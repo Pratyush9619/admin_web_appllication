@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web_appllication/style.dart';
 
 class LoadingPage extends StatefulWidget {
   @override
@@ -10,15 +11,15 @@ class _LoadingPageState extends State<LoadingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Colors.black,
+        color: Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              color: Colors.black,
-              child: const Center(
-                child: CircularProgressIndicator(color: Colors.white),
+              color: Colors.white,
+              child: Center(
+                child: CircularProgressIndicator(color: blue),
               ),
             ),
           ],

@@ -1,9 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_scaffold/admin_scaffold.dart';
+import 'package:web_appllication/MenuPage/admin.dart';
+import 'package:web_appllication/MenuPage/home.dart';
+import 'package:web_appllication/MenuPage/project_planning.dart';
+import 'package:web_appllication/MenuPage/user.dart';
 import 'package:web_appllication/style.dart';
 
-class SmallScreen extends StatelessWidget {
+class SmallScreen extends StatefulWidget {
   const SmallScreen({super.key});
+
+  @override
+  State<SmallScreen> createState() => _SmallScreenState();
+}
+
+class _SmallScreenState extends State<SmallScreen> {
+  Widget selectedScreen = const MenuHomePage();
+  currentScreen(item) {
+    switch (item.route) {
+      case MenuHomePage.id:
+        setState(() {
+          selectedScreen = const MenuHomePage();
+        });
+        break;
+      case AdminPage.id:
+        setState(() {
+          selectedScreen = AdminPage();
+        });
+        break;
+      case ProjectPanning.id:
+        setState(() {
+          selectedScreen = const ProjectPanning();
+        });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,18 +48,23 @@ class SmallScreen extends StatelessWidget {
         items: const [
           AdminMenuItem(
             title: 'Home',
-            route: '/',
+            route: MenuHomePage.id,
             icon: Icons.home_max_outlined,
           ),
           AdminMenuItem(
             title: 'Admin',
-            route: '/first',
+            route: AdminPage.id,
             icon: Icons.dashboard,
           ),
           AdminMenuItem(
             title: 'User',
-            route: '/second',
+            route: MenuUserPage.id,
             icon: Icons.person,
+          ),
+          AdminMenuItem(
+            title: 'Project Planning ',
+            route: ProjectPanning.id,
+            icon: Icons.browse_gallery_outlined,
           ),
           AdminMenuItem(
             title: 'Gallery',
@@ -65,11 +99,9 @@ class SmallScreen extends StatelessWidget {
             ],
           ),
         ],
-        selectedRoute: '/',
+        selectedRoute: MenuHomePage.id,
         onSelected: (item) {
-          if (item.route != null) {
-            Navigator.of(context).pushNamed(item.route!);
-          }
+          currentScreen(item);
         },
         header: Container(
           height: 50,
@@ -94,19 +126,110 @@ class SmallScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          alignment: Alignment.topLeft,
-          padding: const EdgeInsets.all(10),
-          child: const Text(
-            'HomePage',
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 36,
-            ),
-          ),
-        ),
-      ),
+      body: selectedScreen,
+      // body: SingleChildScrollView(
+      //   child: Column(
+      //     children: [
+      //       Padding(
+      //         padding: const EdgeInsets.all(8.0),
+      //         child: Container(
+      //           height: 80,
+      //           alignment: Alignment.topLeft,
+      //           padding: const EdgeInsets.all(10),
+      //           decoration: BoxDecoration(
+      //               borderRadius: BorderRadius.circular(5), color: blue),
+      //           child: Text(
+      //             'HomePage',
+      //             style: TextStyle(
+      //                 fontWeight: FontWeight.w700, fontSize: 20, color: white),
+      //           ),
+      //         ),
+      //       ),
+      //       Padding(
+      //         padding: const EdgeInsets.all(8.0),
+      //         child: Row(
+      //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+      //           children: [
+      //             Container(
+      //               height: 120,
+      //               width: 200,
+      //               decoration: BoxDecoration(
+      //                   borderRadius: BorderRadius.circular(10),
+      //                   border: Border.all(color: blue)),
+      //             ),
+      //             Container(
+      //               height: 120,
+      //               width: 200,
+      //               decoration: BoxDecoration(
+      //                   borderRadius: BorderRadius.circular(10),
+      //                   border: Border.all(color: blue)),
+      //             ),
+      //             Container(
+      //               height: 120,
+      //               width: 200,
+      //               decoration: BoxDecoration(
+      //                   borderRadius: BorderRadius.circular(10),
+      //                   border: Border.all(color: blue)),
+      //             ),
+      //             Container(
+      //               height: 120,
+      //               width: 200,
+      //               decoration: BoxDecoration(
+      //                   borderRadius: BorderRadius.circular(10),
+      //                   border: Border.all(color: blue)),
+      //             )
+      //           ],
+      //         ),
+      //       ),
+      //       SizedBox(height: 15),
+      //       Padding(
+      //         padding: const EdgeInsets.all(8.0),
+      //         child: Row(
+      //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+      //           children: [
+      //             Container(
+      //               height: 400,
+      //               width: 400,
+      //               decoration: BoxDecoration(
+      //                   borderRadius: BorderRadius.circular(10),
+      //                   border: Border.all(color: blue)),
+      //             ),
+      //             Container(
+      //               height: 400,
+      //               width: 400,
+      //               decoration: BoxDecoration(
+      //                   borderRadius: BorderRadius.circular(10),
+      //                   border: Border.all(color: blue)),
+      //             ),
+      //           ],
+      //         ),
+      //       ),
+      //       SizedBox(height: 15),
+      //       Padding(
+      //         padding: const EdgeInsets.all(8.0),
+      //         child: Row(
+      //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+      //           children: [
+      //             Container(
+      //               height: 400,
+      //               width: 400,
+      //               decoration: BoxDecoration(
+      //                   borderRadius: BorderRadius.circular(10),
+      //                   border: Border.all(color: blue)),
+      //             ),
+      //             Container(
+      //               height: 400,
+      //               width: 400,
+      //               decoration: BoxDecoration(
+      //                   borderRadius: BorderRadius.circular(10),
+      //                   border: Border.all(color: blue)),
+      //             ),
+      //           ],
+      //         ),
+      //       )
+      //     ],
+      //   ),
+      // ),
     );
   }
 }

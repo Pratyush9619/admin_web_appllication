@@ -34,12 +34,16 @@ dependencies:
   external_app_launcher: ^3.1.0
   firebase_auth: ^4.1.4
   firebase_core: ^2.3.0
+  firebase_storage: ^11.0.6
   flutter:
     sdk: flutter
   flutter_admin_scaffold: ^1.1.2
   flutter_slider_indicator: ^1.0.0
+  get: ^4.6.5
   google_fonts: ^3.0.1
+  image_picker: ^0.8.6
   shared_preferences: ^2.0.15
+  syncfusion_flutter_datagrid: ^20.3.59
   tab_indicator_styler: ^2.0.0
 
 dev_dependencies:

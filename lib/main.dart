@@ -1,6 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:web_appllication/Authentication/login_register.dart';
+import 'package:web_appllication/MenuPage/admin.dart';
+import 'package:web_appllication/MenuPage/home.dart';
+import 'package:web_appllication/MenuPage/project_planning.dart';
+import 'package:web_appllication/MenuPage/user.dart';
 import 'package:web_appllication/small_screen.dart';
 import 'package:web_appllication/style.dart';
 
@@ -11,6 +17,7 @@ void main() async {
           apiKey: 'AIzaSyCrSwVB12UIZ_wiLcsIqDeXb3cP6QKkMgM',
           appId: '1:787886302853:web:a13e1fc1f32187fcc26bec',
           messagingSenderId: '787886302853',
+          storageBucket: "tp-zap-solz.appspot.com",
           projectId: 'tp-zap-solz'));
   runApp(const MyApp());
 }
@@ -24,6 +31,18 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'TATA Web Application',
+      initialRoute: MenuHomePage.id,
+      routes: {
+        AdminPage.id: (context) => const SmallScreen(),
+        MenuUserPage.id: (context) => const MenuUserPage(),
+        ProjectPanning.id: (context) => const ProjectPanning(),
+
+        // "/menu": (context) => Menu(),
+        // "/user": (context) => User(),
+        // "/shop": (context) => Shop(),
+        // "/statistics": (context) => Stats(),
+        // "/settings": (context) => Settings()
+      },
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -42,6 +61,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return SmallScreen();
+    return LoginRegister();
   }
 }

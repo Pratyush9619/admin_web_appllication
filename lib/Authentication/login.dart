@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_appllication/Authentication/reset_password.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/main.dart';
+import 'package:web_appllication/small_screen.dart';
 
 import '../style.dart';
 
@@ -280,7 +281,7 @@ class _SignInPageState extends State<SignInPage> {
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const MyHomePage(),
+                  builder: (context) => const SmallScreen(),
                 ));
           });
           // ignore: use_build_context_synchronously
