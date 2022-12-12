@@ -11,6 +11,9 @@ class MenuUserPage extends StatefulWidget {
 class _MenuUserPageState extends State<MenuUserPage> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return const Scaffold(
+        body: Center(
+      child: Text('User Page'),
+    ));
   }
 }

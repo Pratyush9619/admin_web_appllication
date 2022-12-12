@@ -31,6 +31,11 @@ class _SmallScreenState extends State<SmallScreen> {
         setState(() {
           selectedScreen = const ProjectPanning();
         });
+        break;
+      case MenuUserPage.id:
+        setState(() {
+          selectedScreen = const MenuUserPage();
+        });
     }
   }
 
@@ -44,6 +49,7 @@ class _SmallScreenState extends State<SmallScreen> {
         backgroundColor: blue,
       ),
       sideBar: SideBar(
+        activeBackgroundColor: white,
         backgroundColor: white,
         items: const [
           AdminMenuItem(
@@ -62,42 +68,42 @@ class _SmallScreenState extends State<SmallScreen> {
             icon: Icons.person,
           ),
           AdminMenuItem(
-            title: 'Project Planning ',
+            title: 'Cities ',
             route: ProjectPanning.id,
-            icon: Icons.browse_gallery_outlined,
+            icon: Icons.location_city_outlined,
           ),
-          AdminMenuItem(
-            title: 'Gallery',
-            route: '/three',
-            icon: Icons.browse_gallery_outlined,
-          ),
-          AdminMenuItem(
-            title: 'Cities',
-            icon: Icons.location_city,
-            children: [
-              AdminMenuItem(
-                title: 'Depots',
-                route: '/secondLevelItem1',
-              ),
-              AdminMenuItem(
-                title: 'Second Level Item 2',
-                route: '/secondLevelItem2',
-              ),
-              // AdminMenuItem(
-              //   title: 'Third Level',
-              //   children: [
-              //     AdminMenuItem(
-              //       title: 'Third Level Item 1',
-              //       route: '/thirdLevelItem1',
-              //     ),
-              //     AdminMenuItem(
-              //       title: 'Third Level Item 2',
-              //       route: '/thirdLevelItem2',
-              //     ),
-              //   ],
-              // ),
-            ],
-          ),
+          // AdminMenuItem(
+          //   title: 'Gallery',
+          //   route: '/three',
+          //   icon: Icons.browse_gallery_outlined,
+          // ),
+          // AdminMenuItem(
+          //   title: 'Cities',
+          //   icon: Icons.location_city,
+          //   children: [
+          //     AdminMenuItem(
+          //       title: 'Depots',
+          //       route: '/secondLevelItem1',
+          //     ),
+          //     AdminMenuItem(
+          //       title: 'Second Level Item 2',
+          //       route: '/secondLevelItem2',
+          //     ),
+          // AdminMenuItem(
+          //   title: 'Third Level',
+          //   children: [
+          //     AdminMenuItem(
+          //       title: 'Third Level Item 1',
+          //       route: '/thirdLevelItem1',
+          //     ),
+          //     AdminMenuItem(
+          //       title: 'Third Level Item 2',
+          //       route: '/thirdLevelItem2',
+          //     ),
+          //   ],
+          // ),
+          // ],
+          // ),
         ],
         selectedRoute: MenuHomePage.id,
         onSelected: (item) {

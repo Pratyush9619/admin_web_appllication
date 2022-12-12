@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:web_appllication/MenuPage/Planning/depot.dart';
 import 'package:web_appllication/Service/database_service.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/style.dart';
@@ -36,54 +37,6 @@ class _CitiesPageState extends State<CitiesPage> {
       body: citylist(),
     );
   }
-
-  Widget Cards(String title, String image) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: GestureDetector(
-        //     onTap: () => onToScreen(index),
-        child: Stack(children: [
-          Column(
-            children: [
-              Container(
-                height: 150,
-                width: 150,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: blue,
-                  image: DecorationImage(
-                      image: NetworkImage(image), fit: BoxFit.cover),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(title)
-            ],
-          ),
-        ]),
-      ),
-      // child: ElevatedButton(
-      //     style: ElevatedButton.styleFrom(
-      //       shape: RoundedRectangleBorder(
-      //           borderRadius: BorderRadius.circular(10.0)),
-      //       //   minimumSize: MediaQuery.of(context).size,
-      //       backgroundColor: blue,
-      //     ),
-      //     onPressed: () {
-      //       onToScreen(index);
-      //     },
-      //     child: Text(title))
-    );
-  }
-
-  // void onToScreen(int index) {
-  //   Navigator.push(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => menuWidget[index],
-  //       ));
-  // }}
 
   PopupDialog(BuildContext context) {
     showDialog(
@@ -241,17 +194,59 @@ class _CitiesPageState extends State<CitiesPage> {
   citylist() {
     return StreamBuilder(
         stream: FirebaseFirestore.instance.collection('CityName').snapshots(),
-        builder: (context, snapshot) {
+        builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return GridView.builder(
-              itemCount: snapshot.data!.docs.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4),
-              itemBuilder: (context, index) {
-                return Cards(snapshot.data!.docs[index]['CityName'],
-                    snapshot.data!.docs[index]['ImageUrl']);
-              },
-            );
+                itemCount: snapshot.data!.docs.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4),
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: GestureDetector(
+                      // onTap: () => onToScreen(index),
+                      child: Stack(children: [
+                        Column(
+                          children: [
+                            Container(
+                              height: 150,
+                              width: 150,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: blue,
+                                image: DecorationImage(
+                                    image: NetworkImage(
+                                        snapshot.data!.docs[index]['ImageUrl']),
+                                    fit: BoxFit.cover),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text(snapshot.data!.docs[index]['CityName']),
+                            const SizedBox(height: 5),
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    backgroundColor: blue),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Mydepots(
+                                                cityName: snapshot.data!
+                                                    .docs[index]['CityName'],
+                                              )));
+                                },
+                                child: const Text('Add Depot'))
+                          ],
+                        ),
+                      ]),
+                    ),
+                  );
+                });
           } else {
             return LoadingPage();
           }
