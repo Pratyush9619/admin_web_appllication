@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/datasource/employee_datasouce.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/model/employee.dart';
+import 'package:web_appllication/MenuPage/KeyEvents/model/firebasemodel.dart';
 import 'package:web_appllication/style.dart';
 
 void main() {
@@ -29,8 +30,8 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
   late EmployeeDataSource _employeeDataSource;
   List<Employee> _employees = <Employee>[];
   late DataGridController _dataGridController;
-
-  List<EmployeeDataSource> blockresult2 = [];
+  List<dynamic> tablevalue = [];
+  List<List<dynamic>> tabledata2 = [];
 
   @override
   void initState() {
@@ -259,11 +260,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
             padding: const EdgeInsets.all(10.0),
             child: ElevatedButton(
                 onPressed: () async {
-                  await FirebaseFirestore.instance
-                      .collection('A1')
-                      .add({'SrNo': _employeeDataSource.dataGridRows});
-
-                  print(_employeeDataSource.dataGridRows[0].getCells());
+                  StoreData();
                 },
                 child: const Text('Upload Data')),
           )
@@ -356,5 +353,21 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
           percProgress: 0,
           weightage: 0.5)
     ];
+  }
+
+  void StoreData() async {
+    for (var i in _employeeDataSource.dataGridRows) {
+      for (var data in i.getCells()) {
+        tablevalue.add(data.value);
+      }
+      tabledata2.add(tablevalue);
+      tablevalue.clear();
+    }
+    Map<String, dynamic> table = Map();
+
+    FirebaseFirestore.instance
+        .collection('collectionPath')
+        .doc()
+        .set({'data': tabledata2.map((e) => null)});
   }
 }

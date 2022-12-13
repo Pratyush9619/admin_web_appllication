@@ -1,5 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class Employee {
@@ -57,21 +55,4 @@ class Employee {
       DataGridCell<double>(columnName: 'Weightage', value: weightage),
     ]);
   }
-
-  CollectionReference collectionReference =
-      FirebaseFirestore.instance.collection('A2');
-
-  // Future uploadData() async {
-  //   await collectionReference.add({
-  //     'srNo': srNo,
-  //     'Approval': approval,
-  //     'weightage': weightage,
-  //     'appllicability': applicability,
-  //     'authority': authority,
-  //     'currentStatusPerc': currentStatusPerc,
-  //     'Overallweightage': overallweightage,
-  //     'currentStatus': currentStatus,
-  //     'listDocument': listDocument
-  //   });
-  // }
 }
