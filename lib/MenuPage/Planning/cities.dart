@@ -208,16 +208,18 @@ class _CitiesPageState extends State<CitiesPage> {
                       child: Stack(children: [
                         Column(
                           children: [
-                            Container(
-                              height: 150,
-                              width: 150,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: blue,
-                                image: DecorationImage(
-                                    image: NetworkImage(
-                                        snapshot.data!.docs[index]['ImageUrl']),
-                                    fit: BoxFit.cover),
+                            Expanded(
+                              child: Container(
+                                height: 120,
+                                width: 150,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: blue,
+                                  image: DecorationImage(
+                                      image: NetworkImage(snapshot
+                                          .data!.docs[index]['ImageUrl']),
+                                      fit: BoxFit.cover),
+                                ),
                               ),
                             ),
                             const SizedBox(

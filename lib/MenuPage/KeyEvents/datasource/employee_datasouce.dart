@@ -139,14 +139,14 @@ class EmployeeDataSource extends DataGridSource {
               columnName: 'Weightage', value: newCellValue as int);
       _employees[dataRowIndex].weightage = newCellValue;
     }
-    Future storeData() async {
-      await FirebaseFirestore.instance.collection('A1').add({
-        'Weightage':
-            dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
-                DataGridCell<int>(
-                    columnName: 'Weightage', value: newCellValue as int),
-      });
-    }
+    // Future storeData() async {
+    //   await FirebaseFirestore.instance.collection('A1').add({
+    //     'Weightage':
+    //         dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
+    //             DataGridCell<int>(
+    //                 columnName: 'Weightage', value: newCellValue as int),
+    //   });
+    // }
   }
 
   @override

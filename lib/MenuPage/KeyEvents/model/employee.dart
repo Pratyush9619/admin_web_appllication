@@ -35,6 +35,25 @@ class Employee {
   int percProgress;
   double weightage;
 
+  factory Employee.fromJson(Map<String, dynamic> json) {
+    return Employee(
+        srNo: json['srNo'],
+        activity: json['Activity'],
+        originalDuration: json['OriginalDuration'],
+        startDate: json['StartDate'],
+        endDate: json['EndDate'],
+        actualstartDate: json['ActualStart'],
+        actualendDate: json['ActualEnd'],
+        actualDuration: json['ActuaslDuration'],
+        delay: json['Delay'],
+        unit: json['Unit'],
+        scope: json['QtyScope'],
+        qtyExecuted: json['QtyExecuted'],
+        balanceQty: json['BalancedQty'],
+        percProgress: json['Progress'],
+        weightage: json['Weightage']);
+  }
+
   DataGridRow getDataGridRow() {
     return DataGridRow(cells: <DataGridCell>[
       DataGridCell<int>(columnName: 'srNo', value: srNo),

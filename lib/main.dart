@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'TATA Web Application',
+      title: 'TATA POWER CONTROL PANEL',
       initialRoute: MenuHomePage.id,
       routes: {
         AdminPage.id: (context) => const SmallScreen(),

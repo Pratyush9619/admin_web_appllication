@@ -47,16 +47,41 @@ class _MyOverviewState extends State<MyOverview> {
       const ProgressPage(),
       KeyEvents(
         depoName: widget.depoName,
+        cityName: widget.cityName,
       ),
-      KeyEvents(),
-      KeyEvents(),
-      KeyEvents(),
-      KeyEvents(),
+      KeyEvents(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
+      KeyEvents(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
+      KeyEvents(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
+      KeyEvents(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
       ProgressPage(),
-      KeyEvents(),
-      KeyEvents(),
-      KeyEvents(),
-      KeyEvents(),
+      KeyEvents(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
+      KeyEvents(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
+      KeyEvents(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
+      KeyEvents(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
     ];
 
     return Scaffold(

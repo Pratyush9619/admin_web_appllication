@@ -13,7 +13,8 @@ import 'package:web_appllication/style.dart';
 
 class KeyEvents extends StatefulWidget {
   String? depoName;
-  KeyEvents({super.key, this.depoName});
+  String? cityName;
+  KeyEvents({super.key, this.depoName, this.cityName});
 
   @override
   State<KeyEvents> createState() => _KeyEventsState();
@@ -55,30 +56,39 @@ class _KeyEventsState extends State<KeyEvents> {
       ),
       StatutoryAprovalA2(
         depoName: widget.depoName.toString(),
+        cityName: widget.cityName.toString(),
       ),
       StatutoryAprovalA3(
         depoName: widget.depoName.toString(),
+        cityName: widget.cityName.toString(),
       ),
       StatutoryAprovalA4(
         depoName: widget.depoName.toString(),
+        cityName: widget.cityName.toString(),
       ),
       StatutoryAprovalA5(
         depoName: widget.depoName.toString(),
+        cityName: widget.cityName.toString(),
       ),
       StatutoryAprovalA6(
         depoName: widget.depoName.toString(),
+        cityName: widget.cityName.toString(),
       ),
       StatutoryAprovalA7(
         depoName: widget.depoName.toString(),
+        cityName: widget.cityName.toString(),
       ),
       StatutoryAprovalA8(
         depoName: widget.depoName.toString(),
+        cityName: widget.cityName.toString(),
       ),
       StatutoryAprovalA9(
         depoName: widget.depoName.toString(),
+        cityName: widget.cityName.toString(),
       ),
       StatutoryAprovalA10(
         depoName: widget.depoName.toString(),
+        cityName: widget.cityName.toString(),
       ),
     ];
     return Scaffold(
