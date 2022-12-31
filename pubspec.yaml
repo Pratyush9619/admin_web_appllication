@@ -30,6 +30,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   cloud_firestore: ^4.1.0
+  country_pickers: ^2.0.0
   cupertino_icons: ^1.0.2
   external_app_launcher: ^3.1.0
   file_picker: ^5.2.3
@@ -44,11 +45,14 @@ dependencies:
   google_fonts: ^3.0.1
   image_picker: ^0.8.6
   intl: ^0.17.0
+  intl_phone_field: ^3.1.0
   open_app_file: ^4.0.1
   path_provider: ^2.0.11
   shared_preferences: ^2.0.15
-  syncfusion_flutter_datagrid: ^20.3.59
-  syncfusion_flutter_pdfviewer: ^20.3.59
+  syncfusion_flutter_charts: ^20.3.58
+  syncfusion_flutter_datagrid: ^20.4.38
+  syncfusion_flutter_datepicker: ^20.4.38
+  syncfusion_flutter_pdfviewer: ^20.3.58
   tab_indicator_styler: ^2.0.0
 
 dev_dependencies:
@@ -68,6 +72,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+    - assets/flags/
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

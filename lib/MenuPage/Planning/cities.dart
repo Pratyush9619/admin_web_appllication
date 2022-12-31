@@ -193,7 +193,10 @@ class _CitiesPageState extends State<CitiesPage> {
 
   citylist() {
     return StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('CityName').snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('CityName')
+            .orderBy('CityName')
+            .snapshots(),
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return GridView.builder(
@@ -208,18 +211,16 @@ class _CitiesPageState extends State<CitiesPage> {
                       child: Stack(children: [
                         Column(
                           children: [
-                            Expanded(
-                              child: Container(
-                                height: 120,
-                                width: 150,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: blue,
-                                  image: DecorationImage(
-                                      image: NetworkImage(snapshot
-                                          .data!.docs[index]['ImageUrl']),
-                                      fit: BoxFit.cover),
-                                ),
+                            Container(
+                              height: 150,
+                              width: 150,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: blue,
+                                image: DecorationImage(
+                                    image: NetworkImage(
+                                        snapshot.data!.docs[index]['ImageUrl']),
+                                    fit: BoxFit.cover),
                               ),
                             ),
                             const SizedBox(

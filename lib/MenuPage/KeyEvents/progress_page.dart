@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web_appllication/style.dart';
 
 class ProgressPage extends StatefulWidget {
   const ProgressPage({super.key});
@@ -10,6 +11,11 @@ class ProgressPage extends StatefulWidget {
 class _ProgressPageState extends State<ProgressPage> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Overview Page'),
+        backgroundColor: blue,
+      ),
+    );
   }
 }

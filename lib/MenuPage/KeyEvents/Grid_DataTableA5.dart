@@ -50,7 +50,7 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
             _employees = getEmployeeData();
           }
           _isLoading = false;
-          _employeeDataSource = EmployeeDataSource(_employees);
+          _employeeDataSource = EmployeeDataSource(_employees, context);
           _dataGridController = DataGridController();
         });
         // _employeeDataSource = EmployeeDataSource(_employees);
@@ -81,8 +81,10 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
                     allowEditing: true,
                     frozenColumnsCount: 2,
                     gridLinesVisibility: GridLinesVisibility.both,
+                    headerGridLinesVisibility: GridLinesVisibility.both,
                     selectionMode: SelectionMode.single,
                     navigationMode: GridNavigationMode.cell,
+                    editingGestureType: EditingGestureType.tap,
                     columnWidthMode: ColumnWidthMode.auto,
                     controller: _dataGridController,
                     // onQueryRowHeight: (details) {
@@ -279,6 +281,7 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(backgroundColor: blue),
                       onPressed: () async {
                         showCupertinoDialog(
                           context: context,
@@ -296,7 +299,13 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
                         );
                         StoreData();
                       },
-                      child: const Text('Sync Data')),
+                      child: const Text(
+                        'Sync Data',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      )),
                 )
               ],
             ),

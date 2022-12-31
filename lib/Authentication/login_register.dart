@@ -23,7 +23,8 @@ class _LoginRegisterState extends State<LoginRegister> {
             width: 450,
             decoration: const BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage('assets/webhome.png'), fit: BoxFit.fill)),
+                    image: AssetImage('assets/webhome.jpeg'),
+                    fit: BoxFit.fill)),
           ),
         ),
         Expanded(

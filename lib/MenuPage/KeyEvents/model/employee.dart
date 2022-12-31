@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class Employee {
@@ -58,6 +60,29 @@ class Employee {
     return DataGridRow(cells: <DataGridCell>[
       DataGridCell<int>(columnName: 'srNo', value: srNo),
       DataGridCell<String>(columnName: 'Activity', value: activity),
+      const DataGridCell<Widget>(columnName: 'button', value: null),
+      DataGridCell<int>(
+          columnName: 'OriginalDuration', value: originalDuration),
+      DataGridCell<String>(columnName: 'StartDate', value: startDate),
+      DataGridCell<String>(columnName: 'EndDate', value: endDate),
+      DataGridCell<String>(columnName: 'ActualStart', value: actualstartDate),
+      DataGridCell<String>(columnName: 'ActualEnd', value: actualendDate),
+      DataGridCell<int>(columnName: 'ActuaslDuration', value: actualDuration),
+      DataGridCell<int>(columnName: 'Delay', value: delay),
+      DataGridCell<int>(columnName: 'Unit', value: unit),
+      DataGridCell<int>(columnName: 'QtyScope', value: scope),
+      DataGridCell<int>(columnName: 'QtyExecuted', value: qtyExecuted),
+      DataGridCell<int>(columnName: 'BalancedQty', value: balanceQty),
+      DataGridCell<int>(columnName: 'Progress', value: percProgress),
+      DataGridCell<double>(columnName: 'Weightage', value: weightage),
+    ]);
+  }
+
+  DataGridRow getKeyDataGridRow() {
+    return DataGridRow(cells: <DataGridCell>[
+      DataGridCell<int>(columnName: 'srNo', value: srNo),
+      DataGridCell<String>(columnName: 'Activity', value: activity),
+      // const DataGridCell<Widget>(columnName: 'button', value: null),
       DataGridCell<int>(
           columnName: 'OriginalDuration', value: originalDuration),
       DataGridCell<String>(columnName: 'StartDate', value: startDate),

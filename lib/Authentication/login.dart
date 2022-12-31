@@ -22,6 +22,7 @@ class _SignInPageState extends State<SignInPage> {
   bool isloading = false;
   String _id = "";
   String _pass = "";
+  bool _isHidden = true;
   late SharedPreferences _sharedPreferences;
   // AuthService authService = AuthService();
 
@@ -79,26 +80,18 @@ class _SignInPageState extends State<SignInPage> {
                             const SizedBox(height: 24),
                             TextFormField(
                               textInputAction: TextInputAction.done,
-                              decoration: const InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
+
+                              decoration: InputDecoration(
+                                suffixIcon: InkWell(
+                                    onTap: _togglePasswordView,
+                                    child: _isHidden
+                                        ? const Icon(Icons.visibility)
+                                        : Icon(
+                                            Icons.visibility_off,
+                                            color: grey,
+                                          )),
+                                contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10, horizontal: 10),
-                                // suffix: _email.isNotEmpty
-                                //     ? InkWell(
-                                //         onTap: () async {
-                                //           Navigator.of(context).push(
-                                //               MaterialPageRoute(
-                                //                   builder: (BuildContext
-                                //                           context) =>
-                                //                       ResetPass(
-                                //                           email: _email)));
-                                //         },
-                                //         child: Text(
-                                //           'Forgot ?',
-                                //           style: bodyText2.copyWith(
-                                //               color: blue),
-                                //         ),
-                                //       )
-                                //     : const SizedBox(),
                                 labelText: "Password",
                               ),
                               validator: (value) {
@@ -106,14 +99,14 @@ class _SignInPageState extends State<SignInPage> {
                                   return 'Password is required';
                                 }
 
-                                if (value.length < 5 || value.length > 20) {
-                                  return 'Password must be betweem 5 and 20 characters';
-                                }
+                                // if (value.length < 5 || value.length > 20) {
+                                //   return 'Password must be betweem 5 and 20 characters';
+                                // }
 
                                 return null;
                               },
                               // key: ValueKey('password'),
-                              obscureText: true,
+                              obscureText: _isHidden,
                               style: bodyText2White60,
                               keyboardType: TextInputType.visiblePassword,
                               // onSaved: (value) {
@@ -156,7 +149,7 @@ class _SignInPageState extends State<SignInPage> {
                               ],
                             ),
                             _space(30),
-                            InkWell(
+                            GestureDetector(
                               onTap: () => login(),
                               child: Container(
                                 height: 50,
@@ -306,9 +299,17 @@ class _SignInPageState extends State<SignInPage> {
           });
         }
         Navigator.pop(context);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(error)));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(error),
+          backgroundColor: blue,
+        ));
       }
     }
+  }
+
+  void _togglePasswordView() {
+    setState(() {
+      _isHidden = !_isHidden;
+    });
   }
 }

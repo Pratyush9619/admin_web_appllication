@@ -50,7 +50,7 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
             _employees = getEmployeeData();
           }
           _isLoading = false;
-          _employeeDataSource = EmployeeDataSource(_employees);
+          _employeeDataSource = EmployeeDataSource(_employees, context);
           _dataGridController = DataGridController();
         });
         // _employeeDataSource = EmployeeDataSource(_employees);
@@ -80,7 +80,9 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
                     source: _employeeDataSource,
                     allowEditing: true,
                     frozenColumnsCount: 2,
+                    editingGestureType: EditingGestureType.tap,
                     gridLinesVisibility: GridLinesVisibility.both,
+                    headerGridLinesVisibility: GridLinesVisibility.both,
                     selectionMode: SelectionMode.single,
                     navigationMode: GridNavigationMode.cell,
                     columnWidthMode: ColumnWidthMode.auto,
@@ -113,6 +115,16 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
                             'Activity',
                             overflow: TextOverflow.values.first,
                           ),
+                        ),
+                      ),
+                      GridColumn(
+                        columnName: 'button',
+                        width: 130,
+                        allowEditing: false,
+                        label: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          alignment: Alignment.center,
+                          child: const Text('View File '),
                         ),
                       ),
                       GridColumn(
@@ -279,6 +291,7 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(backgroundColor: blue),
                       onPressed: () async {
                         showCupertinoDialog(
                           context: context,
@@ -296,7 +309,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
                         );
                         StoreData();
                       },
-                      child: const Text('Sync Data')),
+                      child: const Text(
+                        'Sync Data',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      )),
                 )
               ],
             ),

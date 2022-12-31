@@ -21,24 +21,27 @@ class _MenuUserPageState extends State<MenuUserPage> {
         .snapshots();
 
     return Scaffold(
-        body: Center(
-            child: StreamBuilder<DocumentSnapshot>(
-      stream: users,
-      // future: users.doc('8TfbSgieo2FE8ZMh1njf').get(),
-      builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        if (snapshot.hasData) {
-          var data = snapshot.data!.data() as Map;
-          List<dynamic> newdata = data['data'] as List<dynamic>;
-          return ListView.builder(
-            itemCount: newdata.length,
-            itemBuilder: (context, index) {
-              return Text(newdata[index]['Activity']);
-            },
-          );
-        }
-        return CircularProgressIndicator();
-      },
-    )));
+      body: Center(child: Image.asset('assets/construction.jpeg')),
+    );
+    // Scaffold(
+    //     body: Center(
+    //         child: StreamBuilder<DocumentSnapshot>(
+    //   stream: users,
+    //   // future: users.doc('8TfbSgieo2FE8ZMh1njf').get(),
+    //   builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+    //     if (snapshot.hasData) {
+    //       var data = snapshot.data!.data() as Map;
+    //       List<dynamic> newdata = data['data'] as List<dynamic>;
+    //       return ListView.builder(
+    //         itemCount: newdata.length,
+    //         itemBuilder: (context, index) {
+    //           return Text(newdata[index]['Activity']);
+    //         },
+    //       );
+    //     }
+    //     return CircularProgressIndicator();
+    //   },
+    // )));
   }
 
   citylist() async {

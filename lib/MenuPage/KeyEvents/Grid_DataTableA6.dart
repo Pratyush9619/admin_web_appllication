@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -49,7 +50,7 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
             _employees = getEmployeeData();
           }
           _isLoading = false;
-          _employeeDataSource = EmployeeDataSource(_employees);
+          _employeeDataSource = EmployeeDataSource(_employees, context);
           _dataGridController = DataGridController();
         });
         // _employeeDataSource = EmployeeDataSource(_employees);
@@ -80,6 +81,8 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
                     allowEditing: true,
                     frozenColumnsCount: 2,
                     gridLinesVisibility: GridLinesVisibility.both,
+                    headerGridLinesVisibility: GridLinesVisibility.both,
+                    editingGestureType: EditingGestureType.tap,
                     selectionMode: SelectionMode.single,
                     navigationMode: GridNavigationMode.cell,
                     columnWidthMode: ColumnWidthMode.auto,
@@ -112,6 +115,16 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
                             'Activity',
                             overflow: TextOverflow.values.first,
                           ),
+                        ),
+                      ),
+                      GridColumn(
+                        columnName: 'button',
+                        width: 130,
+                        allowEditing: false,
+                        label: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          alignment: Alignment.center,
+                          child: const Text('View File '),
                         ),
                       ),
                       GridColumn(
@@ -278,10 +291,31 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(backgroundColor: blue),
                       onPressed: () async {
+                        showCupertinoDialog(
+                          context: context,
+                          builder: (context) => const CupertinoAlertDialog(
+                            content: SizedBox(
+                              height: 50,
+                              width: 50,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
                         StoreData();
                       },
-                      child: const Text('Sync Data')),
+                      child: const Text(
+                        'Sync Data',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      )),
                 )
               ],
             ),

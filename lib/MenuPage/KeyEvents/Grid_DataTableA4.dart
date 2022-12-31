@@ -51,7 +51,7 @@ class _StatutoryAprovalA4State extends State<StatutoryAprovalA4> {
             _employees = getEmployeeData();
           }
           _isLoading = false;
-          _employeeDataSource = EmployeeDataSource(_employees);
+          _employeeDataSource = EmployeeDataSource(_employees, context);
           _dataGridController = DataGridController();
         });
       });
@@ -76,7 +76,9 @@ class _StatutoryAprovalA4State extends State<StatutoryAprovalA4> {
                     source: _employeeDataSource,
                     allowEditing: true,
                     frozenColumnsCount: 2,
+                    editingGestureType: EditingGestureType.tap,
                     gridLinesVisibility: GridLinesVisibility.both,
+                    headerGridLinesVisibility: GridLinesVisibility.both,
                     selectionMode: SelectionMode.single,
                     navigationMode: GridNavigationMode.cell,
                     columnWidthMode: ColumnWidthMode.auto,
@@ -109,6 +111,16 @@ class _StatutoryAprovalA4State extends State<StatutoryAprovalA4> {
                             'Activity',
                             overflow: TextOverflow.values.first,
                           ),
+                        ),
+                      ),
+                      GridColumn(
+                        columnName: 'button',
+                        width: 130,
+                        allowEditing: false,
+                        label: Container(
+                          padding: const EdgeInsets.all(8.0),
+                          alignment: Alignment.center,
+                          child: const Text('View File '),
                         ),
                       ),
                       GridColumn(
@@ -275,24 +287,29 @@ class _StatutoryAprovalA4State extends State<StatutoryAprovalA4> {
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: ElevatedButton(
-                      onPressed: () async {
-                        showCupertinoDialog(
-                          context: context,
-                          builder: (context) => const CupertinoAlertDialog(
-                            content: SizedBox(
-                              height: 50,
-                              width: 50,
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ),
+                    style: ElevatedButton.styleFrom(backgroundColor: blue),
+                    onPressed: () async {
+                      showCupertinoDialog(
+                        context: context,
+                        builder: (context) => const CupertinoAlertDialog(
+                          content: SizedBox(
+                            height: 50,
+                            width: 50,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
                               ),
                             ),
                           ),
-                        );
-                        StoreData();
-                      },
-                      child: const Text('Sync Data')),
+                        ),
+                      );
+                      StoreData();
+                    },
+                    child: const Text(
+                      'Sync Data',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
                 )
               ],
             ),

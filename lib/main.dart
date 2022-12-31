@@ -1,8 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:web_appllication/Authentication/login_register.dart';
+import 'package:web_appllication/MenuPage/KeyEvents/key_events.dart';
 import 'package:web_appllication/MenuPage/admin.dart';
 import 'package:web_appllication/MenuPage/home.dart';
 import 'package:web_appllication/MenuPage/project_planning.dart';
@@ -45,6 +44,18 @@ class MyApp extends StatelessWidget {
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        dividerColor: grey,
+        inputDecorationTheme: InputDecorationTheme(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+              borderSide: BorderSide(color: grey),
+            ),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6),
+                borderSide: BorderSide(color: blue)),
+            floatingLabelBehavior: FloatingLabelBehavior.auto,
+            focusColor: almostWhite,
+            labelStyle: bodyText2White60),
       ),
       home: const MyHomePage(),
     );
@@ -61,6 +72,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return LoginRegister();
+    return
+        //  EventsPage();
+        KeyEvents();
+    // LoginRegister();
   }
 }
