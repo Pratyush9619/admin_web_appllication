@@ -7,6 +7,7 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/model/employee.dart';
 
 import '../model/employee_statutory.dart';
+import '../viewFIle.dart';
 
 class EmployeeDataStatutory extends DataGridSource {
   EmployeeDataStatutory(this._employees) {
@@ -53,9 +54,37 @@ class EmployeeDataStatutory extends DataGridSource {
             Alignment.center,
         // : Alignment.center,
         padding: EdgeInsets.symmetric(horizontal: 16.0),
-        child: Text(
-          dataGridCell.value.toString(),
-        ),
+        child: dataGridCell.columnName == 'button'
+            ? LayoutBuilder(
+                builder: (BuildContext ctx, BoxConstraints constraints) {
+                return ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(ctx).push(MaterialPageRoute(
+                        builder: (context) => ViewFile(),
+                      ));
+                      // showDialog(
+                      //     context: context,
+                      //     builder: (context) => AlertDialog(
+                      //         content: SizedBox(
+                      //             height: 100,
+                      //             child: Column(
+                      //               mainAxisAlignment:
+                      //                   MainAxisAlignment.spaceBetween,
+                      //               children: [
+                      //                 Text(
+                      //                     'Employee ID: ${row.getCells()[0].value.toString()}'),
+                      //                 Text(
+                      //                     'Employee Name: ${row.getCells()[1].value.toString()}'),
+                      //                 Text(
+                      //                     'Employee Designation: ${row.getCells()[2].value.toString()}'),
+                      //               ],
+                      //             ))));
+                    },
+                    child: const Text('View'));
+              })
+            : Text(
+                dataGridCell.value.toString(),
+              ),
       );
     }).toList());
   }

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:web_appllication/MenuPage/KeyEvents/Grid_DataTable.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/model/employee.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/viewFIle.dart';
 import 'package:web_appllication/MenuPage/Planning/cities.dart';
@@ -79,18 +80,9 @@ class KeyDataSourceKeyEvents extends DataGridSource {
         color: columnbackgroundcolor,
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: dataGridCell.columnName == 'Activity'
-            ? GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      mainContext,
-                      MaterialPageRoute(
-                        builder: (context) => CitiesPage(),
-                      ));
-                },
-                child: Text(
-                  dataGridCell.value.toString(),
-                  style: TextStyle(color: white),
-                ),
+            ? Text(
+                dataGridCell.value.toString(),
+                style: TextStyle(color: white),
               )
             // (dataGridCell.columnName == 'ActualStart' ||
             //         dataGridCell.columnName == 'ActualEnd')

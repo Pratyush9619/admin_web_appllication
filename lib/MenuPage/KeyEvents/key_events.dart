@@ -5,11 +5,21 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/Grid_DataTable.dart';
+import 'package:web_appllication/MenuPage/KeyEvents/Grid_DataTableA10.dart';
+import 'package:web_appllication/MenuPage/KeyEvents/Grid_DataTableA11.dart';
+import 'package:web_appllication/MenuPage/KeyEvents/Grid_DataTableA3.dart';
+import 'package:web_appllication/MenuPage/KeyEvents/Grid_DataTableA4.dart';
+import 'package:web_appllication/MenuPage/KeyEvents/Grid_DataTableA5.dart';
+import 'package:web_appllication/MenuPage/KeyEvents/Grid_DataTableA6.dart';
+import 'package:web_appllication/MenuPage/KeyEvents/Grid_DataTableA8.dart';
+import 'package:web_appllication/MenuPage/KeyEvents/Grid_DataTableA9.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/datasource/employee_datasouce.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/model/employee.dart';
+import 'package:web_appllication/MenuPage/KeyEvents/viewFIle.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/style.dart';
 
+import 'Grid_DataTableA7.dart';
 import 'datasource/key_datasource.dart';
 
 void main() {
@@ -96,6 +106,45 @@ class _KeyEventsState extends State<KeyEvents> {
       // ChartData('A9', 25, Colors.deepOrange),
       // ChartData('A10', 50, Colors.blue),
     ];
+    menuwidget = [
+      const ViewFile(),
+      StatutoryAprovalA2(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
+      StatutoryAprovalA3(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
+      StatutoryAprovalA4(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
+      StatutoryAprovalA11(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
+      StatutoryAprovalA6(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
+      StatutoryAprovalA7(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
+      StatutoryAprovalA8(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
+      StatutoryAprovalA9(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
+      StatutoryAprovalA10(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
+    ];
     return Scaffold(
       appBar: AppBar(
         title: Text('Key Events '),
@@ -109,6 +158,14 @@ class _KeyEventsState extends State<KeyEvents> {
                   child: SfDataGrid(
                     source: _KeyDataSourceKeyEvents,
 
+                    onCellTap: (DataGridCellTapDetails details) {
+                      final DataGridRow row = _KeyDataSourceKeyEvents
+                          .effectiveRows[details.rowColumnIndex.rowIndex - 1];
+
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              menuwidget[details.rowColumnIndex.rowIndex - 1]));
+                    },
                     allowEditing: true,
                     frozenColumnsCount: 2,
                     editingGestureType: EditingGestureType.tap,
@@ -391,7 +448,7 @@ class _KeyEventsState extends State<KeyEvents> {
   List<Employee> getEmployeeData() {
     return [
       Employee(
-          srNo: 1,
+          srNo: 'A1',
           activity: 'Letter of Award reveived  from TML',
           originalDuration: 1,
           startDate: DateFormat().add_yMd().format(DateTime.now()),
@@ -407,7 +464,7 @@ class _KeyEventsState extends State<KeyEvents> {
           percProgress: 0,
           weightage: 0.5),
       Employee(
-          srNo: 2,
+          srNo: 'A2',
           activity:
               'Site Survey, Job scope finalization  and Proposed layout submission',
           originalDuration: 1,
@@ -424,7 +481,7 @@ class _KeyEventsState extends State<KeyEvents> {
           percProgress: 0,
           weightage: 0.5),
       Employee(
-          srNo: 3,
+          srNo: 'A3',
           activity:
               'Detailed Engineering for Approval of  Civil & Electrical  Layout, GA Drawing from TML',
           originalDuration: 1,
@@ -441,7 +498,7 @@ class _KeyEventsState extends State<KeyEvents> {
           percProgress: 0,
           weightage: 0.5),
       Employee(
-          srNo: 1,
+          srNo: 'A4',
           activity: 'Site Mobalization activity Completed',
           originalDuration: 1,
           startDate: DateFormat().add_yMd().format(DateTime.now()),

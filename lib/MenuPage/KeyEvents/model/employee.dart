@@ -21,7 +21,7 @@ class Employee {
     required this.weightage,
   });
 
-  int srNo;
+  dynamic srNo;
   String activity;
   int originalDuration;
   String? startDate;
@@ -80,7 +80,7 @@ class Employee {
 
   DataGridRow getKeyDataGridRow() {
     return DataGridRow(cells: <DataGridCell>[
-      DataGridCell<int>(columnName: 'srNo', value: srNo),
+      DataGridCell<dynamic>(columnName: 'srNo', value: srNo),
       DataGridCell<String>(columnName: 'Activity', value: activity),
       // const DataGridCell<Widget>(columnName: 'button', value: null),
       DataGridCell<int>(
