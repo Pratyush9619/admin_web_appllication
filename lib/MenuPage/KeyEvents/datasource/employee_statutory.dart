@@ -82,7 +82,8 @@ class EmployeeDataStatutory extends DataGridSource {
                     },
                     child: const Text('View'));
               })
-            : Text(
+           
+           : Text(
                 dataGridCell.value.toString(),
               ),
       );

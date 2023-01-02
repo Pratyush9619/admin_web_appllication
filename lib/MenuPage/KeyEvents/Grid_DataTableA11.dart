@@ -97,25 +97,24 @@ class _StatutoryAprovalA11State extends State<StatutoryAprovalA11> {
                         autoFitPadding: EdgeInsets.symmetric(horizontal: 16),
                         allowEditing: false,
                         label: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Sr No',
-                            overflow: TextOverflow.values.first,
-                            //    textAlign: TextAlign.center,
-                          ),
+                          child: Text('Sr No',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)
+                              //    textAlign: TextAlign.center,
+                              ),
                         ),
                       ),
                       GridColumn(
                         columnName: 'Approval',
                         allowEditing: true,
                         label: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Detail of approval',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('Detail of approval',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
@@ -125,91 +124,86 @@ class _StatutoryAprovalA11State extends State<StatutoryAprovalA11> {
                         label: Container(
                           padding: const EdgeInsets.all(8.0),
                           alignment: Alignment.center,
-                          child: const Text('View File '),
+                          child: const Text('View File',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'Weightage',
                         allowEditing: true,
                         label: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Weightage',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('Weightage',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'Applicability',
                         allowEditing: true,
                         label: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Applicability',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('Applicability',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'ApprovingAuthority',
                         allowEditing: true,
                         label: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'ApprovingAuthority',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('ApprovingAuthority',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'CurrentStatusPerc',
                         allowEditing: true,
                         label: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Current status in % for Approval ',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('Current status in % for Approval ',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'OverallWeightage',
                         allowEditing: true,
                         label: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'OverallWeightage',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('OverallWeightage',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'CurrentStatus',
                         allowEditing: true,
                         label: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Current Status',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('Current Status',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'ListDocument',
                         allowEditing: true,
                         label: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'List of Document Required',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('List of Document Required',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                     ],
@@ -450,7 +444,9 @@ class _StatutoryAprovalA11State extends State<StatutoryAprovalA11> {
     Map<String, dynamic> table_data = Map();
     for (var i in _employeeDataSource.dataGridRows) {
       for (var data in i.getCells()) {
-        table_data[data.columnName] = data.value;
+        if (data.columnName != 'button') {
+          table_data[data.columnName] = data.value;
+        }
       }
       tabledata2.add(table_data);
       table_data = {};

@@ -23,6 +23,7 @@ class Employee {
 
   dynamic srNo;
   String activity;
+
   int originalDuration;
   String? startDate;
   String? endDate;
@@ -46,7 +47,7 @@ class Employee {
         endDate: json['EndDate'],
         actualstartDate: json['ActualStart'],
         actualendDate: json['ActualEnd'],
-        actualDuration: json['ActuaslDuration'],
+        actualDuration: json['ActualDuration'],
         delay: json['Delay'],
         unit: json['Unit'],
         scope: json['QtyScope'],
@@ -67,7 +68,7 @@ class Employee {
       DataGridCell<String>(columnName: 'EndDate', value: endDate),
       DataGridCell<String>(columnName: 'ActualStart', value: actualstartDate),
       DataGridCell<String>(columnName: 'ActualEnd', value: actualendDate),
-      DataGridCell<int>(columnName: 'ActuaslDuration', value: actualDuration),
+      DataGridCell<int>(columnName: 'ActualDuration', value: actualDuration),
       DataGridCell<int>(columnName: 'Delay', value: delay),
       DataGridCell<int>(columnName: 'Unit', value: unit),
       DataGridCell<int>(columnName: 'QtyScope', value: scope),

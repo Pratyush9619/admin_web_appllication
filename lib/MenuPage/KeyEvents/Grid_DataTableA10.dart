@@ -50,7 +50,7 @@ class _StatutoryAprovalA10State extends State<StatutoryAprovalA10> {
             _employees = getEmployeeData();
           }
           _isLoading = false;
-          _employeeDataSource = EmployeeDataSource(_employees , context);
+          _employeeDataSource = EmployeeDataSource(_employees, context);
           _dataGridController = DataGridController();
         });
         // _employeeDataSource = EmployeeDataSource(_employees);
@@ -96,25 +96,24 @@ class _StatutoryAprovalA10State extends State<StatutoryAprovalA10> {
                         autoFitPadding: EdgeInsets.symmetric(horizontal: 16),
                         allowEditing: false,
                         label: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Sr No',
-                            overflow: TextOverflow.values.first,
-                            //    textAlign: TextAlign.center,
-                          ),
+                          child: Text('Sr No',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)
+                              //    textAlign: TextAlign.center,
+                              ),
                         ),
                       ),
                       GridColumn(
                         columnName: 'Activity',
                         allowEditing: true,
                         label: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Activity',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('Activity',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
@@ -124,127 +123,119 @@ class _StatutoryAprovalA10State extends State<StatutoryAprovalA10> {
                         label: Container(
                           padding: const EdgeInsets.all(8.0),
                           alignment: Alignment.center,
-                          child: const Text('View File '),
+                          child: const Text('View File',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'OriginalDuration',
                         allowEditing: true,
                         label: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Original Duration',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('Original Duration',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'StartDate',
                         allowEditing: true,
                         label: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Start Date',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('Start Date',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'EndDate',
                         allowEditing: true,
                         label: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'End Date',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('End Date',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'ActualStart',
                         allowEditing: true,
                         label: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Actual Start',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('Actual Start',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'ActualEnd',
                         allowEditing: true,
                         label: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Actual End',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('Actual End',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'ActualDuration',
                         allowEditing: true,
                         label: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Actual Duration',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('Actual Duration',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'Delay',
                         allowEditing: true,
                         label: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Delay',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('Delay',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'Unit',
                         allowEditing: true,
                         label: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Unit',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('Unit',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'QtyScope',
                         allowEditing: true,
                         label: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Oty as per scope',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('Oty as per scope',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'QtyExecuted',
                         allowEditing: true,
                         label: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Qty executed',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('Qty executed',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
@@ -252,36 +243,33 @@ class _StatutoryAprovalA10State extends State<StatutoryAprovalA10> {
                         allowEditing: true,
                         label: Container(
                           width: 150,
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Balanced Qty',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('Balanced Qty',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'Progress',
                         allowEditing: true,
                         label: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            '% of Progress',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('% of Progress',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
                         columnName: 'Weightage',
                         allowEditing: true,
                         label: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
                           alignment: Alignment.center,
-                          child: Text(
-                            'Weightage',
-                            overflow: TextOverflow.values.first,
-                          ),
+                          child: Text('Weightage',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                     ],
@@ -341,10 +329,10 @@ class _StatutoryAprovalA10State extends State<StatutoryAprovalA10> {
           srNo: 1,
           activity: 'CMS Integration',
           originalDuration: 1,
-          startDate: DateFormat().add_yMd().format(DateTime.now()),
-          endDate: DateFormat().add_yMd().format(DateTime.now()),
-          actualstartDate: DateFormat().add_yMd().format(DateTime.now()),
-          actualendDate: DateFormat().add_yMd().format(DateTime.now()),
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
           unit: 0,
@@ -357,10 +345,10 @@ class _StatutoryAprovalA10State extends State<StatutoryAprovalA10> {
           srNo: 2,
           activity: 'Bus Depot work Completed & Handover to TML',
           originalDuration: 1,
-          startDate: DateFormat().add_yMd().format(DateTime.now()),
-          endDate: DateFormat().add_yMd().format(DateTime.now()),
-          actualstartDate: DateFormat().add_yMd().format(DateTime.now()),
-          actualendDate: DateFormat().add_yMd().format(DateTime.now()),
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
           unit: 0,
@@ -376,7 +364,9 @@ class _StatutoryAprovalA10State extends State<StatutoryAprovalA10> {
     Map<String, dynamic> table_data = Map();
     for (var i in _employeeDataSource.dataGridRows) {
       for (var data in i.getCells()) {
-        table_data[data.columnName] = data.value;
+        if (data.columnName != 'button') {
+          table_data[data.columnName] = data.value;
+        }
       }
       tabledata2.add(table_data);
       table_data = {};

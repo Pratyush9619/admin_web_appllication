@@ -147,7 +147,7 @@ class _KeyEventsState extends State<KeyEvents> {
     ];
     return Scaffold(
       appBar: AppBar(
-        title: Text('Key Events '),
+        title: const Text('Key Events '),
         backgroundColor: blue,
       ),
       body: _isLoading
@@ -397,7 +397,7 @@ class _KeyEventsState extends State<KeyEvents> {
                   ),
                 ),
                 Container(
-                    padding: EdgeInsets.only(top: 30, bottom: 15),
+                    padding: EdgeInsets.only(top: 40, bottom: 20),
                     width: 300,
                     child: SfCartesianChart(
                         title: ChartTitle(),
@@ -514,7 +514,7 @@ class _KeyEventsState extends State<KeyEvents> {
           percProgress: 0,
           weightage: 0.5),
       Employee(
-          srNo: 2,
+          srNo: 'A5',
           activity: 'Approval of statutory clearances of BUS Depot',
           originalDuration: 1,
           startDate: DateFormat().add_yMd().format(DateTime.now()),
@@ -530,7 +530,7 @@ class _KeyEventsState extends State<KeyEvents> {
           percProgress: 0,
           weightage: 0.5),
       Employee(
-          srNo: 3,
+          srNo: 'A6',
           activity: 'Procurement of Order Finalisation Completed',
           originalDuration: 1,
           startDate: DateFormat().add_yMd().format(DateTime.now()),
@@ -546,7 +546,7 @@ class _KeyEventsState extends State<KeyEvents> {
           percProgress: 0,
           weightage: 0.5),
       Employee(
-          srNo: 1,
+          srNo: 'A7',
           activity: 'Receipt of all Materials at Site',
           originalDuration: 1,
           startDate: DateFormat().add_yMd().format(DateTime.now()),
@@ -562,7 +562,7 @@ class _KeyEventsState extends State<KeyEvents> {
           percProgress: 0,
           weightage: 0.5),
       Employee(
-          srNo: 2,
+          srNo: 'A8',
           activity: 'Civil Infra Development completed at Bus Depot',
           originalDuration: 1,
           startDate: DateFormat().add_yMd().format(DateTime.now()),
@@ -578,7 +578,7 @@ class _KeyEventsState extends State<KeyEvents> {
           percProgress: 0,
           weightage: 0.5),
       Employee(
-          srNo: 3,
+          srNo: 'A9',
           activity: 'Electrical Infra Development completed at Bus Depot',
           originalDuration: 1,
           startDate: DateFormat().add_yMd().format(DateTime.now()),
@@ -594,7 +594,7 @@ class _KeyEventsState extends State<KeyEvents> {
           percProgress: 0,
           weightage: 0.5),
       Employee(
-          srNo: 3,
+          srNo: 'A10',
           activity: 'Bus Depot work Completed & Handover to TML',
           originalDuration: 1,
           startDate: DateFormat().add_yMd().format(DateTime.now()),
