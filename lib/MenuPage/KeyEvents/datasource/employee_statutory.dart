@@ -82,8 +82,7 @@ class EmployeeDataStatutory extends DataGridSource {
                     },
                     child: const Text('View'));
               })
-           
-           : Text(
+            : Text(
                 dataGridCell.value.toString(),
               ),
       );
@@ -115,8 +114,7 @@ class EmployeeDataStatutory extends DataGridSource {
       _employees[dataRowIndex].approval = newCellValue.toString();
     } else if (column.columnName == 'Weightage') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
-          DataGridCell<int>(
-              columnName: 'Weightage', value: newCellValue as int);
+          DataGridCell<double>(columnName: 'Weightage', value: newCellValue);
       _employees[dataRowIndex].weightage = newCellValue;
     } else if (column.columnName == 'Applicability') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
@@ -248,7 +246,7 @@ class EmployeeDataStatutory extends DataGridSource {
 
   RegExp _getRegExp(bool isNumericKeyBoard, String columnName) {
     return isNumericKeyBoard
-        ? RegExp('[0-9]')
+        ? RegExp('[0-9.]')
         // : isDateTimeBoard
         //     ? RegExp('[0-9/]')
         : RegExp('[a-zA-Z ]');

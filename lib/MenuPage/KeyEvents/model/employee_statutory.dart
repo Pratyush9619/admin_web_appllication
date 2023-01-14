@@ -16,7 +16,7 @@ class EmployeeStatutory {
 
   int srNo;
   String approval;
-  int weightage;
+  double weightage;
   String? applicability;
   String? approvingAuthority;
   int? currentStatusPerc;
@@ -42,7 +42,7 @@ class EmployeeStatutory {
       DataGridCell<int>(columnName: 'srNo', value: srNo),
       DataGridCell<String>(columnName: 'Approval', value: approval),
       const DataGridCell<Widget>(columnName: 'button', value: null),
-      DataGridCell<int>(columnName: 'Weightage', value: weightage),
+      DataGridCell<double>(columnName: 'Weightage', value: weightage),
       DataGridCell<String>(columnName: 'Applicability', value: applicability),
       DataGridCell<String>(
           columnName: 'ApprovingAuthority', value: approvingAuthority),

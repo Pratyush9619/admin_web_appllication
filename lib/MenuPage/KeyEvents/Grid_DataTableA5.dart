@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:web_appllication/MenuPage/KeyEvents/datasource/employee_datasouce.dart';
-import 'package:web_appllication/MenuPage/KeyEvents/model/employee.dart';
+import 'package:web_appllication/MenuPage/KeyEvents/datasource/employee_statutory.dart';
+
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/style.dart';
+
+import 'model/employee_statutory.dart';
 
 void main() {
   runApp(StatutoryAprovalA5());
@@ -27,10 +29,9 @@ class StatutoryAprovalA5 extends StatefulWidget {
 }
 
 class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
-  late EmployeeDataSource _employeeDataSource;
-  List<Employee> _employees = <Employee>[];
+  late EmployeeDataStatutory _employeeDataSource;
+  List<EmployeeStatutory> _employees = <EmployeeStatutory>[];
   late DataGridController _dataGridController;
-  //  List<DataGridRow> dataGridRows = [];
   DataGridRow? dataGridRow;
   RowColumnIndex? rowColumnIndex;
   GridColumn? column;
@@ -47,10 +48,10 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
       getFirestoreData().whenComplete(() {
         setState(() {
           if (_employees.length == 0 || _employees.isEmpty) {
-            _employees = getEmployeeData();
+            _employees = getData();
           }
           _isLoading = false;
-          _employeeDataSource = EmployeeDataSource(_employees, context);
+          _employeeDataSource = EmployeeDataStatutory(_employees);
           _dataGridController = DataGridController();
         });
         // _employeeDataSource = EmployeeDataSource(_employees);
@@ -80,11 +81,11 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
                     source: _employeeDataSource,
                     allowEditing: true,
                     frozenColumnsCount: 2,
+                    editingGestureType: EditingGestureType.tap,
                     gridLinesVisibility: GridLinesVisibility.both,
                     headerGridLinesVisibility: GridLinesVisibility.both,
                     selectionMode: SelectionMode.single,
                     navigationMode: GridNavigationMode.cell,
-                    editingGestureType: EditingGestureType.tap,
                     columnWidthMode: ColumnWidthMode.auto,
                     controller: _dataGridController,
                     // onQueryRowHeight: (details) {
@@ -100,153 +101,31 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
                           child: Text('Sr No',
                               overflow: TextOverflow.values.first,
                               style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                                  fontWeight: FontWeight.bold, fontSize: 16)
+                              //    textAlign: TextAlign.center,
+                              ),
                         ),
                       ),
                       GridColumn(
-                        columnName: 'Activity',
+                        columnName: 'Approval',
                         allowEditing: true,
                         label: Container(
                           alignment: Alignment.center,
-                          child: Text(
-                            'Activity',
-                            overflow: TextOverflow.values.first,
-                          ),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'OriginalDuration',
-                        allowEditing: true,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('Original Duration',
+                          child: Text('Detail of approval',
                               overflow: TextOverflow.values.first,
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
                       GridColumn(
-                        columnName: 'StartDate',
-                        allowEditing: true,
+                        columnName: 'button',
+                        width: 130,
+                        allowEditing: false,
                         label: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
+                          padding: const EdgeInsets.all(8.0),
                           alignment: Alignment.center,
-                          child: Text('Start Date',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'EndDate',
-                        allowEditing: true,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('End Date',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'ActualStart',
-                        allowEditing: true,
-                        width: 180,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('Actual Start',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'ActualEnd',
-                        allowEditing: true,
-                        width: 180,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('Actual End',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'ActualDuration',
-                        allowEditing: true,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('Actual Duration',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'Delay',
-                        allowEditing: true,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('Delay',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'Unit',
-                        allowEditing: true,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('Unit',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'QtyScope',
-                        allowEditing: true,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('Oty as per scope',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'QtyExecuted',
-                        allowEditing: true,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('Qty executed',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'BalancedQty',
-                        allowEditing: true,
-                        label: Container(
-                          width: 150,
-                          alignment: Alignment.center,
-                          child: Text('Balanced Qty',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'Progress',
-                        allowEditing: true,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('% of Progress',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
+                          child: const Text('View File',
+                              style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
@@ -256,6 +135,72 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
                         label: Container(
                           alignment: Alignment.center,
                           child: Text('Weightage',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                        ),
+                      ),
+                      GridColumn(
+                        columnName: 'Applicability',
+                        allowEditing: true,
+                        label: Container(
+                          alignment: Alignment.center,
+                          child: Text('Applicability',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                        ),
+                      ),
+                      GridColumn(
+                        columnName: 'ApprovingAuthority',
+                        allowEditing: true,
+                        label: Container(
+                          alignment: Alignment.center,
+                          child: Text('ApprovingAuthority',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                        ),
+                      ),
+                      GridColumn(
+                        columnName: 'CurrentStatusPerc',
+                        allowEditing: true,
+                        label: Container(
+                          alignment: Alignment.center,
+                          child: Text('Current status in % for Approval ',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                        ),
+                      ),
+                      GridColumn(
+                        columnName: 'OverallWeightage',
+                        allowEditing: true,
+                        label: Container(
+                          alignment: Alignment.center,
+                          child: Text('OverallWeightage',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                        ),
+                      ),
+                      GridColumn(
+                        columnName: 'CurrentStatus',
+                        allowEditing: true,
+                        label: Container(
+                          alignment: Alignment.center,
+                          child: Text('Current Status',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                        ),
+                      ),
+                      GridColumn(
+                        columnName: 'ListDocument',
+                        allowEditing: true,
+                        label: Container(
+                          alignment: Alignment.center,
+                          child: Text('List of Document Required',
                               overflow: TextOverflow.values.first,
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16)),
@@ -286,13 +231,11 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
                         );
                         StoreData();
                       },
-                      child: const Text(
-                        'Sync Data',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 20,
-                        ),
-                      )),
+                      child: const Text('Sync Data',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 20,
+                          ))),
                 )
               ],
             ),
@@ -301,182 +244,201 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
 
   Future<void> getFirestoreData() async {
     FirebaseFirestore instance = FirebaseFirestore.instance;
-    CollectionReference tabledata = instance.collection('${widget.depoName}A5');
+    CollectionReference tabledata = instance.collection(widget.depoName!);
 
-    DocumentSnapshot snapshot = await tabledata.doc(widget.depoName).get();
+    DocumentSnapshot snapshot =
+        await tabledata.doc('${widget.depoName}A4').get();
     var data = snapshot.data() as Map;
     var alldata = data['data'] as List<dynamic>;
 
     _employees = [];
     alldata.forEach((element) {
-      _employees.add(Employee.fromJson(element));
+      _employees.add(EmployeeStatutory.fromJson(element));
     });
   }
 
-  List<Employee> getEmployeeData() {
+  List<EmployeeStatutory> getData() {
     return [
-      Employee(
+      EmployeeStatutory(
           srNo: 1,
-          activity: 'Consent to Established-Pollution control board approval',
-          originalDuration: 1,
-          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualDuration: 0,
-          delay: 0,
-          unit: 0,
-          scope: 0,
-          qtyExecuted: 0,
-          balanceQty: 0,
-          percProgress: 0,
-          weightage: 0.5),
-      Employee(
+          approval: 'Environment clearance',
+          weightage: 10,
+          applicability: 'yes',
+          approvingAuthority: 'JKEIAA',
+          currentStatusPerc: 10,
+          overallWeightage: 1,
+          currentStatus: 'In progress',
+          listDocument:
+              'Site plan approved by the Authority (Jammu Smart city, Jammu Municipal Corporation or Jammu Development Authority)'),
+      EmployeeStatutory(
           srNo: 2,
-          activity: 'Consent to Operate-Pollution control board approval',
-          originalDuration: 1,
-          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualDuration: 0,
-          delay: 0,
-          unit: 0,
-          scope: 0,
-          qtyExecuted: 0,
-          balanceQty: 0,
-          percProgress: 0,
-          weightage: 0.5),
-      Employee(
+          approval: 'Consent to Establish under air and water act',
+          weightage: 10,
+          applicability: 'yes',
+          approvingAuthority: 'JKPCC',
+          currentStatusPerc: 20,
+          overallWeightage: 10,
+          currentStatus: 'completed',
+          listDocument: 'Traffic Plan'),
+      EmployeeStatutory(
           srNo: 3,
-          activity: 'Fire NOC  for Electrical vehicle charging infrastructure',
-          originalDuration: 1,
-          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualDuration: 0,
-          delay: 0,
-          unit: 0,
-          scope: 0,
-          qtyExecuted: 0,
-          balanceQty: 0,
-          percProgress: 0,
-          weightage: 0.5),
-      Employee(
+          approval: 'Hazardous Waste Disposal ',
+          weightage: 10,
+          applicability: 'yes',
+          approvingAuthority: 'JKEIAA',
+          currentStatusPerc: 10,
+          overallWeightage: 1,
+          currentStatus: 'In progress',
+          listDocument:
+              'Site plan approved by the Authority (Jammu Smart city, Jammu Municipal Corporation or Jammu Development Authority)'),
+      EmployeeStatutory(
           srNo: 4,
-          activity: 'Chief Inspector of Factory /Director(DISH Approval)',
-          originalDuration: 1,
-          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualDuration: 0,
-          delay: 0,
-          unit: 0,
-          scope: 0,
-          qtyExecuted: 0,
-          balanceQty: 0,
-          percProgress: 0,
-          weightage: 0.5),
-      Employee(
+          approval: 'Forest NOC',
+          weightage: 10,
+          applicability: 'yes',
+          approvingAuthority: 'JKEIAA',
+          currentStatusPerc: 10,
+          overallWeightage: 1,
+          currentStatus: 'In progress',
+          listDocument: 'Fire Map'),
+      EmployeeStatutory(
           srNo: 5,
-          activity: 'CEIG/EI Approval',
-          originalDuration: 1,
-          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualDuration: 0,
-          delay: 0,
-          unit: 0,
-          scope: 0,
-          qtyExecuted: 0,
-          balanceQty: 0,
-          percProgress: 0,
-          weightage: 0.5),
-      Employee(
+          approval: 'Fire NOC',
+          weightage: 10,
+          applicability: 'yes',
+          approvingAuthority: 'JKEIAA',
+          currentStatusPerc: 10,
+          overallWeightage: 1,
+          currentStatus: 'In progress',
+          listDocument:
+              'Site plan approved by the Authority (Jammu Smart city, Jammu Municipal Corporation or Jammu Development Authority)'),
+      EmployeeStatutory(
           srNo: 6,
-          activity: 'Charging Shed Errection Approval',
-          originalDuration: 1,
-          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualDuration: 0,
-          delay: 0,
-          unit: 0,
-          scope: 0,
-          qtyExecuted: 0,
-          balanceQty: 0,
-          percProgress: 0,
-          weightage: 0.5),
-      Employee(
+          approval: 'Structural Stability from Government approved consultant',
+          weightage: 10,
+          applicability: 'yes',
+          approvingAuthority: 'JKEIAA',
+          currentStatusPerc: 10,
+          overallWeightage: 1,
+          currentStatus: 'In progress',
+          listDocument:
+              'Site plan approved by the Authority (Jammu Smart city, Jammu Municipal Corporation or Jammu Development Authority)'),
+      EmployeeStatutory(
           srNo: 7,
-          activity: 'Effluent treatment plant',
-          originalDuration: 1,
-          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualDuration: 0,
-          delay: 0,
-          unit: 0,
-          scope: 0,
-          qtyExecuted: 0,
-          balanceQty: 0,
-          percProgress: 0,
-          weightage: 0.5),
-      Employee(
+          approval: 'PHE NOC (Public Health Engineering )',
+          weightage: 10,
+          applicability: 'yes',
+          approvingAuthority: 'JKEIAA',
+          currentStatusPerc: 10,
+          overallWeightage: 1,
+          currentStatus: 'In progress',
+          listDocument:
+              'Site plan approved by the Authority (Jammu Smart city, Jammu Municipal Corporation or Jammu Development Authority)'),
+      EmployeeStatutory(
           srNo: 8,
-          activity: 'Soild Waste Managent',
-          originalDuration: 1,
-          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualDuration: 0,
-          delay: 0,
-          unit: 0,
-          scope: 0,
-          qtyExecuted: 0,
-          balanceQty: 0,
-          percProgress: 0,
-          weightage: 0.5),
-      Employee(
+          approval: 'Disaster Management authority',
+          weightage: 10,
+          applicability: 'yes',
+          approvingAuthority: 'JKEIAA',
+          currentStatusPerc: 10,
+          overallWeightage: 1,
+          currentStatus: 'In progress',
+          listDocument:
+              'Site plan approved by the Authority (Jammu Smart city, Jammu Municipal Corporation or Jammu Development Authority)'),
+      EmployeeStatutory(
           srNo: 9,
-          activity: 'ETP Plant ',
-          originalDuration: 1,
-          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualDuration: 0,
-          delay: 0,
-          unit: 0,
-          scope: 0,
-          qtyExecuted: 0,
-          balanceQty: 0,
-          percProgress: 0,
-          weightage: 0.5),
-      Employee(
+          approval: 'Traffic NOC',
+          weightage: 10,
+          applicability: 'yes',
+          approvingAuthority: 'JKEIAA',
+          currentStatusPerc: 10,
+          overallWeightage: 1,
+          currentStatus: 'In progress',
+          listDocument:
+              'Site plan approved by the Authority (Jammu Smart city, Jammu Municipal Corporation or Jammu Development Authority)'),
+      EmployeeStatutory(
           srNo: 10,
-          activity: 'Hazardous waste approval ',
-          originalDuration: 1,
-          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualDuration: 0,
-          delay: 0,
-          unit: 0,
-          scope: 0,
-          qtyExecuted: 0,
-          balanceQty: 0,
-          percProgress: 0,
-          weightage: 0.5)
+          approval: 'Consent to Operate Air and Water',
+          weightage: 10,
+          applicability: 'yes',
+          approvingAuthority: 'JKEIAA',
+          currentStatusPerc: 10,
+          overallWeightage: 1,
+          currentStatus: 'In progress',
+          listDocument:
+              'Site plan approved by the Authority (Jammu Smart city, Jammu Municipal Corporation or Jammu Development Authority)'),
+      EmployeeStatutory(
+          srNo: 11,
+          approval: 'Labour Registration',
+          weightage: 10,
+          applicability: 'yes',
+          approvingAuthority: 'JKEIAA',
+          currentStatusPerc: 10,
+          overallWeightage: 1,
+          currentStatus: 'In progress',
+          listDocument:
+              'Site plan approved by the Authority (Jammu Smart city, Jammu Municipal Corporation or Jammu Development Authority)'),
+      EmployeeStatutory(
+          srNo: 12,
+          approval: 'Chief Electrical Inspector Clearance',
+          weightage: 10,
+          applicability: 'yes',
+          approvingAuthority: 'JKEIAA',
+          currentStatusPerc: 10,
+          overallWeightage: 1,
+          currentStatus: 'In progress',
+          listDocument:
+              'Site plan approved by the Authority (Jammu Smart city, Jammu Municipal Corporation or Jammu Development Authority)'),
+      EmployeeStatutory(
+          srNo: 13,
+          approval: 'ETP',
+          weightage: 10,
+          applicability: 'yes',
+          approvingAuthority: 'JKEIAA',
+          currentStatusPerc: 10,
+          overallWeightage: 1,
+          currentStatus: 'In progress',
+          listDocument:
+              'Site plan approved by the Authority (Jammu Smart city, Jammu Municipal Corporation or Jammu Development Authority)'),
     ];
   }
+
+  // List<Employee> getEmployeeData() {
+  //   return [
+  //     Employee(
+  //         srNo: 1,
+  //         activity: 'CMS Integration',
+  //         originalDuration: 1,
+  //         startDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         endDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         actualstartDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         actualendDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         actualDuration: 0,
+  //         delay: 0,
+  //         unit: 0,
+  //         scope: 0,
+  //         qtyExecuted: 0,
+  //         balanceQty: 0,
+  //         percProgress: 0,
+  //         weightage: 0.5),
+  //     Employee(
+  //         srNo: 2,
+  //         activity: 'Bus Depot work Completed & Handover to TML',
+  //         originalDuration: 1,
+  //         startDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         endDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         actualstartDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         actualendDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         actualDuration: 0,
+  //         delay: 0,
+  //         unit: 0,
+  //         scope: 0,
+  //         qtyExecuted: 0,
+  //         balanceQty: 0,
+  //         percProgress: 0,
+  //         weightage: 0.5),
+  //   ];
+  // }
 
   void StoreData() {
     Map<String, dynamic> table_data = Map();
@@ -491,9 +453,11 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
     }
 
     FirebaseFirestore.instance
-        .collection('${widget.depoName}A5')
-        .doc(widget.depoName)
-        .set({'data': tabledata2}).whenComplete(() {
+        .collection(widget.depoName!)
+        .doc('${widget.depoName}A4')
+        .set({
+      'data': tabledata2,
+    }).whenComplete(() {
       tabledata2.clear();
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

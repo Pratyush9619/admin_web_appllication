@@ -23,11 +23,6 @@ class KeyDataSourceKeyEvents extends DataGridSource {
         .toList();
   }
 
-  void _onSelectionchanged(
-      DateRangePickerSelectionChangedArgs dateRangePickerSelectionChangedArgs) {
-    print(dateRangePickerSelectionChangedArgs);
-  }
-
   @override
   List<Employee> _employees = [];
 
@@ -565,7 +560,7 @@ class KeyDataSourceKeyEvents extends DataGridSource {
     return isNumericKeyBoard
         ? RegExp('[0-9.]')
         : isDateTimeBoard
-            ? RegExp('[0-9/]')
+            ? RegExp('[0-9-]')
             : RegExp('[a-zA-Z ]');
   }
 }

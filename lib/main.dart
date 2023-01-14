@@ -1,11 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:web_appllication/Authentication/login_register.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/key_events.dart';
 import 'package:web_appllication/MenuPage/admin.dart';
 import 'package:web_appllication/MenuPage/home.dart';
 import 'package:web_appllication/MenuPage/project_planning.dart';
 import 'package:web_appllication/MenuPage/user.dart';
+import 'package:web_appllication/provider/key_provider.dart';
 import 'package:web_appllication/small_screen.dart';
 import 'package:web_appllication/style.dart';
 
@@ -27,38 +29,40 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'TATA POWER CONTROL PANEL',
-      initialRoute: MenuHomePage.id,
-      routes: {
-        AdminPage.id: (context) => const SmallScreen(),
-        MenuUserPage.id: (context) => const MenuUserPage(),
-        ProjectPanning.id: (context) => const ProjectPanning(),
+    return ChangeNotifierProvider<KeyProvider>(
+        create: (context) => KeyProvider(),
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'TATA POWER CONTROL PANEL',
+          initialRoute: MenuHomePage.id,
+          routes: {
+            AdminPage.id: (context) => const SmallScreen(),
+            MenuUserPage.id: (context) => const MenuUserPage(),
+            ProjectPanning.id: (context) => const ProjectPanning(),
 
-        // "/menu": (context) => Menu(),
-        // "/user": (context) => User(),
-        // "/shop": (context) => Shop(),
-        // "/statistics": (context) => Stats(),
-        // "/settings": (context) => Settings()
-      },
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        dividerColor: grey,
-        inputDecorationTheme: InputDecorationTheme(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6),
-              borderSide: BorderSide(color: grey),
-            ),
-            focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(6),
-                borderSide: BorderSide(color: blue)),
-            floatingLabelBehavior: FloatingLabelBehavior.auto,
-            focusColor: almostWhite,
-            labelStyle: bodyText2White60),
-      ),
-      home: const MyHomePage(),
-    );
+            // "/menu": (context) => Menu(),
+            // "/user": (context) => User(),
+            // "/shop": (context) => Shop(),
+            // "/statistics": (context) => Stats(),
+            // "/settings": (context) => Settings()
+          },
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            dividerColor: grey,
+            inputDecorationTheme: InputDecorationTheme(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(6),
+                  borderSide: BorderSide(color: grey),
+                ),
+                focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(6),
+                    borderSide: BorderSide(color: blue)),
+                floatingLabelBehavior: FloatingLabelBehavior.auto,
+                focusColor: almostWhite,
+                labelStyle: bodyText2White60),
+          ),
+          home: const MyHomePage(),
+        ));
   }
 }
 
