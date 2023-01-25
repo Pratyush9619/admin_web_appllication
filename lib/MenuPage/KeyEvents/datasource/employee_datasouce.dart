@@ -30,6 +30,7 @@ class EmployeeDataSource extends DataGridSource {
 
   /// Help to control the editable text in [TextField] widget.
   TextEditingController editingController = TextEditingController();
+  final DataGridController _dataGridController = DataGridController();
 
   @override
   List<DataGridRow> get rows => dataGridRows;
@@ -38,7 +39,6 @@ class EmployeeDataSource extends DataGridSource {
 
   @override
   DataGridRowAdapter? buildRow(DataGridRow row) {
-    final DataGridController _dataGridController = DataGridController();
     DateTime? rangeStartDate = DateTime.now();
     DateTime? rangeEndDate = DateTime.now();
     DateTime? date;
@@ -219,7 +219,7 @@ class EmployeeDataSource extends DataGridSource {
                                         updateDataGrid(
                                             rowColumnIndex: RowColumnIndex(
                                                 dataRowIndex, 6));
-
+                                        notifyListeners();
                                         print('state$date');
                                         print('valuedata$value');
 
@@ -305,6 +305,8 @@ class EmployeeDataSource extends DataGridSource {
                                         updateDataGrid(
                                             rowColumnIndex: RowColumnIndex(
                                                 dataRowIndex, 7));
+
+                                        notifyListeners();
                                       }
                                       if (dataRowIndex != null) {
                                         _employees[dataRowIndex]
@@ -381,6 +383,7 @@ class EmployeeDataSource extends DataGridSource {
                                         updateDataGrid(
                                             rowColumnIndex: RowColumnIndex(
                                                 dataRowIndex, 8));
+                                        notifyListeners();
                                       }
                                     }),
                                     onCancel: () {
@@ -416,7 +419,7 @@ class EmployeeDataSource extends DataGridSource {
                                       child: SfDateRangePicker(
                                         view: DateRangePickerView.month,
                                         showTodayButton: true,
-                                        controller : _datecontroller,
+                                        controller: _datecontroller,
                                         onSelectionChanged:
                                             (DateRangePickerSelectionChangedArgs
                                                 args) {
@@ -538,6 +541,8 @@ class EmployeeDataSource extends DataGridSource {
                                                 rowColumnIndex: RowColumnIndex(
                                                     dataRowIndex, 4));
 
+                                            notifyListeners();
+
                                             print('state$date');
                                             print('valuedata$value');
 
@@ -640,6 +645,8 @@ class EmployeeDataSource extends DataGridSource {
                                             updateDataGrid(
                                                 rowColumnIndex: RowColumnIndex(
                                                     dataRowIndex, 5));
+
+                                            notifyListeners();
                                           }
                                           if (dataRowIndex != null) {
                                             _employees[dataRowIndex]
@@ -734,6 +741,8 @@ class EmployeeDataSource extends DataGridSource {
                                             updateDataGrid(
                                                 rowColumnIndex: RowColumnIndex(
                                                     dataRowIndex, 3));
+
+                                            notifyListeners();
                                           }
                                         }),
                                         onCancel: () {

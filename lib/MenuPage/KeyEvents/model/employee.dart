@@ -23,7 +23,6 @@ class Employee {
 
   dynamic srNo;
   String activity;
-
   int originalDuration;
   String? startDate;
   String? endDate;

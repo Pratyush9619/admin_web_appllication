@@ -61,6 +61,7 @@ class _KeyEventsState extends State<KeyEvents> {
   String? actualenddate;
   List<double> weight = [];
   List<ChartData> chartData = <ChartData>[];
+  List<ChartData> chartData2 = <ChartData>[];
   String? sdate;
   String? edate;
   String? asdate;
@@ -465,41 +466,81 @@ class _KeyEventsState extends State<KeyEvents> {
                         ChartData(
                             'A10',
                             weight.asMap().containsKey(8) ? weight[8] : 0,
-                            Colors.teal),
+                            Colors.yellow),
                         ChartData(
                             'A9',
                             weight.asMap().containsKey(7) ? weight[7] : 0,
-                            Colors.orange),
+                            Colors.yellow),
                         ChartData(
                             'A8',
                             weight.asMap().containsKey(6) ? weight[6] : 0,
-                            Colors.brown),
+                            Colors.yellow),
                         ChartData(
                             'A7',
                             weight.asMap().containsKey(5) ? weight[5] : 0,
-                            Colors.deepOrange),
+                            Colors.yellow),
                         ChartData(
                             'A6',
                             weight.asMap().containsKey(4) ? weight[4] : 0,
-                            Colors.blue),
+                            Colors.yellow),
                         ChartData(
                             'A5',
                             weight.asMap().containsKey(3) ? weight[3] : 0,
-                            Colors.teal),
+                            Colors.yellow),
                         ChartData(
                             'A4',
                             weight.asMap().containsKey(2) ? weight[2] : 0,
-                            Colors.orange),
+                            Colors.yellow),
                         ChartData(
                             'A3',
                             weight.asMap().containsKey(1) ? weight[1] : 0,
-                            Colors.brown),
+                            Colors.yellow),
                         ChartData(
                             'A2',
                             weight.asMap().containsKey(0) ? weight[0] : 0,
-                            Colors.deepOrange),
-                        ChartData('A1', 5, Colors.blue),
+                            Colors.yellow),
+                        ChartData('A1', 5, Colors.yellow),
                       ];
+                      chartData2 = [
+                        ChartData(
+                            'A10',
+                            weight.asMap().containsKey(8) ? weight[8] : 0,
+                            Colors.red),
+                        ChartData(
+                            'A9',
+                            weight.asMap().containsKey(7) ? weight[7] : 0,
+                            Colors.red),
+                        ChartData(
+                            'A8',
+                            weight.asMap().containsKey(6) ? weight[6] : 0,
+                            Colors.red),
+                        ChartData(
+                            'A7',
+                            weight.asMap().containsKey(5) ? weight[5] : 0,
+                            Colors.red),
+                        ChartData(
+                            'A6',
+                            weight.asMap().containsKey(4) ? weight[4] : 0,
+                            Colors.red),
+                        ChartData(
+                            'A5',
+                            weight.asMap().containsKey(3) ? weight[3] : 0,
+                            Colors.red),
+                        ChartData(
+                            'A4',
+                            weight.asMap().containsKey(2) ? weight[2] : 0,
+                            Colors.red),
+                        ChartData(
+                            'A3',
+                            weight.asMap().containsKey(1) ? weight[1] : 0,
+                            Colors.red),
+                        ChartData(
+                            'A2',
+                            weight.asMap().containsKey(0) ? weight[0] : 0,
+                            Colors.red),
+                        ChartData('A1', 5, Colors.red),
+                      ];
+
                       print(weight);
                       totalweightage = 0;
                     }
@@ -798,6 +839,18 @@ class _KeyEventsState extends State<KeyEvents> {
                                     // Renders column chart
                                     BarSeries<ChartData, String>(
                                         dataSource: chartData,
+                                        dataLabelSettings:
+                                            const DataLabelSettings(
+                                                isVisible: true),
+                                        xValueMapper: (ChartData data, _) =>
+                                            data.x,
+                                        yValueMapper: (ChartData data, _) =>
+                                            data.y,
+                                        pointColorMapper: (ChartData data, _) =>
+                                            data.y1),
+
+                                    BarSeries<ChartData, String>(
+                                        dataSource: chartData2,
                                         dataLabelSettings:
                                             DataLabelSettings(isVisible: true),
                                         xValueMapper: (ChartData data, _) =>

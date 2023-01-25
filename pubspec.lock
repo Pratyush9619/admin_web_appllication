@@ -240,6 +240,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  gantt_chart:
+    dependency: "direct main"
+    description:
+      name: gantt_chart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0"
   get:
     dependency: "direct main"
     description:

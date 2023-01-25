@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web_appllication/Authentication/login_register.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/key_events.dart';
+import 'package:web_appllication/MenuPage/Planning/overview.dart';
 import 'package:web_appllication/MenuPage/admin.dart';
 import 'package:web_appllication/MenuPage/home.dart';
 import 'package:web_appllication/MenuPage/project_planning.dart';
 import 'package:web_appllication/MenuPage/user.dart';
+import 'package:web_appllication/OverviewPages/depot_overview.dart';
+import 'package:web_appllication/OverviewPages/resource_allocation.dart';
 import 'package:web_appllication/provider/key_provider.dart';
+import 'package:web_appllication/provider/text_provider.dart';
 import 'package:web_appllication/small_screen.dart';
 import 'package:web_appllication/style.dart';
 
@@ -29,8 +33,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<KeyProvider>(
-        create: (context) => KeyProvider(),
+    return ChangeNotifierProvider<textprovider>(
+        create: (context) => textprovider(),
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'TATA POWER CONTROL PANEL',
@@ -76,9 +80,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return
-        //  EventsPage();
-        // KeyEvents();
-        LoginRegister();
+    return MenuUserPage();
+    // DepotOverview();
+    // ResourceAllocation();1
+    //  EventsPage();
+    // KeyEvents();
+    // LoginRegister();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:web_appllication/MenuPage/KeyEvents/progress_page.dart';
+import 'package:web_appllication/OverviewPages/depot_overview.dart';
+import 'package:web_appllication/OverviewPages/resource_allocation.dart';
 import 'package:web_appllication/style.dart';
 
 import '../KeyEvents/key_events.dart';
@@ -57,8 +58,14 @@ class _MyOverviewState extends State<MyOverview> {
   @override
   Widget build(BuildContext context) {
     pages = [
-      const ProgressPage(),
+      DepotOverview(
+        depoName: widget.depoName,
+      ),
       KeyEvents(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
+      ResourceAllocation(
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
@@ -74,11 +81,7 @@ class _MyOverviewState extends State<MyOverview> {
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
-      KeyEvents(
-        depoName: widget.depoName,
-        cityName: widget.cityName,
-      ),
-      ProgressPage(),
+      DepotOverview(),
       KeyEvents(
         depoName: widget.depoName,
         cityName: widget.cityName,
@@ -133,8 +136,8 @@ class _MyOverviewState extends State<MyOverview> {
             children: [
               const SizedBox(height: 10),
               Container(
-                height: 100,
-                width: 100,
+                height: 80,
+                width: 80,
                 child: Image.asset(img, fit: BoxFit.cover),
               ),
               const SizedBox(height: 10),

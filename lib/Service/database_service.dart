@@ -7,6 +7,10 @@ class DatabaseService {
 
   final CollectionReference depocollectionReference =
       FirebaseFirestore.instance.collection('DepoName');
+
+  final CollectionReference resourcecollectionReference =
+      FirebaseFirestore.instance.collection('ResourceAllocation');
+
   Future uploadCityData(String cityName, String imageUrl) async {
     await collectionReference.add({
       'CityName': cityName,
@@ -20,4 +24,10 @@ class DatabaseService {
       'DepoUrl': imageUrl,
     });
   }
+
+  // Future resourceDepoData(String deponame) async {
+  //   await resourcecollectionReference.add({
+
+  //   });
+  // }
 }
