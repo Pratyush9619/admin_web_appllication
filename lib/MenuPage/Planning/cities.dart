@@ -226,7 +226,7 @@ class _CitiesPageState extends State<CitiesPage> {
                             const SizedBox(
                               height: 10,
                             ),
-                            Text(snapshot.data!.docs[index]['CityName']),
+                            // Text(snapshot.data!.docs[index]['CityName']),
                             const SizedBox(height: 5),
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(
@@ -243,7 +243,8 @@ class _CitiesPageState extends State<CitiesPage> {
                                                     .docs[index]['CityName'],
                                               )));
                                 },
-                                child: const Text('Add Depot'))
+                                child: Text(
+                                    snapshot.data!.docs[index]['CityName']))
                           ],
                         ),
                       ]),

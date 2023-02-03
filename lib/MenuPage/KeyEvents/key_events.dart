@@ -421,7 +421,7 @@ class _KeyEventsState extends State<KeyEvents> {
                                   series: <ChartSeries>[
                                     // Renders column chart
                                     BarSeries<ChartData, String>(
-                                        dataSource: chartData,
+                                        dataSource: chartData2,
                                         xValueMapper: (ChartData data, _) =>
                                             data.x,
                                         yValueMapper: (ChartData data, _) =>

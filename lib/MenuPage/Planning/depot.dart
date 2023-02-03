@@ -21,7 +21,7 @@ class Mydepots extends StatefulWidget {
 }
 
 class _MydepotsState extends State<Mydepots> {
-  String? cityName = "";
+  String cityName = "";
   File? pickedImage;
   // Uint8List? webImage;
   var webImage;
@@ -172,16 +172,20 @@ class _MydepotsState extends State<Mydepots> {
                           final ref = FirebaseStorage.instance
                               .ref()
                               .child('DepoImages')
-                              .child('/' + cityName!);
+                              .child('/' + cityName);
                           await ref.putData(webImage,
                               SettableMetadata(contentType: 'image/jpeg'));
                           var downloadurl = await ref
                               .getDownloadURL()
                               .whenComplete(() => null);
 
+                          // DatabaseService()
+                          //     .uploadDepoData(cityName, downloadurl)
+                          //     .whenComplete(() => pickedImage == null);
+                          // Navigator.pop(context);
+
                           FirebaseFirestore.instance
                               .collection(widget.cityName!)
-                              // .doc(widget.cityName)
                               .add({
                             'DepoName': cityName,
                             'DepoUrl': downloadurl,
@@ -189,17 +193,17 @@ class _MydepotsState extends State<Mydepots> {
                           Navigator.pop(context);
                           pickedImage == null;
                           Navigator.pop(context);
-                          // DatabaseService()
-                          //     .uploadDepoData(cityName!, downloadurl)
-                          //     .whenComplete(() {
-                          //   Navigator.pop(context);
-                          //   pickedImage == null;
-                          //   setState() {
-                          //     _isLoading = false;
-                          //   }
+                          DatabaseService()
+                              .uploadDepoData(cityName, downloadurl)
+                              .whenComplete(() {
+                            Navigator.pop(context);
+                            pickedImage == null;
+                            setState() {
+                              _isLoading = false;
+                            }
 
-                          //   Navigator.pop(context);
-                          // });
+                            Navigator.pop(context);
+                          });
                         }
                       },
                       child: Text("ADD"),
@@ -247,7 +251,7 @@ class _MydepotsState extends State<Mydepots> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                Text(snapshot.data!.docs[index]['DepoName']),
+                                // Text(snapshot.data!.docs[index]['DepoName']),
                                 const SizedBox(height: 5),
                                 ElevatedButton(
                                     style: ElevatedButton.styleFrom(
@@ -271,7 +275,8 @@ class _MydepotsState extends State<Mydepots> {
                                               //     )
                                               ));
                                     },
-                                    child: const Text('Add Overview'))
+                                    child: Text(
+                                        snapshot.data!.docs[index]['DepoName']))
                               ],
                             ),
                           ]),

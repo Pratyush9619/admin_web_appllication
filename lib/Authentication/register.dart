@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:web_appllication/Authentication/auth_service.dart';
+import 'package:web_appllication/Authentication/login_register.dart';
 import 'package:web_appllication/main.dart';
 import 'package:web_appllication/small_screen.dart';
 import 'package:web_appllication/style.dart';
@@ -453,9 +454,15 @@ class _RegisterPageState extends State<RegisterPage> {
                   firstname![0] + lastname![0] + phone!.substring(9, 13))
               .then((value) {
             if (value == true) {
+              Navigator.pop(context);
+
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: const Text('Registration Successfully Please Sign In'),
+                backgroundColor: blue,
+              ));
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SmallScreen()),
+                MaterialPageRoute(builder: (context) => LoginRegister()),
               );
             } else {
               Navigator.pop(context);

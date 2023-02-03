@@ -86,7 +86,7 @@ class _DepotOverviewState extends State<DepotOverview> {
           children: [
             Container(
               height: 40,
-              decoration: BoxDecoration(color: red),
+              decoration: BoxDecoration(color: Colors.blue),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -155,6 +155,16 @@ class _DepotOverviewState extends State<DepotOverview> {
                     Expanded(
                       child: Column(
                         children: [
+                          Text(
+                            'E-Bus Depot Name : ${widget.depoName}',
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          const Text(
+                            'Project Manager: Sumit Swarup Sarkar',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
                           Padding(
                             padding: const EdgeInsets.all(5.0),
                             child: Container(
@@ -168,16 +178,6 @@ class _DepotOverviewState extends State<DepotOverview> {
                                       fontWeight: FontWeight.bold,
                                       color: white)),
                             ),
-                          ),
-                          Text(
-                            'E-Bus Depot Name : ${widget.depoName}',
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          const Text(
-                            'Project Manager: Sumit Swarup Sarkar',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           const Padding(padding: EdgeInsets.only(top: 12)),
                           Expanded(
@@ -279,41 +279,83 @@ class _DepotOverviewState extends State<DepotOverview> {
                                       columnName: 'Owner',
                                       allowEditing: true,
                                       width: 150,
-                                      label: Container(
-                                        alignment: Alignment.center,
-                                        child: Text('Owner',
-                                            overflow: TextOverflow.values.first,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16)),
+                                      label: Column(
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.center,
+                                            child: Text('Owner',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16)),
+                                          ),
+                                          Text(
+                                              'Person Who will manage the risk',
+                                              overflow:
+                                                  TextOverflow.values.first,
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                  color: Colors.red,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12))
+                                        ],
                                       ),
                                     ),
                                     GridColumn(
                                       columnName: 'MigratingRisk',
                                       allowEditing: true,
                                       width: 150,
-                                      label: Container(
-                                        alignment: Alignment.center,
-                                        child: Text('Migrating Action',
-                                            overflow: TextOverflow.values.first,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16)),
+                                      label: Column(
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.center,
+                                            child: Text('Mitigation Action',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16)),
+                                          ),
+                                          Text(
+                                              'Action to Mitigate the risk e.g reduce the likelihood',
+                                              overflow:
+                                                  TextOverflow.values.first,
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                  color: Colors.red,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12))
+                                        ],
                                       ),
                                     ),
                                     GridColumn(
                                       columnName: 'ContigentAction',
                                       allowEditing: true,
                                       width: 180,
-                                      label: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16.0),
-                                        alignment: Alignment.center,
-                                        child: Text('Contigent Action',
-                                            overflow: TextOverflow.values.first,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16)),
+                                      label: Column(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16.0),
+                                            alignment: Alignment.center,
+                                            child: Text('Contigent Action',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16)),
+                                          ),
+                                          Text(
+                                              'Action to be taken if the risk happens',
+                                              overflow:
+                                                  TextOverflow.values.first,
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                  color: Colors.red,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12))
+                                        ],
                                       ),
                                     ),
                                     GridColumn(
@@ -520,6 +562,23 @@ class _DepotOverviewState extends State<DepotOverview> {
             ),
           ],
         ),
+        floatingActionButton: FloatingActionButton(
+            child: Icon(Icons.add),
+            onPressed: (() {
+              _employees.add(DepotOverviewModel(
+                  srNo: 1,
+                  date: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+                  riskDescription: 'dedd',
+                  typeRisk: 'Material Supply',
+                  impactRisk: 'High',
+                  owner: 'Pratyush',
+                  migrateAction: ' lkmlm',
+                  contigentAction: 'mlkmlk',
+                  progressAction: 'iio',
+                  status: 'Close'));
+              _employeeDataSource.buildDataGridRows();
+              _employeeDataSource.updateDatagridSource();
+            })),
       ),
     );
   }
@@ -527,6 +586,7 @@ class _DepotOverviewState extends State<DepotOverview> {
   cards() {
     return Expanded(
       child: Container(
+        width: 550,
         child: StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection('OverviewCollection')
@@ -545,13 +605,13 @@ class _DepotOverviewState extends State<DepotOverview> {
                           'Depots location and Address ',
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                       Container(
-                          width: 300,
+                          width: 200,
                           height: 50,
                           child: TextFormField(
                               initialValue: snapshot.data!
@@ -565,7 +625,7 @@ class _DepotOverviewState extends State<DepotOverview> {
                               minLines: 1,
                               autofocus: false,
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: black, fontSize: 20),
+                              style: TextStyle(color: black, fontSize: 16),
                               onChanged: (value) {
                                 address = value;
                               })),
@@ -575,18 +635,18 @@ class _DepotOverviewState extends State<DepotOverview> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        width: 280,
+                        width: 200,
                         child: const Text(
                           'No of Buses in Scope',
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                       Container(
-                        width: 300,
+                        width: 200,
                         height: 50,
                         child: TextFormField(
                             initialValue: snapshot.data!
@@ -600,7 +660,7 @@ class _DepotOverviewState extends State<DepotOverview> {
                             minLines: 1,
                             autofocus: false,
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: black, fontSize: 20),
+                            style: TextStyle(color: black, fontSize: 16),
                             onChanged: (value) {
                               scope = value;
                             }),
@@ -611,18 +671,18 @@ class _DepotOverviewState extends State<DepotOverview> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        width: 280,
+                        width: 200,
                         child: const Text(
                           'No. of Charger Required ',
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                       Container(
-                        width: 300,
+                        width: 200,
                         height: 50,
                         child: TextFormField(
                             initialValue: snapshot.data!
@@ -636,7 +696,7 @@ class _DepotOverviewState extends State<DepotOverview> {
                             minLines: 1,
                             autofocus: false,
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: black, fontSize: 20),
+                            style: TextStyle(color: black, fontSize: 16),
                             onChanged: (value) {
                               required = value;
                             }),
@@ -647,18 +707,18 @@ class _DepotOverviewState extends State<DepotOverview> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        width: 280,
+                        width: 200,
                         child: const Text(
                           'Rating Of charger ',
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                       Container(
-                        width: 300,
+                        width: 200,
                         height: 50,
                         child: TextFormField(
                             initialValue: snapshot.data!
@@ -672,7 +732,7 @@ class _DepotOverviewState extends State<DepotOverview> {
                             minLines: 1,
                             autofocus: false,
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: black, fontSize: 20),
+                            style: TextStyle(color: black, fontSize: 16),
                             onChanged: (value) {
                               charger = value;
                             }),
@@ -683,18 +743,18 @@ class _DepotOverviewState extends State<DepotOverview> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        width: 280,
+                        width: 200,
                         child: const Text(
                           'Required Sanctioned load ',
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                       Container(
-                        width: 300,
+                        width: 200,
                         height: 50,
                         child: TextFormField(
                             initialValue: snapshot.data!
@@ -708,7 +768,7 @@ class _DepotOverviewState extends State<DepotOverview> {
                             minLines: 1,
                             autofocus: false,
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: black, fontSize: 20),
+                            style: TextStyle(color: black, fontSize: 16),
                             onChanged: (value) {
                               load = value;
                             }),
@@ -724,13 +784,13 @@ class _DepotOverviewState extends State<DepotOverview> {
                           'Existing Utility for power source ',
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                       Container(
-                        width: 300,
+                        width: 200,
                         height: 50,
                         child: TextFormField(
                             initialValue: snapshot.data!
@@ -743,7 +803,7 @@ class _DepotOverviewState extends State<DepotOverview> {
                             minLines: 1,
                             autofocus: false,
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: black, fontSize: 20),
+                            style: TextStyle(color: black, fontSize: 16),
                             onChanged: (value) {
                               powerSource = value;
                             }),
@@ -751,23 +811,24 @@ class _DepotOverviewState extends State<DepotOverview> {
                     ],
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
-                        width: 280,
+                        width: 200,
                         child: Text(
                           'BOQ Electrical',
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: black),
                         ),
                       ),
                       Container(
-                          width: 300,
+                          width: 200,
                           height: 60,
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               if (result != null)
                                 const Padding(
@@ -786,7 +847,10 @@ class _DepotOverviewState extends State<DepotOverview> {
                                       });
                                     }
                                   },
-                                  child: const Text('Pick file')),
+                                  child: const Text(
+                                    'Pick file',
+                                    textAlign: TextAlign.end,
+                                  )),
                               Container(
                                   height: 70,
                                   child: Row(
@@ -817,6 +881,7 @@ class _DepotOverviewState extends State<DepotOverview> {
                     ],
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
                         width: 280,
@@ -824,16 +889,16 @@ class _DepotOverviewState extends State<DepotOverview> {
                           'BOQ Civil',
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: black),
                         ),
                       ),
                       Container(
-                          width: 300,
+                          width: 250,
                           height: 60,
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               if (result1 != null)
                                 const Padding(
@@ -861,11 +926,13 @@ class _DepotOverviewState extends State<DepotOverview> {
                                   if (result1 != null)
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        result1!.files.first.name,
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
+                                      child: Expanded(
+                                        child: Text(
+                                          result1!.files.first.name,
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                       ),
                                     ),
                                 ],

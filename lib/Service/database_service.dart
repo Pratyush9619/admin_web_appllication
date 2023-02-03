@@ -19,7 +19,7 @@ class DatabaseService {
   }
 
   Future uploadDepoData(String cityName, String imageUrl) async {
-    await depocollectionReference.add({
+    await depocollectionReference.doc().set({
       'DepoName': cityName,
       'DepoUrl': imageUrl,
     });

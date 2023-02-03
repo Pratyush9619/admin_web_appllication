@@ -44,6 +44,7 @@ dependencies:
   gantt_chart: ^0.1.0
   get: ^4.6.5
   google_fonts: ^3.0.1
+  group_button: ^5.2.2
   image_picker: ^0.8.6
   intl: ^0.17.0
   intl_phone_field: ^3.1.0

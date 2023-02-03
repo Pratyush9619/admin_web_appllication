@@ -80,7 +80,7 @@ class _SignInPageState extends State<SignInPage> {
                             const SizedBox(height: 24),
                             TextFormField(
                               textInputAction: TextInputAction.done,
-
+                              onFieldSubmitted: (value) => login(),
                               decoration: InputDecoration(
                                 suffixIcon: InkWell(
                                     onTap: _togglePasswordView,
