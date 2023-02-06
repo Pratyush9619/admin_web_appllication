@@ -66,6 +66,15 @@ class _MenuUserPageState extends State<MenuUserPage> {
       });
     });
 
+    // getDepodata(String deponame){
+    //   FirebaseFirestore.instance.collection(deponame).get().then((value) {
+    //   value.docs.forEach((element) {
+    //     var data = element['DepoName'];
+    //     depodata.add(data);
+    //   });
+    // });
+    // }
+
     // FirebaseFirestore.instance.collection(cityValue!).get().then((value) {
     //   value.docs.forEach((element) {
     //     var data = element['DepoName'];
@@ -185,7 +194,6 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Container(
-                                    width: 120,
                                     padding: EdgeInsets.all(5),
                                     child: const Text(
                                       'Cities :',
@@ -196,25 +204,28 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                   ),
                                 ),
                                 const SizedBox(width: 15),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Padding(
+                                Flexible(
+                                  child: Container(
+                                    child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: GroupButton(
                                         options: const GroupButtonOptions(
                                             selectedColor: Colors.green),
                                         buttons: citydata,
-                                        isRadio: false,
-                                        onSelected: (value, index, isSelected) {
+                                        isRadio: true,
+                                        onSelected:
+                                            (value, index, isSelected) async {
+                                          depodata.clear();
                                           cityValue = value;
+                                          await getDepodata(cityValue);
+                                          setState(() {});
                                           // setState(() {
                                           //   _inits = false;
                                           // });
                                         },
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 )
                               ],
                             ),
@@ -235,18 +246,21 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                   ),
                                 ),
                                 const SizedBox(width: 15),
-                                Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child:
-                                        // Consumer<DepoProvider>(
-                                        //     builder: (context, value, child) {
-                                        GroupButton(
-                                      options: const GroupButtonOptions(
-                                          selectedColor: Colors.green),
-                                      buttons: depodata,
-                                      isRadio: false,
-                                      onSelected: (value, index, isSelected) {},
-                                    )),
+                                Flexible(
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child:
+                                          // Consumer<DepoProvider>(
+                                          //     builder: (context, value, child) {
+                                          GroupButton(
+                                        options: const GroupButtonOptions(
+                                            selectedColor: Colors.green),
+                                        buttons: depodata,
+                                        isRadio: false,
+                                        onSelected:
+                                            (value, index, isSelected) {},
+                                      )),
+                                ),
                                 // )
                               ],
                             ),
@@ -586,4 +600,13 @@ class _MenuUserPageState extends State<MenuUserPage> {
   //     },
   //   );
   // }
+
+  getDepodata(String deponame) {
+    return FirebaseFirestore.instance.collection(deponame).get().then((value) {
+      value.docs.forEach((element) {
+        var data = element['DepoName'];
+        depodata.add(data);
+      });
+    });
+  }
 }

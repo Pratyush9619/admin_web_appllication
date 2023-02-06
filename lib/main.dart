@@ -80,12 +80,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return
-        // MenuUserPage();
-        // DepotOverview();
-        // ResourceAllocation();
-        //  EventsPage();
-        // KeyEvents();
-        LoginRegister();
+    return MenuUserPage();
+    // DepotOverview();
+    // ResourceAllocation();
+    //  EventsPage();
+    // KeyEvents();
+    // LoginRegister();
   }
 }
