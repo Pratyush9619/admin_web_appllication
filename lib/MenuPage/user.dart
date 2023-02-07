@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:group_button/group_button.dart';
 import 'package:intl_phone_field/helpers.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +22,8 @@ class MenuUserPage extends StatefulWidget {
 class _MenuUserPageState extends State<MenuUserPage> {
   bool _isfolded = true;
   bool _isfolded2 = false;
+  int _crossaxiscount = 5;
+  double _expansionheight = 50;
   String? userValue;
   int groupValue = 0;
   Stream? _stream;
@@ -42,13 +45,33 @@ class _MenuUserPageState extends State<MenuUserPage> {
     'Lead EV- Bus Project',
     'Others'
   ];
+  List<String> totalUser = [];
+  List<String> cardTitle = [
+    'Total User',
+    'Assigned User',
+    'Not Assigned USer',
+    'New Users'
+  ];
+  List<Color> cardColor = [
+    Colors.blue,
+    Colors.green,
+    Colors.grey,
+    Colors.red,
+  ];
   List<String> citydata = [];
   List<String> depodata = [];
   List<String> defaultdata = [];
+  var items = [
+    'Item    1',
+    'Item 2',
+    'Item 3',
+    'Item 4',
+    'Item 5',
+  ];
+  String dropdown = 'Item    1';
   String? designValue;
   String cityValue = 'Jammu';
   var _isinit = true;
-
   @override
   void initState() {
     _stream = FirebaseFirestore.instance
@@ -66,56 +89,8 @@ class _MenuUserPageState extends State<MenuUserPage> {
       });
     });
 
-    // getDepodata(String deponame){
-    //   FirebaseFirestore.instance.collection(deponame).get().then((value) {
-    //   value.docs.forEach((element) {
-    //     var data = element['DepoName'];
-    //     depodata.add(data);
-    //   });
-    // });
-    // }
-
-    // FirebaseFirestore.instance.collection(cityValue!).get().then((value) {
-    //   value.docs.forEach((element) {
-    //     var data = element['DepoName'];
-    //     depodata.add(data);
-    //   });
-    // });
-
     super.initState();
   }
-
-  // @override
-  // void didChangeDependencies() {
-  //   if (_isinit) {
-  //     _depoProvider =
-  //         Provider.of(context)<DepoProvider>(context, listen: false);
-  //     depodata = _depoProvider!.fetchData(cityValue);
-  //     _isinit = false;
-  //   }
-  //   super.didChangeDependencies();
-  // }
-
-  // @override
-  // void didChangeDependencies() {
-  //   if (_inits) {
-  //     FirebaseFirestore.instance.collection('Jammu').get().then((value) {
-  //       value.docs.forEach((element) {
-  //         var data = element['DepoName'];
-  //         depodata.add(data);
-  //       });
-  //     });
-  //   } else {
-  //     FirebaseFirestore.instance.collection(cityValue).get().then((value) {
-  //       value.docs.forEach((element) {
-  //         var data = element['DepoName'];
-  //         depodata.add(data);
-  //       });
-  //     });
-  //   }
-
-  //   super.didChangeDependencies();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -128,163 +103,392 @@ class _MenuUserPageState extends State<MenuUserPage> {
       //   title: const Text('User Page'),
       // ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: StreamBuilder(
-          stream: _stream,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    if (snapshot.hasData) {
-                      return Container(
-                        margin: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: blue)),
-                        child: ExpansionTile(
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        padding: EdgeInsets.all(12.0),
+        child: Column(
+          children: [
+            Container(
+              height: 200,
+              width: MediaQuery.of(context).size.width,
+              child: GridView.builder(
+                padding: EdgeInsets.zero,
+                itemCount: 4,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    childAspectRatio: 1 / .7, crossAxisCount: 4),
+                itemBuilder: (context, index) {
+                  return UserCard('15', cardTitle[index], cardColor[index]);
+                },
+              ),
+            ),
+            Flexible(
+              child: StreamBuilder(
+                stream: _stream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: snapshot.data.docs.length,
+                      itemBuilder: (context, index) {
+                        if (snapshot.hasData) {
+                          return ExpansionTile(
+                            title: ListTile(
+                              title: Container(
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color: blue)),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(snapshot.data!.docs[index]
+                                            ['FirstName'] +
+                                        ' ' +
+                                        snapshot.data!.docs[index]['LastName']),
+                                  ],
+                                ),
+                              ),
+                              leading: CircleAvatar(
+                                child: Text(snapshot
+                                    .data!.docs[index]['FirstName']
+                                    .toString()
+                                    .trim()
+                                    .split('')
+                                    .take(1)
+                                    .first),
+                              ),
+                            ),
+                            onExpansionChanged: (value) {},
                             children: [
-                              Text(snapshot.data!.docs[index]['FirstName'] +
-                                  ' ' +
-                                  snapshot.data!.docs[index]['LastName']),
-                            ],
-                          ),
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    width: 120,
-                                    padding: EdgeInsets.all(5),
-                                    child: const Text(
-                                      'Designation :',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 15),
-                                Flexible(
-                                  child: Container(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: GroupButton(
-                                        options: const GroupButtonOptions(
-                                            selectedColor: Colors.green),
-                                        buttons: designation,
-                                        isRadio: false,
-                                        onSelected: (value, index, isSelected) {
-                                          designValue = value;
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    padding: EdgeInsets.all(5),
-                                    child: const Text(
-                                      'Cities :',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 15),
-                                Flexible(
-                                  child: Container(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: GroupButton(
-                                        options: const GroupButtonOptions(
-                                            selectedColor: Colors.green),
-                                        buttons: citydata,
-                                        isRadio: true,
-                                        onSelected:
-                                            (value, index, isSelected) async {
-                                          depodata.clear();
-                                          cityValue = value;
-                                          await getDepodata(cityValue);
-                                          setState(() {});
-                                          // setState(() {
-                                          //   _inits = false;
-                                          // });
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    width: 120,
-                                    padding: const EdgeInsets.all(5),
-                                    child: const Text(
-                                      'Depots :',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 15),
-                                Flexible(
-                                  child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child:
-                                          // Consumer<DepoProvider>(
-                                          //     builder: (context, value, child) {
-                                          GroupButton(
-                                        options: const GroupButtonOptions(
-                                            selectedColor: Colors.green),
-                                        buttons: depodata,
-                                        isRadio: false,
-                                        onSelected:
-                                            (value, index, isSelected) {},
-                                      )),
-                                ),
-                                // )
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  ElevatedButton(
-                                      onPressed: () {},
-                                      child: const Text('Sync'))
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      width: 150,
+                                      padding: EdgeInsets.all(5),
+                                      child: const Text(
+                                        'Designation :',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 15),
+                                  Expanded(
+                                    child: Container(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: GroupButton(
+                                          options: const GroupButtonOptions(
+                                              selectedColor: Colors.green),
+                                          buttons: designation,
+                                          isRadio: false,
+                                          onSelected:
+                                              (value, index, isSelected) {
+                                            designValue = value;
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  )
                                 ],
                               ),
-                            )
-                          ],
-                        ),
-                      );
-                    }
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      width: 150,
+                                      padding: EdgeInsets.all(5),
+                                      child: const Text(
+                                        'Cities :',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 15),
+                                  Flexible(
+                                    child: Container(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: GroupButton(
+                                          options: const GroupButtonOptions(
+                                              selectedColor: Colors.green),
+                                          buttons: citydata,
+                                          isRadio: true,
+                                          onSelected:
+                                              (value, index, isSelected) async {
+                                            depodata.clear();
+                                            cityValue = value;
+                                            await getDepodata(cityValue);
+                                            setState(() {});
+                                            // setState(() {
+                                            //   _inits = false;
+                                            // });
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      width: 150,
+                                      padding: const EdgeInsets.all(5),
+                                      child: const Text(
+                                        'Depots :',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 15),
+                                  Flexible(
+                                    child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child:
+                                            // Consumer<DepoProvider>(
+                                            //     builder: (context, value, child) {
+                                            GroupButton(
+                                          options: const GroupButtonOptions(
+                                              selectedColor: Colors.green),
+                                          buttons: depodata,
+                                          isRadio: false,
+                                          onSelected:
+                                              (value, index, isSelected) {},
+                                        )),
+                                  ),
+                                  // )
+                                ],
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      width: 120,
+                                      padding: const EdgeInsets.all(5),
+                                      child: const Text(
+                                        'Reporting Manager:',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 15),
+                                  Flexible(
+                                    child: Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Container(
+                                          width: 150,
+                                          child: DropdownButton(
+                                            value: dropdown,
+                                            items: items
+                                                .map<DropdownMenuItem<String>>(
+                                                    (String value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              );
+                                            }).toList(),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                dropdown = value.toString();
+                                              });
+                                            },
+                                          ),
+                                        )),
+                                  ),
+                                  // )
+                                ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    ElevatedButton(
+                                        onPressed: () {},
+                                        child: const Text('Sync'))
+                                  ],
+                                ),
+                              )
+                            ],
+                          );
+                        } else {
+                          return LoadingPage();
+                        }
+                      },
+                    );
+
+                    // ListView.builder(
+                    //     shrinkWrap: true,
+                    //     itemCount: snapshot.data!.docs.length,
+                    //     itemBuilder: (context, index) {
+                    //       if (snapshot.hasData) {
+                    //         return Container(
+                    //           margin: EdgeInsets.all(5),
+                    //           decoration: BoxDecoration(
+                    //               borderRadius: BorderRadius.circular(10),
+                    //               border: Border.all(color: blue)),
+                    //           child: ExpansionTile(
+                    //             title: Row(
+                    //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //               children: [
+                    //                 Text(snapshot.data!.docs[index]['FirstName'] +
+                    //                     ' ' +
+                    //                     snapshot.data!.docs[index]['LastName']),
+                    //               ],
+                    //             ),
+                    //             children: [
+                    //               Row(
+                    //                 crossAxisAlignment: CrossAxisAlignment.start,
+                    //                 children: [
+                    //                   Padding(
+                    //                     padding: const EdgeInsets.all(8.0),
+                    //                     child: Container(
+                    //                       width: 120,
+                    //                       padding: EdgeInsets.all(5),
+                    //                       child: const Text(
+                    //                         'Designation :',
+                    //                         style: TextStyle(
+                    //                             fontSize: 16,
+                    //                             fontWeight: FontWeight.bold),
+                    //                       ),
+                    //                     ),
+                    //                   ),
+                    //                   const SizedBox(width: 15),
+                    //                   Flexible(
+                    //                     child: Container(
+                    //                       child: Padding(
+                    //                         padding: const EdgeInsets.all(8.0),
+                    //                         child: GroupButton(
+                    //                           options: const GroupButtonOptions(
+                    //                               selectedColor: Colors.green),
+                    //                           buttons: designation,
+                    //                           isRadio: false,
+                    //                           onSelected: (value, index, isSelected) {
+                    //                             designValue = value;
+                    //                           },
+                    //                         ),
+                    //                       ),
+                    //                     ),
+                    //                   )
+                    //                 ],
+                    //               ),
+                    //               Row(
+                    //                 crossAxisAlignment: CrossAxisAlignment.start,
+                    //                 children: [
+                    //                   Padding(
+                    //                     padding: const EdgeInsets.all(8.0),
+                    //                     child: Container(
+                    //                       padding: EdgeInsets.all(5),
+                    //                       child: const Text(
+                    //                         'Cities :',
+                    //                         style: TextStyle(
+                    //                             fontSize: 16,
+                    //                             fontWeight: FontWeight.bold),
+                    //                       ),
+                    //                     ),
+                    //                   ),
+                    //                   const SizedBox(width: 15),
+                    //                   Flexible(
+                    //                     child: Container(
+                    //                       child: Padding(
+                    //                         padding: const EdgeInsets.all(8.0),
+                    //                         child: GroupButton(
+                    //                           options: const GroupButtonOptions(
+                    //                               selectedColor: Colors.green),
+                    //                           buttons: citydata,
+                    //                           isRadio: true,
+                    //                           onSelected:
+                    //                               (value, index, isSelected) async {
+                    //                             depodata.clear();
+                    //                             cityValue = value;
+                    //                             await getDepodata(cityValue);
+                    //                             setState(() {});
+                    //                             // setState(() {
+                    //                             //   _inits = false;
+                    //                             // });
+                    //                           },
+                    //                         ),
+                    //                       ),
+                    //                     ),
+                    //                   )
+                    //                 ],
+                    //               ),
+                    //               Row(
+                    //                 crossAxisAlignment: CrossAxisAlignment.start,
+                    //                 children: [
+                    //                   Padding(
+                    //                     padding: const EdgeInsets.all(8.0),
+                    //                     child: Container(
+                    //                       width: 120,
+                    //                       padding: const EdgeInsets.all(5),
+                    //                       child: const Text(
+                    //                         'Depots :',
+                    //                         style: TextStyle(
+                    //                             fontSize: 16,
+                    //                             fontWeight: FontWeight.bold),
+                    //                       ),
+                    //                     ),
+                    //                   ),
+                    //                   const SizedBox(width: 15),
+                    //                   Flexible(
+                    //                     child: Padding(
+                    //                         padding: const EdgeInsets.all(8.0),
+                    //                         child:
+                    //                             // Consumer<DepoProvider>(
+                    //                             //     builder: (context, value, child) {
+                    //                             GroupButton(
+                    //                           options: const GroupButtonOptions(
+                    //                               selectedColor: Colors.green),
+                    //                           buttons: depodata,
+                    //                           isRadio: false,
+                    //                           onSelected:
+                    //                               (value, index, isSelected) {},
+                    //                         )),
+                    //                   ),
+                    //                   // )
+                    //                 ],
+                    //               ),
+                    //               Padding(
+                    //                 padding: const EdgeInsets.all(8.0),
+                    //                 child: Row(
+                    //                   mainAxisAlignment: MainAxisAlignment.end,
+                    //                   children: [
+                    //                     ElevatedButton(
+                    //                         onPressed: () {},
+                    //                         child: const Text('Sync'))
+                    //                   ],
+                    //                 ),
+                    //               )
+                    //             ],
+                    //           ),
+                    //         );
+                    //       }
+                    //       return LoadingPage();
+                    //     });
+                  } else {
                     return LoadingPage();
-                  });
-            } else {
-              return LoadingPage();
-            }
-          },
+                  }
+                },
+              ),
+            ),
+          ],
         ),
       ),
 
@@ -608,5 +812,46 @@ class _MenuUserPageState extends State<MenuUserPage> {
         depodata.add(data);
       });
     });
+  }
+
+  UserCard(String number, String title, Color color) {
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Container(
+        padding: EdgeInsets.all(15),
+        decoration: BoxDecoration(
+            color: color, borderRadius: BorderRadius.circular(10)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(
+                number,
+                style: TextStyle(fontSize: 18, color: white),
+              ),
+              Text(title, style: TextStyle(fontSize: 18, color: white)),
+            ]),
+            Container(
+              width: 200,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: Text('More Info'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: color,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Icon(Icons.forward)
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
