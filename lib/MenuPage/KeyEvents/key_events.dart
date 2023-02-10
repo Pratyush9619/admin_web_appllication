@@ -206,16 +206,6 @@ class _KeyEventsState extends State<KeyEvents> {
                                     ),
                                   ),
                                 ),
-                                // GridColumn(
-                                //   columnName: 'button',
-                                //   width: 130,
-                                //   allowEditing: false,
-                                //   label: Container(
-                                //     padding: const EdgeInsets.all(8.0),
-                                //     alignment: Alignment.center,
-                                //     child: const Text('View File '),
-                                //   ),
-                                // ),
                                 GridColumn(
                                   columnName: 'OriginalDuration',
                                   allowEditing: false,
@@ -434,18 +424,29 @@ class _KeyEventsState extends State<KeyEvents> {
                     );
                   } else {
                     int length = snapshot.data.docs.length;
-
                     weight.clear();
                     startdate.clear();
                     enddate.clear();
                     asstartdate.clear();
                     asenddate.clear();
                     for (int i = 0; i < length; i++) {
-                      if (i != 3) {
+                      if (i == 3) {
+                        var alldataA5 =
+                            snapshot.data.docs[i]['data'] as List<dynamic>;
+                        sdate = alldataA5[0]['StartDate'];
+                        edate = alldataA5[alldataA5.length - 1]['EndDate'];
+                        asdate = alldataA5[0]['ActualStart'];
+                        aedate = alldataA5[alldataA5.length - 1]['ActualEnd'];
+                        startdate.add(sdate!);
+                        enddate.add(edate!);
+                        asstartdate.add(asdate!);
+                        asenddate.add(aedate!);
+                        print('Start$startdate');
+                        print('Start$enddate');
+                      } else {
+// if (i != 3) {
                         alldata =
                             snapshot.data.docs[i]['data'] as List<dynamic>;
-                      }
-                      if (i != 3) {
                         sdate = alldata[0]['StartDate'];
                         edate = alldata[alldata.length - 1]['EndDate'];
                         asdate = alldata[0]['ActualStart'];
@@ -457,100 +458,101 @@ class _KeyEventsState extends State<KeyEvents> {
                         print('Start$startdate');
                         print('Start$enddate');
                       }
-                      for (int i = 0; i < alldata.length; i++) {
-                        var weightage = alldata[i]['Weightage'];
-                        totalweightage = totalweightage + weightage;
-                      }
-                      weight.add(totalweightage);
-                      chartData = [
-                        ChartData(
-                            'A10',
-                            weight.asMap().containsKey(8) ? weight[8] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A9',
-                            weight.asMap().containsKey(7) ? weight[7] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A8',
-                            weight.asMap().containsKey(6) ? weight[6] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A7',
-                            weight.asMap().containsKey(5) ? weight[5] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A6',
-                            weight.asMap().containsKey(4) ? weight[4] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A5',
-                            weight.asMap().containsKey(3) ? weight[3] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A4',
-                            weight.asMap().containsKey(2) ? weight[2] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A3',
-                            weight.asMap().containsKey(1) ? weight[1] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A2',
-                            weight.asMap().containsKey(0) ? weight[0] : 0,
-                            Colors.yellow),
-                        ChartData('A1', 5, Colors.yellow),
-                      ];
-                      chartData2 = [
-                        ChartData(
-                            'A10',
-                            weight.asMap().containsKey(8) ? weight[8] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A9',
-                            weight.asMap().containsKey(7) ? weight[7] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A8',
-                            weight.asMap().containsKey(6) ? weight[6] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A7',
-                            weight.asMap().containsKey(5) ? weight[5] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A6',
-                            weight.asMap().containsKey(4) ? weight[4] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A5',
-                            weight.asMap().containsKey(3) ? weight[3] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A4',
-                            weight.asMap().containsKey(2) ? weight[2] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A3',
-                            weight.asMap().containsKey(1) ? weight[1] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A2',
-                            weight.asMap().containsKey(0) ? weight[0] : 0,
-                            Colors.red),
-                        ChartData('A1', 5, Colors.red),
-                      ];
-
-                      print(weight);
-                      totalweightage = 0;
                     }
 
-                    if (!snapshot.hasData) return LoadingPage();
-                    _employees.clear();
+                    for (int i = 0; i < alldata.length; i++) {
+                      var weightage = alldata[i]['Weightage'];
+                      totalweightage = totalweightage + weightage;
+                    }
+                    weight.add(totalweightage);
+                    chartData = [
+                      ChartData(
+                          'A10',
+                          weight.asMap().containsKey(8) ? weight[8] : 0,
+                          Colors.yellow),
+                      ChartData(
+                          'A9',
+                          weight.asMap().containsKey(7) ? weight[7] : 0,
+                          Colors.yellow),
+                      ChartData(
+                          'A8',
+                          weight.asMap().containsKey(6) ? weight[6] : 0,
+                          Colors.yellow),
+                      ChartData(
+                          'A7',
+                          weight.asMap().containsKey(5) ? weight[5] : 0,
+                          Colors.yellow),
+                      ChartData(
+                          'A6',
+                          weight.asMap().containsKey(4) ? weight[4] : 0,
+                          Colors.yellow),
+                      ChartData(
+                          'A5',
+                          weight.asMap().containsKey(3) ? weight[3] : 0,
+                          Colors.yellow),
+                      ChartData(
+                          'A4',
+                          weight.asMap().containsKey(2) ? weight[2] : 0,
+                          Colors.yellow),
+                      ChartData(
+                          'A3',
+                          weight.asMap().containsKey(1) ? weight[1] : 0,
+                          Colors.yellow),
+                      ChartData(
+                          'A2',
+                          weight.asMap().containsKey(0) ? weight[0] : 0,
+                          Colors.yellow),
+                      ChartData('A1', 5, Colors.yellow),
+                    ];
+                    chartData2 = [
+                      ChartData(
+                          'A10',
+                          weight.asMap().containsKey(8) ? weight[8] : 0,
+                          Colors.red),
+                      ChartData(
+                          'A9',
+                          weight.asMap().containsKey(7) ? weight[7] : 0,
+                          Colors.red),
+                      ChartData(
+                          'A8',
+                          weight.asMap().containsKey(6) ? weight[6] : 0,
+                          Colors.red),
+                      ChartData(
+                          'A7',
+                          weight.asMap().containsKey(5) ? weight[5] : 0,
+                          Colors.red),
+                      ChartData(
+                          'A6',
+                          weight.asMap().containsKey(4) ? weight[4] : 0,
+                          Colors.red),
+                      ChartData(
+                          'A5',
+                          weight.asMap().containsKey(3) ? weight[3] : 0,
+                          Colors.red),
+                      ChartData(
+                          'A4',
+                          weight.asMap().containsKey(2) ? weight[2] : 0,
+                          Colors.red),
+                      ChartData(
+                          'A3',
+                          weight.asMap().containsKey(1) ? weight[1] : 0,
+                          Colors.red),
+                      ChartData(
+                          'A2',
+                          weight.asMap().containsKey(0) ? weight[0] : 0,
+                          Colors.red),
+                      ChartData('A1', 5, Colors.red),
+                    ];
 
-                    alldata.forEach((element) {
-                      _employees.add(Employee.fromJson(element));
-                    });
+                    print(weight);
+                    totalweightage = 0;
+
+                    if (!snapshot.hasData) return LoadingPage();
+                    // _employees.clear();
+
+                    // alldata.forEach((element) {
+                    //   _employees.add(Employee.fromJson(element));
+                    // });
 
                     _employees = getEmployeeData();
                     _KeyDataSourceKeyEvents =
@@ -865,6 +867,7 @@ class _KeyEventsState extends State<KeyEvents> {
                     );
                   }
                 }));
+
     //  _isLoading
     //     ? LoadingPage()
     //     :
@@ -1069,11 +1072,6 @@ class _KeyEventsState extends State<KeyEvents> {
         activity:
             'Site Survey, Job scope finalization  and Proposed layout submission',
         originalDuration: 10,
-        // int.parse(
-        //   durationParse(
-        //           DateTime.parse('02-10-2020'), DateTime.parse('05-10-2020'))
-        //       .toString(),
-        // ),
         startDate: startdate.asMap().containsKey(0)
             ? startdate[0]
             : DateFormat('dd-MM-yyyy').format(DateTime(01 - 12 - 2022)),
@@ -1110,7 +1108,7 @@ class _KeyEventsState extends State<KeyEvents> {
         actualstartDate: asstartdate.asMap().containsKey(7)
             ? asstartdate[1]
             : DateFormat('dd-MM-yyyy').format(DateTime(01 - 12 - 2022)),
-        actualendDate: asenddate.asMap().containsKey(7)
+        actualendDate: asenddate.asMap().containsKey(1)
             ? asenddate[1]
             : DateFormat('dd-MM-yyyy').format(DateTime(01 - 12 - 2022)),
         actualDuration: 0,
@@ -1148,24 +1146,8 @@ class _KeyEventsState extends State<KeyEvents> {
         weightage: weight.asMap().containsKey(2) ? weight[2] : 0.0,
       ),
       Employee(
-          srNo: 'A5',
-          activity: 'Approval of statutory clearances of BUS Depot',
-          originalDuration: 1,
-          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualDuration: 0,
-          delay: 0,
-          unit: 0,
-          scope: 0,
-          qtyExecuted: 0,
-          balanceQty: 0,
-          percProgress: 0,
-          weightage: 0),
-      Employee(
-        srNo: 'A6',
-        activity: 'Procurement of Order Finalisation Completed',
+        srNo: 'A5',
+        activity: 'Approval of statutory clearances of BUS Depot',
         originalDuration: 1,
         startDate: startdate.asMap().containsKey(3)
             ? startdate[3]
@@ -1189,8 +1171,8 @@ class _KeyEventsState extends State<KeyEvents> {
         weightage: weight.asMap().containsKey(3) ? weight[3] : 0.0,
       ),
       Employee(
-        srNo: 'A7',
-        activity: 'Receipt of all Materials at Site',
+        srNo: 'A6',
+        activity: 'Procurement of Order Finalisation Completed',
         originalDuration: 1,
         startDate: startdate.asMap().containsKey(4)
             ? startdate[4]
@@ -1214,8 +1196,8 @@ class _KeyEventsState extends State<KeyEvents> {
         weightage: weight.asMap().containsKey(4) ? weight[4] : 0.0,
       ),
       Employee(
-        srNo: 'A8',
-        activity: 'Civil Infra Development completed at Bus Depot',
+        srNo: 'A7',
+        activity: 'Receipt of all Materials at Site',
         originalDuration: 1,
         startDate: startdate.asMap().containsKey(5)
             ? startdate[5]
@@ -1226,7 +1208,7 @@ class _KeyEventsState extends State<KeyEvents> {
         actualstartDate: asstartdate.asMap().containsKey(5)
             ? asstartdate[5]
             : DateFormat('dd-MM-yyyy').format(DateTime(01 - 12 - 2022)),
-        actualendDate: asenddate.asMap().containsKey(5)
+        actualendDate: asenddate.asMap().containsKey(4)
             ? asenddate[5]
             : DateFormat('dd-MM-yyyy').format(DateTime(01 - 12 - 2022)),
         actualDuration: 0,
@@ -1239,10 +1221,10 @@ class _KeyEventsState extends State<KeyEvents> {
         weightage: weight.asMap().containsKey(5) ? weight[5] : 0.0,
       ),
       Employee(
-        srNo: 'A9',
-        activity: 'Electrical Infra Development completed at Bus Depot',
+        srNo: 'A8',
+        activity: 'Civil Infra Development completed at Bus Depot',
         originalDuration: 1,
-        startDate: startdate.asMap().containsKey(7)
+        startDate: startdate.asMap().containsKey(6)
             ? startdate[6]
             : DateFormat('dd-MM-yyyy').format(DateTime(01 - 12 - 2022)),
         endDate: enddate.asMap().containsKey(6)
@@ -1264,8 +1246,8 @@ class _KeyEventsState extends State<KeyEvents> {
         weightage: weight.asMap().containsKey(6) ? weight[6] : 0.0,
       ),
       Employee(
-        srNo: 'A10',
-        activity: 'Bus Depot work Completed & Handover to TML',
+        srNo: 'A9',
+        activity: 'Electrical Infra Development completed at Bus Depot',
         originalDuration: 1,
         startDate: startdate.asMap().containsKey(7)
             ? startdate[7]
@@ -1287,6 +1269,31 @@ class _KeyEventsState extends State<KeyEvents> {
         balanceQty: 0,
         percProgress: 0,
         weightage: weight.asMap().containsKey(7) ? weight[7] : 0.0,
+      ),
+      Employee(
+        srNo: 'A10',
+        activity: 'Bus Depot work Completed & Handover to TML',
+        originalDuration: 1,
+        startDate: startdate.asMap().containsKey(8)
+            ? startdate[8]
+            : DateFormat('dd-MM-yyyy').format(DateTime(01 - 12 - 2022)),
+        endDate: enddate.asMap().containsKey(8)
+            ? enddate[8]
+            : DateFormat('dd-MM-yyyy').format(DateTime(01 - 12 - 2022)),
+        actualstartDate: asstartdate.asMap().containsKey(7)
+            ? asstartdate[8]
+            : DateFormat('dd-MM-yyyy').format(DateTime(01 - 12 - 2022)),
+        actualendDate: asenddate.asMap().containsKey(8)
+            ? asenddate[8]
+            : DateFormat('dd-MM-yyyy').format(DateTime(01 - 12 - 2022)),
+        actualDuration: 0,
+        delay: 0,
+        unit: 0,
+        scope: 0,
+        qtyExecuted: 0,
+        balanceQty: 0,
+        percProgress: 0,
+        weightage: weight.asMap().containsKey(8) ? weight[8] : 0.0,
       ),
     ];
   }
@@ -1317,7 +1324,6 @@ class _KeyEventsState extends State<KeyEvents> {
   //     },
   //   );
   // }
-
 }
 
 class ChartData {

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/datasource/employee_statutory.dart';
 
@@ -51,7 +52,7 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
             _employees = getData();
           }
           _isLoading = false;
-          _employeeDataSource = EmployeeDataStatutory(_employees);
+          _employeeDataSource = EmployeeDataStatutory(_employees, context);
           _dataGridController = DataGridController();
         });
         // _employeeDataSource = EmployeeDataSource(_employees);
@@ -59,7 +60,6 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
       });
       //getFirestoreData() as List<Employee>;
       // getEmployeeData();
-
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -126,6 +126,57 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
                           alignment: Alignment.center,
                           child: const Text('View File',
                               style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                        ),
+                      ),
+                      GridColumn(
+                        columnName: 'StartDate',
+                        allowEditing: false,
+                        width: 180,
+                        label: Container(
+                          alignment: Alignment.center,
+                          child: Text('Start Date',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                        ),
+                      ),
+                      GridColumn(
+                        columnName: 'EndDate',
+                        allowEditing: false,
+                        width: 180,
+                        label: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          alignment: Alignment.center,
+                          child: Text('End Date',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                        ),
+                      ),
+                      GridColumn(
+                        columnName: 'ActualStart',
+                        allowEditing: false,
+                        width: 180,
+                        label: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          alignment: Alignment.center,
+                          child: Text('Actual Start',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                        ),
+                      ),
+                      GridColumn(
+                        columnName: 'ActualEnd',
+                        allowEditing: false,
+                        width: 180,
+                        label: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          alignment: Alignment.center,
+                          child: Text('Actual End',
+                              overflow: TextOverflow.values.first,
+                              style: const TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16)),
                         ),
                       ),
@@ -262,6 +313,10 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
       EmployeeStatutory(
           srNo: 1,
           approval: 'Environment clearance',
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           weightage: 10,
           applicability: 'yes',
           approvingAuthority: 'JKEIAA',
@@ -273,6 +328,10 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
       EmployeeStatutory(
           srNo: 2,
           approval: 'Consent to Establish under air and water act',
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           weightage: 10,
           applicability: 'yes',
           approvingAuthority: 'JKPCC',
@@ -283,6 +342,10 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
       EmployeeStatutory(
           srNo: 3,
           approval: 'Hazardous Waste Disposal ',
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           weightage: 10,
           applicability: 'yes',
           approvingAuthority: 'JKEIAA',
@@ -294,6 +357,10 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
       EmployeeStatutory(
           srNo: 4,
           approval: 'Forest NOC',
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           weightage: 10,
           applicability: 'yes',
           approvingAuthority: 'JKEIAA',
@@ -304,6 +371,10 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
       EmployeeStatutory(
           srNo: 5,
           approval: 'Fire NOC',
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           weightage: 10,
           applicability: 'yes',
           approvingAuthority: 'JKEIAA',
@@ -315,6 +386,10 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
       EmployeeStatutory(
           srNo: 6,
           approval: 'Structural Stability from Government approved consultant',
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           weightage: 10,
           applicability: 'yes',
           approvingAuthority: 'JKEIAA',
@@ -326,6 +401,10 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
       EmployeeStatutory(
           srNo: 7,
           approval: 'PHE NOC (Public Health Engineering )',
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           weightage: 10,
           applicability: 'yes',
           approvingAuthority: 'JKEIAA',
@@ -337,6 +416,10 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
       EmployeeStatutory(
           srNo: 8,
           approval: 'Disaster Management authority',
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           weightage: 10,
           applicability: 'yes',
           approvingAuthority: 'JKEIAA',
@@ -348,6 +431,10 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
       EmployeeStatutory(
           srNo: 9,
           approval: 'Traffic NOC',
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           weightage: 10,
           applicability: 'yes',
           approvingAuthority: 'JKEIAA',
@@ -359,6 +446,10 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
       EmployeeStatutory(
           srNo: 10,
           approval: 'Consent to Operate Air and Water',
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           weightage: 10,
           applicability: 'yes',
           approvingAuthority: 'JKEIAA',
@@ -370,6 +461,10 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
       EmployeeStatutory(
           srNo: 11,
           approval: 'Labour Registration',
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           weightage: 10,
           applicability: 'yes',
           approvingAuthority: 'JKEIAA',
@@ -381,6 +476,10 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
       EmployeeStatutory(
           srNo: 12,
           approval: 'Chief Electrical Inspector Clearance',
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           weightage: 10,
           applicability: 'yes',
           approvingAuthority: 'JKEIAA',
@@ -392,6 +491,10 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
       EmployeeStatutory(
           srNo: 13,
           approval: 'ETP',
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           weightage: 10,
           applicability: 'yes',
           approvingAuthority: 'JKEIAA',

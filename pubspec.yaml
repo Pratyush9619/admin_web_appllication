@@ -29,6 +29,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  advanced_search: ^2.2.3
   cloud_firestore: ^4.1.0
   country_pickers: ^2.0.0
   cupertino_icons: ^1.0.2

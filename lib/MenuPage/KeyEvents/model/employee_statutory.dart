@@ -5,6 +5,10 @@ class EmployeeStatutory {
   EmployeeStatutory({
     required this.srNo,
     required this.approval,
+    required this.startDate,
+    required this.endDate,
+    required this.actualstartDate,
+    required this.actualendDate,
     required this.weightage,
     required this.applicability,
     required this.approvingAuthority,
@@ -16,6 +20,10 @@ class EmployeeStatutory {
 
   int srNo;
   String approval;
+  String? startDate;
+  String? endDate;
+  String? actualstartDate;
+  String? actualendDate;
   double weightage;
   String? applicability;
   String? approvingAuthority;
@@ -28,6 +36,10 @@ class EmployeeStatutory {
     return EmployeeStatutory(
         srNo: json['srNo'],
         approval: json['Approval'],
+        startDate: json['StartDate'],
+        endDate: json['EndDate'],
+        actualstartDate: json['ActualStart'],
+        actualendDate: json['ActualEnd'],
         weightage: json['Weightage'],
         applicability: json['Applicability'],
         approvingAuthority: json['ApprovingAuthority'],
@@ -42,6 +54,10 @@ class EmployeeStatutory {
       DataGridCell<int>(columnName: 'srNo', value: srNo),
       DataGridCell<String>(columnName: 'Approval', value: approval),
       const DataGridCell<Widget>(columnName: 'button', value: null),
+      DataGridCell<String>(columnName: 'StartDate', value: startDate),
+      DataGridCell<String>(columnName: 'EndDate', value: endDate),
+      DataGridCell<String>(columnName: 'ActualStart', value: actualstartDate),
+      DataGridCell<String>(columnName: 'ActualEnd', value: actualendDate),
       DataGridCell<double>(columnName: 'Weightage', value: weightage),
       DataGridCell<String>(columnName: 'Applicability', value: applicability),
       DataGridCell<String>(
