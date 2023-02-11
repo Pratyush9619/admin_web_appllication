@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web_appllication/Authentication/login_register.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/key_events.dart';
+import 'package:web_appllication/MenuPage/Planning/cities.dart';
 import 'package:web_appllication/MenuPage/Planning/overview.dart';
 import 'package:web_appllication/MenuPage/admin.dart';
 import 'package:web_appllication/MenuPage/home.dart';
@@ -86,6 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // ResourceAllocation();
         //  EventsPage();
         // KeyEvents();
+        // CitiesPage();
         LoginRegister();
   }
 }

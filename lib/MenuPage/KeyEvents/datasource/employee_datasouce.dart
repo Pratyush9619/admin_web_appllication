@@ -10,8 +10,11 @@ import 'package:web_appllication/MenuPage/KeyEvents/viewFIle.dart';
 
 class EmployeeDataSource extends DataGridSource {
   BuildContext mainContext;
+  String? cityName;
+  String? depoName;
 
-  EmployeeDataSource(this._employees, this.mainContext) {
+  EmployeeDataSource(
+      this._employees, this.mainContext, this.cityName, this.depoName) {
     buildDataGridRows();
   }
   void buildDataGridRows() {
@@ -77,7 +80,10 @@ class EmployeeDataSource extends DataGridSource {
                 return ElevatedButton(
                     onPressed: () {
                       Navigator.of(ctx).push(MaterialPageRoute(
-                        builder: (context) => ViewFile(),
+                        builder: (context) => ViewFile(
+                          cityName: cityName,
+                          depoName: depoName,
+                        ),
                       ));
                       // showDialog(
                       //     context: context,

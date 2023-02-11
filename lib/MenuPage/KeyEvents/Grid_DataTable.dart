@@ -112,7 +112,8 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                 }
                 if (!snapshot.hasData || snapshot.data.exists == false) {
                   _employees = getEmployeeData();
-                  _employeeDataSource = EmployeeDataSource(_employees, context);
+                  _employeeDataSource = EmployeeDataSource(
+                      _employees, context, widget.cityName, widget.depoName);
                   _dataGridController = DataGridController();
 
                   return Column(
@@ -422,8 +423,8 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                   _employees.clear();
                   alldata.forEach((element) {
                     _employees.add(Employee.fromJson(element));
-                    _employeeDataSource =
-                        EmployeeDataSource(_employees, context);
+                    _employeeDataSource = EmployeeDataSource(
+                        _employees, context, widget.cityName, widget.depoName);
                     _dataGridController = DataGridController();
                   });
                   for (int i = 0; i < alldata.length; i++) {

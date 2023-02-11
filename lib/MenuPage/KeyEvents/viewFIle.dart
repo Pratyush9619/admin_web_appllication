@@ -3,7 +3,10 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:web_appllication/style.dart';
 
 class ViewFile extends StatefulWidget {
-  const ViewFile({super.key});
+  String? cityName;
+  String? depoName;
+
+  ViewFile({super.key, this.cityName, this.depoName});
 
   @override
   State<ViewFile> createState() => _ViewFileState();
