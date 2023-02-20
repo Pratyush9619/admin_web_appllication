@@ -7,13 +7,13 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:web_appllication/MenuPage/KeyEvents/datasource/employee_datasouce.dart';
+import 'package:web_appllication/MenuPage/datasource/employee_datasouce.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/provider/text_provider.dart';
 import 'package:web_appllication/style.dart';
 
-import '../MenuPage/KeyEvents/datasource/depot_overviewdatasource.dart';
-import '../MenuPage/KeyEvents/model/depot_overview.dart';
+import '../MenuPage/datasource/depot_overviewdatasource.dart';
+import '../MenuPage/model/depot_overview.dart';
 
 class DepotOverview extends StatefulWidget {
   String? depoName;

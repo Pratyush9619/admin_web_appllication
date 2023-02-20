@@ -32,20 +32,26 @@ dependencies:
   advanced_search: ^2.2.3
   cloud_firestore: ^4.1.0
   country_pickers: ^2.0.0
+  csv: ^5.0.1
   cupertino_icons: ^1.0.2
+  excel: ^2.0.1
   external_app_launcher: ^3.1.0
   file_picker: ^5.2.3
   firebase_auth: ^4.1.4
   firebase_core: ^2.3.0
   firebase_storage: ^11.0.6
+  firebaseapis: ^0.1.2
   flutter:
     sdk: flutter
   flutter_admin_scaffold: ^1.1.2
+
+  flutter_pdfview: ^1.2.5
   flutter_slider_indicator: ^1.0.0
   gantt_chart: ^0.1.0
   get: ^4.6.5
   google_fonts: ^3.0.1
   group_button: ^5.2.2
+  http: ^0.13.5
   image_picker: ^0.8.6
   intl: ^0.17.0
   intl_phone_field: ^3.1.0
@@ -58,6 +64,7 @@ dependencies:
   syncfusion_flutter_datagrid: ^20.4.38
   syncfusion_flutter_datepicker: ^20.4.38
   syncfusion_flutter_pdfviewer: ^20.3.58
+  syncfusion_flutter_xlsio: ^20.4.50-beta
   tab_indicator_styler: ^2.0.0
 
 dev_dependencies:

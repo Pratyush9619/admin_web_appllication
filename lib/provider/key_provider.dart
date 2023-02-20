@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../MenuPage/KeyEvents/model/employee.dart';
+import '../MenuPage/model/employee.dart';
 
 class KeyProvider with ChangeNotifier {
   List<Employee> _employees = <Employee>[];

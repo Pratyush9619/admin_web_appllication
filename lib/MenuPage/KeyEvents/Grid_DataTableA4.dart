@@ -5,8 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/ChartData.dart';
-import 'package:web_appllication/MenuPage/KeyEvents/datasource/employee_datasouce.dart';
-import 'package:web_appllication/MenuPage/KeyEvents/model/employee.dart';
+import 'package:web_appllication/MenuPage/datasource/employee_datasouce.dart';
+import 'package:web_appllication/MenuPage/model/employee.dart';
 import 'package:web_appllication/components/loading_page.dart';
 
 import '../../style.dart';
@@ -103,7 +103,7 @@ class _StatutoryAprovalA4State extends State<StatutoryAprovalA4> {
                         height: _employees.length * 66,
                         child: Row(
                           children: [
-                            Expanded(
+                            Flexible(
                               child: SfDataGrid(
                                 source: _employeeDataSource,
                                 allowEditing: true,

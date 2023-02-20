@@ -35,9 +35,9 @@ class _UploadDocumentState extends State<UploadDocument> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text(
+                      Text(
                         'Selected file:',
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
@@ -46,16 +46,20 @@ class _UploadDocumentState extends State<UploadDocument> {
                           shrinkWrap: true,
                           itemCount: result?.files.length ?? 0,
                           itemBuilder: (context, index) {
-                            return Text(result?.files[index].name ?? '',
-                                style: const TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.bold));
+                            return Center(
+                              child: Text(result?.files[index].name ?? '',
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold)),
+                            );
                           })
                     ],
                   ),
                 ),
               ElevatedButton(
                   onPressed: () async {
-                    result = await FilePicker.platform.pickFiles();
+                    result = await FilePicker.platform
+                        .pickFiles(allowMultiple: false, withData: true);
                     if (result == null) {
                       print("No file selected");
                     } else {
@@ -88,8 +92,9 @@ class _UploadDocumentState extends State<UploadDocument> {
                       // String? fileName = result!.files.first.name;
 
                       await FirebaseStorage.instance
-                          .ref('uploads/' + widget.depoName!)
-                          .putData(fileBytes!)
+                          .ref('AwardLetter/' + widget.depoName!)
+                          .putData(fileBytes!,
+                              SettableMetadata(contentType: 'appllication/pdf'))
                           .whenComplete(() => setState(() => result == null));
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(

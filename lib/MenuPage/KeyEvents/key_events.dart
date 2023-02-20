@@ -12,14 +12,15 @@ import 'package:web_appllication/MenuPage/KeyEvents/Grid_DataTableA4.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/Grid_DataTableA6.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/Grid_DataTableA8.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/Grid_DataTableA9.dart';
-import 'package:web_appllication/MenuPage/KeyEvents/datasource/employee_datasouce.dart';
-import 'package:web_appllication/MenuPage/KeyEvents/model/employee.dart';
+import 'package:web_appllication/MenuPage/datasource/employee_datasouce.dart';
+import 'package:web_appllication/MenuPage/model/employee.dart';
+import 'package:web_appllication/MenuPage/KeyEvents/upload.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/viewFIle.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/provider/key_provider.dart';
 import 'package:web_appllication/style.dart';
 import 'Grid_DataTableA7.dart';
-import 'datasource/key_datasource.dart';
+import '../datasource/key_datasource.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
@@ -83,7 +84,9 @@ class _KeyEventsState extends State<KeyEvents> {
   @override
   Widget build(BuildContext context) {
     menuwidget = [
-      ViewFile(),
+      UploadDocument(
+        depoName: widget.depoName,
+      ),
       StatutoryAprovalA2(
         depoName: widget.depoName,
         cityName: widget.cityName,
@@ -126,7 +129,8 @@ class _KeyEventsState extends State<KeyEvents> {
         ? LoadingPage()
         : Scaffold(
             appBar: AppBar(
-              title: const Text('Key Events '),
+              title:
+                  Text('Key Events - ${widget.cityName} - ${widget.depoName}'),
               backgroundColor: blue,
             ),
             body: StreamBuilder(

@@ -4,12 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:web_appllication/MenuPage/KeyEvents/datasource/employee_statutory.dart';
+import 'package:web_appllication/MenuPage/datasource/employee_statutory.dart';
 
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/style.dart';
 
-import 'model/employee_statutory.dart';
+import '../model/employee_statutory.dart';
 
 void main() {
   runApp(StatutoryAprovalA5());

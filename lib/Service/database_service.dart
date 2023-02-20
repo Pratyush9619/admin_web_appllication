@@ -1,7 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class DatabaseService {
+  firebase_storage.FirebaseStorage storage =
+      firebase_storage.FirebaseStorage.instance;
+
   final CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('CityName');
 
@@ -25,9 +29,15 @@ class DatabaseService {
     });
   }
 
-  // Future resourceDepoData(String deponame) async {
-  //   await resourcecollectionReference.add({
+  Future<String> downloadURLExample() async {
+    String downloadURL = await firebase_storage.FirebaseStorage.instance
+        .ref(
+            'gs://tp-zap-solz.appspot.com/checklist/Jammu/DRDO/Initial Survey Of Depot With TML & STA Team.')
+        .getDownloadURL();
+    print(downloadURL);
 
-  //   });
-  // }
+    return downloadURL;
+    //   PDFDocument doc = await PDFDocument.fromURL(downloadURL);
+    //Notice the Push Route once this is done.
+  }
 }
