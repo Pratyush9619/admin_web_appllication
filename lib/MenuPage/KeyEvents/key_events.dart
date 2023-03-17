@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
@@ -22,6 +24,7 @@ import 'package:web_appllication/style.dart';
 import 'Grid_DataTableA7.dart';
 import '../datasource/key_datasource.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:async/async.dart';
 
 void main() {
   runApp(KeyEvents());
@@ -72,10 +75,80 @@ class _KeyEventsState extends State<KeyEvents> {
   bool _isInit = true;
   int? length;
 
+  double? weight2,
+      weight3,
+      weight4,
+      weight5,
+      weight6,
+      weight7,
+      weight8,
+      weight9;
+  String? startdate2,
+      enddate2,
+      asstartdate2,
+      asenddate2,
+      actualstartdate2,
+      actualenddate2;
+  String? startdate3,
+      enddate3,
+      asstartdate3,
+      asenddate3,
+      actualstartdate3,
+      actualenddate3;
+  String? startdate4,
+      enddate4,
+      asstartdate4,
+      asenddate4,
+      actualstartdate4,
+      actualenddate4;
+  String? startdate5,
+      enddate5,
+      asstartdate5,
+      asenddate5,
+      actualstartdate5,
+      actualenddate5;
+  String? startdate6,
+      enddate6,
+      asstartdate6,
+      asenddate6,
+      actualstartdate6,
+      actualenddate6;
+
+  String? startdate7,
+      enddate7,
+      asstartdate7,
+      asenddate7,
+      actualstartdate7,
+      actualenddate7;
+  String? startdate8,
+      enddate8,
+      asstartdate8,
+      asenddate8,
+      actualstartdate8,
+      actualenddate8;
+  String? startdate9,
+      enddate9,
+      asstartdate9,
+      asenddate9,
+      actualstartdate9,
+      actualenddate9;
+
   @override
   void initState() {
-    yourstream =
-        FirebaseFirestore.instance.collection('${widget.depoName}').snapshots();
+    yourstream = FirebaseFirestore.instance
+        .collection('KeyEventsTable')
+        .doc(widget.depoName!)
+        .collection('AllKeyEventsTable')
+        .snapshots();
+
+    // collection('${widget.depoName}').snapshots();
+
+    //  Firestore.instance
+    //     .collection('your_collection_name')
+    //     .document(documentId)
+    //     .snapshots();
+    // streamGroup.add(stream);
+
     super.initState();
   }
 
@@ -145,8 +218,32 @@ class _KeyEventsState extends State<KeyEvents> {
                       asenddate.clear();
                       weight.clear();
 
+                      // var alldataA21 =
+                      //     snapshot.data.docs['DRDOA1']['data'] as List<dynamic>;
+                      var alldataA2 =
+                          snapshot.data.docs[0]['data'] as List<dynamic>;
+                      sdate = alldataA2[0]['StartDate'];
+                      edate = alldataA2[alldataA2.length - 1]['EndDate'];
+                      asdate = alldataA2[0]['ActualStart'];
+                      aedate = alldataA2[alldataA2.length - 1]['ActualEnd'];
+                      startdate2 = sdate;
+                      enddate2 = edate;
+                      asstartdate2 = asdate;
+                      asenddate2 = aedate;
+                      print('Start$startdate');
+                      print('Start$enddate');
+
+                      for (int i = 0; i < alldataA2.length; i++) {
+                        var weightage = alldataA2[i]['Weightage'];
+                        totalweightage = totalweightage + weightage;
+                      }
+                      weight.add(totalweightage);
+
                       for (int i = 0; i < length; i++) {
                         totalweightage = 0;
+
+                        weight.add(totalweightage);
+
                         if (i == 3) {
                           var alldataA5 =
                               snapshot.data.docs[i]['data'] as List<dynamic>;
@@ -177,390 +274,397 @@ class _KeyEventsState extends State<KeyEvents> {
                           asstartdate.add(asdate!);
                           asenddate.add(aedate!);
                           print('Start$startdate');
-                          print('Start$enddate');
+                          print('End$enddate');
 
                           for (int i = 0; i < alldata.length; i++) {
                             var weightage = alldata[i]['Weightage'];
                             totalweightage = totalweightage + weightage;
                           }
                           weight.add(totalweightage);
-                          print(weight);
+                          chartData = [
+                            ChartData(
+                                'A10',
+                                weight.asMap().containsKey(8) ? weight[8] : 0,
+                                Colors.yellow),
+                            ChartData(
+                                'A9',
+                                weight.asMap().containsKey(7) ? weight[7] : 0,
+                                Colors.yellow),
+                            ChartData(
+                                'A8',
+                                weight.asMap().containsKey(6) ? weight[6] : 0,
+                                Colors.yellow),
+                            ChartData(
+                                'A7',
+                                weight.asMap().containsKey(5) ? weight[5] : 0,
+                                Colors.yellow),
+                            ChartData(
+                                'A6',
+                                weight.asMap().containsKey(4) ? weight[4] : 0,
+                                Colors.yellow),
+                            ChartData(
+                                'A5',
+                                weight.asMap().containsKey(3) ? weight[3] : 0,
+                                Colors.yellow),
+                            ChartData(
+                                'A4',
+                                weight.asMap().containsKey(2) ? weight[2] : 0,
+                                Colors.yellow),
+                            ChartData(
+                                'A3',
+                                weight.asMap().containsKey(1) ? weight[1] : 0,
+                                Colors.yellow),
+                            ChartData(
+                                'A2',
+                                weight.asMap().containsKey(0) ? weight[0] : 0,
+                                Colors.yellow),
+                            ChartData('A1', 5, Colors.yellow),
+                          ];
+                          chartData2 = [
+                            ChartData(
+                                'A10',
+                                weight.asMap().containsKey(8) ? weight[8] : 0,
+                                Colors.red),
+                            ChartData(
+                                'A9',
+                                weight.asMap().containsKey(7) ? weight[7] : 0,
+                                Colors.red),
+                            ChartData(
+                                'A8',
+                                weight.asMap().containsKey(6) ? weight[6] : 0,
+                                Colors.red),
+                            ChartData(
+                                'A7',
+                                weight.asMap().containsKey(5) ? weight[5] : 0,
+                                Colors.red),
+                            ChartData(
+                                'A6',
+                                weight.asMap().containsKey(4) ? weight[4] : 0,
+                                Colors.red),
+                            ChartData(
+                                'A5',
+                                weight.asMap().containsKey(3) ? weight[3] : 0,
+                                Colors.red),
+                            ChartData(
+                                'A4',
+                                weight.asMap().containsKey(2) ? weight[2] : 0,
+                                Colors.red),
+                            ChartData(
+                                'A3',
+                                weight.asMap().containsKey(1) ? weight[1] : 0,
+                                Colors.red),
+                            ChartData(
+                                'A2',
+                                weight.asMap().containsKey(0) ? weight[0] : 0,
+                                Colors.red),
+                            ChartData('A1', 5, Colors.red),
+                          ];
+
+                          _employees = getEmployeeData();
+                          _KeyDataSourceKeyEvents =
+                              KeyDataSourceKeyEvents(_employees, context);
+                          _dataGridController = DataGridController();
+
+                          return Container(
+                              height: 580,
+                              child: Row(children: [
+                                Expanded(
+                                  child: SfDataGrid(
+                                    source: _KeyDataSourceKeyEvents,
+                                    onCellTap:
+                                        (DataGridCellTapDetails details) {
+                                      final DataGridRow row =
+                                          _KeyDataSourceKeyEvents.effectiveRows[
+                                              details.rowColumnIndex.rowIndex -
+                                                  1];
+
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) => menuwidget[
+                                                  details.rowColumnIndex
+                                                          .rowIndex -
+                                                      1]));
+                                    },
+                                    allowEditing: true,
+                                    frozenColumnsCount: 2,
+                                    editingGestureType: EditingGestureType.tap,
+                                    headerGridLinesVisibility:
+                                        GridLinesVisibility.both,
+                                    gridLinesVisibility:
+                                        GridLinesVisibility.both,
+                                    selectionMode: SelectionMode.single,
+                                    navigationMode: GridNavigationMode.cell,
+                                    columnWidthMode: ColumnWidthMode.auto,
+                                    controller: _dataGridController,
+                                    // onQueryRowHeight: (details) {
+                                    //   return details.rowIndex == 0 ? 60.0 : 49.0;
+                                    // },
+                                    columns: [
+                                      GridColumn(
+                                        columnName: 'srNo',
+                                        autoFitPadding: EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        allowEditing: false,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Sr No',
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+
+                                            //    textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'Activity',
+                                        allowEditing: false,
+                                        width: 220,
+                                        label: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16.0),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Activity',
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'OriginalDuration',
+                                        allowEditing: false,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Original Duration',
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'StartDate',
+                                        allowEditing: false,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Start Date',
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'EndDate',
+                                        allowEditing: false,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'End Date',
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'ActualStart',
+                                        allowEditing: false,
+                                        width: 150,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Actual Start',
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'ActualEnd',
+                                        allowEditing: false,
+                                        width: 150,
+                                        label: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16.0),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Actual End',
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'ActualDuration',
+                                        allowEditing: false,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Actual Duration',
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'Delay',
+                                        allowEditing: false,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Delay',
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'Dependency',
+                                        allowEditing: false,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Dependency',
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      // GridColumn(
+                                      //   columnName: 'QtyScope',
+                                      //   allowEditing: false,
+                                      //   label: Container(
+                                      //     alignment: Alignment.center,
+                                      //     child: Text(
+                                      //       'Oty as per scope',
+                                      //       overflow: TextOverflow.values.first,
+                                      //       style: const TextStyle(
+                                      //           fontWeight: FontWeight.bold,
+                                      //           fontSize: 16),
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                      // GridColumn(
+                                      //   columnName: 'QtyExecuted',
+                                      //   allowEditing: false,
+                                      //   label: Container(
+                                      //     alignment: Alignment.center,
+                                      //     child: Text(
+                                      //       'Qty executed',
+                                      //       overflow: TextOverflow.values.first,
+                                      //       style: const TextStyle(
+                                      //           fontWeight: FontWeight.bold,
+                                      //           fontSize: 16),
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                      // GridColumn(
+                                      //   columnName: 'BalancedQty',
+                                      //   allowEditing: false,
+                                      //   label: Container(
+                                      //     width: 150,
+                                      //     alignment: Alignment.center,
+                                      //     child: Text(
+                                      //       'Balanced Qty',
+                                      //       overflow: TextOverflow.values.first,
+                                      //       style: const TextStyle(
+                                      //           fontWeight: FontWeight.bold,
+                                      //           fontSize: 16),
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                      GridColumn(
+                                        columnName: 'Progress',
+                                        allowEditing: false,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            '% of Progress',
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'Weightage',
+                                        allowEditing: false,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Weightage',
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                    width: 300,
+                                    margin: EdgeInsets.only(top: 10),
+                                    child: SfCartesianChart(
+                                        title: ChartTitle(
+                                            text: 'All Events Wightage Graph'),
+                                        primaryXAxis: CategoryAxis(
+                                            // title: AxisTitle(text: 'Key Events')
+                                            ),
+                                        primaryYAxis: NumericAxis(
+                                            // title: AxisTitle(text: 'Weightage')
+                                            ),
+                                        series: <ChartSeries>[
+                                          // Renders column chart
+                                          BarSeries<ChartData, String>(
+                                              dataSource: chartData2,
+                                              xValueMapper:
+                                                  (ChartData data, _) => data.x,
+                                              yValueMapper:
+                                                  (ChartData data, _) => data.y,
+                                              pointColorMapper:
+                                                  (ChartData data, _) =>
+                                                      data.y1),
+
+                                          BarSeries<ChartData, String>(
+                                              dataSource: chartData,
+                                              dataLabelSettings:
+                                                  DataLabelSettings(
+                                                      isVisible: true),
+                                              xValueMapper:
+                                                  (ChartData data, _) => data.x,
+                                              yValueMapper:
+                                                  (ChartData data, _) => data.y,
+                                              pointColorMapper:
+                                                  (ChartData data, _) =>
+                                                      data.y1)
+                                        ]))
+                              ]));
                         }
                       }
-                      chartData = [
-                        ChartData(
-                            'A10',
-                            weight.asMap().containsKey(8) ? weight[8] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A9',
-                            weight.asMap().containsKey(7) ? weight[7] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A8',
-                            weight.asMap().containsKey(6) ? weight[6] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A7',
-                            weight.asMap().containsKey(5) ? weight[5] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A6',
-                            weight.asMap().containsKey(4) ? weight[4] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A5',
-                            weight.asMap().containsKey(3) ? weight[3] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A4',
-                            weight.asMap().containsKey(2) ? weight[2] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A3',
-                            weight.asMap().containsKey(1) ? weight[1] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A2',
-                            weight.asMap().containsKey(0) ? weight[0] : 0,
-                            Colors.yellow),
-                        ChartData('A1', 5, Colors.yellow),
-                      ];
-                      chartData2 = [
-                        ChartData(
-                            'A10',
-                            weight.asMap().containsKey(8) ? weight[8] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A9',
-                            weight.asMap().containsKey(7) ? weight[7] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A8',
-                            weight.asMap().containsKey(6) ? weight[6] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A7',
-                            weight.asMap().containsKey(5) ? weight[5] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A6',
-                            weight.asMap().containsKey(4) ? weight[4] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A5',
-                            weight.asMap().containsKey(3) ? weight[3] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A4',
-                            weight.asMap().containsKey(2) ? weight[2] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A3',
-                            weight.asMap().containsKey(1) ? weight[1] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A2',
-                            weight.asMap().containsKey(0) ? weight[0] : 0,
-                            Colors.red),
-                        ChartData('A1', 5, Colors.red),
-                      ];
-
-                      _employees = getEmployeeData();
-                      _KeyDataSourceKeyEvents =
-                          KeyDataSourceKeyEvents(_employees, context);
-                      _dataGridController = DataGridController();
-
-                      return Container(
-                          height: 580,
-                          child: Row(children: [
-                            Expanded(
-                              child: SfDataGrid(
-                                source: _KeyDataSourceKeyEvents,
-                                onCellTap: (DataGridCellTapDetails details) {
-                                  final DataGridRow row =
-                                      _KeyDataSourceKeyEvents.effectiveRows[
-                                          details.rowColumnIndex.rowIndex - 1];
-
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => menuwidget[
-                                          details.rowColumnIndex.rowIndex -
-                                              1]));
-                                },
-                                allowEditing: true,
-                                frozenColumnsCount: 2,
-                                editingGestureType: EditingGestureType.tap,
-                                headerGridLinesVisibility:
-                                    GridLinesVisibility.both,
-                                gridLinesVisibility: GridLinesVisibility.both,
-                                selectionMode: SelectionMode.single,
-                                navigationMode: GridNavigationMode.cell,
-                                columnWidthMode: ColumnWidthMode.auto,
-                                controller: _dataGridController,
-                                // onQueryRowHeight: (details) {
-                                //   return details.rowIndex == 0 ? 60.0 : 49.0;
-                                // },
-                                columns: [
-                                  GridColumn(
-                                    columnName: 'srNo',
-                                    autoFitPadding:
-                                        EdgeInsets.symmetric(horizontal: 16),
-                                    allowEditing: false,
-                                    label: Container(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Sr No',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-
-                                        //    textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ),
-                                  GridColumn(
-                                    columnName: 'Activity',
-                                    allowEditing: false,
-                                    width: 220,
-                                    label: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Activity',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                    ),
-                                  ),
-                                  GridColumn(
-                                    columnName: 'OriginalDuration',
-                                    allowEditing: false,
-                                    label: Container(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Original Duration',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                    ),
-                                  ),
-                                  GridColumn(
-                                    columnName: 'StartDate',
-                                    allowEditing: false,
-                                    label: Container(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Start Date',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                    ),
-                                  ),
-                                  GridColumn(
-                                    columnName: 'EndDate',
-                                    allowEditing: false,
-                                    label: Container(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'End Date',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                    ),
-                                  ),
-                                  GridColumn(
-                                    columnName: 'ActualStart',
-                                    allowEditing: false,
-                                    width: 150,
-                                    label: Container(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Actual Start',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                    ),
-                                  ),
-                                  GridColumn(
-                                    columnName: 'ActualEnd',
-                                    allowEditing: false,
-                                    width: 150,
-                                    label: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Actual End',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                    ),
-                                  ),
-                                  GridColumn(
-                                    columnName: 'ActualDuration',
-                                    allowEditing: false,
-                                    label: Container(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Actual Duration',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                    ),
-                                  ),
-                                  GridColumn(
-                                    columnName: 'Delay',
-                                    allowEditing: false,
-                                    label: Container(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Delay',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                    ),
-                                  ),
-                                  GridColumn(
-                                    columnName: 'Unit',
-                                    allowEditing: false,
-                                    label: Container(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Unit',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                    ),
-                                  ),
-                                  GridColumn(
-                                    columnName: 'QtyScope',
-                                    allowEditing: false,
-                                    label: Container(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Oty as per scope',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                    ),
-                                  ),
-                                  GridColumn(
-                                    columnName: 'QtyExecuted',
-                                    allowEditing: false,
-                                    label: Container(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Qty executed',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                    ),
-                                  ),
-                                  GridColumn(
-                                    columnName: 'BalancedQty',
-                                    allowEditing: false,
-                                    label: Container(
-                                      width: 150,
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Balanced Qty',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                    ),
-                                  ),
-                                  GridColumn(
-                                    columnName: 'Progress',
-                                    allowEditing: false,
-                                    label: Container(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        '% of Progress',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                    ),
-                                  ),
-                                  GridColumn(
-                                    columnName: 'Weightage',
-                                    allowEditing: false,
-                                    label: Container(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Weightage',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                                width: 300,
-                                margin: EdgeInsets.only(top: 10),
-                                child: SfCartesianChart(
-                                    title: ChartTitle(
-                                        text: 'All Events Wightage Graph'),
-                                    primaryXAxis: CategoryAxis(
-                                        // title: AxisTitle(text: 'Key Events')
-                                        ),
-                                    primaryYAxis: NumericAxis(
-                                        // title: AxisTitle(text: 'Weightage')
-                                        ),
-                                    series: <ChartSeries>[
-                                      // Renders column chart
-                                      BarSeries<ChartData, String>(
-                                          dataSource: chartData2,
-                                          xValueMapper: (ChartData data, _) =>
-                                              data.x,
-                                          yValueMapper: (ChartData data, _) =>
-                                              data.y,
-                                          pointColorMapper:
-                                              (ChartData data, _) => data.y1),
-
-                                      BarSeries<ChartData, String>(
-                                          dataSource: chartData,
-                                          dataLabelSettings: DataLabelSettings(
-                                              isVisible: true),
-                                          xValueMapper: (ChartData data, _) =>
-                                              data.x,
-                                          yValueMapper: (ChartData data, _) =>
-                                              data.y,
-                                          pointColorMapper:
-                                              (ChartData data, _) => data.y1)
-                                    ]))
-                          ]));
                     }
                   } else {
                     return LoadingPage();
@@ -737,12 +841,12 @@ class _KeyEventsState extends State<KeyEvents> {
                                 ),
                               ),
                               GridColumn(
-                                columnName: 'Unit',
+                                columnName: 'Dependency',
                                 allowEditing: false,
                                 label: Container(
                                   alignment: Alignment.center,
                                   child: Text(
-                                    'Unit',
+                                    'Dependency',
                                     overflow: TextOverflow.values.first,
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold,
@@ -750,49 +854,49 @@ class _KeyEventsState extends State<KeyEvents> {
                                   ),
                                 ),
                               ),
-                              GridColumn(
-                                columnName: 'QtyScope',
-                                allowEditing: false,
-                                label: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Oty as per scope',
-                                    overflow: TextOverflow.values.first,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                columnName: 'QtyExecuted',
-                                allowEditing: false,
-                                label: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Qty executed',
-                                    overflow: TextOverflow.values.first,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                columnName: 'BalancedQty',
-                                allowEditing: false,
-                                label: Container(
-                                  width: 150,
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Balanced Qty',
-                                    overflow: TextOverflow.values.first,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                ),
-                              ),
+                              // GridColumn(
+                              //   columnName: 'QtyScope',
+                              //   allowEditing: false,
+                              //   label: Container(
+                              //     alignment: Alignment.center,
+                              //     child: Text(
+                              //       'Oty as per scope',
+                              //       overflow: TextOverflow.values.first,
+                              //       style: const TextStyle(
+                              //           fontWeight: FontWeight.bold,
+                              //           fontSize: 16),
+                              //     ),
+                              //   ),
+                              // ),
+                              // GridColumn(
+                              //   columnName: 'QtyExecuted',
+                              //   allowEditing: false,
+                              //   label: Container(
+                              //     alignment: Alignment.center,
+                              //     child: Text(
+                              //       'Qty executed',
+                              //       overflow: TextOverflow.values.first,
+                              //       style: const TextStyle(
+                              //           fontWeight: FontWeight.bold,
+                              //           fontSize: 16),
+                              //     ),
+                              //   ),
+                              // ),
+                              // GridColumn(
+                              //   columnName: 'BalancedQty',
+                              //   allowEditing: false,
+                              //   label: Container(
+                              //     width: 150,
+                              //     alignment: Alignment.center,
+                              //     child: Text(
+                              //       'Balanced Qty',
+                              //       overflow: TextOverflow.values.first,
+                              //       style: const TextStyle(
+                              //           fontWeight: FontWeight.bold,
+                              //           fontSize: 16),
+                              //     ),
+                              //   ),
+                              // ),
                               GridColumn(
                                 columnName: 'Progress',
                                 allowEditing: false,
@@ -826,6 +930,7 @@ class _KeyEventsState extends State<KeyEvents> {
                         )
                       ]));
                 })); //  _isLoading
+
     //     ? LoadingPage()
     //     :
   }
@@ -841,6 +946,7 @@ class _KeyEventsState extends State<KeyEvents> {
           actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
+          reasonDelay: '',
           delay: 0,
           unit: 0,
           scope: 0,
@@ -858,6 +964,7 @@ class _KeyEventsState extends State<KeyEvents> {
           actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
+          reasonDelay: '',
           delay: 0,
           unit: 0,
           scope: 0,
@@ -876,6 +983,7 @@ class _KeyEventsState extends State<KeyEvents> {
           actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
+          reasonDelay: '',
           delay: 0,
           unit: 0,
           scope: 0,
@@ -893,6 +1001,7 @@ class _KeyEventsState extends State<KeyEvents> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
@@ -909,6 +1018,7 @@ class _KeyEventsState extends State<KeyEvents> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
@@ -925,6 +1035,7 @@ class _KeyEventsState extends State<KeyEvents> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
@@ -941,6 +1052,7 @@ class _KeyEventsState extends State<KeyEvents> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
@@ -957,6 +1069,7 @@ class _KeyEventsState extends State<KeyEvents> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
@@ -973,6 +1086,7 @@ class _KeyEventsState extends State<KeyEvents> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
@@ -989,6 +1103,7 @@ class _KeyEventsState extends State<KeyEvents> {
         actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
         actualDuration: 0,
         delay: 0,
+        reasonDelay: '',
         unit: 0,
         scope: 0,
         qtyExecuted: 0,
@@ -1018,11 +1133,12 @@ class _KeyEventsState extends State<KeyEvents> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
-          percProgress: 0,
+          percProgress: 100,
           weightage: 10),
       Employee(
         srNo: 'A2',
@@ -1043,6 +1159,7 @@ class _KeyEventsState extends State<KeyEvents> {
             : DateFormat('dd-MM-yyyy').format(DateTime.now()),
         actualDuration: 0,
         delay: 0,
+        reasonDelay: '',
         unit: 0,
         scope: 0,
         qtyExecuted: 0,
@@ -1069,6 +1186,7 @@ class _KeyEventsState extends State<KeyEvents> {
             : DateFormat('dd-MM-yyyy').format(DateTime.now()),
         actualDuration: 0,
         delay: 0,
+        reasonDelay: '',
         unit: 0,
         scope: 0,
         qtyExecuted: 0,
@@ -1094,6 +1212,7 @@ class _KeyEventsState extends State<KeyEvents> {
             : DateFormat('dd-MM-yyyy').format(DateTime.now()),
         actualDuration: 0,
         delay: 0,
+        reasonDelay: '',
         unit: 0,
         scope: 0,
         qtyExecuted: 0,
@@ -1119,6 +1238,7 @@ class _KeyEventsState extends State<KeyEvents> {
             : DateFormat('dd-MM-yyyy').format(DateTime.now()),
         actualDuration: 0,
         delay: 0,
+        reasonDelay: '',
         unit: 0,
         scope: 0,
         qtyExecuted: 0,
@@ -1144,6 +1264,7 @@ class _KeyEventsState extends State<KeyEvents> {
             : DateFormat('dd-MM-yyyy').format(DateTime.now()),
         actualDuration: 0,
         delay: 0,
+        reasonDelay: '',
         unit: 0,
         scope: 0,
         qtyExecuted: 0,
@@ -1169,6 +1290,7 @@ class _KeyEventsState extends State<KeyEvents> {
             : DateFormat('dd-MM-yyyy').format(DateTime.now()),
         actualDuration: 0,
         delay: 0,
+        reasonDelay: '',
         unit: 0,
         scope: 0,
         qtyExecuted: 0,
@@ -1194,6 +1316,7 @@ class _KeyEventsState extends State<KeyEvents> {
             : DateFormat('dd-MM-yyyy').format(DateTime.now()),
         actualDuration: 0,
         delay: 0,
+        reasonDelay: '',
         unit: 0,
         scope: 0,
         qtyExecuted: 0,
@@ -1219,6 +1342,7 @@ class _KeyEventsState extends State<KeyEvents> {
             : DateFormat('dd-MM-yyyy').format(DateTime.now()),
         actualDuration: 0,
         delay: 0,
+        reasonDelay: '',
         unit: 0,
         scope: 0,
         qtyExecuted: 0,
@@ -1244,6 +1368,7 @@ class _KeyEventsState extends State<KeyEvents> {
             : DateFormat('dd-MM-yyyy').format(DateTime.now()),
         actualDuration: 0,
         delay: 0,
+        reasonDelay: '',
         unit: 0,
         scope: 0,
         qtyExecuted: 0,

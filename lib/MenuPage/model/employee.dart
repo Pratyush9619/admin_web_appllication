@@ -13,6 +13,8 @@ class Employee {
     required this.actualendDate,
     required this.actualDuration,
     required this.delay,
+    required this.reasonDelay,
+    this.dependency,
     required this.unit,
     required this.scope,
     required this.qtyExecuted,
@@ -29,7 +31,9 @@ class Employee {
   String? actualstartDate;
   String? actualendDate;
   int actualDuration;
+  String? reasonDelay;
   int delay;
+  String? dependency;
   int unit;
   int scope;
   int qtyExecuted;
@@ -48,6 +52,7 @@ class Employee {
         actualendDate: json['ActualEnd'],
         actualDuration: json['ActualDuration'],
         delay: json['Delay'],
+        reasonDelay: json['ReasonDelay'],
         unit: json['Unit'],
         scope: json['QtyScope'],
         qtyExecuted: json['QtyExecuted'],
@@ -69,6 +74,7 @@ class Employee {
       DataGridCell<String>(columnName: 'ActualEnd', value: actualendDate),
       DataGridCell<int>(columnName: 'ActualDuration', value: actualDuration),
       DataGridCell<int>(columnName: 'Delay', value: delay),
+      DataGridCell<String>(columnName: 'ReasonDelay', value: reasonDelay),
       DataGridCell<int>(columnName: 'Unit', value: unit),
       DataGridCell<int>(columnName: 'QtyScope', value: scope),
       DataGridCell<int>(columnName: 'QtyExecuted', value: qtyExecuted),
@@ -91,10 +97,11 @@ class Employee {
       DataGridCell<String>(columnName: 'ActualEnd', value: actualendDate),
       DataGridCell<int>(columnName: 'ActuaslDuration', value: actualDuration),
       DataGridCell<int>(columnName: 'Delay', value: delay),
-      DataGridCell<int>(columnName: 'Unit', value: unit),
-      DataGridCell<int>(columnName: 'QtyScope', value: scope),
-      DataGridCell<int>(columnName: 'QtyExecuted', value: qtyExecuted),
-      DataGridCell<int>(columnName: 'BalancedQty', value: balanceQty),
+      DataGridCell<String>(columnName: 'Dependency', value: dependency),
+      // DataGridCell<int>(columnName: 'Unit', value: unit),
+      // DataGridCell<int>(columnName: 'QtyScope', value: scope),
+      // DataGridCell<int>(columnName: 'QtyExecuted', value: qtyExecuted),
+      // DataGridCell<int>(columnName: 'BalancedQty', value: balanceQty),
       DataGridCell<int>(columnName: 'Progress', value: percProgress),
       DataGridCell<double>(columnName: 'Weightage', value: weightage),
     ]);

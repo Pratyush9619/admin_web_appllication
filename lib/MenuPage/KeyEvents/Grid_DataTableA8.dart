@@ -10,6 +10,8 @@ import 'package:web_appllication/MenuPage/model/employee.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/style.dart';
 
+import '../../widgets/custom_appbar.dart';
+
 void main() {
   runApp(StatutoryAprovalA8());
 }
@@ -74,7 +76,9 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
   @override
   void initState() {
     _stream = FirebaseFirestore.instance
-        .collection('${widget.depoName}')
+        .collection('KeyEventsTable')
+        .doc(widget.depoName!)
+        .collection('AllKeyEventsTable')
         .doc('${widget.depoName}A7')
         .snapshots();
     super.initState();
@@ -84,9 +88,16 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Key Events / ' + widget.depoName! + ' /A8'),
-        backgroundColor: blue,
+      appBar: PreferredSize(
+        // ignore: sort_child_properties_last
+        child: CustomAppBar(
+          text: 'Key Events / ${widget.depoName!} /A8',
+          haveSynced: true,
+          store: () {
+            StoreData();
+          },
+        ),
+        preferredSize: Size.fromHeight(50),
       ),
       body: _isLoading
           ? LoadingPage()
@@ -268,6 +279,19 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
                                       ),
                                     ),
                                     GridColumn(
+                                      columnName: 'ReasonDelay',
+                                      allowEditing: true,
+                                      label: Container(
+                                        alignment: Alignment.center,
+                                        child: Text('Reason For Delay',
+                                            textAlign: TextAlign.center,
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16)),
+                                      ),
+                                    ),
+                                    GridColumn(
                                       columnName: 'Unit',
                                       allowEditing: true,
                                       label: Container(
@@ -372,40 +396,40 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
                             ],
                           ),
                         ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: blue),
-                              onPressed: () async {
-                                showCupertinoDialog(
-                                  context: context,
-                                  builder: (context) =>
-                                      const CupertinoAlertDialog(
-                                    content: SizedBox(
-                                      height: 50,
-                                      width: 50,
-                                      child: Center(
-                                        child: CircularProgressIndicator(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                                StoreData();
-                              },
-                              child: const Text(
-                                'Sync Data',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                ),
-                              )),
-                        ),
+                        // const SizedBox(
+                        //   height: 5,
+                        // ),
+                        // Padding(
+                        //   padding: const EdgeInsets.all(10.0),
+                        //   child: ElevatedButton(
+                        //       style: ElevatedButton.styleFrom(
+                        //           backgroundColor: blue),
+                        //       onPressed: () async {
+                        //         showCupertinoDialog(
+                        //           context: context,
+                        //           builder: (context) =>
+                        //               const CupertinoAlertDialog(
+                        //             content: SizedBox(
+                        //               height: 50,
+                        //               width: 50,
+                        //               child: Center(
+                        //                 child: CircularProgressIndicator(
+                        //                   color: Colors.white,
+                        //                 ),
+                        //               ),
+                        //             ),
+                        //           ),
+                        //         );
+                        //         StoreData();
+                        //       },
+                        //       child: const Text(
+                        //         'Sync Data',
+                        //         textAlign: TextAlign.center,
+                        //         style: TextStyle(
+                        //           fontSize: 15,
+                        //         ),
+                        //       )),
+                        // ),
                       ],
                     ),
                   );
@@ -594,6 +618,19 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
                                       ),
                                     ),
                                     GridColumn(
+                                      columnName: 'ReasonDelay',
+                                      allowEditing: true,
+                                      label: Container(
+                                        alignment: Alignment.center,
+                                        child: Text('Reason For Delay',
+                                            textAlign: TextAlign.center,
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16)),
+                                      ),
+                                    ),
+                                    GridColumn(
                                       columnName: 'Unit',
                                       allowEditing: true,
                                       label: Container(
@@ -698,40 +735,40 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
                             ],
                           ),
                         ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: blue),
-                              onPressed: () async {
-                                showCupertinoDialog(
-                                  context: context,
-                                  builder: (context) =>
-                                      const CupertinoAlertDialog(
-                                    content: SizedBox(
-                                      height: 50,
-                                      width: 50,
-                                      child: Center(
-                                        child: CircularProgressIndicator(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                                StoreData();
-                              },
-                              child: const Text(
-                                'Sync Data',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                ),
-                              )),
-                        ),
+                        // const SizedBox(
+                        //   height: 5,
+                        // ),
+                        // Padding(
+                        //   padding: const EdgeInsets.all(10.0),
+                        //   child: ElevatedButton(
+                        //       style: ElevatedButton.styleFrom(
+                        //           backgroundColor: blue),
+                        //       onPressed: () async {
+                        //         showCupertinoDialog(
+                        //           context: context,
+                        //           builder: (context) =>
+                        //               const CupertinoAlertDialog(
+                        //             content: SizedBox(
+                        //               height: 50,
+                        //               width: 50,
+                        //               child: Center(
+                        //                 child: CircularProgressIndicator(
+                        //                   color: Colors.white,
+                        //                 ),
+                        //               ),
+                        //             ),
+                        //           ),
+                        //         );
+                        //         StoreData();
+                        //       },
+                        //       child: const Text(
+                        //         'Sync Data',
+                        //         textAlign: TextAlign.center,
+                        //         style: TextStyle(
+                        //           fontSize: 15,
+                        //         ),
+                        //       )),
+                        // ),
                       ],
                     ),
                   );
@@ -752,6 +789,7 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
                 actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
                 actualDuration: 0,
                 delay: 0,
+                reasonDelay: '',
                 unit: 0,
                 scope: 0,
                 qtyExecuted: 0,
@@ -793,12 +831,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 2.4),
       Employee(
           srNo: 2,
           activity: 'Manual Excavation',
@@ -809,12 +848,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 0.9),
       Employee(
           srNo: 3,
           activity: 'Soling',
@@ -825,12 +865,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 1.1),
       Employee(
           srNo: 4,
           activity: 'PCC & Curing',
@@ -841,12 +882,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 1.5),
       Employee(
           srNo: 5,
           activity: 'Reinforcement tying of Raft (charger Foundation)',
@@ -857,12 +899,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 1.5),
       Employee(
           srNo: 6,
           activity: 'Shuttering of Raft (charger Foundation)',
@@ -873,12 +916,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 1.5),
       Employee(
           srNo: 7,
           activity: 'Concreting of Raft (charger Foundation) and Curing',
@@ -889,12 +933,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 1.5),
       Employee(
           srNo: 8,
           activity: 'Reinforcement tying of pedestal (PSS)',
@@ -905,12 +950,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 1.5),
       Employee(
           srNo: 9,
           activity: 'Shuttering of pedestal (PSS Foundation) ',
@@ -921,12 +967,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 1.5),
       Employee(
           srNo: 10,
           activity: 'Concreting of pedestal (PSS Foundation) ',
@@ -937,12 +984,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 6.6),
       Employee(
           srNo: 11,
           activity: 'Reinforcement tying of Raft (shed)',
@@ -953,12 +1001,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 0.6),
       Employee(
           srNo: 12,
           activity: 'Shuttering of Raft (shed)',
@@ -969,12 +1018,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 0.6),
       Employee(
           srNo: 13,
           activity: 'Concreting of Raft (shed) and Curing',
@@ -985,12 +1035,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 0.6),
       Employee(
           srNo: 14,
           activity: 'Backfilling',
@@ -1001,12 +1052,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 1.1),
       Employee(
           srNo: 15,
           activity: 'Erection of shed structure',
@@ -1017,12 +1069,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 1.2),
       Employee(
           srNo: 16,
           activity: 'Roof sheeting',
@@ -1033,12 +1086,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 1.1),
       Employee(
           srNo: 17,
           activity: 'Concreting around excavated area',
@@ -1049,12 +1103,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 0.6),
       Employee(
           srNo: 18,
           activity: 'Thermoplastic paint',
@@ -1065,12 +1120,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 0.3),
       Employee(
           srNo: 19,
           activity: 'Crash barrier ',
@@ -1081,12 +1137,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 0.3),
       Employee(
           srNo: 20,
           activity: '5S activity',
@@ -1097,12 +1154,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 0.3),
       Employee(
           srNo: 21,
           activity: 'Cable Trenching (for burried cable)',
@@ -1113,12 +1171,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 1.0),
       Employee(
           srNo: 22,
           activity: 'Compressor foundation and room',
@@ -1129,6 +1188,7 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
@@ -1145,6 +1205,7 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
@@ -1161,12 +1222,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 0.8),
       Employee(
           srNo: 25,
           activity: 'Painiting ',
@@ -1177,12 +1239,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 0.3),
     ];
   }
 
@@ -1199,11 +1262,13 @@ class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
     }
 
     FirebaseFirestore.instance
-        .collection(widget.depoName!)
+        .collection('KeyEventsTable')
+        .doc(widget.depoName!)
+        .collection('AllKeyEventsTable')
         .doc('${widget.depoName}A7')
         .set({'data': tabledata2}).whenComplete(() {
       tabledata2.clear();
-      Navigator.pop(context);
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: const Text('Data are synced'),
         backgroundColor: blue,

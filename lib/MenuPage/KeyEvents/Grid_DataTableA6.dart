@@ -10,6 +10,8 @@ import 'package:web_appllication/MenuPage/model/employee.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/style.dart';
 
+import '../../widgets/custom_appbar.dart';
+
 void main() {
   runApp(StatutoryAprovalA6());
 }
@@ -74,7 +76,9 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
   @override
   void initState() {
     _stream = FirebaseFirestore.instance
-        .collection('${widget.depoName}')
+        .collection('KeyEventsTable')
+        .doc(widget.depoName!)
+        .collection('AllKeyEventsTable')
         .doc('${widget.depoName}A5')
         .snapshots();
     super.initState();
@@ -83,9 +87,16 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Key Events / ' + widget.depoName! + ' /A6'),
-        backgroundColor: blue,
+      appBar: PreferredSize(
+        // ignore: sort_child_properties_last
+        child: CustomAppBar(
+          text: 'Key Events / ${widget.depoName!} /A6',
+          haveSynced: true,
+          store: () {
+            StoreData();
+          },
+        ),
+        preferredSize: Size.fromHeight(50),
       ),
       body: _isLoading
           ? LoadingPage()
@@ -264,6 +275,19 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
                                     ),
                                   ),
                                   GridColumn(
+                                    columnName: 'ReasonDelay',
+                                    allowEditing: true,
+                                    label: Container(
+                                      alignment: Alignment.center,
+                                      child: Text('Reason For Delay',
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.values.first,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16)),
+                                    ),
+                                  ),
+                                  GridColumn(
                                     columnName: 'Unit',
                                     allowEditing: true,
                                     label: Container(
@@ -367,40 +391,40 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
                           ],
                         ),
                       ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: ElevatedButton(
-                            style:
-                                ElevatedButton.styleFrom(backgroundColor: blue),
-                            onPressed: () async {
-                              showCupertinoDialog(
-                                context: context,
-                                builder: (context) =>
-                                    const CupertinoAlertDialog(
-                                  content: SizedBox(
-                                    height: 50,
-                                    width: 50,
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                              StoreData();
-                            },
-                            child: const Text(
-                              'Sync Data',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 15,
-                              ),
-                            )),
-                      ),
+                      // const SizedBox(
+                      //   height: 5,
+                      // ),
+                      // Padding(
+                      //   padding: const EdgeInsets.all(10.0),
+                      //   child: ElevatedButton(
+                      //       style:
+                      //           ElevatedButton.styleFrom(backgroundColor: blue),
+                      //       onPressed: () async {
+                      //         showCupertinoDialog(
+                      //           context: context,
+                      //           builder: (context) =>
+                      //               const CupertinoAlertDialog(
+                      //             content: SizedBox(
+                      //               height: 50,
+                      //               width: 50,
+                      //               child: Center(
+                      //                 child: CircularProgressIndicator(
+                      //                   color: Colors.white,
+                      //                 ),
+                      //               ),
+                      //             ),
+                      //           ),
+                      //         );
+                      //         StoreData();
+                      //       },
+                      //       child: const Text(
+                      //         'Sync Data',
+                      //         textAlign: TextAlign.center,
+                      //         style: TextStyle(
+                      //           fontSize: 15,
+                      //         ),
+                      //       )),
+                      // ),
                     ],
                   );
                 } else {
@@ -586,6 +610,19 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
                                     ),
                                   ),
                                   GridColumn(
+                                    columnName: 'ReasonDelay',
+                                    allowEditing: true,
+                                    label: Container(
+                                      alignment: Alignment.center,
+                                      child: Text('Reason For Delay',
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.values.first,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16)),
+                                    ),
+                                  ),
+                                  GridColumn(
                                     columnName: 'Unit',
                                     allowEditing: true,
                                     label: Container(
@@ -689,40 +726,40 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
                           ],
                         ),
                       ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: ElevatedButton(
-                            style:
-                                ElevatedButton.styleFrom(backgroundColor: blue),
-                            onPressed: () async {
-                              showCupertinoDialog(
-                                context: context,
-                                builder: (context) =>
-                                    const CupertinoAlertDialog(
-                                  content: SizedBox(
-                                    height: 50,
-                                    width: 50,
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                              StoreData();
-                            },
-                            child: const Text(
-                              'Sync Data',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 15,
-                              ),
-                            )),
-                      ),
+                      // const SizedBox(
+                      //   height: 5,
+                      // ),
+                      // Padding(
+                      //   padding: const EdgeInsets.all(10.0),
+                      //   child: ElevatedButton(
+                      //       style:
+                      //           ElevatedButton.styleFrom(backgroundColor: blue),
+                      //       onPressed: () async {
+                      //         showCupertinoDialog(
+                      //           context: context,
+                      //           builder: (context) =>
+                      //               const CupertinoAlertDialog(
+                      //             content: SizedBox(
+                      //               height: 50,
+                      //               width: 50,
+                      //               child: Center(
+                      //                 child: CircularProgressIndicator(
+                      //                   color: Colors.white,
+                      //                 ),
+                      //               ),
+                      //             ),
+                      //           ),
+                      //         );
+                      //         StoreData();
+                      //       },
+                      //       child: const Text(
+                      //         'Sync Data',
+                      //         textAlign: TextAlign.center,
+                      //         style: TextStyle(
+                      //           fontSize: 15,
+                      //         ),
+                      //       )),
+                      // ),
                     ],
                   );
                 }
@@ -741,6 +778,7 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
                     DateFormat('dd-MM-yyyy').format(DateTime.now()),
                 actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
                 actualDuration: 0,
+                reasonDelay: '',
                 delay: 0,
                 unit: 0,
                 scope: 0,
@@ -783,12 +821,13 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 3.0),
       Employee(
           srNo: 2,
           activity: 'PR/PO Generation for Charger',
@@ -799,12 +838,13 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 3.0),
       Employee(
           srNo: 3,
           activity: 'PR/PO Generation for SFU Panel',
@@ -815,12 +855,13 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 3.0),
       Employee(
           srNo: 4,
           activity: 'PR/PO Generation for HT Cable',
@@ -831,12 +872,13 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 3.0),
       Employee(
           srNo: 5,
           activity: 'PR/PO Generation for LT Cable',
@@ -847,12 +889,13 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5)
+          weightage: 3.0)
     ];
   }
 
@@ -869,10 +912,11 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
     }
 
     FirebaseFirestore.instance
-        .collection(widget.depoName!)
+        .collection('KeyEventsTable')
+        .doc(widget.depoName!)
+        .collection('AllKeyEventsTable')
         .doc('${widget.depoName}A5')
         .set({'data': tabledata2}).whenComplete(() {
-      tabledata2.clear();
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: const Text('Data are synced'),

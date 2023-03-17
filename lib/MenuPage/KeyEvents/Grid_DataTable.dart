@@ -10,6 +10,7 @@ import 'package:web_appllication/MenuPage/datasource/employee_datasouce.dart';
 import 'package:web_appllication/MenuPage/model/employee.dart';
 import 'package:web_appllication/style.dart';
 import '../../components/loading_page.dart';
+import '../../widgets/custom_appbar.dart';
 
 void main() {
   runApp(StatutoryAprovalA2());
@@ -47,9 +48,13 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
   @override
   void initState() {
     _stream = FirebaseFirestore.instance
-        .collection('${widget.depoName}')
+        .collection('KeyEventsTable')
+        .doc(widget.depoName!)
+        .collection('AllKeyEventsTable')
         .doc('${widget.depoName}A1')
         .snapshots();
+
+    int length = _employees.length * 66;
     super.initState();
   }
 
@@ -97,9 +102,16 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
     //   // ChartData('A10', 50, Colors.blue),
     // ];
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Key Events / ' + widget.depoName! + ' /A2'),
-        backgroundColor: blue,
+      appBar: PreferredSize(
+        // ignore: sort_child_properties_last
+        child: CustomAppBar(
+          text: 'Key Events / ${widget.depoName!} /A2',
+          haveSynced: true,
+          store: () {
+            StoreData();
+          },
+        ),
+        preferredSize: Size.fromHeight(50),
       ),
       body: _isLoading
           ? LoadingPage()
@@ -279,6 +291,18 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                     ),
                                   ),
                                   GridColumn(
+                                    columnName: 'ReasonDelay',
+                                    allowEditing: true,
+                                    label: Container(
+                                      alignment: Alignment.center,
+                                      child: Text('Reason For Delay',
+                                          overflow: TextOverflow.values.first,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16)),
+                                    ),
+                                  ),
+                                  GridColumn(
                                     columnName: 'Unit',
                                     allowEditing: true,
                                     label: Container(
@@ -382,40 +406,40 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                           ],
                         ),
                       ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: ElevatedButton(
-                            style:
-                                ElevatedButton.styleFrom(backgroundColor: blue),
-                            onPressed: () async {
-                              showCupertinoDialog(
-                                context: context,
-                                builder: (context) =>
-                                    const CupertinoAlertDialog(
-                                  content: SizedBox(
-                                    height: 50,
-                                    width: 50,
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                              StoreData();
-                            },
-                            child: const Text(
-                              'Sync Data',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 15,
-                              ),
-                            )),
-                      ),
+                      // const SizedBox(
+                      //   height: 5,
+                      // ),
+                      // Padding(
+                      //   padding: const EdgeInsets.all(10.0),
+                      //   child: ElevatedButton(
+                      //       style:
+                      //           ElevatedButton.styleFrom(backgroundColor: blue),
+                      //       onPressed: () async {
+                      //         showCupertinoDialog(
+                      //           context: context,
+                      //           builder: (context) =>
+                      //               const CupertinoAlertDialog(
+                      //             content: SizedBox(
+                      //               height: 50,
+                      //               width: 50,
+                      //               child: Center(
+                      //                 child: CircularProgressIndicator(
+                      //                   color: Colors.white,
+                      //                 ),
+                      //               ),
+                      //             ),
+                      //           ),
+                      //         );
+                      //         StoreData();
+                      //       },
+                      //       child: const Text(
+                      //         'Sync Data',
+                      //         textAlign: TextAlign.center,
+                      //         style: TextStyle(
+                      //           fontSize: 15,
+                      //         ),
+                      //       )),
+                      // ),
                     ],
                   );
                 } else {
@@ -603,6 +627,19 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                       ),
                                     ),
                                     GridColumn(
+                                      columnName: 'ReasonDelay',
+                                      allowEditing: true,
+                                      label: Container(
+                                        alignment: Alignment.center,
+                                        child: Text('Reason For Delay',
+                                            textAlign: TextAlign.center,
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16)),
+                                      ),
+                                    ),
+                                    GridColumn(
                                       columnName: 'Unit',
                                       allowEditing: true,
                                       label: Container(
@@ -697,7 +734,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                             width: 0.5,
                                             trackPadding: 0,
                                             dataLabelSettings:
-                                                DataLabelSettings(
+                                                const DataLabelSettings(
                                                     isVisible: true),
                                             dataSource: chartData,
                                             xValueMapper: (ChartData data, _) =>
@@ -710,40 +747,40 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                             ],
                           ),
                         ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: blue),
-                              onPressed: () async {
-                                showCupertinoDialog(
-                                  context: context,
-                                  builder: (context) =>
-                                      const CupertinoAlertDialog(
-                                    content: SizedBox(
-                                      height: 50,
-                                      width: 50,
-                                      child: Center(
-                                        child: CircularProgressIndicator(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                                StoreData();
-                              },
-                              child: const Text(
-                                'Sync Data',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                ),
-                              )),
-                        ),
+                        // const SizedBox(
+                        //   height: 5,
+                        // ),
+                        // Padding(
+                        //   padding: const EdgeInsets.all(10.0),
+                        //   child: ElevatedButton(
+                        //       style: ElevatedButton.styleFrom(
+                        //           backgroundColor: blue),
+                        //       onPressed: () async {
+                        //         showCupertinoDialog(
+                        //           context: context,
+                        //           builder: (context) =>
+                        //               const CupertinoAlertDialog(
+                        //             content: SizedBox(
+                        //               height: 50,
+                        //               width: 50,
+                        //               child: Center(
+                        //                 child: CircularProgressIndicator(
+                        //                   color: Colors.white,
+                        //                 ),
+                        //               ),
+                        //             ),
+                        //           ),
+                        //         );
+                        //         StoreData();
+                        //       },
+                        //       child: const Text(
+                        //         'Sync Data',
+                        //         textAlign: TextAlign.center,
+                        //         style: TextStyle(
+                        //           fontSize: 15,
+                        //         ),
+                        //       )),
+                        // ),
                       ],
                     ),
                   );
@@ -764,6 +801,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                 actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
                 actualDuration: 0,
                 delay: 0,
+                reasonDelay: '',
                 unit: 0,
                 scope: 0,
                 qtyExecuted: 0,
@@ -818,6 +856,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
         actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
         actualDuration: 0,
         delay: 0,
+        reasonDelay: '',
         unit: 0,
         scope: 0,
         qtyExecuted: 0,
@@ -835,12 +874,13 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 1.0),
       Employee(
           srNo: 3,
           activity:
@@ -852,12 +892,13 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5),
+          weightage: 0.3),
       Employee(
           srNo: 4,
           activity: 'Job Scope Finalization & Preparation Of BOQ',
@@ -868,6 +909,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
@@ -884,12 +926,13 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
           actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           actualDuration: 0,
           delay: 0,
+          reasonDelay: '',
           unit: 0,
           scope: 0,
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.5)
+          weightage: 0.3)
     ];
   }
 
@@ -907,13 +950,15 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
     }
 
     FirebaseFirestore.instance
-        .collection(widget.depoName!)
+        .collection('KeyEventsTable')
+        .doc(widget.depoName!)
+        .collection('AllKeyEventsTable')
         .doc('${widget.depoName}A1')
         .set({
       'data': tabledata2,
     }).whenComplete(() {
       tabledata2.clear();
-      Navigator.pop(context);
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: const Text('Data are synced'),
         backgroundColor: blue,

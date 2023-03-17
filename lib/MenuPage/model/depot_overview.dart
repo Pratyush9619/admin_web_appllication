@@ -11,6 +11,8 @@ class DepotOverviewModel {
     required this.migrateAction,
     required this.contigentAction,
     required this.progressAction,
+    required this.reason,
+    required this.TargetDate,
     required this.status,
   });
   dynamic srNo;
@@ -19,10 +21,11 @@ class DepotOverviewModel {
   String? riskDescription;
   dynamic typeRisk;
   dynamic impactRisk;
-
   String? migrateAction;
   String? contigentAction;
   String? progressAction;
+  String? reason;
+  String? TargetDate;
   dynamic status;
 
   factory DepotOverviewModel.fromJson(Map<String, dynamic> json) {
@@ -33,7 +36,9 @@ class DepotOverviewModel {
         migrateAction: json['MigratingRisk'],
         progressAction: json['ProgressionAction'],
         riskDescription: json['RiskDescription'],
+        reason: json['Reason'],
         status: json['Status'],
+        TargetDate: json['TargetDate'],
         typeRisk: json['TypeRisk'],
         impactRisk: json['impactRisk'],
         contigentAction: json['ContigentAction']);
@@ -53,6 +58,8 @@ class DepotOverviewModel {
           columnName: 'ContigentAction', value: contigentAction),
       DataGridCell<String>(
           columnName: 'ProgressionAction', value: progressAction),
+      DataGridCell<dynamic>(columnName: 'Reason', value: reason),
+      DataGridCell(columnName: 'TargetDate', value: TargetDate),
       DataGridCell<dynamic>(columnName: 'Status', value: status),
     ]);
   }

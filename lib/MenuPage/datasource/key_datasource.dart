@@ -64,10 +64,10 @@ class KeyDataSourceKeyEvents extends DataGridSource {
                 dataGridCell.columnName == 'ActualEnd' ||
                 dataGridCell.columnName == 'ActualDuration' ||
                 dataGridCell.columnName == 'Delay' ||
-                dataGridCell.columnName == 'Unit' ||
-                dataGridCell.columnName == 'QtyScope' ||
-                dataGridCell.columnName == 'QtyExecuted' ||
-                dataGridCell.columnName == 'BalancedQty' ||
+                dataGridCell.columnName == 'Dependency' ||
+                // dataGridCell.columnName == 'QtyScope' ||
+                // dataGridCell.columnName == 'QtyExecuted' ||
+                // dataGridCell.columnName == 'BalancedQty' ||
                 dataGridCell.columnName == 'Progress' ||
                 dataGridCell.columnName == 'Weightage')
             ? Alignment.center
@@ -363,9 +363,14 @@ class KeyDataSourceKeyEvents extends DataGridSource {
             //         ],
             //       )
             //     :
-            : Text(
-                dataGridCell.value.toString(),
-              ),
+            : dataGridCell.columnName == 'Progress'
+                ? Text(
+                    dataGridCell.value.toString() + '%',
+                    style: TextStyle(color: black),
+                  )
+                : Text(
+                    dataGridCell.value.toString(),
+                  ),
       );
     }).toList());
   }
@@ -431,25 +436,27 @@ class KeyDataSourceKeyEvents extends DataGridSource {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
           DataGridCell<int>(columnName: 'Delay', value: newCellValue as int);
       _employees[dataRowIndex].delay = newCellValue;
-    } else if (column.columnName == 'Unit') {
+    } else if (column.columnName == 'Dependency') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
-          DataGridCell<int>(columnName: 'Unit', value: newCellValue as int);
-      _employees[dataRowIndex].unit = newCellValue;
-    } else if (column.columnName == 'QtyScope') {
-      dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
-          DataGridCell<int>(columnName: 'QtyScope', value: newCellValue as int);
-      _employees[dataRowIndex].scope = newCellValue;
-    } else if (column.columnName == 'QtyExecuted') {
-      dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
-          DataGridCell<int>(
-              columnName: 'QtyExecuted', value: newCellValue as int);
-      _employees[dataRowIndex].qtyExecuted = newCellValue;
-    } else if (column.columnName == 'BalancedQty') {
-      dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
-          DataGridCell<int>(
-              columnName: 'BalancedQty', value: newCellValue as int);
-      _employees[dataRowIndex].balanceQty = newCellValue;
-    } else if (column.columnName == 'Progress') {
+          DataGridCell<String>(columnName: 'Dependency', value: newCellValue);
+      _employees[dataRowIndex].dependency = newCellValue;
+    }
+    //else if (column.columnName == 'QtyScope') {
+    //   dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
+    //       DataGridCell<int>(columnName: 'QtyScope', value: newCellValue as int);
+    //   _employees[dataRowIndex].scope = newCellValue;
+    // } else if (column.columnName == 'QtyExecuted') {
+    //   dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
+    //       DataGridCell<int>(
+    //           columnName: 'QtyExecuted', value: newCellValue as int);
+    //   _employees[dataRowIndex].qtyExecuted = newCellValue;
+    // } else if (column.columnName == 'BalancedQty') {
+    //   dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
+    //       DataGridCell<int>(
+    //           columnName: 'BalancedQty', value: newCellValue as int);
+    //   _employees[dataRowIndex].balanceQty = newCellValue;
+    // }
+    else if (column.columnName == 'Progress') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
           DataGridCell<int>(columnName: 'Progress', value: newCellValue as int);
       _employees[dataRowIndex].percProgress = newCellValue;
@@ -499,10 +506,10 @@ class KeyDataSourceKeyEvents extends DataGridSource {
         // column.columnName == 'ActualEnd' ||
         column.columnName == 'ActualDuration' ||
         column.columnName == 'Delay' ||
-        column.columnName == 'Unit' ||
-        column.columnName == 'QtyScope' ||
-        column.columnName == 'QtyExecuted' ||
-        column.columnName == 'BalancedQty' ||
+        // column.columnName == 'Unit' ||
+        // column.columnName == 'QtyScope' ||
+        // column.columnName == 'QtyExecuted' ||
+        // column.columnName == 'BalancedQty' ||
         column.columnName == 'Progress' ||
         column.columnName == 'Weightage';
 

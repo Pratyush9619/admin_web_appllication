@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:web_appllication/OverviewPages/daily_project.dart';
 import 'package:web_appllication/OverviewPages/depot_overview.dart';
+import 'package:web_appllication/OverviewPages/monthly_project.dart';
 import 'package:web_appllication/OverviewPages/resource_allocation.dart';
 import 'package:web_appllication/style.dart';
 
+import '../../OverviewPages/detailed_Eng.dart';
+import '../../OverviewPages/quality_checklist.dart';
 import '../KeyEvents/key_events.dart';
 
 class MyOverview extends StatefulWidget {
@@ -39,24 +43,27 @@ class _MyOverviewState extends State<MyOverview> {
     'assets/overview_image/jmr.png',
     'assets/overview_image/safety.png',
     'assets/overview_image/checklist_civil.png',
+    'assets/overview_image/checklist_civil.png',
     'assets/overview_image/testing_commissioning.png',
     'assets/overview_image/closure_report.png',
   ];
-  List<String> desription = [
-    'Overview of Project Progress Status of Shivaji Nagar EV Bus Charging Infra',
-    'Project Planning & Scheduling Bus Depot Wise [Gant Chart] ',
-    'Resource Allocation',
-    'Monthly Project Monitoring & Review',
-    'Submission of Daily Progress Report for Individual Project',
-    'Detailed Engineering of Project Documents like GTP, GA Drawing',
-    'Online JMR verification for projects',
-    'Safety check list & observation',
-    'FQP Checklist for Civil & Electrical work',
-    'Testing & Commissioning Reports of Equipment',
-    'Closure Report'
-  ];
+
   @override
   Widget build(BuildContext context) {
+    List<String> desription = [
+      'Overview of Project Progress Status of ${widget.depoName} EV Bus Charging Infra',
+      'Project Planning & Scheduling Bus Depot Wise [Gant Chart] ',
+      'Resource Allocation',
+      'Monthly Project Monitoring & Review',
+      'Submission of Daily Progress Report for Individual Project',
+      'Detailed Engineering of Project Documents like GTP, GA Drawing',
+      'Online JMR verification for projects',
+      'Safety check list & observation',
+      'Quality check list & observation',
+      'FQP Checklist for Civil & Electrical work',
+      'Testing & Commissioning Reports of Equipment',
+      'Closure Report'
+    ];
     pages = [
       DepotOverview(
         depoName: widget.depoName,
@@ -69,27 +76,44 @@ class _MyOverviewState extends State<MyOverview> {
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
-      KeyEvents(
-        depoName: widget.depoName,
+      MonthlyProject(
         cityName: widget.cityName,
+        depoName: widget.depoName,
       ),
-      KeyEvents(
-        depoName: widget.depoName,
+      // KeyEvents(
+      //   depoName: widget.depoName,
+      //   cityName: widget.cityName,
+      // ),
+      DailyProject(
         cityName: widget.cityName,
+        depoName: widget.depoName,
       ),
-      KeyEvents(
-        depoName: widget.depoName,
+      // KeyEvents(
+      //   depoName: widget.depoName,
+      //   cityName: widget.cityName,
+      // ),
+      // KeyEvents(
+      //   depoName: widget.depoName,
+      //   cityName: widget.cityName,
+      // ),
+      DetailedEng(
         cityName: widget.cityName,
+        depoName: widget.depoName,
       ),
       DepotOverview(),
       KeyEvents(
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
+      QualityChecklist(
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
       KeyEvents(
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
+
       KeyEvents(
         depoName: widget.depoName,
         cityName: widget.cityName,

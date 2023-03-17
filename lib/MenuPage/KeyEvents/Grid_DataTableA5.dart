@@ -4,10 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:web_appllication/MenuPage/datasource/employee_datasouce.dart';
 import 'package:web_appllication/MenuPage/datasource/employee_statutory.dart';
 
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/style.dart';
+import 'package:web_appllication/widgets/custom_appbar.dart';
 
 import '../model/employee_statutory.dart';
 
@@ -39,258 +41,765 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
   List<dynamic> tabledata2 = [];
   bool _isLoading = false;
   bool _isInit = true;
+  Stream? _stream;
+  List<double> weight = [];
+  List<int> yAxis = [];
+  // List<ChartData> chartData = [];
+  var alldata;
 
   @override
-  void didChangeDependencies() {
-    if (_isInit) {
-      setState(() {
-        _isLoading = true;
-      });
-      getFirestoreData().whenComplete(() {
-        setState(() {
-          if (_employees.length == 0 || _employees.isEmpty) {
-            _employees = getData();
-          }
-          _isLoading = false;
-          _employeeDataSource = EmployeeDataStatutory(_employees, context);
-          _dataGridController = DataGridController();
-        });
-        // _employeeDataSource = EmployeeDataSource(_employees);
-        // _dataGridController = DataGridController();
-      });
-      //getFirestoreData() as List<Employee>;
-      // getEmployeeData();
-    }
-    _isInit = false;
-    super.didChangeDependencies();
+  void initState() {
+    _stream = FirebaseFirestore.instance
+        .collection('KeyEventsTable')
+        .doc(widget.depoName!)
+        .collection('AllKeyEventsTable')
+        .doc('${widget.depoName}A4')
+        .snapshots();
+    super.initState();
   }
+
+  // @override
+  // void didChangeDependencies() {
+  //   if (_isInit) {
+  //     setState(() {
+  //       _isLoading = true;
+  //     });
+  //     getFirestoreData().whenComplete(() {
+  //       setState(() {
+  //         if (_employees.length == 0 || _employees.isEmpty) {
+  //           _employees = getData();
+  //         }
+  //         _isLoading = false;
+  //         _employeeDataSource = EmployeeDataStatutory(_employees, context);
+  //         _dataGridController = DataGridController();
+  //       });
+  //       // _employeeDataSource = EmployeeDataSource(_employees);
+  //       // _dataGridController = DataGridController();
+  //     });
+  //     //getFirestoreData() as List<Employee>;
+  //     // getEmployeeData();
+  //   }
+  //   _isInit = false;
+  //   super.didChangeDependencies();
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Key Events / ' + widget.depoName! + ' /A5'),
-        backgroundColor: blue,
-      ),
-      body: _isLoading
-          ? LoadingPage()
-          : Column(
-              children: [
-                Flexible(
-                  child: SfDataGrid(
-                    source: _employeeDataSource,
-                    allowEditing: true,
-                    frozenColumnsCount: 2,
-                    editingGestureType: EditingGestureType.tap,
-                    gridLinesVisibility: GridLinesVisibility.both,
-                    headerGridLinesVisibility: GridLinesVisibility.both,
-                    selectionMode: SelectionMode.single,
-                    navigationMode: GridNavigationMode.cell,
-                    columnWidthMode: ColumnWidthMode.auto,
-                    controller: _dataGridController,
-                    // onQueryRowHeight: (details) {
-                    //   return details.rowIndex == 0 ? 60.0 : 49.0;
-                    // },
-                    columns: [
-                      GridColumn(
-                        columnName: 'srNo',
-                        autoFitPadding: EdgeInsets.symmetric(horizontal: 16),
-                        allowEditing: false,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('Sr No',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)
-                              //    textAlign: TextAlign.center,
-                              ),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'Approval',
-                        allowEditing: true,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('Detail of approval',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'button',
-                        width: 130,
-                        allowEditing: false,
-                        label: Container(
-                          padding: const EdgeInsets.all(8.0),
-                          alignment: Alignment.center,
-                          child: const Text('View File',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'StartDate',
-                        allowEditing: false,
-                        width: 180,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('Start Date',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'EndDate',
-                        allowEditing: false,
-                        width: 180,
-                        label: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          alignment: Alignment.center,
-                          child: Text('End Date',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'ActualStart',
-                        allowEditing: false,
-                        width: 180,
-                        label: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          alignment: Alignment.center,
-                          child: Text('Actual Start',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'ActualEnd',
-                        allowEditing: false,
-                        width: 180,
-                        label: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          alignment: Alignment.center,
-                          child: Text('Actual End',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'Weightage',
-                        allowEditing: true,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('Weightage',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'Applicability',
-                        allowEditing: true,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('Applicability',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'ApprovingAuthority',
-                        allowEditing: true,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('ApprovingAuthority',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'CurrentStatusPerc',
-                        allowEditing: true,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('Current status in % for Approval ',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'OverallWeightage',
-                        allowEditing: true,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('OverallWeightage',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'CurrentStatus',
-                        allowEditing: true,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('Current Status',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                      GridColumn(
-                        columnName: 'ListDocument',
-                        allowEditing: true,
-                        label: Container(
-                          alignment: Alignment.center,
-                          child: Text('List of Document Required',
-                              overflow: TextOverflow.values.first,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: blue),
-                      onPressed: () async {
-                        showCupertinoDialog(
-                          context: context,
-                          builder: (context) => const CupertinoAlertDialog(
-                            content: SizedBox(
-                              height: 50,
-                              width: 50,
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
+        appBar: PreferredSize(
+          // ignore: sort_child_properties_last
+          child: CustomAppBar(
+            text: 'Key Events / ${widget.depoName!} /A5',
+            haveSynced: true,
+            store: () {
+              StoreData();
+            },
+          ),
+          preferredSize: Size.fromHeight(50),
+        ),
+        // AppBar(
+        //   title: Text('Key Events / ' + widget.depoName! + ' /A5'),
+        //   backgroundColor: blue,
+        // ),
+        body: _isLoading
+            ? LoadingPage()
+            : StreamBuilder(
+                stream: _stream,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return LoadingPage();
+                  }
+                  if (!snapshot.hasData || snapshot.data.exists == false) {
+                    _employees = getData();
+                    _employeeDataSource =
+                        EmployeeDataStatutory(_employees, context);
+                    _dataGridController = DataGridController();
+
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: SfDataGrid(
+                            source: _employeeDataSource,
+                            allowEditing: true,
+                            frozenColumnsCount: 2,
+                            editingGestureType: EditingGestureType.tap,
+                            gridLinesVisibility: GridLinesVisibility.both,
+                            headerGridLinesVisibility: GridLinesVisibility.both,
+                            selectionMode: SelectionMode.single,
+                            navigationMode: GridNavigationMode.cell,
+                            columnWidthMode: ColumnWidthMode.auto,
+                            controller: _dataGridController,
+                            // onQueryRowHeight: (details) {
+                            //   return details.rowIndex == 0 ? 60.0 : 49.0;
+                            // },
+                            columns: [
+                              GridColumn(
+                                columnName: 'srNo',
+                                autoFitPadding:
+                                    EdgeInsets.symmetric(horizontal: 16),
+                                allowEditing: false,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text('Sr No',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)
+                                      //    textAlign: TextAlign.center,
+                                      ),
                                 ),
                               ),
-                            ),
+                              GridColumn(
+                                columnName: 'Approval',
+                                allowEditing: true,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text('Detail of approval',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'button',
+                                width: 130,
+                                allowEditing: false,
+                                label: Container(
+                                  padding: const EdgeInsets.all(8.0),
+                                  alignment: Alignment.center,
+                                  child: const Text('View File',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'StartDate',
+                                allowEditing: false,
+                                width: 180,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text('Start Date',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'EndDate',
+                                allowEditing: false,
+                                width: 180,
+                                label: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0),
+                                  alignment: Alignment.center,
+                                  child: Text('End Date',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'ActualStart',
+                                allowEditing: false,
+                                width: 180,
+                                label: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0),
+                                  alignment: Alignment.center,
+                                  child: Text('Actual Start',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'ActualEnd',
+                                allowEditing: false,
+                                width: 180,
+                                label: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0),
+                                  alignment: Alignment.center,
+                                  child: Text('Actual End',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'Weightage',
+                                allowEditing: true,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text('Weightage',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'Applicability',
+                                allowEditing: true,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text('Applicability',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'ApprovingAuthority',
+                                allowEditing: true,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text('ApprovingAuthority',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'CurrentStatusPerc',
+                                allowEditing: true,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                      'Current status in % for Approval ',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'OverallWeightage',
+                                allowEditing: true,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text('OverallWeightage',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'CurrentStatus',
+                                allowEditing: true,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text('Current Status',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'ListDocument',
+                                allowEditing: true,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text('List of Document Required',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                            ],
                           ),
-                        );
-                        StoreData();
-                      },
-                      child: const Text('Sync Data',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 20,
-                          ))),
-                )
-              ],
-            ),
-    );
+                        ),
+                      ],
+                    );
+                  } else {
+                    alldata = snapshot.data['data'] as List<dynamic>;
+                    _employees.clear();
+                    alldata.forEach((element) {
+                      _employees.add(EmployeeStatutory.fromJson(element));
+                      _employeeDataSource =
+                          EmployeeDataStatutory(_employees, context);
+                      _dataGridController = DataGridController();
+                    });
+                    for (int i = 0; i < alldata.length; i++) {
+                      var weightdata = alldata[i]['Weightage'];
+                      var yaxisdata = alldata[i]['srNo'];
+                      weight.add(weightdata);
+                      yAxis.add(yaxisdata);
+                    }
+                    // for (int i = weight.length - 1; i >= 0; i--) {
+                    //   chartData.add(ChartData(
+                    //       yAxis[i].toString(), weight[i], Colors.green));
+                    // }
+                    return Column(
+                      children: [
+                        Flexible(
+                          child: SfDataGrid(
+                            source: _employeeDataSource,
+                            allowEditing: true,
+                            frozenColumnsCount: 2,
+                            editingGestureType: EditingGestureType.tap,
+                            gridLinesVisibility: GridLinesVisibility.both,
+                            headerGridLinesVisibility: GridLinesVisibility.both,
+                            selectionMode: SelectionMode.single,
+                            navigationMode: GridNavigationMode.cell,
+                            columnWidthMode: ColumnWidthMode.auto,
+                            controller: _dataGridController,
+                            // onQueryRowHeight: (details) {
+                            //   return details.rowIndex == 0 ? 60.0 : 49.0;
+                            // },
+                            columns: [
+                              GridColumn(
+                                columnName: 'srNo',
+                                autoFitPadding:
+                                    EdgeInsets.symmetric(horizontal: 16),
+                                allowEditing: false,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text('Sr No',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)
+                                      //    textAlign: TextAlign.center,
+                                      ),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'Approval',
+                                allowEditing: true,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text('Detail of approval',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'button',
+                                width: 130,
+                                allowEditing: false,
+                                label: Container(
+                                  padding: const EdgeInsets.all(8.0),
+                                  alignment: Alignment.center,
+                                  child: const Text('View File',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'StartDate',
+                                allowEditing: false,
+                                width: 180,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text('Start Date',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'EndDate',
+                                allowEditing: false,
+                                width: 180,
+                                label: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0),
+                                  alignment: Alignment.center,
+                                  child: Text('End Date',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'ActualStart',
+                                allowEditing: false,
+                                width: 180,
+                                label: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0),
+                                  alignment: Alignment.center,
+                                  child: Text('Actual Start',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'ActualEnd',
+                                allowEditing: false,
+                                width: 180,
+                                label: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0),
+                                  alignment: Alignment.center,
+                                  child: Text('Actual End',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'Weightage',
+                                allowEditing: true,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text('Weightage',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'Applicability',
+                                allowEditing: true,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text('Applicability',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'ApprovingAuthority',
+                                allowEditing: true,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text('ApprovingAuthority',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'CurrentStatusPerc',
+                                allowEditing: true,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                      'Current status in % for Approval ',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'OverallWeightage',
+                                allowEditing: true,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text('OverallWeightage',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'CurrentStatus',
+                                allowEditing: true,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text('Current Status',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'ListDocument',
+                                allowEditing: true,
+                                label: Container(
+                                  alignment: Alignment.center,
+                                  child: Text('List of Document Required',
+                                      overflow: TextOverflow.values.first,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // const SizedBox(height: 10),
+                        // Padding(
+                        //   padding: const EdgeInsets.all(10.0),
+                        //   child: ElevatedButton(
+                        //       style: ElevatedButton.styleFrom(
+                        //           backgroundColor: blue),
+                        //       onPressed: () async {
+                        //         showCupertinoDialog(
+                        //           context: context,
+                        //           builder: (context) =>
+                        //               const CupertinoAlertDialog(
+                        //             content: SizedBox(
+                        //               height: 50,
+                        //               width: 50,
+                        //               child: Center(
+                        //                 child: CircularProgressIndicator(
+                        //                   color: Colors.white,
+                        //                 ),
+                        //               ),
+                        //             ),
+                        //           ),
+                        //         );
+                        //         StoreData();
+                        //       },
+                        //       child: const Text('Sync Data',
+                        //           textAlign: TextAlign.center,
+                        //           style: TextStyle(
+                        //             fontSize: 20,
+                        //           ))),
+                        // )
+                      ],
+                    );
+                  }
+                },
+              )
+
+        // Column(
+        //     children: [
+        //       Flexible(
+        //         child: SfDataGrid(
+        //           source: _employeeDataSource,
+        //           allowEditing: true,
+        //           frozenColumnsCount: 2,
+        //           editingGestureType: EditingGestureType.tap,
+        //           gridLinesVisibility: GridLinesVisibility.both,
+        //           headerGridLinesVisibility: GridLinesVisibility.both,
+        //           selectionMode: SelectionMode.single,
+        //           navigationMode: GridNavigationMode.cell,
+        //           columnWidthMode: ColumnWidthMode.auto,
+        //           controller: _dataGridController,
+        //           // onQueryRowHeight: (details) {
+        //           //   return details.rowIndex == 0 ? 60.0 : 49.0;
+        //           // },
+        //           columns: [
+        //             GridColumn(
+        //               columnName: 'srNo',
+        //               autoFitPadding: EdgeInsets.symmetric(horizontal: 16),
+        //               allowEditing: false,
+        //               label: Container(
+        //                 alignment: Alignment.center,
+        //                 child: Text('Sr No',
+        //                     overflow: TextOverflow.values.first,
+        //                     style: const TextStyle(
+        //                         fontWeight: FontWeight.bold, fontSize: 16)
+        //                     //    textAlign: TextAlign.center,
+        //                     ),
+        //               ),
+        //             ),
+        //             GridColumn(
+        //               columnName: 'Approval',
+        //               allowEditing: true,
+        //               label: Container(
+        //                 alignment: Alignment.center,
+        //                 child: Text('Detail of approval',
+        //                     overflow: TextOverflow.values.first,
+        //                     style: const TextStyle(
+        //                         fontWeight: FontWeight.bold, fontSize: 16)),
+        //               ),
+        //             ),
+        //             GridColumn(
+        //               columnName: 'button',
+        //               width: 130,
+        //               allowEditing: false,
+        //               label: Container(
+        //                 padding: const EdgeInsets.all(8.0),
+        //                 alignment: Alignment.center,
+        //                 child: const Text('View File',
+        //                     style: TextStyle(
+        //                         fontWeight: FontWeight.bold, fontSize: 16)),
+        //               ),
+        //             ),
+        //             GridColumn(
+        //               columnName: 'StartDate',
+        //               allowEditing: false,
+        //               width: 180,
+        //               label: Container(
+        //                 alignment: Alignment.center,
+        //                 child: Text('Start Date',
+        //                     overflow: TextOverflow.values.first,
+        //                     style: const TextStyle(
+        //                         fontWeight: FontWeight.bold, fontSize: 16)),
+        //               ),
+        //             ),
+        //             GridColumn(
+        //               columnName: 'EndDate',
+        //               allowEditing: false,
+        //               width: 180,
+        //               label: Container(
+        //                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        //                 alignment: Alignment.center,
+        //                 child: Text('End Date',
+        //                     overflow: TextOverflow.values.first,
+        //                     style: const TextStyle(
+        //                         fontWeight: FontWeight.bold, fontSize: 16)),
+        //               ),
+        //             ),
+        //             GridColumn(
+        //               columnName: 'ActualStart',
+        //               allowEditing: false,
+        //               width: 180,
+        //               label: Container(
+        //                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        //                 alignment: Alignment.center,
+        //                 child: Text('Actual Start',
+        //                     overflow: TextOverflow.values.first,
+        //                     style: const TextStyle(
+        //                         fontWeight: FontWeight.bold, fontSize: 16)),
+        //               ),
+        //             ),
+        //             GridColumn(
+        //               columnName: 'ActualEnd',
+        //               allowEditing: false,
+        //               width: 180,
+        //               label: Container(
+        //                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        //                 alignment: Alignment.center,
+        //                 child: Text('Actual End',
+        //                     overflow: TextOverflow.values.first,
+        //                     style: const TextStyle(
+        //                         fontWeight: FontWeight.bold, fontSize: 16)),
+        //               ),
+        //             ),
+        //             GridColumn(
+        //               columnName: 'Weightage',
+        //               allowEditing: true,
+        //               label: Container(
+        //                 alignment: Alignment.center,
+        //                 child: Text('Weightage',
+        //                     overflow: TextOverflow.values.first,
+        //                     style: const TextStyle(
+        //                         fontWeight: FontWeight.bold, fontSize: 16)),
+        //               ),
+        //             ),
+        //             GridColumn(
+        //               columnName: 'Applicability',
+        //               allowEditing: true,
+        //               label: Container(
+        //                 alignment: Alignment.center,
+        //                 child: Text('Applicability',
+        //                     overflow: TextOverflow.values.first,
+        //                     style: const TextStyle(
+        //                         fontWeight: FontWeight.bold, fontSize: 16)),
+        //               ),
+        //             ),
+        //             GridColumn(
+        //               columnName: 'ApprovingAuthority',
+        //               allowEditing: true,
+        //               label: Container(
+        //                 alignment: Alignment.center,
+        //                 child: Text('ApprovingAuthority',
+        //                     overflow: TextOverflow.values.first,
+        //                     style: const TextStyle(
+        //                         fontWeight: FontWeight.bold, fontSize: 16)),
+        //               ),
+        //             ),
+        //             GridColumn(
+        //               columnName: 'CurrentStatusPerc',
+        //               allowEditing: true,
+        //               label: Container(
+        //                 alignment: Alignment.center,
+        //                 child: Text('Current status in % for Approval ',
+        //                     overflow: TextOverflow.values.first,
+        //                     style: const TextStyle(
+        //                         fontWeight: FontWeight.bold, fontSize: 16)),
+        //               ),
+        //             ),
+        //             GridColumn(
+        //               columnName: 'OverallWeightage',
+        //               allowEditing: true,
+        //               label: Container(
+        //                 alignment: Alignment.center,
+        //                 child: Text('OverallWeightage',
+        //                     overflow: TextOverflow.values.first,
+        //                     style: const TextStyle(
+        //                         fontWeight: FontWeight.bold, fontSize: 16)),
+        //               ),
+        //             ),
+        //             GridColumn(
+        //               columnName: 'CurrentStatus',
+        //               allowEditing: true,
+        //               label: Container(
+        //                 alignment: Alignment.center,
+        //                 child: Text('Current Status',
+        //                     overflow: TextOverflow.values.first,
+        //                     style: const TextStyle(
+        //                         fontWeight: FontWeight.bold, fontSize: 16)),
+        //               ),
+        //             ),
+        //             GridColumn(
+        //               columnName: 'ListDocument',
+        //               allowEditing: true,
+        //               label: Container(
+        //                 alignment: Alignment.center,
+        //                 child: Text('List of Document Required',
+        //                     overflow: TextOverflow.values.first,
+        //                     style: const TextStyle(
+        //                         fontWeight: FontWeight.bold, fontSize: 16)),
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //       const SizedBox(height: 10),
+        //       Padding(
+        //         padding: const EdgeInsets.all(10.0),
+        //         child: ElevatedButton(
+        //             style: ElevatedButton.styleFrom(backgroundColor: blue),
+        //             onPressed: () async {
+        //               showCupertinoDialog(
+        //                 context: context,
+        //                 builder: (context) => const CupertinoAlertDialog(
+        //                   content: SizedBox(
+        //                     height: 50,
+        //                     width: 50,
+        //                     child: Center(
+        //                       child: CircularProgressIndicator(
+        //                         color: Colors.white,
+        //                       ),
+        //                     ),
+        //                   ),
+        //                 ),
+        //               );
+        //               StoreData();
+        //             },
+        //             child: const Text('Sync Data',
+        //                 textAlign: TextAlign.center,
+        //                 style: TextStyle(
+        //                   fontSize: 20,
+        //                 ))),
+        //       )
+        //     ],
+        //   ),
+
+        );
   }
 
   Future<void> getFirestoreData() async {
@@ -556,13 +1065,15 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
     }
 
     FirebaseFirestore.instance
-        .collection(widget.depoName!)
+        .collection('KeyEventsTable')
+        .doc(widget.depoName!)
+        .collection('AllKeyEventsTable')
         .doc('${widget.depoName}A4')
         .set({
       'data': tabledata2,
     }).whenComplete(() {
       tabledata2.clear();
-      Navigator.pop(context);
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: const Text('Data are synced'),
         backgroundColor: blue,

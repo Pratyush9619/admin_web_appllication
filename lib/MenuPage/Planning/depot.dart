@@ -8,7 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:web_appllication/MenuPage/Planning/overview.dart';
-import 'package:web_appllication/Service/database_service.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/style.dart';
 
@@ -185,7 +184,9 @@ class _MydepotsState extends State<Mydepots> {
                           // Navigator.pop(context);
 
                           FirebaseFirestore.instance
-                              .collection(widget.cityName!)
+                              .collection('DepoName')
+                              .doc(widget.cityName!)
+                              .collection('AllDepots')
                               .add({
                             'DepoName': cityName,
                             'DepoUrl': downloadurl,
@@ -193,17 +194,17 @@ class _MydepotsState extends State<Mydepots> {
                           Navigator.pop(context);
                           pickedImage == null;
                           Navigator.pop(context);
-                          DatabaseService()
-                              .uploadDepoData(cityName, downloadurl)
-                              .whenComplete(() {
-                            Navigator.pop(context);
-                            pickedImage == null;
-                            setState() {
-                              _isLoading = false;
-                            }
+                          // DatabaseService()
+                          //     .uploadDepoData(cityName, downloadurl)
+                          //     .whenComplete(() {
+                          //   Navigator.pop(context);
+                          //   pickedImage == null;
+                          //   setState() {
+                          //     _isLoading = false;
+                          //   }
 
-                            Navigator.pop(context);
-                          });
+                          //   Navigator.pop(context);
+                          // });
                         }
                       },
                       child: Text("ADD"),
@@ -217,8 +218,11 @@ class _MydepotsState extends State<Mydepots> {
 
   depolist() {
     return StreamBuilder(
-        stream:
-            FirebaseFirestore.instance.collection(widget.cityName!).snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('DepoName')
+            .doc(widget.cityName!)
+            .collection('AllDepots')
+            .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data != null) {

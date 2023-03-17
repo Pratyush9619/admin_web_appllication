@@ -11,8 +11,10 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:web_appllication/style.dart';
 
 class UploadDocument extends StatefulWidget {
+  String? activity;
+  String? cityName;
   String? depoName;
-  UploadDocument({super.key, this.depoName});
+  UploadDocument({super.key, this.cityName, this.depoName, this.activity});
 
   @override
   State<UploadDocument> createState() => _UploadDocumentState();
@@ -37,7 +39,7 @@ class _UploadDocumentState extends State<UploadDocument> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         'Selected file:',
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
