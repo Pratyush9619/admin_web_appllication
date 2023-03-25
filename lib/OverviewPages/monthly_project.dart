@@ -49,7 +49,7 @@ class _MonthlyProjectState extends State<MonthlyProject> {
     return Scaffold(
       appBar: PreferredSize(
           child: CustomAppBar(
-            text: 'Monthly Report/ ${widget.cityName}/ ${widget.depoName}',
+            text: ' ${widget.cityName}/ ${widget.depoName} / Monthly Report',
             haveSynced: true,
             store: () {
               StoreData();

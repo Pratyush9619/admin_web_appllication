@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -9,7 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/ChartData.dart';
-import 'package:web_appllication/MenuPage/datasource/employee_datasouce.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/provider/text_provider.dart';
 import 'package:web_appllication/style.dart';
@@ -18,8 +15,9 @@ import '../MenuPage/datasource/depot_overviewdatasource.dart';
 import '../MenuPage/model/depot_overview.dart';
 
 class DepotOverview extends StatefulWidget {
+  String? cityName;
   String? depoName;
-  DepotOverview({super.key, this.depoName});
+  DepotOverview({super.key, this.cityName, this.depoName});
 
   @override
   State<DepotOverview> createState() => _DepotOverviewState();
@@ -53,6 +51,8 @@ class _DepotOverviewState extends State<DepotOverview> {
 
   Stream? _stream, _stream1;
   var alldata;
+
+  Uint8List? fileBytes1;
 
   @override
   void initState() {
@@ -101,7 +101,7 @@ class _DepotOverviewState extends State<DepotOverview> {
         appBar: PreferredSize(
           // ignore: sort_child_properties_last
           child: CustomAppBar(
-              text: 'Depot Overview',
+              text: '${widget.cityName}/ ${widget.depoName} /Depot Overview',
               // icon: Icons.logout,
               haveSynced: true,
               store: () {
@@ -130,6 +130,7 @@ class _DepotOverviewState extends State<DepotOverview> {
           children: [
             Container(
               height: 40,
+              width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(color: Colors.blue),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -157,7 +158,7 @@ class _DepotOverviewState extends State<DepotOverview> {
                   children: [
                     Container(
                       padding: EdgeInsets.all(8.0),
-                      width: 600,
+                      width: 500,
                       child: Column(
                         children: [
                           Container(
@@ -167,7 +168,7 @@ class _DepotOverviewState extends State<DepotOverview> {
                                   color: blue),
                               child: Text(
                                 'Brief Overview of ${widget.depoName} E-Bus Depot',
-                                style: TextStyle(color: white, fontSize: 18),
+                                style: TextStyle(color: white, fontSize: 16),
                               )),
                           const SizedBox(height: 25),
                           cards(),
@@ -815,7 +816,7 @@ class _DepotOverviewState extends State<DepotOverview> {
   cards() {
     return Expanded(
       child: Container(
-        width: 550,
+        width: 500,
         child: StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection('OverviewCollection')
@@ -825,7 +826,6 @@ class _DepotOverviewState extends State<DepotOverview> {
             if (snapshot.hasData) {
               return SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -836,7 +836,7 @@ class _DepotOverviewState extends State<DepotOverview> {
                             'Depots location and Address ',
                             textAlign: TextAlign.start,
                             style: TextStyle(
-                              fontSize: 15,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -856,13 +856,16 @@ class _DepotOverviewState extends State<DepotOverview> {
                                 minLines: 1,
                                 autofocus: false,
                                 textAlign: TextAlign.center,
-                                style: TextStyle(color: black, fontSize: 15),
+                                style: TextStyle(fontSize: 15),
                                 onChanged: (value) {
+                                  address = value;
+                                },
+                                onSaved: (value) {
                                   address = value;
                                 })),
                       ],
                     ),
-                    SizedBox(height: 3),
+                    SizedBox(height: 5),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -885,21 +888,24 @@ class _DepotOverviewState extends State<DepotOverview> {
                                       .data()
                                       .toString()
                                       .contains('scope')
-                                  ? snapshot.data!.get('scope')
+                                  ? snapshot.data!.get('scope') ?? 'Enter scope'
                                   : 'Enter scope',
                               maxLines: 1,
                               textInputAction: TextInputAction.done,
                               minLines: 1,
                               autofocus: false,
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: black, fontSize: 15),
+                              style: const TextStyle(fontSize: 15),
+                              onSaved: (newValue) {
+                                scope = newValue;
+                              },
                               onChanged: (value) {
                                 scope = value;
                               }),
                         ),
                       ],
                     ),
-                    SizedBox(height: 3),
+                    SizedBox(height: 5),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -914,7 +920,7 @@ class _DepotOverviewState extends State<DepotOverview> {
                             ),
                           ),
                         ),
-                        Container(
+                        SizedBox(
                           width: 200,
                           height: 35,
                           child: TextFormField(
@@ -922,21 +928,22 @@ class _DepotOverviewState extends State<DepotOverview> {
                                       .data()
                                       .toString()
                                       .contains('required')
-                                  ? snapshot.data!.get('required')
+                                  ? snapshot.data!.get('required') ??
+                                      'Enter Required'
                                   : 'Enter Required',
                               maxLines: 1,
                               textInputAction: TextInputAction.done,
                               minLines: 1,
                               autofocus: false,
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: black, fontSize: 15),
+                              style: TextStyle(fontSize: 15),
                               onChanged: (value) {
                                 required = value;
                               }),
                         ),
                       ],
                     ),
-                    SizedBox(height: 3),
+                    const SizedBox(height: 5),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -959,21 +966,22 @@ class _DepotOverviewState extends State<DepotOverview> {
                                       .data()
                                       .toString()
                                       .contains('charger')
-                                  ? snapshot.data!.get('charger')
-                                  : 'Enter no. of Charger ',
+                                  ? snapshot.data!.get('charger') ??
+                                      'Enter no. of Charger '
+                                  : 'Enter no. of Charger',
                               maxLines: 1,
                               textInputAction: TextInputAction.done,
                               minLines: 1,
                               autofocus: false,
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: black, fontSize: 15),
+                              style: TextStyle(fontSize: 15),
                               onChanged: (value) {
                                 charger = value;
                               }),
                         ),
                       ],
                     ),
-                    SizedBox(height: 3),
+                    SizedBox(height: 5),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -996,26 +1004,26 @@ class _DepotOverviewState extends State<DepotOverview> {
                                       .data()
                                       .toString()
                                       .contains('load')
-                                  ? snapshot.data!.get('load')
+                                  ? snapshot.data!.get('load') ?? 'Enter  load '
                                   : 'Enter  load ',
                               maxLines: 1,
                               textInputAction: TextInputAction.done,
                               minLines: 1,
                               autofocus: false,
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: black, fontSize: 15),
+                              style: TextStyle(fontSize: 15),
                               onChanged: (value) {
                                 load = value;
                               }),
                         ),
                       ],
                     ),
-                    SizedBox(height: 3),
+                    SizedBox(height: 5),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          width: 200,
+                          width: 280,
                           child: const Text(
                             'Existing Utility for power source ',
                             textAlign: TextAlign.start,
@@ -1033,170 +1041,348 @@ class _DepotOverviewState extends State<DepotOverview> {
                                       .data()
                                       .toString()
                                       .contains('powerSource')
-                                  ? snapshot.data!.get('powerSource')
+                                  ? snapshot.data!.get('powerSource') ??
+                                      'Enter  PowerSource '
                                   : 'Enter  PowerSource ',
                               textInputAction: TextInputAction.done,
                               minLines: 1,
                               autofocus: false,
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: black, fontSize: 15),
+                              style: TextStyle(fontSize: 15),
                               onChanged: (value) {
                                 powerSource = value;
                               }),
                         ),
                       ],
                     ),
-                    SizedBox(height: 3),
+                    SizedBox(height: 5),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          width: 200,
-                          child: Text(
-                            'BOQ Electrical',
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: black),
+                          padding: const EdgeInsets.only(right: 30),
+                          width: 280,
+                          height: 35,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'BOQ Electrical',
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: black),
+                              ),
+                              ElevatedButton(
+                                  onPressed: () async {
+                                    result = await FilePicker.platform
+                                        .pickFiles(
+                                            type: FileType.custom,
+                                            withData: true,
+                                            allowedExtensions: ['pdf']);
+                                    fileBytes = result!.files.first.bytes;
+                                    if (result == null) {
+                                      print("No file selected");
+                                    } else {
+                                      setState(() {});
+                                      result?.files.forEach((element) {
+                                        print(element.name);
+                                      });
+                                    }
+                                  },
+                                  child: const Text(
+                                    'Pick file',
+                                    textAlign: TextAlign.end,
+                                  ))
+                            ],
                           ),
                         ),
-                        Container(
-                            width: 200,
-                            height: 60,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                if (result != null)
-                                  const Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                  ),
-                                Column(
-                                  children: [
-                                    ElevatedButton(
-                                        onPressed: () async {
-                                          result = await FilePicker.platform
-                                              .pickFiles(withData: true);
-                                          if (result == null) {
-                                            print("No file selected");
-                                          } else {
-                                            setState(() {});
-                                            result?.files.forEach((element) {
-                                              print(element.name);
-                                            });
-                                          }
-                                        },
-                                        child: const Text(
-                                          'Pick file',
-                                          textAlign: TextAlign.end,
-                                        )),
-                                    SizedBox(height: 4),
-                                    ElevatedButton(
-                                        onPressed: () {},
-                                        child: Text('View File'))
-                                  ],
-                                ),
-                                Divider(thickness: 5),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                        const SizedBox(width: 4),
+                        Row(
+                          children: [
+                            Container(
+                                padding: const EdgeInsets.all(5),
+                                width: 150,
+                                height: 35,
+                                decoration: BoxDecoration(
+                                    color: blue,
+                                    border: Border.all(color: grey),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Row(
                                   children: [
                                     if (result != null)
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              width: 75,
-                                              child: Text(
-                                                result!.files.first.name,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                      Text(
+                                        result!.files.first.name,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 15, color: white),
                                       ),
                                   ],
-                                ),
-                              ],
-                            )),
+                                )),
+                            IconButton(
+                                alignment: Alignment.bottomRight,
+                                padding: EdgeInsets.only(bottom: 5),
+                                onPressed: () {},
+                                icon: Icon(Icons.delete, color: red))
+                          ],
+                        ),
+                        // TextFormField(
+                        //     initialValue: snapshot.data!
+                        //             .data()
+                        //             .toString()
+                        //             .contains('powerSource')
+                        //         ? snapshot.data!.get('powerSource') ??
+                        //             'Enter  PowerSource '
+                        //         : 'Enter  PowerSource ',
+                        //     textInputAction: TextInputAction.done,
+                        //     minLines: 1,
+                        //     autofocus: false,
+                        //     textAlign: TextAlign.center,
+                        //     style: TextStyle(fontSize: 15),
+                        //     onChanged: (value) {
+                        //       powerSource = value;
+                        //     }),
+
+                        // Container(
+                        //     width: 200,
+                        //     height: 100,
+                        //     child: Column(
+                        //       children: [
+                        //         Row(
+                        //           mainAxisAlignment:
+                        //               MainAxisAlignment.spaceBetween,
+                        //           children: [
+                        //             if (result != null)
+                        //               const Padding(
+                        //                 padding: const EdgeInsets.all(8.0),
+                        //               ),
+                        //             ElevatedButton(
+                        //                 onPressed: () async {
+                        //                   result = await FilePicker.platform
+                        //                       .pickFiles(
+                        //                           type: FileType.custom,
+                        //                           withData: true,
+                        //                           allowedExtensions: ['pdf']);
+                        //                   if (result == null) {
+                        //                     print("No file selected");
+                        //                   } else {
+                        //                     setState(() {});
+                        //                     result?.files.forEach((element) {
+                        //                       print(element.name);
+                        //                     });
+                        //                   }
+                        //                 },
+                        //                 child: const Text(
+                        //                   'Pick file',
+                        //                   textAlign: TextAlign.end,
+                        //                 )),
+                        //             ElevatedButton(
+                        //                 onPressed: () async {
+                        //                   result = await FilePicker.platform
+                        //                       .pickFiles(withData: true);
+                        //                   if (result == null) {
+                        //                     print("No file selected");
+                        //                   } else {
+                        //                     setState(() {});
+                        //                     result?.files.forEach((element) {
+                        //                       print(element.name);
+                        //                     });
+                        //                   }
+                        //                 },
+                        //                 child: Row(
+                        //                   children: [
+                        //                     if (result != null)
+                        //                       Container(
+                        //                         width: 65,
+                        //                         child: Text(
+                        //                           result!.files.first.name,
+                        //                           overflow:
+                        //                               TextOverflow.ellipsis,
+                        //                           textAlign: TextAlign.end,
+                        //                         ),
+                        //                       )
+                        //                   ],
+                        //                 )),
+                        //           ],
+                        //         ),
+                        //         Container(
+                        //             width: 200,
+                        //             height: 70,
+                        //             child: Row(
+                        //               mainAxisAlignment:
+                        //                   MainAxisAlignment.spaceBetween,
+                        //               children: [
+                        //                 if (result != null)
+                        //                   Padding(
+                        //                     padding: const EdgeInsets.all(8.0),
+                        //                     child: Container(
+                        //                       width: 170,
+                        //                       child: Text(
+                        //                         result!.files.first.name,
+                        //                         overflow: TextOverflow.ellipsis,
+                        //                         style: const TextStyle(
+                        //                             fontSize: 16,
+                        //                             fontWeight:
+                        //                                 FontWeight.bold),
+                        //                       ),
+                        //                     ),
+                        //                   ),
+                        //               ],
+                        //             )),
+                        //       ],
+                        //     )),
                       ],
                     ),
-                    SizedBox(height: 3),
+                    const SizedBox(height: 5),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
+                          padding: EdgeInsets.only(right: 30),
                           width: 280,
-                          child: Text(
-                            'BOQ Civil',
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: black),
+                          height: 35,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'BOQ Civil',
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: black),
+                              ),
+                              ElevatedButton(
+                                  onPressed: () async {
+                                    result1 = await FilePicker.platform
+                                        .pickFiles(
+                                            type: FileType.custom,
+                                            withData: true,
+                                            allowedExtensions: ['pdf']);
+                                    fileBytes1 = result1!.files.first.bytes;
+                                    if (result == null) {
+                                      print("No file selected");
+                                    } else {
+                                      setState(() {});
+                                      result?.files.forEach((element) {
+                                        print(element.name);
+                                      });
+                                    }
+                                  },
+                                  child: const Text(
+                                    'Pick file',
+                                    textAlign: TextAlign.end,
+                                  ))
+                            ],
                           ),
                         ),
-                        Container(
-                            width: 200,
-                            height: 80,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                // if (result1 != null)
-                                //   const Padding(
-                                //     padding: const EdgeInsets.only(top: 10),
-                                //   ),
-                                Column(
-                                  children: [
-                                    ElevatedButton(
-                                        onPressed: () async {
-                                          result1 = await FilePicker.platform
-                                              .pickFiles(withData: true);
-                                          if (result1 == null) {
-                                            print("No file selected");
-                                          } else {
-                                            setState(() {});
-                                            result1?.files.forEach((element) {
-                                              print(element.name);
-                                            });
-                                          }
-                                        },
-                                        child: const Text('Pick file')),
-                                    SizedBox(height: 5),
-                                    ElevatedButton(
-                                        onPressed: () {},
-                                        child: Text('View File'))
-                                  ],
-                                ),
-                                Row(
+                        const SizedBox(width: 4),
+                        Row(
+                          children: [
+                            Container(
+                                padding: const EdgeInsets.all(5),
+                                width: 150,
+                                height: 35,
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: grey),
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: blue),
+                                child: Row(
                                   children: [
                                     if (result1 != null)
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Container(
-                                          width: 75,
-                                          child: Text(
-                                            result1!.files.first.name,
-                                            style: TextStyle(
-                                                overflow: TextOverflow.ellipsis,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
+                                      Text(
+                                        result1!.files.first.name,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 15, color: white),
                                       ),
                                   ],
-                                ),
-                              ],
-                            )),
+                                )),
+                            IconButton(
+                                alignment: Alignment.bottomRight,
+                                padding: EdgeInsets.only(bottom: 5),
+                                onPressed: () {},
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: red,
+                                ))
+                          ],
+                        ),
+
+                        // Container(
+                        //     width: 200,
+                        //     height: 80,
+                        //     child: Column(
+                        //       children: [
+                        //         Row(
+                        //           mainAxisAlignment:
+                        //               MainAxisAlignment.spaceBetween,
+                        //           children: [
+                        //             if (result1 != null)
+                        //               const Padding(
+                        //                 padding: const EdgeInsets.only(top: 10),
+                        //               ),
+                        //             ElevatedButton(
+                        //                 onPressed: () async {
+                        //                   result1 = await FilePicker.platform
+                        //                       .pickFiles(withData: true);
+                        //                   if (result1 == null) {
+                        //                     print("No file selected");
+                        //                   } else {
+                        //                     setState(() {});
+                        //                     result1?.files.forEach((element) {
+                        //                       print(element.name);
+                        //                     });
+                        //                   }
+                        //                 },
+                        //                 child: const Text('Pick file')),
+                        //             ElevatedButton(
+                        //                 onPressed: () async {
+                        //                   result1 = await FilePicker.platform
+                        //                       .pickFiles(withData: true);
+                        //                   if (result1 == null) {
+                        //                     print("No file selected");
+                        //                   } else {
+                        //                     setState(() {});
+                        //                     result1?.files.forEach((element) {
+                        //                       print(element.name);
+                        //                     });
+                        //                   }
+                        //                 },
+                        //                 child: const Text('Pick file')),
+                        //           ],
+                        //         ),
+                        //         Container(
+                        //             child: Row(
+                        //           mainAxisAlignment:
+                        //               MainAxisAlignment.spaceBetween,
+                        //           children: [
+                        //             if (result1 != null)
+                        //               Padding(
+                        //                 padding: const EdgeInsets.all(8.0),
+                        //                 child: Container(
+                        //                   decoration: BoxDecoration(
+                        //                       borderRadius:
+                        //                           BorderRadius.circular(10)),
+                        //                   width: 150,
+                        //                   child: Text(
+                        //                     result1!.files.first.name,
+                        //                     overflow: TextOverflow.ellipsis,
+                        //                     style: const TextStyle(
+                        //                         fontSize: 14,
+                        //                         fontWeight: FontWeight.bold),
+                        //                   ),
+                        //                 ),
+                        //               ),
+                        //           ],
+                        //         )),
+                        //       ],
+                        //     )),
                       ],
                     ),
+                    const SizedBox(height: 5),
                     Center(
                         child: SfCircularChart(
                       legend: Legend(

@@ -104,7 +104,7 @@ class _ResourceAllocationState extends State<ResourceAllocation> {
 
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Key Events '),
+          title: Text('${widget.cityName} / ${widget.depoName} / Key Events '),
           backgroundColor: blue,
         ),
         body: resourceCard()

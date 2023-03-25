@@ -11,10 +11,12 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:web_appllication/style.dart';
 
 class UploadDocument extends StatefulWidget {
+  String? title;
   String? activity;
   String? cityName;
   String? depoName;
-  UploadDocument({super.key, this.cityName, this.depoName, this.activity});
+  UploadDocument(
+      {super.key, this.title, this.cityName, this.depoName, this.activity});
 
   @override
   State<UploadDocument> createState() => _UploadDocumentState();

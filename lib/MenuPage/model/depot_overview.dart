@@ -32,7 +32,7 @@ class DepotOverviewModel {
     return DepotOverviewModel(
         srNo: json['srNo'],
         date: json['Date'],
-        owner: json['owner'],
+        owner: json['Owner'],
         migrateAction: json['MigratingRisk'],
         progressAction: json['ProgressionAction'],
         riskDescription: json['RiskDescription'],

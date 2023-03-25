@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:web_appllication/MenuPage/datasource/qualitychecklist_datasource.dart';
 import 'package:web_appllication/OverviewPages/daily_project.dart';
 import 'package:web_appllication/OverviewPages/depot_overview.dart';
 import 'package:web_appllication/OverviewPages/monthly_project.dart';
+import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 import 'package:web_appllication/OverviewPages/resource_allocation.dart';
+import 'package:web_appllication/OverviewPages/safety_checklist.dart';
 import 'package:web_appllication/style.dart';
 
 import '../../OverviewPages/detailed_Eng.dart';
-import '../../OverviewPages/quality_checklist.dart';
 import '../KeyEvents/key_events.dart';
 
 class MyOverview extends StatefulWidget {
@@ -42,7 +44,7 @@ class _MyOverviewState extends State<MyOverview> {
     'assets/overview_image/detailed_engineering.png',
     'assets/overview_image/jmr.png',
     'assets/overview_image/safety.png',
-    'assets/overview_image/checklist_civil.png',
+    'assets/overview_image/safety_checklist.jpeg',
     'assets/overview_image/checklist_civil.png',
     'assets/overview_image/testing_commissioning.png',
     'assets/overview_image/closure_report.png',
@@ -66,6 +68,7 @@ class _MyOverviewState extends State<MyOverview> {
     ];
     pages = [
       DepotOverview(
+        cityName: widget.cityName,
         depoName: widget.depoName,
       ),
       KeyEvents(
@@ -80,40 +83,32 @@ class _MyOverviewState extends State<MyOverview> {
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
-      // KeyEvents(
-      //   depoName: widget.depoName,
-      //   cityName: widget.cityName,
-      // ),
       DailyProject(
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
-      // KeyEvents(
-      //   depoName: widget.depoName,
-      //   cityName: widget.cityName,
-      // ),
-      // KeyEvents(
-      //   depoName: widget.depoName,
-      //   cityName: widget.cityName,
-      // ),
       DetailedEng(
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
       DepotOverview(),
-      KeyEvents(
-        depoName: widget.depoName,
+      SafetyChecklist(
         cityName: widget.cityName,
+        depoName: widget.depoName,
       ),
       QualityChecklist(
-        depoName: widget.depoName,
         cityName: widget.cityName,
+        depoName: widget.depoName,
       ),
       KeyEvents(
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
 
+      // KeyEvents(
+      //   depoName: widget.depoName,
+      //   cityName: widget.cityName,
+      // ),
       KeyEvents(
         depoName: widget.depoName,
         cityName: widget.cityName,
@@ -131,6 +126,7 @@ class _MyOverviewState extends State<MyOverview> {
       ),
       body: GridView.count(
         crossAxisCount: 6,
+        childAspectRatio: 0.99,
         children: List.generate(desription.length, (index) {
           return cards(desription[index], imagedata[index], index);
         }),

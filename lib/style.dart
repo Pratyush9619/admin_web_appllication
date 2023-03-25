@@ -6,7 +6,7 @@ Color green = Color.fromARGB(255, 88, 221, 128);
 Color almostblack = Color(0xff000000).withOpacity(0.87);
 Color almostWhite = Color(0xffffffff).withOpacity(0.87);
 Color blue = Color.fromARGB(255, 9, 83, 161);
-Color blue2 = Color(0xff009eff);
+Color lightblue = Color(0xff009eff);
 Color white = Color(0xffffffff);
 
 TextStyle bodyText1 = GoogleFonts.ibmPlexSans(
