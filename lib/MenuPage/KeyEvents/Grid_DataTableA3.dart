@@ -53,7 +53,7 @@ class _StatutoryAprovalA3State extends State<StatutoryAprovalA3> {
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
         .collection('AllKeyEventsTable')
-        .doc('${widget.depoName}A2')
+        .doc('${widget.depoName}A3')
         .snapshots();
     super.initState();
   }
@@ -856,7 +856,7 @@ class _StatutoryAprovalA3State extends State<StatutoryAprovalA3> {
     CollectionReference tabledata = instance.collection(widget.depoName!);
 
     DocumentSnapshot snapshot =
-        await tabledata.doc('${widget.depoName}A2').get();
+        await tabledata.doc('${widget.depoName}A3').get();
     var data = snapshot.data() as Map;
     var alldata = data['data'] as List<dynamic>;
 
@@ -882,7 +882,7 @@ class _StatutoryAprovalA3State extends State<StatutoryAprovalA3> {
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
         .collection('AllKeyEventsTable')
-        .doc('${widget.depoName}A2')
+        .doc('${widget.depoName}A3')
         .set({'data': tabledata2}).whenComplete(() {
       tabledata2.clear();
 

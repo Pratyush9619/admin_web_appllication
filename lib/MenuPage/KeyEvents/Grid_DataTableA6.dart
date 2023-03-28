@@ -79,7 +79,7 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
         .collection('AllKeyEventsTable')
-        .doc('${widget.depoName}A5')
+        .doc('${widget.depoName}A6')
         .snapshots();
     super.initState();
   }
@@ -915,7 +915,7 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
         .collection('AllKeyEventsTable')
-        .doc('${widget.depoName}A5')
+        .doc('${widget.depoName}A6')
         .set({'data': tabledata2}).whenComplete(() {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

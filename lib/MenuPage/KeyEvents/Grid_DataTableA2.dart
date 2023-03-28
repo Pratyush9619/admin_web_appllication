@@ -51,7 +51,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
         .collection('AllKeyEventsTable')
-        .doc('${widget.depoName}A1')
+        .doc('${widget.depoName}A2')
         .snapshots();
 
     int length = _employees.length * 66;
@@ -99,7 +99,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
     //   // ChartData('A7', 23, Colors.orange),
     //   // ChartData('A8', 34, Colors.brown),
     //   // ChartData('A9', 25, Colors.deepOrange),
-    //   // ChartData('A10', 50, Colors.blue),
+    //   // ChartData('A20', 50, Colors.blue),
     // ];
     return Scaffold(
       appBar: PreferredSize(
@@ -821,7 +821,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
   //   CollectionReference tabledata = instance.collection(widget.depoName!);
 
   //   DocumentSnapshot snapshot =
-  //       await tabledata.doc('${widget.depoName}A1').get();
+  //       await tabledata.doc('${widget.depoName}A2').get();
   //   var data = snapshot.data() as Map;
   //   alldata = data['data'] as List<dynamic>;
 
@@ -953,7 +953,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
         .collection('AllKeyEventsTable')
-        .doc('${widget.depoName}A1')
+        .doc('${widget.depoName}A2')
         .set({
       'data': tabledata2,
     }).whenComplete(() {

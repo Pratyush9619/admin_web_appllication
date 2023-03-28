@@ -79,7 +79,7 @@ class _StatutoryAprovalA7State extends State<StatutoryAprovalA7> {
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
         .collection('AllKeyEventsTable')
-        .doc('${widget.depoName}A6')
+        .doc('${widget.depoName}A7')
         .snapshots();
     super.initState();
   }
@@ -914,7 +914,7 @@ class _StatutoryAprovalA7State extends State<StatutoryAprovalA7> {
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
         .collection('AllKeyEventsTable')
-        .doc('${widget.depoName}A6')
+        .doc('${widget.depoName}A7')
         .set({'data': tabledata2}).whenComplete(() {
       tabledata2.clear();
 

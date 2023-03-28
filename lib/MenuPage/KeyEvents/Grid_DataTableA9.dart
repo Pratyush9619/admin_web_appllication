@@ -79,7 +79,7 @@ class _StatutoryAprovalA9State extends State<StatutoryAprovalA9> {
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
         .collection('AllKeyEventsTable')
-        .doc('${widget.depoName}A8')
+        .doc('${widget.depoName}A9')
         .snapshots();
     super.initState();
   }
@@ -1006,11 +1006,14 @@ class _StatutoryAprovalA9State extends State<StatutoryAprovalA9> {
     }
 
     FirebaseFirestore.instance
-        .collection(widget.depoName!)
-        .doc('${widget.depoName}A8')
-        .set({'data': tabledata2}).whenComplete(() {
+        .collection('KeyEventsTable')
+        .doc(widget.depoName!)
+        .collection('AllKeyEventsTable')
+        .doc('${widget.depoName}A9')
+        .set({
+      'data': tabledata2,
+    }).whenComplete(() {
       tabledata2.clear();
-
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Data are synced'),
         backgroundColor: blue,
