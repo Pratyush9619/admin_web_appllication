@@ -340,7 +340,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                   ),
                                   GridColumn(
                                     columnName: 'BalancedQty',
-                                    allowEditing: true,
+                                    allowEditing: false,
                                     label: Container(
                                       width: 150,
                                       alignment: Alignment.center,
@@ -353,7 +353,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                   ),
                                   GridColumn(
                                     columnName: 'Progress',
-                                    allowEditing: true,
+                                    allowEditing: false,
                                     label: Container(
                                       alignment: Alignment.center,
                                       child: Text('% of Progress',
@@ -677,7 +677,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                     ),
                                     GridColumn(
                                       columnName: 'BalancedQty',
-                                      allowEditing: true,
+                                      allowEditing: false,
                                       label: Container(
                                         width: 150,
                                         alignment: Alignment.center,
@@ -690,7 +690,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                     ),
                                     GridColumn(
                                       columnName: 'Progress',
-                                      allowEditing: true,
+                                      allowEditing: false,
                                       label: Container(
                                         alignment: Alignment.center,
                                         child: Text('% of Progress',

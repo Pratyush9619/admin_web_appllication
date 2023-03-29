@@ -325,7 +325,7 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
                                   ),
                                   GridColumn(
                                     columnName: 'BalancedQty',
-                                    allowEditing: true,
+                                    allowEditing: false,
                                     label: Container(
                                       width: 150,
                                       alignment: Alignment.center,
@@ -338,7 +338,7 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
                                   ),
                                   GridColumn(
                                     columnName: 'Progress',
-                                    allowEditing: true,
+                                    allowEditing: false,
                                     label: Container(
                                       alignment: Alignment.center,
                                       child: Text('% of Progress',
@@ -660,7 +660,7 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
                                   ),
                                   GridColumn(
                                     columnName: 'BalancedQty',
-                                    allowEditing: true,
+                                    allowEditing: false,
                                     label: Container(
                                       width: 150,
                                       alignment: Alignment.center,
@@ -673,7 +673,7 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
                                   ),
                                   GridColumn(
                                     columnName: 'Progress',
-                                    allowEditing: true,
+                                    allowEditing: false,
                                     label: Container(
                                       alignment: Alignment.center,
                                       child: Text('% of Progress',
