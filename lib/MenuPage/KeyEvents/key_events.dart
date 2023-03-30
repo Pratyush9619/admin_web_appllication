@@ -6,6 +6,7 @@ import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:web_appllication/MenuPage/KeyEvents/Grid_DataTable51.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/Grid_DataTableA10.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/Grid_DataTableA5.dart';
 import 'package:web_appllication/MenuPage/KeyEvents/Grid_DataTableA3.dart';
@@ -202,7 +203,7 @@ class _KeyEventsState extends State<KeyEvents> {
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
-      StatutoryAprovalA5(
+      StatutoryAproval(
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
@@ -248,565 +249,610 @@ class _KeyEventsState extends State<KeyEvents> {
                       asenddate.clear();
                       weight.clear();
 
-                      if (snapshot.data.docs[0].reference.id.toString() ==
-                          '${widget.depoName}A10') {
-                        var alldataA10 =
-                            snapshot.data.docs[0]['data'] as List<dynamic>;
-                        sdate10 = alldataA10[0]['StartDate'];
-                        edate10 = alldataA10[alldataA10.length - 1]['EndDate'];
-                        asdate10 = alldataA10[0]['ActualStart'];
-                        aedate10 =
-                            alldataA10[alldataA10.length - 1]['ActualEnd'];
-
-                        for (int i = 0; i < alldataA10.length; i++) {
-                          var weightage = alldataA10[i]['Weightage'];
-                          totalweightage = totalweightage + weightage;
-                        }
-                        weight10.add(totalweightage);
-                      }
-
-                      if (snapshot.data.docs[1].reference.id.toString() ==
-                          '${widget.depoName}A2') {
-                        var alldataA2 =
-                            snapshot.data.docs[1]['data'] as List<dynamic>;
-                        sdate2 = alldataA2[0]['StartDate'];
-                        edate2 = alldataA2[alldataA2.length - 1]['EndDate'];
-                        asdate2 = alldataA2[0]['ActualStart'];
-                        aedate2 = alldataA2[alldataA2.length - 1]['ActualEnd'];
-
-                        for (int i = 0; i < alldataA2.length; i++) {
-                          var weightage = alldataA2[i]['Weightage'];
-                          totalweightage = totalweightage + weightage;
-                        }
-                        weight2.add(totalweightage);
-                      }
-                      if (snapshot.data.docs[2].reference.id.toString() ==
-                          '${widget.depoName}A3') {
-                        var alldataA3 =
-                            snapshot.data.docs[2]['data'] as List<dynamic>;
-                        sdate3 = alldataA3[0]['StartDate'];
-                        edate3 = alldataA3[alldataA3.length - 1]['EndDate'];
-                        asdate3 = alldataA3[0]['ActualStart'];
-                        aedate3 = alldataA3[alldataA3.length - 1]['ActualEnd'];
-
-                        for (int i = 0; i < alldataA3.length; i++) {
-                          var weightage = alldataA3[i]['Weightage'];
-                          totalweightage = totalweightage + weightage;
-                        }
-                        weight3.add(totalweightage);
-                      }
-                      if (snapshot.data.docs[3].reference.id.toString() ==
-                          '${widget.depoName}A4') {
-                        var alldataA4 =
-                            snapshot.data.docs[3]['data'] as List<dynamic>;
-                        sdate4 = alldataA4[0]['StartDate'];
-                        edate4 = alldataA4[alldataA4.length - 1]['EndDate'];
-                        asdate4 = alldataA4[0]['ActualStart'];
-                        aedate4 = alldataA4[alldataA4.length - 1]['ActualEnd'];
-
-                        for (int i = 0; i < alldataA4.length; i++) {
-                          var weightage = alldataA4[i]['Weightage'];
-                          totalweightage = totalweightage + weightage;
-                        }
-                        weight4.add(totalweightage);
-                      }
-                      if (snapshot.data.docs[4].reference.id.toString() ==
-                          '${widget.depoName}A5') {
-                        var alldataA5 =
-                            snapshot.data.docs[4]['data'] as List<dynamic>;
-                        sdate5 = alldataA5[0]['StartDate'];
-                        edate5 = alldataA5[alldataA5.length - 1]['EndDate'];
-                        asdate5 = alldataA5[0]['ActualStart'];
-                        aedate5 = alldataA5[alldataA5.length - 1]['ActualEnd'];
-
-                        for (int i = 0; i < alldataA5.length; i++) {
-                          var weightage = alldataA5[i]['Weightage'];
-                          totalweightage = totalweightage + weightage;
-                        }
-                        weight5.add(totalweightage);
-                      }
-                      if (snapshot.data.docs[5].reference.id.toString() ==
-                          '${widget.depoName}A6') {
-                        var alldataA6 =
-                            snapshot.data.docs[5]['data'] as List<dynamic>;
-                        sdate6 = alldataA6[0]['StartDate'];
-                        edate6 = alldataA6[alldataA6.length - 1]['EndDate'];
-                        asdate6 = alldataA6[0]['ActualStart'];
-                        aedate6 = alldataA6[alldataA6.length - 1]['ActualEnd'];
-
-                        for (int i = 0; i < alldataA6.length; i++) {
-                          var weightage = alldataA6[i]['Weightage'];
-                          totalweightage = totalweightage + weightage;
-                        }
-                        weight6.add(totalweightage);
-                      }
-                      if (snapshot.data.docs[6].reference.id.toString() ==
-                          '${widget.depoName}A7') {
-                        var alldataA7 =
-                            snapshot.data.docs[6]['data'] as List<dynamic>;
-                        sdate7 = alldataA7[0]['StartDate'];
-                        edate7 = alldataA7[alldataA7.length - 1]['EndDate'];
-                        asdate7 = alldataA7[0]['ActualStart'];
-                        aedate7 = alldataA7[alldataA7.length - 1]['ActualEnd'];
-
-                        for (int i = 0; i < alldataA7.length; i++) {
-                          var weightage = alldataA7[i]['Weightage'];
-                          totalweightage = totalweightage + weightage;
-                        }
-                        weight7.add(totalweightage);
-                      }
-                      if (snapshot.data.docs[7].reference.id.toString() ==
-                          '${widget.depoName}A8') {
-                        var alldataA8 =
-                            snapshot.data.docs[7]['data'] as List<dynamic>;
-                        sdate8 = alldataA8[0]['StartDate'];
-                        edate8 = alldataA8[alldataA8.length - 1]['EndDate'];
-                        asdate8 = alldataA8[0]['ActualStart'];
-                        aedate8 = alldataA8[alldataA8.length - 1]['ActualEnd'];
-
-                        for (int i = 0; i < alldataA8.length; i++) {
-                          var weightage = alldataA8[i]['Weightage'];
-                          totalweightage = totalweightage + weightage;
-                        }
-                        weight8.add(totalweightage);
-                      }
-                      if (snapshot.data.docs[8].reference.id.toString() ==
-                          '${widget.depoName}A9') {
-                        var alldataA9 =
-                            snapshot.data.docs[8]['data'] as List<dynamic>;
-                        sdate9 = alldataA9[0]['StartDate'];
-                        edate9 = alldataA9[alldataA9.length - 1]['EndDate'];
-                        asdate9 = alldataA9[0]['ActualStart'];
-                        aedate9 = alldataA9[alldataA9.length - 1]['ActualEnd'];
-
-                        for (int i = 0; i < alldataA9.length; i++) {
-                          var weightage = alldataA9[i]['Weightage'];
-                          totalweightage = totalweightage + weightage;
-                        }
-                        weight9.add(totalweightage);
-                      }
-
                       for (int i = 0; i < length; i++) {
-                        totalweightage = 0;
+                        if (i == 0) {
+                          for (int j = 0; j < length; j++) {
+                            if (snapshot.data.docs[j].reference.id.toString() ==
+                                '${widget.depoName}A10') {
+                              var alldataA10 = snapshot.data.docs[0]['data']
+                                  as List<dynamic>;
+                              sdate10 = alldataA10[0]['StartDate'];
+                              edate10 =
+                                  alldataA10[alldataA10.length - 1]['EndDate'];
+                              asdate10 = alldataA10[0]['ActualStart'];
+                              aedate10 = alldataA10[alldataA10.length - 1]
+                                  ['ActualEnd'];
 
-                        weight.add(totalweightage);
-                        // if (i == 4) {
-                        //   var alldataA5 =
-                        //       snapshot.data.docs[i]['data'] as List<dynamic>;
-                        //   sdate = alldataA5[0]['StartDate'];
-                        //   edate = alldataA5[alldataA5.length - 1]['EndDate'];
-                        //   asdate = alldataA5[0]['ActualStart'];
-                        //   aedate = alldataA5[alldataA5.length - 1]['ActualEnd'];
-                        //   startdate.add(sdate!);
-                        //   enddate.add(edate!);
-                        //   asstartdate.add(asdate!);
-                        //   asenddate.add(aedate!);
-                        //   print('Start$startdate');
-                        //   print('Start$enddate');
-                        //   for (int i = 0; i < alldataA5.length; i++) {
-                        //     var weightage = alldataA5[i]['Weightage'];
-                        //     totalweightage = totalweightage + weightage;
-                        //   }
-                        //   weight.add(totalweightage);
-                        // } else {
-                        //   alldata =
-                        //       snapshot.data.docs[i]['data'] as List<dynamic>;
-                        //   sdate = alldata[0]['StartDate'];
-                        //   edate = alldata[alldata.length - 1]['EndDate'];
-                        //   asdate = alldata[0]['ActualStart'];
-                        //   aedate = alldata[alldata.length - 1]['ActualEnd'];
-                        //   startdate.add(sdate!);
-                        //   enddate.add(edate!);
-                        //   asstartdate.add(asdate!);
-                        //   asenddate.add(aedate!);
-                        //   print('Start$startdate');
-                        //   print('End$enddate');
+                              for (int i = 0; i < alldataA10.length; i++) {
+                                var weightage = alldataA10[i]['Weightage'];
+                                totalweightage = totalweightage + weightage;
+                              }
+                              weight10.add(totalweightage);
+                            }
+                          }
+                        }
+                        if (i == 1) {
+                          for (int j = 0; j < length; j++) {
+                            if (snapshot.data.docs[j].reference.id.toString() ==
+                                '${widget.depoName}A2') {
+                              var alldataA2 = snapshot.data.docs[1]['data']
+                                  as List<dynamic>;
+                              sdate2 = alldataA2[0]['StartDate'];
+                              edate2 =
+                                  alldataA2[alldataA2.length - 1]['EndDate'];
+                              asdate2 = alldataA2[0]['ActualStart'];
+                              aedate2 =
+                                  alldataA2[alldataA2.length - 1]['ActualEnd'];
 
-                        // for (int i = 0; i < alldata.length; i++) {
-                        //   var weightage = alldata[i]['Weightage'];
-                        //   totalweightage = totalweightage + weightage;
-                        // }
+                              for (int i = 0; i < alldataA2.length; i++) {
+                                var weightage = alldataA2[i]['Weightage'];
+                                totalweightage = totalweightage + weightage;
+                              }
+                              weight2.add(totalweightage);
+                            }
+                          }
+                        }
+                        if (i == 2) {
+                          for (int j = 0; j < length; j++) {
+                            if (snapshot.data.docs[j].reference.id.toString() ==
+                                '${widget.depoName}A3') {
+                              var alldataA3 = snapshot.data.docs[2]['data']
+                                  as List<dynamic>;
+                              sdate3 = alldataA3[0]['StartDate'];
+                              edate3 =
+                                  alldataA3[alldataA3.length - 1]['EndDate'];
+                              asdate3 = alldataA3[0]['ActualStart'];
+                              aedate3 =
+                                  alldataA3[alldataA3.length - 1]['ActualEnd'];
 
-                        // weight.add(totalweightage);
-                        chartData = [
-                          ChartData(
-                              'A10',
-                              weight.asMap().containsKey(8) ? weight[8] : 0,
-                              Colors.yellow),
-                          ChartData(
-                              'A9',
-                              weight.asMap().containsKey(7) ? weight[7] : 0,
-                              Colors.yellow),
-                          ChartData(
-                              'A8',
-                              weight.asMap().containsKey(6) ? weight[6] : 0,
-                              Colors.yellow),
-                          ChartData(
-                              'A7',
-                              weight.asMap().containsKey(5) ? weight[5] : 0,
-                              Colors.yellow),
-                          ChartData(
-                              'A6',
-                              weight.asMap().containsKey(4) ? weight[4] : 0,
-                              Colors.yellow),
-                          ChartData(
-                              'A5',
-                              weight.asMap().containsKey(3) ? weight[3] : 0,
-                              Colors.yellow),
-                          ChartData(
-                              'A4',
-                              weight.asMap().containsKey(2) ? weight[2] : 0,
-                              Colors.yellow),
-                          ChartData(
-                              'A3',
-                              weight.asMap().containsKey(1) ? weight[1] : 0,
-                              Colors.yellow),
-                          ChartData(
-                              'A2',
-                              weight.asMap().containsKey(0) ? weight[0] : 0,
-                              Colors.yellow),
-                          ChartData('A1', 5, Colors.yellow),
-                        ];
-                        chartData2 = [
-                          ChartData(
-                              'A10',
-                              weight.asMap().containsKey(8) ? weight[8] : 0,
-                              Colors.red),
-                          ChartData(
-                              'A9',
-                              weight.asMap().containsKey(7) ? weight[7] : 0,
-                              Colors.red),
-                          ChartData(
-                              'A8',
-                              weight.asMap().containsKey(6) ? weight[6] : 0,
-                              Colors.red),
-                          ChartData(
-                              'A7',
-                              weight.asMap().containsKey(5) ? weight[5] : 0,
-                              Colors.red),
-                          ChartData(
-                              'A6',
-                              weight.asMap().containsKey(4) ? weight[4] : 0,
-                              Colors.red),
-                          ChartData(
-                              'A5',
-                              weight.asMap().containsKey(3) ? weight[3] : 0,
-                              Colors.red),
-                          ChartData(
-                              'A4',
-                              weight.asMap().containsKey(2) ? weight[2] : 0,
-                              Colors.red),
-                          ChartData(
-                              'A3',
-                              weight.asMap().containsKey(1) ? weight[1] : 0,
-                              Colors.red),
-                          ChartData(
-                              'A2',
-                              weight.asMap().containsKey(0) ? weight[0] : 0,
-                              Colors.red),
-                          ChartData('A1', 5, Colors.red),
-                        ];
+                              for (int i = 0; i < alldataA3.length; i++) {
+                                var weightage = alldataA3[i]['Weightage'];
+                                totalweightage = totalweightage + weightage;
+                              }
+                              weight3.add(totalweightage);
+                            }
+                          }
+                        }
+                        if (i == 3) {
+                          for (int j = 0; j < length; j++) {
+                            if (snapshot.data.docs[j].reference.id.toString() ==
+                                '${widget.depoName}A4') {
+                              var alldataA4 = snapshot.data.docs[3]['data']
+                                  as List<dynamic>;
+                              sdate4 = alldataA4[0]['StartDate'];
+                              edate4 =
+                                  alldataA4[alldataA4.length - 1]['EndDate'];
+                              asdate4 = alldataA4[0]['ActualStart'];
+                              aedate4 =
+                                  alldataA4[alldataA4.length - 1]['ActualEnd'];
 
-                        _employees = getEmployeeData();
-                        _KeyDataSourceKeyEvents =
-                            KeyDataSourceKeyEvents(_employees, context);
-                        _dataGridController = DataGridController();
+                              for (int i = 0; i < alldataA4.length; i++) {
+                                var weightage = alldataA4[i]['Weightage'];
+                                totalweightage = totalweightage + weightage;
+                              }
+                              weight4.add(totalweightage);
+                            }
+                          }
+                        }
+                        if (i == 4) {
+                          for (int j = 0; j < length; j++) {
+                            if (snapshot.data.docs[j].reference.id.toString() ==
+                                '${widget.depoName}A5') {
+                              var alldataA5 = snapshot.data.docs[4]['data']
+                                  as List<dynamic>;
+                              sdate5 = alldataA5[0]['StartDate'];
+                              edate5 =
+                                  alldataA5[alldataA5.length - 1]['EndDate'];
+                              asdate5 = alldataA5[0]['ActualStart'];
+                              aedate5 =
+                                  alldataA5[alldataA5.length - 1]['ActualEnd'];
 
-                        return Container(
-                            height: 580,
-                            child: Row(children: [
-                              Expanded(
-                                child: SfDataGrid(
-                                  source: _KeyDataSourceKeyEvents,
-                                  onCellTap: (DataGridCellTapDetails details) {
-                                    final DataGridRow row =
-                                        _KeyDataSourceKeyEvents.effectiveRows[
-                                            details.rowColumnIndex.rowIndex -
-                                                1];
+                              for (int i = 0; i < alldataA5.length; i++) {
+                                var weightage = alldataA5[i]['Weightage'];
+                                totalweightage = totalweightage + weightage;
+                              }
+                              weight5.add(totalweightage);
+                            }
+                          }
+                        }
+                        if (i == 5) {
+                          for (int j = 0; j < length; j++) {
+                            if (snapshot.data.docs[j].reference.id.toString() ==
+                                '${widget.depoName}A6') {
+                              var alldataA6 = snapshot.data.docs[5]['data']
+                                  as List<dynamic>;
+                              sdate6 = alldataA6[0]['StartDate'];
+                              edate6 =
+                                  alldataA6[alldataA6.length - 1]['EndDate'];
+                              asdate6 = alldataA6[0]['ActualStart'];
+                              aedate6 =
+                                  alldataA6[alldataA6.length - 1]['ActualEnd'];
 
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) => menuwidget[
-                                                details.rowColumnIndex
-                                                        .rowIndex -
-                                                    1]));
-                                  },
-                                  allowEditing: true,
-                                  frozenColumnsCount: 2,
-                                  editingGestureType: EditingGestureType.tap,
-                                  headerGridLinesVisibility:
-                                      GridLinesVisibility.both,
-                                  gridLinesVisibility: GridLinesVisibility.both,
-                                  selectionMode: SelectionMode.single,
-                                  navigationMode: GridNavigationMode.cell,
-                                  columnWidthMode: ColumnWidthMode.auto,
-                                  controller: _dataGridController,
-                                  // onQueryRowHeight: (details) {
-                                  //   return details.rowIndex == 0 ? 60.0 : 49.0;
-                                  // },
-                                  columns: [
-                                    GridColumn(
-                                      columnName: 'srNo',
-                                      autoFitPadding:
-                                          EdgeInsets.symmetric(horizontal: 16),
-                                      allowEditing: false,
-                                      label: Container(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          'Sr No',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
+                              for (int i = 0; i < alldataA6.length; i++) {
+                                var weightage = alldataA6[i]['Weightage'];
+                                totalweightage = totalweightage + weightage;
+                              }
+                              weight6.add(totalweightage);
+                            }
+                          }
+                        }
+                        if (i == 6) {
+                          for (int j = 0; j < length; j++) {
+                            if (snapshot.data.docs[j].reference.id.toString() ==
+                                '${widget.depoName}A7') {
+                              var alldataA7 = snapshot.data.docs[6]['data']
+                                  as List<dynamic>;
+                              sdate7 = alldataA7[0]['StartDate'];
+                              edate7 =
+                                  alldataA7[alldataA7.length - 1]['EndDate'];
+                              asdate7 = alldataA7[0]['ActualStart'];
+                              aedate7 =
+                                  alldataA7[alldataA7.length - 1]['ActualEnd'];
 
-                                          //    textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ),
-                                    GridColumn(
-                                      columnName: 'Activity',
-                                      allowEditing: false,
-                                      width: 220,
-                                      label: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16.0),
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          'Activity',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
-                                        ),
-                                      ),
-                                    ),
-                                    GridColumn(
-                                      columnName: 'OriginalDuration',
-                                      allowEditing: false,
-                                      label: Container(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          'Original Duration',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
-                                        ),
-                                      ),
-                                    ),
-                                    GridColumn(
-                                      columnName: 'StartDate',
-                                      allowEditing: false,
-                                      label: Container(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          'Start Date',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
-                                        ),
-                                      ),
-                                    ),
-                                    GridColumn(
-                                      columnName: 'EndDate',
-                                      allowEditing: false,
-                                      label: Container(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          'End Date',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
-                                        ),
-                                      ),
-                                    ),
-                                    GridColumn(
-                                      columnName: 'ActualStart',
-                                      allowEditing: false,
-                                      width: 150,
-                                      label: Container(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          'Actual Start',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
-                                        ),
-                                      ),
-                                    ),
-                                    GridColumn(
-                                      columnName: 'ActualEnd',
-                                      allowEditing: false,
-                                      width: 150,
-                                      label: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16.0),
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          'Actual End',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
-                                        ),
-                                      ),
-                                    ),
-                                    GridColumn(
-                                      columnName: 'ActualDuration',
-                                      allowEditing: false,
-                                      label: Container(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          'Actual Duration',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
-                                        ),
-                                      ),
-                                    ),
-                                    GridColumn(
-                                      columnName: 'Delay',
-                                      allowEditing: false,
-                                      label: Container(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          'Delay',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
-                                        ),
-                                      ),
-                                    ),
-                                    GridColumn(
-                                      columnName: 'Dependency',
-                                      allowEditing: false,
-                                      label: Container(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          'Dependency',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
-                                        ),
-                                      ),
-                                    ),
-                                    // GridColumn(
-                                    //   columnName: 'QtyScope',
-                                    //   allowEditing: false,
-                                    //   label: Container(
-                                    //     alignment: Alignment.center,
-                                    //     child: Text(
-                                    //       'Oty as per scope',
-                                    //       overflow: TextOverflow.values.first,
-                                    //       style: const TextStyle(
-                                    //           fontWeight: FontWeight.bold,
-                                    //           fontSize: 16),
-                                    //     ),
-                                    //   ),
-                                    // ),
-                                    // GridColumn(
-                                    //   columnName: 'QtyExecuted',
-                                    //   allowEditing: false,
-                                    //   label: Container(
-                                    //     alignment: Alignment.center,
-                                    //     child: Text(
-                                    //       'Qty executed',
-                                    //       overflow: TextOverflow.values.first,
-                                    //       style: const TextStyle(
-                                    //           fontWeight: FontWeight.bold,
-                                    //           fontSize: 16),
-                                    //     ),
-                                    //   ),
-                                    // ),
-                                    // GridColumn(
-                                    //   columnName: 'BalancedQty',
-                                    //   allowEditing: false,
-                                    //   label: Container(
-                                    //     width: 150,
-                                    //     alignment: Alignment.center,
-                                    //     child: Text(
-                                    //       'Balanced Qty',
-                                    //       overflow: TextOverflow.values.first,
-                                    //       style: const TextStyle(
-                                    //           fontWeight: FontWeight.bold,
-                                    //           fontSize: 16),
-                                    //     ),
-                                    //   ),
-                                    // ),
-                                    GridColumn(
-                                      columnName: 'Progress',
-                                      allowEditing: false,
-                                      label: Container(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          '% of Progress',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
-                                        ),
-                                      ),
-                                    ),
-                                    GridColumn(
-                                      columnName: 'Weightage',
-                                      allowEditing: false,
-                                      label: Container(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          'Weightage',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                  width: 300,
-                                  margin: EdgeInsets.only(top: 10),
-                                  child: SfCartesianChart(
-                                      title: ChartTitle(
-                                          text: 'All Events Wightage Graph'),
-                                      primaryXAxis: CategoryAxis(
-                                          // title: AxisTitle(text: 'Key Events')
-                                          ),
-                                      primaryYAxis: NumericAxis(
-                                          // title: AxisTitle(text: 'Weightage')
-                                          ),
-                                      series: <ChartSeries>[
-                                        // Renders column chart
-                                        BarSeries<ChartData, String>(
-                                            dataSource: chartData2,
-                                            xValueMapper: (ChartData data, _) =>
-                                                data.x,
-                                            yValueMapper: (ChartData data, _) =>
-                                                data.y,
-                                            pointColorMapper:
-                                                (ChartData data, _) => data.y1),
+                              for (int i = 0; i < alldataA7.length; i++) {
+                                var weightage = alldataA7[i]['Weightage'];
+                                totalweightage = totalweightage + weightage;
+                              }
+                              weight7.add(totalweightage);
+                            }
+                          }
+                        }
+                        if (i == 7) {
+                          for (int j = 0; j < length; j++) {
+                            if (snapshot.data.docs[j].reference.id.toString() ==
+                                '${widget.depoName}A8') {
+                              var alldataA8 = snapshot.data.docs[7]['data']
+                                  as List<dynamic>;
+                              sdate8 = alldataA8[0]['StartDate'];
+                              edate8 =
+                                  alldataA8[alldataA8.length - 1]['EndDate'];
+                              asdate8 = alldataA8[0]['ActualStart'];
+                              aedate8 =
+                                  alldataA8[alldataA8.length - 1]['ActualEnd'];
 
-                                        BarSeries<ChartData, String>(
-                                            dataSource: chartData,
-                                            dataLabelSettings:
-                                                DataLabelSettings(
-                                                    isVisible: true),
-                                            xValueMapper: (ChartData data, _) =>
-                                                data.x,
-                                            yValueMapper: (ChartData data, _) =>
-                                                data.y,
-                                            pointColorMapper:
-                                                (ChartData data, _) => data.y1)
-                                      ]))
-                            ]));
+                              for (int i = 0; i < alldataA8.length; i++) {
+                                var weightage = alldataA8[i]['Weightage'];
+                                totalweightage = totalweightage + weightage;
+                              }
+                              weight8.add(totalweightage);
+                            }
+                          }
+                        }
+                        if (i == 8) {
+                          for (int j = 0; j < length; j++) {
+                            if (snapshot.data.docs[j].reference.id.toString() ==
+                                '${widget.depoName}A9') {
+                              var alldataA9 = snapshot.data.docs[8]['data']
+                                  as List<dynamic>;
+                              sdate9 = alldataA9[0]['StartDate'];
+                              edate9 =
+                                  alldataA9[alldataA9.length - 1]['EndDate'];
+                              asdate9 = alldataA9[0]['ActualStart'];
+                              aedate9 =
+                                  alldataA9[alldataA9.length - 1]['ActualEnd'];
+
+                              for (int i = 0; i < alldataA9.length; i++) {
+                                var weightage = alldataA9[i]['Weightage'];
+                                totalweightage = totalweightage + weightage;
+                              }
+                            }
+                            weight9.add(totalweightage);
+                          }
+                        }
                       }
+                      // }
+                      // if (i == 4) {
+                      //   var alldataA5 =
+                      //       snapshot.data.docs[i]['data'] as List<dynamic>;
+                      //   sdate = alldataA5[0]['StartDate'];
+                      //   edate = alldataA5[alldataA5.length - 1]['EndDate'];
+                      //   asdate = alldataA5[0]['ActualStart'];
+                      //   aedate = alldataA5[alldataA5.length - 1]['ActualEnd'];
+                      //   startdate.add(sdate!);
+                      //   enddate.add(edate!);
+                      //   asstartdate.add(asdate!);
+                      //   asenddate.add(aedate!);
+                      //   print('Start$startdate');
+                      //   print('Start$enddate');
+                      //   for (int i = 0; i < alldataA5.length; i++) {
+                      //     var weightage = alldataA5[i]['Weightage'];
+                      //     totalweightage = totalweightage + weightage;
+                      //   }
+                      //   weight.add(totalweightage);
+                      // } else {
+                      //   alldata =
+                      //       snapshot.data.docs[i]['data'] as List<dynamic>;
+                      //   sdate = alldata[0]['StartDate'];
+                      //   edate = alldata[alldata.length - 1]['EndDate'];
+                      //   asdate = alldata[0]['ActualStart'];
+                      //   aedate = alldata[alldata.length - 1]['ActualEnd'];
+                      //   startdate.add(sdate!);
+                      //   enddate.add(edate!);
+                      //   asstartdate.add(asdate!);
+                      //   asenddate.add(aedate!);
+                      //   print('Start$startdate');
+                      //   print('End$enddate');
+
+                      // for (int i = 0; i < alldata.length; i++) {
+                      //   var weightage = alldata[i]['Weightage'];
+                      //   totalweightage = totalweightage + weightage;
+                      // }
+
+                      // weight.add(totalweightage);
+                      chartData = [
+                        ChartData(
+                            'A10',
+                            weight.asMap().containsKey(8) ? weight[8] : 0,
+                            Colors.yellow),
+                        ChartData(
+                            'A9',
+                            weight.asMap().containsKey(7) ? weight[7] : 0,
+                            Colors.yellow),
+                        ChartData(
+                            'A8',
+                            weight.asMap().containsKey(6) ? weight[6] : 0,
+                            Colors.yellow),
+                        ChartData(
+                            'A7',
+                            weight.asMap().containsKey(5) ? weight[5] : 0,
+                            Colors.yellow),
+                        ChartData(
+                            'A6',
+                            weight.asMap().containsKey(4) ? weight[4] : 0,
+                            Colors.yellow),
+                        ChartData(
+                            'A5',
+                            weight.asMap().containsKey(3) ? weight[3] : 0,
+                            Colors.yellow),
+                        ChartData(
+                            'A4',
+                            weight.asMap().containsKey(2) ? weight[2] : 0,
+                            Colors.yellow),
+                        ChartData(
+                            'A3',
+                            weight.asMap().containsKey(1) ? weight[1] : 0,
+                            Colors.yellow),
+                        ChartData(
+                            'A2',
+                            weight.asMap().containsKey(0) ? weight[0] : 0,
+                            Colors.yellow),
+                        ChartData('A1', 5, Colors.yellow),
+                      ];
+                      chartData2 = [
+                        ChartData(
+                            'A10',
+                            weight.asMap().containsKey(8) ? weight[8] : 0,
+                            Colors.red),
+                        ChartData(
+                            'A9',
+                            weight.asMap().containsKey(7) ? weight[7] : 0,
+                            Colors.red),
+                        ChartData(
+                            'A8',
+                            weight.asMap().containsKey(6) ? weight[6] : 0,
+                            Colors.red),
+                        ChartData(
+                            'A7',
+                            weight.asMap().containsKey(5) ? weight[5] : 0,
+                            Colors.red),
+                        ChartData(
+                            'A6',
+                            weight.asMap().containsKey(4) ? weight[4] : 0,
+                            Colors.red),
+                        ChartData(
+                            'A5',
+                            weight.asMap().containsKey(3) ? weight[3] : 0,
+                            Colors.red),
+                        ChartData(
+                            'A4',
+                            weight.asMap().containsKey(2) ? weight[2] : 0,
+                            Colors.red),
+                        ChartData(
+                            'A3',
+                            weight.asMap().containsKey(1) ? weight[1] : 0,
+                            Colors.red),
+                        ChartData(
+                            'A2',
+                            weight.asMap().containsKey(0) ? weight[0] : 0,
+                            Colors.red),
+                        ChartData('A1', 5, Colors.red),
+                      ];
+
+                      _employees = getEmployeeData();
+                      _KeyDataSourceKeyEvents =
+                          KeyDataSourceKeyEvents(_employees, context);
+                      _dataGridController = DataGridController();
+
+                      return Container(
+                          height: 580,
+                          child: Row(children: [
+                            Expanded(
+                              child: SfDataGrid(
+                                source: _KeyDataSourceKeyEvents,
+                                onCellTap: (DataGridCellTapDetails details) {
+                                  final DataGridRow row =
+                                      _KeyDataSourceKeyEvents.effectiveRows[
+                                          details.rowColumnIndex.rowIndex - 1];
+
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => menuwidget[
+                                          details.rowColumnIndex.rowIndex -
+                                              1]));
+                                },
+                                allowEditing: true,
+                                frozenColumnsCount: 2,
+                                editingGestureType: EditingGestureType.tap,
+                                headerGridLinesVisibility:
+                                    GridLinesVisibility.both,
+                                gridLinesVisibility: GridLinesVisibility.both,
+                                selectionMode: SelectionMode.single,
+                                navigationMode: GridNavigationMode.cell,
+                                columnWidthMode: ColumnWidthMode.auto,
+                                controller: _dataGridController,
+                                // onQueryRowHeight: (details) {
+                                //   return details.rowIndex == 0 ? 60.0 : 49.0;
+                                // },
+                                columns: [
+                                  GridColumn(
+                                    columnName: 'srNo',
+                                    autoFitPadding:
+                                        EdgeInsets.symmetric(horizontal: 16),
+                                    allowEditing: false,
+                                    label: Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Sr No',
+                                        overflow: TextOverflow.values.first,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+
+                                        //    textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                  GridColumn(
+                                    columnName: 'Activity',
+                                    allowEditing: false,
+                                    width: 220,
+                                    label: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Activity',
+                                        overflow: TextOverflow.values.first,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
+                                  GridColumn(
+                                    columnName: 'OriginalDuration',
+                                    allowEditing: false,
+                                    label: Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Original Duration',
+                                        overflow: TextOverflow.values.first,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
+                                  GridColumn(
+                                    columnName: 'StartDate',
+                                    allowEditing: false,
+                                    label: Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Start Date',
+                                        overflow: TextOverflow.values.first,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
+                                  GridColumn(
+                                    columnName: 'EndDate',
+                                    allowEditing: false,
+                                    label: Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'End Date',
+                                        overflow: TextOverflow.values.first,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
+                                  GridColumn(
+                                    columnName: 'ActualStart',
+                                    allowEditing: false,
+                                    width: 150,
+                                    label: Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Actual Start',
+                                        overflow: TextOverflow.values.first,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
+                                  GridColumn(
+                                    columnName: 'ActualEnd',
+                                    allowEditing: false,
+                                    width: 150,
+                                    label: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Actual End',
+                                        overflow: TextOverflow.values.first,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
+                                  GridColumn(
+                                    columnName: 'ActualDuration',
+                                    allowEditing: false,
+                                    label: Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Actual Duration',
+                                        overflow: TextOverflow.values.first,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
+                                  GridColumn(
+                                    columnName: 'Delay',
+                                    allowEditing: false,
+                                    label: Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Delay',
+                                        overflow: TextOverflow.values.first,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
+                                  GridColumn(
+                                    columnName: 'Dependency',
+                                    allowEditing: false,
+                                    label: Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Dependency',
+                                        overflow: TextOverflow.values.first,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
+                                  // GridColumn(
+                                  //   columnName: 'QtyScope',
+                                  //   allowEditing: false,
+                                  //   label: Container(
+                                  //     alignment: Alignment.center,
+                                  //     child: Text(
+                                  //       'Oty as per scope',
+                                  //       overflow: TextOverflow.values.first,
+                                  //       style: const TextStyle(
+                                  //           fontWeight: FontWeight.bold,
+                                  //           fontSize: 16),
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                  // GridColumn(
+                                  //   columnName: 'QtyExecuted',
+                                  //   allowEditing: false,
+                                  //   label: Container(
+                                  //     alignment: Alignment.center,
+                                  //     child: Text(
+                                  //       'Qty executed',
+                                  //       overflow: TextOverflow.values.first,
+                                  //       style: const TextStyle(
+                                  //           fontWeight: FontWeight.bold,
+                                  //           fontSize: 16),
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                  // GridColumn(
+                                  //   columnName: 'BalancedQty',
+                                  //   allowEditing: false,
+                                  //   label: Container(
+                                  //     width: 150,
+                                  //     alignment: Alignment.center,
+                                  //     child: Text(
+                                  //       'Balanced Qty',
+                                  //       overflow: TextOverflow.values.first,
+                                  //       style: const TextStyle(
+                                  //           fontWeight: FontWeight.bold,
+                                  //           fontSize: 16),
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                  GridColumn(
+                                    columnName: 'Progress',
+                                    allowEditing: false,
+                                    label: Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        '% of Progress',
+                                        overflow: TextOverflow.values.first,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
+                                  GridColumn(
+                                    columnName: 'Weightage',
+                                    allowEditing: false,
+                                    label: Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Weightage',
+                                        overflow: TextOverflow.values.first,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                                width: 300,
+                                margin: EdgeInsets.only(top: 10),
+                                child: SfCartesianChart(
+                                    title: ChartTitle(
+                                        text: 'All Events Wightage Graph'),
+                                    primaryXAxis: CategoryAxis(
+                                        // title: AxisTitle(text: 'Key Events')
+                                        ),
+                                    primaryYAxis: NumericAxis(
+                                        // title: AxisTitle(text: 'Weightage')
+                                        ),
+                                    series: <ChartSeries>[
+                                      // Renders column chart
+                                      BarSeries<ChartData, String>(
+                                          dataSource: chartData2,
+                                          xValueMapper: (ChartData data, _) =>
+                                              data.x,
+                                          yValueMapper: (ChartData data, _) =>
+                                              data.y,
+                                          pointColorMapper:
+                                              (ChartData data, _) => data.y1),
+
+                                      BarSeries<ChartData, String>(
+                                          dataSource: chartData,
+                                          dataLabelSettings: DataLabelSettings(
+                                              isVisible: true),
+                                          xValueMapper: (ChartData data, _) =>
+                                              data.x,
+                                          yValueMapper: (ChartData data, _) =>
+                                              data.y,
+                                          pointColorMapper:
+                                              (ChartData data, _) => data.y1)
+                                    ]))
+                          ]));
                     }
                   } else {
                     return LoadingPage();
@@ -1301,7 +1347,9 @@ class _KeyEventsState extends State<KeyEvents> {
         qtyExecuted: 0,
         balanceQty: 0,
         percProgress: 0,
-        weightage: weight2[0],
+        weightage: weight2.isNotEmpty
+            ? double.parse(weight2[0].toStringAsFixed(4))
+            : 0.0,
       ),
       Employee(
         srNo: 'A3',
@@ -1322,7 +1370,9 @@ class _KeyEventsState extends State<KeyEvents> {
         qtyExecuted: 0,
         balanceQty: 0,
         percProgress: 0,
-        weightage: weight3[0],
+        weightage: weight3.isNotEmpty
+            ? double.parse(weight3[0].toStringAsFixed(4))
+            : 0.0,
       ),
       Employee(
         srNo: 'A4',
@@ -1342,7 +1392,9 @@ class _KeyEventsState extends State<KeyEvents> {
         qtyExecuted: 0,
         balanceQty: 0,
         percProgress: 0,
-        weightage: weight4[0],
+        weightage: weight4.isNotEmpty
+            ? double.parse(weight4[0].toStringAsFixed(4))
+            : 0.0,
       ),
       Employee(
         srNo: 'A5',
@@ -1362,7 +1414,9 @@ class _KeyEventsState extends State<KeyEvents> {
         qtyExecuted: 0,
         balanceQty: 0,
         percProgress: 0,
-        weightage: weight5[0],
+        weightage: weight5.isNotEmpty
+            ? double.parse(weight5[0].toStringAsFixed(4))
+            : 0.0,
       ),
       Employee(
         srNo: 'A6',
@@ -1382,7 +1436,9 @@ class _KeyEventsState extends State<KeyEvents> {
         qtyExecuted: 0,
         balanceQty: 0,
         percProgress: 0,
-        weightage: weight6[0],
+        weightage: weight6.isNotEmpty
+            ? double.parse(weight6[0].toStringAsFixed(4))
+            : 0.0,
       ),
       Employee(
         srNo: 'A7',
@@ -1402,7 +1458,9 @@ class _KeyEventsState extends State<KeyEvents> {
         qtyExecuted: 0,
         balanceQty: 0,
         percProgress: 0,
-        weightage: weight7[0],
+        weightage: weight7.isNotEmpty
+            ? double.parse(weight7[0].toStringAsFixed(4))
+            : 0.0,
       ),
       Employee(
         srNo: 'A8',
@@ -1422,7 +1480,9 @@ class _KeyEventsState extends State<KeyEvents> {
         qtyExecuted: 0,
         balanceQty: 0,
         percProgress: 0,
-        weightage: weight8[0],
+        weightage: weight8.isNotEmpty
+            ? double.parse(weight8[0].toStringAsFixed(4))
+            : 0.0,
       ),
       Employee(
         srNo: 'A9',
@@ -1442,7 +1502,9 @@ class _KeyEventsState extends State<KeyEvents> {
         qtyExecuted: 0,
         balanceQty: 0,
         percProgress: 0,
-        weightage: weight9[0],
+        weightage: weight9.isNotEmpty
+            ? double.parse(weight9[0].toStringAsFixed(4))
+            : 0.0,
       ),
       Employee(
         srNo: 'A10',
@@ -1462,7 +1524,9 @@ class _KeyEventsState extends State<KeyEvents> {
         qtyExecuted: 0,
         balanceQty: 0,
         percProgress: 0,
-        weightage: weight10[0],
+        weightage: weight10.isNotEmpty
+            ? double.parse(weight10[0].toStringAsFixed(4))
+            : 0.0,
       ),
     ];
   }

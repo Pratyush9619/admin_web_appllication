@@ -13,25 +13,24 @@ import '../../components/loading_page.dart';
 import '../../widgets/custom_appbar.dart';
 
 void main() {
-  runApp(StatutoryAprovalA2());
+  runApp(StatutoryAproval());
 }
 
 /// The application that contains datagrid on it.
 
 /// The home page of the application which hosts the datagrid.
-class StatutoryAprovalA2 extends StatefulWidget {
+class StatutoryAproval extends StatefulWidget {
   /// Creates the home page.
   String? depoName;
   String? cityName;
 
-  StatutoryAprovalA2({Key? key, this.depoName, this.cityName})
-      : super(key: key);
+  StatutoryAproval({Key? key, this.depoName, this.cityName}) : super(key: key);
 
   @override
-  _StatutoryAprovalA2State createState() => _StatutoryAprovalA2State();
+  _StatutoryAprovalState createState() => _StatutoryAprovalState();
 }
 
-class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
+class _StatutoryAprovalState extends State<StatutoryAproval> {
   late EmployeeDataSource _employeeDataSource;
   List<Employee> _employees = <Employee>[];
   late DataGridController _dataGridController;
@@ -49,9 +48,9 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
   void initState() {
     _stream = FirebaseFirestore.instance
         .collection('KeyEventsTable')
-        .doc(widget.depoName!)
+        .doc(widget.depoName)
         .collection('AllKeyEventsTable')
-        .doc('${widget.depoName}A2')
+        .doc('${widget.depoName}A5')
         .snapshots();
 
     int length = _employees.length * 66;
@@ -99,13 +98,13 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
     //   // ChartData('A7', 23, Colors.orange),
     //   // ChartData('A8', 34, Colors.brown),
     //   // ChartData('A9', 25, Colors.deepOrange),
-    //   // ChartData('A20', 50, Colors.blue),
+    //   // ChartData('A50', 50, Colors.blue),
     // ];
     return Scaffold(
       appBar: PreferredSize(
         // ignore: sort_child_properties_last
         child: CustomAppBar(
-          text: 'Key Events / ${widget.depoName!} /A2',
+          text: 'Key Events / ${widget.depoName!} /A5',
           haveSynced: true,
           store: () {
             StoreData();
@@ -852,7 +851,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
     return [
       Employee(
         srNo: 1,
-        activity: 'Initial Survey Of Depot With TML & STA Team.',
+        activity: 'Consent to Established-Pollution control board approval',
         originalDuration: 1,
         startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
         endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
@@ -870,7 +869,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
       ),
       Employee(
           srNo: 2,
-          activity: 'Details Survey Of Depot With TPC Civil & Electrical Team',
+          activity: 'Consent to Operate-Pollution control board approval',
           originalDuration: 1,
           startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
@@ -887,8 +886,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
           weightage: 1.0),
       Employee(
           srNo: 3,
-          activity:
-              'Survey Report Submission With Existing & Proposed Layout Drawings.',
+          activity: 'Fire NOC  for Electrical vehicle charging infrastructure',
           originalDuration: 1,
           startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
@@ -905,7 +903,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
           weightage: 0.3),
       Employee(
           srNo: 4,
-          activity: 'Job Scope Finalization & Preparation Of BOQ',
+          activity: 'Chief Inspector of Factory /Director(DISH Approval)',
           originalDuration: 1,
           startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
@@ -922,7 +920,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
           weightage: 0.5),
       Employee(
           srNo: 5,
-          activity: 'Power Connection / Load Applied By STA To Discom.',
+          activity: 'CEIG/EI Approval',
           originalDuration: 1,
           startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
@@ -936,7 +934,92 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.3)
+          weightage: 0.3),
+      Employee(
+          srNo: 6,
+          activity: 'Charging Shed Errection Approval',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 0.3),
+      Employee(
+          srNo: 7,
+          activity: 'Effluent treatment plant',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 0.3),
+      Employee(
+          srNo: 8,
+          activity: 'Soild Waste Managent',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 0.3),
+      Employee(
+          srNo: 9,
+          activity: 'ETP Plant',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 0.3),
+      Employee(
+          srNo: 10,
+          activity: 'Hazardous waste approval ',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 0.3),
     ];
   }
 
@@ -957,7 +1040,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
         .collection('AllKeyEventsTable')
-        .doc('${widget.depoName}A2')
+        .doc('${widget.depoName}A5')
         .set({
       'data': tabledata2,
     }).whenComplete(() {
