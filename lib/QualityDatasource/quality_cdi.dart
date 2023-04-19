@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-import '../MenuPage/model/quality_checklistModel.dart';
+import '../model/quality_checklistModel.dart';
 
 class QualityCDIDataSource extends DataGridSource {
   // BuildContext mainContext;

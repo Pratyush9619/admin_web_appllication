@@ -6,16 +6,21 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:web_appllication/components/loading_page.dart';
 
 import '../Authentication/login_register.dart';
-import '../MenuPage/datasource/detailedengEV_datasource.dart';
-import '../MenuPage/datasource/detailedengShed_datasource.dart';
-import '../MenuPage/datasource/detailedeng_datasource.dart';
-import '../MenuPage/model/detailed_engModel.dart';
+import '../datasource/detailedengEV_datasource.dart';
+import '../datasource/detailedengShed_datasource.dart';
+import '../datasource/detailedeng_datasource.dart';
+import '../model/detailed_engModel.dart';
 import '../style.dart';
 
 class DetailedEng extends StatefulWidget {
+  String userId;
   String? cityName;
   String? depoName;
-  DetailedEng({super.key, required this.cityName, required this.depoName});
+  DetailedEng(
+      {super.key,
+      required this.userId,
+      required this.cityName,
+      required this.depoName});
 
   @override
   State<DetailedEng> createState() => _DetailedEngtState();
@@ -23,9 +28,9 @@ class DetailedEng extends StatefulWidget {
 
 class _DetailedEngtState extends State<DetailedEng>
     with TickerProviderStateMixin {
-  List<DetailedEngModel> DetailedProject = <DetailedEngModel>[];
-  List<DetailedEngModel> DetailedProjectev = <DetailedEngModel>[];
-  List<DetailedEngModel> DetailedProjectshed = <DetailedEngModel>[];
+  List<DetailedEngModel> detailedProject = <DetailedEngModel>[];
+  List<DetailedEngModel> detailedProjectev = <DetailedEngModel>[];
+  List<DetailedEngModel> detailedProjectshed = <DetailedEngModel>[];
   late DetailedEngSourceShed _detailedEngSourceShed;
   late DetailedEngSource _detailedDataSource;
   late DetailedEngSourceEV _detailedEngSourceev;
@@ -44,18 +49,18 @@ class _DetailedEngtState extends State<DetailedEng>
   void initState() {
     getmonthlyReport();
     getmonthlyReportEv();
-    DetailedProject = getmonthlyReport();
-    _detailedDataSource = DetailedEngSource(DetailedProject, context,
+    detailedProject = getmonthlyReport();
+    _detailedDataSource = DetailedEngSource(detailedProject, context,
         widget.cityName.toString(), widget.depoName.toString());
     _dataGridController = DataGridController();
 
-    DetailedProjectev = getmonthlyReportEv();
-    _detailedEngSourceev = DetailedEngSourceEV(DetailedProjectev, context,
+    detailedProjectev = getmonthlyReportEv();
+    _detailedEngSourceev = DetailedEngSourceEV(detailedProjectev, context,
         widget.cityName.toString(), widget.depoName.toString());
     _dataGridController = DataGridController();
 
-    DetailedProjectshed = getmonthlyReportEv();
-    _detailedEngSourceShed = DetailedEngSourceShed(DetailedProjectshed, context,
+    detailedProjectshed = getmonthlyReportEv();
+    _detailedEngSourceShed = DetailedEngSourceShed(detailedProjectshed, context,
         widget.cityName.toString(), widget.depoName.toString());
     _dataGridController = DataGridController();
     _controller = TabController(length: 3, vsync: this);
@@ -65,21 +70,21 @@ class _DetailedEngtState extends State<DetailedEng>
         .collection('DetailEngineering')
         .doc('${widget.depoName}')
         .collection('RFC LAYOUT DRAWING')
-        .doc('RFC DRAWING')
+        .doc(widget.userId)
         .snapshots();
 
     _stream1 = FirebaseFirestore.instance
         .collection('DetailEngineering')
         .doc('${widget.depoName}')
         .collection('EV LAYOUT DRAWING')
-        .doc('EV DRAWING')
+        .doc(widget.userId)
         .snapshots();
 
     _stream2 = FirebaseFirestore.instance
         .collection('DetailEngineering')
         .doc('${widget.depoName}')
         .collection('Shed LAYOUT DRAWING')
-        .doc('SHED DRAWING')
+        .doc(widget.userId)
         .snapshots();
     super.initState();
   }
@@ -152,18 +157,6 @@ class _DetailedEngtState extends State<DetailedEng>
                 Tab(text: "Shed Lighting Drawings & Specification"),
               ],
             )),
-        // PreferredSize(
-        //     // ignore: sort_child_properties_last
-        //     child: CustomAppBar(
-        //       text:
-        //           'Detailed Engineering/ ${widget.cityName}/ ${widget.depoName}',
-        //       haveSynced: true,
-        //       havebottom: false,
-        //       store: () {
-        //         StoreData();
-        //       },
-        //     ),
-        //     preferredSize: Size.fromHeight(100)),
 
         body: TabBarView(children: [
           tabScreen(),
@@ -536,11 +529,11 @@ class _DetailedEngtState extends State<DetailedEng>
                       ]);
                 } else {
                   alldata = snapshot.data['data'] as List<dynamic>;
-                  DetailedProject.clear();
+                  detailedProject.clear();
                   alldata.forEach((element) {
-                    DetailedProject.add(DetailedEngModel.fromjsaon(element));
+                    detailedProject.add(DetailedEngModel.fromjsaon(element));
                     _detailedDataSource = DetailedEngSource(
-                        DetailedProject,
+                        detailedProject,
                         context,
                         widget.cityName.toString(),
                         widget.depoName.toString());
@@ -726,7 +719,7 @@ class _DetailedEngtState extends State<DetailedEng>
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: (() {
-            DetailedProject.add(DetailedEngModel(
+            detailedProject.add(DetailedEngModel(
               siNo: 1,
               title: 'EV Layout',
               number: 12345,
@@ -918,11 +911,11 @@ class _DetailedEngtState extends State<DetailedEng>
               } else {
                 alldata = '';
                 alldata = snapshot.data['data'] as List<dynamic>;
-                DetailedProjectev.clear();
+                detailedProjectev.clear();
                 alldata.forEach((element) {
-                  DetailedProjectev.add(DetailedEngModel.fromjsaon(element));
+                  detailedProjectev.add(DetailedEngModel.fromjsaon(element));
                   _detailedEngSourceev = DetailedEngSourceEV(
-                      DetailedProjectev,
+                      detailedProjectev,
                       context,
                       widget.cityName.toString(),
                       widget.depoName.toString());
@@ -1102,7 +1095,7 @@ class _DetailedEngtState extends State<DetailedEng>
         child: Icon(Icons.add),
         onPressed: (() {
           if (_selectedIndex == 0) {
-            DetailedProjectev.add(DetailedEngModel(
+            detailedProjectev.add(DetailedEngModel(
               siNo: 1,
               title: 'EV Layout',
               number: 123456878,
@@ -1115,7 +1108,7 @@ class _DetailedEngtState extends State<DetailedEng>
             _detailedDataSource.updateDatagridSource();
           }
           if (_selectedIndex == 1) {
-            DetailedProjectev.add(DetailedEngModel(
+            detailedProjectev.add(DetailedEngModel(
               siNo: 1,
               title: 'EV Layout',
               number: 12345,
@@ -1316,12 +1309,12 @@ class _DetailedEngtState extends State<DetailedEng>
                 } else {
                   alldata = '';
                   alldata = snapshot.data['data'] as List<dynamic>;
-                  DetailedProjectshed.clear();
+                  detailedProjectshed.clear();
                   alldata.forEach((element) {
-                    DetailedProjectshed.add(
-                        DetailedEngModel.fromjsaon(element));
+                    detailedProjectshed
+                        .add(DetailedEngModel.fromjsaon(element));
                     _detailedEngSourceShed = DetailedEngSourceShed(
-                        DetailedProjectshed,
+                        detailedProjectshed,
                         context,
                         widget.cityName.toString(),
                         widget.depoName.toString());
@@ -1507,7 +1500,7 @@ class _DetailedEngtState extends State<DetailedEng>
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: (() {
-            DetailedProjectshed.add(DetailedEngModel(
+            detailedProjectshed.add(DetailedEngModel(
               siNo: 1,
               title: 'EV Layout',
               number: 12345,

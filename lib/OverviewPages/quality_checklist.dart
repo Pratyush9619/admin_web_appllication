@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 import 'package:web_appllication/OverviewPages/detailed_Eng.dart';
 
-import '../MenuPage/model/quality_checklistModel.dart';
+import '../model/quality_checklistModel.dart';
 import '../QualityDatasource/quality_EP.dart';
 import '../QualityDatasource/quality_acdb.dart';
 import '../QualityDatasource/quality_cdi.dart';
@@ -20,9 +21,11 @@ import '../components/loading_page.dart';
 import '../style.dart';
 
 class QualityChecklist extends StatefulWidget {
+  String? userId;
+  String? currentDate;
   String? cityName;
   String? depoName;
-  QualityChecklist({super.key, this.cityName, this.depoName});
+  QualityChecklist({super.key, this.userId, this.cityName, this.depoName});
 
   @override
   State<QualityChecklist> createState() => _QualityChecklistState();
@@ -75,6 +78,7 @@ Stream? _stream7;
 Stream? _stream8;
 Stream? _stream9;
 var alldata;
+
 int? _selectedIndex = 0;
 List<String> title = [
   'CHECKLIST FOR INSTALLATION OF PSS',
@@ -97,28 +101,36 @@ class _QualityChecklistState extends State<QualityChecklist> {
         .collection('QualityChecklist')
         .doc('${widget.depoName}')
         .collection('PSS TABLE DATA')
-        .doc('PSS DATA')
+        .doc('PSS')
+        .collection(widget.userId!)
+        .doc(widget.currentDate)
         .snapshots();
 
     _stream1 = FirebaseFirestore.instance
         .collection('QualityChecklist')
         .doc('${widget.depoName}')
         .collection('RMU TABLE DATA')
-        .doc('RMU DATA')
+        .doc('RMU')
+        .collection(widget.userId!)
+        .doc(widget.currentDate)
         .snapshots();
 
     _stream2 = FirebaseFirestore.instance
         .collection('QualityChecklist')
         .doc('${widget.depoName}')
         .collection('CONVENTIONAL TRANSFORMER TABLE DATA')
-        .doc('CONVENTIONAL TRANSFORMER DATA')
+        .doc('CONVENTIONAL TRANSFORMER')
+        .collection(widget.userId!)
+        .doc(widget.currentDate)
         .snapshots();
 
     _stream3 = FirebaseFirestore.instance
         .collection('QualityChecklist')
         .doc('${widget.depoName}')
         .collection('CTPT METERING UNIT TABLE DATA')
-        .doc('CTPT METERING DATA')
+        .doc('CTPT METERING UNIT')
+        .collection(widget.userId!)
+        .doc(widget.currentDate)
         .snapshots();
 
     _stream4 = FirebaseFirestore.instance
@@ -126,13 +138,17 @@ class _QualityChecklistState extends State<QualityChecklist> {
         .doc('${widget.depoName}')
         .collection('ACDB TABLE DATA')
         .doc('ACDB DATA')
+        .collection(widget.userId!)
+        .doc(widget.currentDate)
         .snapshots();
 
     _stream5 = FirebaseFirestore.instance
         .collection('QualityChecklist')
         .doc('${widget.depoName}')
         .collection('CABLE INSTALLATION TABLE DATA')
-        .doc('CABLE INSTALLATION DATA')
+        .doc('CABLE INSTALLATION')
+        .collection(widget.userId!)
+        .doc(widget.currentDate)
         .snapshots();
 
     _stream6 = FirebaseFirestore.instance
@@ -140,6 +156,8 @@ class _QualityChecklistState extends State<QualityChecklist> {
         .doc('${widget.depoName}')
         .collection('CDI TABLE DATA')
         .doc('CDI DATA')
+        .collection(widget.userId!)
+        .doc(widget.currentDate)
         .snapshots();
 
     _stream7 = FirebaseFirestore.instance
@@ -147,6 +165,8 @@ class _QualityChecklistState extends State<QualityChecklist> {
         .doc('${widget.depoName}')
         .collection('MSP TABLE DATA')
         .doc('MSP DATA')
+        .collection(widget.userId!)
+        .doc(widget.currentDate)
         .snapshots();
 
     _stream8 = FirebaseFirestore.instance
@@ -154,13 +174,17 @@ class _QualityChecklistState extends State<QualityChecklist> {
         .doc('${widget.depoName}')
         .collection('CHARGER TABLE DATA')
         .doc('CHARGER DATA')
+        .collection(widget.userId!)
+        .doc(widget.currentDate)
         .snapshots();
 
     _stream9 = FirebaseFirestore.instance
         .collection('QualityChecklist')
         .doc('${widget.depoName}')
         .collection('EARTH TABLE DATA')
-        .doc('EARTH PIT DATA')
+        .doc('EARTH DATA')
+        .collection(widget.userId!)
+        .doc(widget.currentDate)
         .snapshots();
 
     qualitylisttable1 = getData();
@@ -208,6 +232,8 @@ class _QualityChecklistState extends State<QualityChecklist> {
 
   @override
   Widget build(BuildContext context) {
+    widget.currentDate =
+        widget.currentDate ?? DateFormat.yMMMMd().format(DateTime.now());
     return SafeArea(
       child: DefaultTabController(
           length: 10,
@@ -289,16 +315,6 @@ class _QualityChecklistState extends State<QualityChecklist> {
                 ],
               ),
             ),
-            //  PreferredSize(
-            //   child:
-            //   CustomAppBar(
-            //     text:
-            //         'Quality Checklist / ${widget.cityName} / ${widget.depoName}',
-            //     haveSynced: true,
-            //     havebottom: true,
-            //   ),
-            //   preferredSize: Size.fromHeight(100),
-            // ),
             body: TabBarView(children: [
               upperScreen(),
               upperScreen(),

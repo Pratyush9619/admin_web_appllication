@@ -1,17 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:web_appllication/Authentication/login_register.dart';
-import 'package:web_appllication/MenuPage/KeyEvents/key_events.dart';
-import 'package:web_appllication/MenuPage/Planning/cities.dart';
-import 'package:web_appllication/MenuPage/Planning/overview.dart';
+import 'package:web_appllication/Planning/cities.dart';
 import 'package:web_appllication/MenuPage/admin.dart';
 import 'package:web_appllication/MenuPage/home.dart';
 import 'package:web_appllication/MenuPage/project_planning.dart';
 import 'package:web_appllication/MenuPage/user.dart';
-import 'package:web_appllication/OverviewPages/depot_overview.dart';
-import 'package:web_appllication/OverviewPages/resource_allocation.dart';
-import 'package:web_appllication/provider/key_provider.dart';
+
 import 'package:web_appllication/provider/text_provider.dart';
 import 'package:web_appllication/small_screen.dart';
 import 'package:web_appllication/style.dart';
@@ -87,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // ResourceAllocation();
         //  EventsPage();
         // KeyEvents();
-        // CitiesPage();
-        LoginRegister();
+        CitiesPage();
+    // LoginRegister();
   }
 }

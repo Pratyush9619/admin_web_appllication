@@ -1,19 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-import '../MenuPage/datasource/safetychecklist_datasource.dart';
-import '../MenuPage/model/safety_checklistModel.dart';
+import '../datasource/safetychecklist_datasource.dart';
+import '../model/safety_checklistModel.dart';
 import '../components/loading_page.dart';
 import '../style.dart';
 import '../widgets/custom_appbar.dart';
 
 class SafetyChecklist extends StatefulWidget {
+  String? userId;
   String? cityName;
   String? depoName;
 
-  SafetyChecklist({super.key, required this.cityName, required this.depoName});
+  SafetyChecklist(
+      {super.key,
+      required this.userId,
+      required this.cityName,
+      required this.depoName});
 
   @override
   State<SafetyChecklist> createState() => _SafetyChecklistState();
@@ -36,6 +42,8 @@ class _SafetyChecklistState extends State<SafetyChecklist> {
     _stream = FirebaseFirestore.instance
         .collection('SafetyChecklistTable')
         .doc(widget.depoName!)
+        .collection(widget.userId!)
+        .doc(DateFormat.yMMMMd().format(DateTime.now()))
         .snapshots();
     super.initState();
   }
@@ -46,6 +54,7 @@ class _SafetyChecklistState extends State<SafetyChecklist> {
         // ignore: sort_child_properties_last
         child: CustomAppBar(
             text: '${widget.cityName} / ${widget.depoName} / SafetyChecklist',
+            userid: widget.userId,
             // icon: Icons.logout,
             haveSynced: true,
             store: () {
@@ -325,6 +334,8 @@ class _SafetyChecklistState extends State<SafetyChecklist> {
     FirebaseFirestore.instance
         .collection('SafetyChecklistTable')
         .doc(widget.depoName!)
+        .collection(widget.userId!)
+        .doc(DateFormat.yMMMMd().format(DateTime.now()))
         .set(
       {'data': tabledata2},
       SetOptions(merge: true),

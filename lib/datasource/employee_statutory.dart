@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-import 'package:web_appllication/MenuPage/model/employee.dart';
+import 'package:web_appllication/model/employee.dart';
 import '../model/employee_statutory.dart';
 import '../KeyEvents/viewFIle.dart';
 

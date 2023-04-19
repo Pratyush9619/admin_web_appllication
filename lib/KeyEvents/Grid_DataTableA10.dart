@@ -1,40 +1,40 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:web_appllication/MenuPage/KeyEvents/ChartData.dart';
-import 'package:web_appllication/MenuPage/datasource/employee_datasouce.dart';
-import 'package:web_appllication/MenuPage/model/employee.dart';
+import 'package:web_appllication/KeyEvents/ChartData.dart';
+import 'package:web_appllication/datasource/employee_datasouce.dart';
+import 'package:web_appllication/model/employee.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/style.dart';
 
-import '../../widgets/custom_appbar.dart';
+import '../widgets/custom_appbar.dart';
 
 void main() {
-  runApp(StatutoryAprovalA6());
+  runApp(StatutoryAprovalA10());
 }
 
 /// The application that contains datagrid on it.
 
 /// The home page of the application which hosts the datagrid.
-class StatutoryAprovalA6 extends StatefulWidget {
+class StatutoryAprovalA10 extends StatefulWidget {
   /// Creates the home page.
   String? depoName;
   String? cityName;
-  StatutoryAprovalA6({Key? key, this.depoName, this.cityName})
+  StatutoryAprovalA10({Key? key, this.depoName, this.cityName})
       : super(key: key);
 
   @override
-  _StatutoryAprovalA6State createState() => _StatutoryAprovalA6State();
+  _StatutoryAprovalA10State createState() => _StatutoryAprovalA10State();
 }
 
-class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
+class _StatutoryAprovalA10State extends State<StatutoryAprovalA10> {
   late EmployeeDataSource _employeeDataSource;
   List<Employee> _employees = <Employee>[];
   late DataGridController _dataGridController;
-  //  List<DataGridRow> dataGridRows = [];
   DataGridRow? dataGridRow;
   RowColumnIndex? rowColumnIndex;
   GridColumn? column;
@@ -79,7 +79,7 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
         .collection('AllKeyEventsTable')
-        .doc('${widget.depoName}A6')
+        .doc('${widget.depoName}A10')
         .snapshots();
     super.initState();
   }
@@ -90,7 +90,7 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
       appBar: PreferredSize(
         // ignore: sort_child_properties_last
         child: CustomAppBar(
-          text: 'Key Events / ${widget.depoName!} /A6',
+          text: 'Key Events / ${widget.depoName!} /A10',
           haveSynced: true,
           store: () {
             StoreData();
@@ -195,7 +195,7 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
                                   ),
                                   GridColumn(
                                     columnName: 'StartDate',
-                                    allowEditing: false,
+                                    allowEditing: true,
                                     width: 180,
                                     label: Container(
                                       alignment: Alignment.center,
@@ -208,7 +208,8 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
                                   ),
                                   GridColumn(
                                     columnName: 'EndDate',
-                                    allowEditing: false,
+                                    allowEditing: true,
+                                    width: 180,
                                     label: Container(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 16.0),
@@ -529,7 +530,7 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
                                   ),
                                   GridColumn(
                                     columnName: 'StartDate',
-                                    allowEditing: true,
+                                    allowEditing: false,
                                     width: 180,
                                     label: Container(
                                       alignment: Alignment.center,
@@ -542,8 +543,8 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
                                   ),
                                   GridColumn(
                                     columnName: 'EndDate',
+                                    allowEditing: false,
                                     width: 180,
-                                    allowEditing: true,
                                     label: Container(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 16.0),
@@ -778,8 +779,8 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
                     DateFormat('dd-MM-yyyy').format(DateTime.now()),
                 actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
                 actualDuration: 0,
-                reasonDelay: '',
                 delay: 0,
+                reasonDelay: '',
                 unit: 0,
                 scope: 0,
                 qtyExecuted: 0,
@@ -797,9 +798,8 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
   Future<void> getFirestoreData() async {
     FirebaseFirestore instance = FirebaseFirestore.instance;
     CollectionReference tabledata = instance.collection(widget.depoName!);
-
     DocumentSnapshot snapshot =
-        await tabledata.doc('${widget.depoName}A5').get();
+        await tabledata.doc('${widget.depoName}A9').get();
     var data = snapshot.data() as Map;
     var alldata = data['data'] as List<dynamic>;
 
@@ -813,7 +813,7 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
     return [
       Employee(
           srNo: 1,
-          activity: 'PR/PO Generation for  PSS',
+          activity: 'CMS Integration',
           originalDuration: 1,
           startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
@@ -827,10 +827,10 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 3.0),
+          weightage: 0.5),
       Employee(
           srNo: 2,
-          activity: 'PR/PO Generation for Charger',
+          activity: 'Bus Depot work Completed & Handover to TML',
           originalDuration: 1,
           startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
@@ -844,58 +844,7 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 3.0),
-      Employee(
-          srNo: 3,
-          activity: 'PR/PO Generation for SFU Panel',
-          originalDuration: 1,
-          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualDuration: 0,
-          delay: 0,
-          reasonDelay: '',
-          unit: 0,
-          scope: 0,
-          qtyExecuted: 0,
-          balanceQty: 0,
-          percProgress: 0,
-          weightage: 3.0),
-      Employee(
-          srNo: 4,
-          activity: 'PR/PO Generation for HT Cable',
-          originalDuration: 1,
-          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualDuration: 0,
-          delay: 0,
-          reasonDelay: '',
-          unit: 0,
-          scope: 0,
-          qtyExecuted: 0,
-          balanceQty: 0,
-          percProgress: 0,
-          weightage: 3.0),
-      Employee(
-          srNo: 5,
-          activity: 'PR/PO Generation for LT Cable',
-          originalDuration: 1,
-          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualDuration: 0,
-          delay: 0,
-          reasonDelay: '',
-          unit: 0,
-          scope: 0,
-          qtyExecuted: 0,
-          balanceQty: 0,
-          percProgress: 0,
-          weightage: 3.0)
+          weightage: 4.5),
     ];
   }
 
@@ -915,9 +864,12 @@ class _StatutoryAprovalA6State extends State<StatutoryAprovalA6> {
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
         .collection('AllKeyEventsTable')
-        .doc('${widget.depoName}A6')
-        .set({'data': tabledata2}).whenComplete(() {
-      Navigator.pop(context);
+        .doc('${widget.depoName}A10')
+        .set({
+      'data': tabledata2,
+    }).whenComplete(() {
+      tabledata2.clear();
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: const Text('Data are synced'),
         backgroundColor: blue,

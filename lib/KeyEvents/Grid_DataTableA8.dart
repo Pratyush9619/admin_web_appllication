@@ -1,61 +1,51 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:web_appllication/MenuPage/KeyEvents/ChartData.dart';
-import 'package:web_appllication/MenuPage/datasource/employee_datasouce.dart';
-import 'package:web_appllication/MenuPage/model/employee.dart';
+import 'package:web_appllication/KeyEvents/ChartData.dart';
+import 'package:web_appllication/datasource/employee_datasouce.dart';
+import 'package:web_appllication/model/employee.dart';
+import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/style.dart';
-import '../../components/loading_page.dart';
-import '../../widgets/custom_appbar.dart';
+
+import '../widgets/custom_appbar.dart';
 
 void main() {
-  runApp(StatutoryAproval());
+  runApp(StatutoryAprovalA8());
 }
 
 /// The application that contains datagrid on it.
 
 /// The home page of the application which hosts the datagrid.
-class StatutoryAproval extends StatefulWidget {
+class StatutoryAprovalA8 extends StatefulWidget {
   /// Creates the home page.
   String? depoName;
   String? cityName;
-
-  StatutoryAproval({Key? key, this.depoName, this.cityName}) : super(key: key);
+  StatutoryAprovalA8({Key? key, this.depoName, this.cityName})
+      : super(key: key);
 
   @override
-  _StatutoryAprovalState createState() => _StatutoryAprovalState();
+  _StatutoryAprovalA8State createState() => _StatutoryAprovalA8State();
 }
 
-class _StatutoryAprovalState extends State<StatutoryAproval> {
+class _StatutoryAprovalA8State extends State<StatutoryAprovalA8> {
   late EmployeeDataSource _employeeDataSource;
   List<Employee> _employees = <Employee>[];
   late DataGridController _dataGridController;
+  //  List<DataGridRow> dataGridRows = [];
+  DataGridRow? dataGridRow;
+  RowColumnIndex? rowColumnIndex;
+  GridColumn? column;
   List<dynamic> tabledata2 = [];
-  List<dynamic> weightage = [];
-  var alldata;
   bool _isLoading = false;
   bool _isInit = true;
   List<double> weight = [];
   List<int> yAxis = [];
   List<ChartData> chartData = [];
   Stream? _stream;
-
-  @override
-  void initState() {
-    _stream = FirebaseFirestore.instance
-        .collection('KeyEventsTable')
-        .doc(widget.depoName)
-        .collection('AllKeyEventsTable')
-        .doc('${widget.depoName}A5')
-        .snapshots();
-
-    int length = _employees.length * 66;
-    super.initState();
-  }
+  var alldata;
 
   // @override
   // void didChangeDependencies() {
@@ -65,7 +55,6 @@ class _StatutoryAprovalState extends State<StatutoryAproval> {
   //     });
   //     getFirestoreData().whenComplete(() {
   //       setState(() {
-  //         loadchartdata();
   //         if (_employees.length == 0 || _employees.isEmpty) {
   //           _employees = getEmployeeData();
   //         }
@@ -85,26 +74,24 @@ class _StatutoryAprovalState extends State<StatutoryAproval> {
   // }
 
   @override
+  void initState() {
+    _stream = FirebaseFirestore.instance
+        .collection('KeyEventsTable')
+        .doc(widget.depoName!)
+        .collection('AllKeyEventsTable')
+        .doc('${widget.depoName}A8')
+        .snapshots();
+    super.initState();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // chartData = [
-    //   // ChartData('7', 32, Color.fromARGB(255, 124, 136, 135)),
-    //   // ChartData('6', 35, Colors.teal),
-    //   ChartData('5', 35, Colors.teal),
-    //   ChartData('4', 23, Colors.orange),
-    //   ChartData('3', 34, Colors.brown),
-    //   ChartData('2', 25, Colors.deepOrange),
-    //   ChartData('1', 50, Colors.blue),
-    //   // ChartData('A6', 35, Colors.teal),
-    //   // ChartData('A7', 23, Colors.orange),
-    //   // ChartData('A8', 34, Colors.brown),
-    //   // ChartData('A9', 25, Colors.deepOrange),
-    //   // ChartData('A50', 50, Colors.blue),
-    // ];
     return Scaffold(
       appBar: PreferredSize(
         // ignore: sort_child_properties_last
         child: CustomAppBar(
-          text: 'Key Events / ${widget.depoName!} /A5',
+          text: 'Key Events / ${widget.depoName!} /A8',
           haveSynced: true,
           store: () {
             StoreData();
@@ -117,10 +104,10 @@ class _StatutoryAprovalState extends State<StatutoryAproval> {
           : StreamBuilder(
               stream: _stream,
               builder: (context, snapshot) {
-                chartData = [];
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return LoadingPage();
                 }
+
                 if (!snapshot.hasData || snapshot.data.exists == false) {
                   _employees = getEmployeeData();
                   _employeeDataSource = EmployeeDataSource(
@@ -131,7 +118,7 @@ class _StatutoryAprovalState extends State<StatutoryAproval> {
                     child: Column(
                       children: [
                         Container(
-                          height: _employees.length * 66,
+                          height: _employees.length * 60,
                           child: Row(
                             children: [
                               Expanded(
@@ -211,8 +198,8 @@ class _StatutoryAprovalState extends State<StatutoryAproval> {
                                     ),
                                     GridColumn(
                                       columnName: 'StartDate',
-                                      allowEditing: false,
-                                      width: 200,
+                                      allowEditing: true,
+                                      width: 180,
                                       label: Container(
                                         alignment: Alignment.center,
                                         child: Text('Start Date',
@@ -224,8 +211,8 @@ class _StatutoryAprovalState extends State<StatutoryAproval> {
                                     ),
                                     GridColumn(
                                       columnName: 'EndDate',
-                                      allowEditing: false,
-                                      width: 200,
+                                      allowEditing: true,
+                                      width: 180,
                                       label: Container(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 16.0),
@@ -297,6 +284,7 @@ class _StatutoryAprovalState extends State<StatutoryAproval> {
                                       label: Container(
                                         alignment: Alignment.center,
                                         child: Text('Reason For Delay',
+                                            textAlign: TextAlign.center,
                                             overflow: TextOverflow.values.first,
                                             style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
@@ -414,8 +402,8 @@ class _StatutoryAprovalState extends State<StatutoryAproval> {
                         // Padding(
                         //   padding: const EdgeInsets.all(10.0),
                         //   child: ElevatedButton(
-                        //       style:
-                        //           ElevatedButton.styleFrom(backgroundColor: blue),
+                        //       style: ElevatedButton.styleFrom(
+                        //           backgroundColor: blue),
                         //       onPressed: () async {
                         //         showCupertinoDialog(
                         //           context: context,
@@ -469,7 +457,7 @@ class _StatutoryAprovalState extends State<StatutoryAproval> {
                     child: Column(
                       children: [
                         Container(
-                          height: _employees.length * 66,
+                          height: _employees.length * 52,
                           child: Row(
                             children: [
                               Expanded(
@@ -720,7 +708,6 @@ class _StatutoryAprovalState extends State<StatutoryAproval> {
                               ),
                               Container(
                                   width: 300,
-                                  height: _employees.length * 75,
                                   margin: EdgeInsets.only(top: 10),
                                   child: SfCartesianChart(
                                       title: ChartTitle(
@@ -734,10 +721,8 @@ class _StatutoryAprovalState extends State<StatutoryAproval> {
                                       series: <ChartSeries>[
                                         // Renders column chart
                                         BarSeries<ChartData, String>(
-                                            width: 0.5,
-                                            trackPadding: 0,
                                             dataLabelSettings:
-                                                const DataLabelSettings(
+                                                DataLabelSettings(
                                                     isVisible: true),
                                             dataSource: chartData,
                                             xValueMapper: (ChartData data, _) =>
@@ -819,57 +804,366 @@ class _StatutoryAprovalState extends State<StatutoryAproval> {
     );
   }
 
-  // Future<void> getFirestoreData() async {
-  //   FirebaseFirestore instance = FirebaseFirestore.instance;
-  //   CollectionReference tabledata = instance.collection(widget.depoName!);
+  Future<void> getFirestoreData() async {
+    FirebaseFirestore instance = FirebaseFirestore.instance;
+    CollectionReference tabledata = instance.collection(widget.depoName!);
 
-  //   DocumentSnapshot snapshot =
-  //       await tabledata.doc('${widget.depoName}A2').get();
-  //   var data = snapshot.data() as Map;
-  //   alldata = data['data'] as List<dynamic>;
+    DocumentSnapshot snapshot =
+        await tabledata.doc('${widget.depoName}A7').get();
+    var data = snapshot.data() as Map;
+    var alldata = data['data'] as List<dynamic>;
 
-  //   // _employees = [];
-  //   alldata.forEach((element) {
-  //     _employees.add(Employee.fromJson(element));
-  //   });
-
-  //   for (int i = 0; i < alldata.length; i++) {
-  //     var weightdata = alldata[i]['Weightage'];
-  //     var yaxisdata = alldata[i]['srNo'];
-  //     weight.add(weightdata);
-  //     yAxis.add(yaxisdata);
-  //   }
-  // }
-
-  // void loadchartdata() {
-  //   for (int i = 0; i < weight.length; i++) {
-  //     chartData.add(ChartData(yAxis[i].toString(), weight[i], Colors.green));
-  //   }
-  // }
+    _employees = [];
+    alldata.forEach((element) {
+      _employees.add(Employee.fromJson(element));
+    });
+  }
 
   List<Employee> getEmployeeData() {
     return [
       Employee(
-        srNo: 1,
-        activity: 'Consent to Established-Pollution control board approval',
-        originalDuration: 1,
-        startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-        endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-        actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-        actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-        actualDuration: 0,
-        delay: 0,
-        reasonDelay: '',
-        unit: 0,
-        scope: 0,
-        qtyExecuted: 0,
-        balanceQty: 0,
-        percProgress: 0,
-        weightage: 0.5,
-      ),
+          srNo: 1,
+          activity: 'Concrete breaking ',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 2.4),
       Employee(
           srNo: 2,
-          activity: 'Consent to Operate-Pollution control board approval',
+          activity: 'Manual Excavation',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 0.9),
+      Employee(
+          srNo: 3,
+          activity: 'Soling',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 1.1),
+      Employee(
+          srNo: 4,
+          activity: 'PCC & Curing',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 1.5),
+      Employee(
+          srNo: 5,
+          activity: 'Reinforcement tying of Raft (charger Foundation)',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 1.5),
+      Employee(
+          srNo: 6,
+          activity: 'Shuttering of Raft (charger Foundation)',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 1.5),
+      Employee(
+          srNo: 7,
+          activity: 'Concreting of Raft (charger Foundation) and Curing',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 1.5),
+      Employee(
+          srNo: 8,
+          activity: 'Reinforcement tying of pedestal (PSS)',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 1.5),
+      Employee(
+          srNo: 9,
+          activity: 'Shuttering of pedestal (PSS Foundation) ',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 1.5),
+      Employee(
+          srNo: 10,
+          activity: 'Concreting of pedestal (PSS Foundation) ',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 6.6),
+      Employee(
+          srNo: 11,
+          activity: 'Reinforcement tying of Raft (shed)',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 0.6),
+      Employee(
+          srNo: 12,
+          activity: 'Shuttering of Raft (shed)',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 0.6),
+      Employee(
+          srNo: 13,
+          activity: 'Concreting of Raft (shed) and Curing',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 0.6),
+      Employee(
+          srNo: 14,
+          activity: 'Backfilling',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 1.1),
+      Employee(
+          srNo: 15,
+          activity: 'Erection of shed structure',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 1.2),
+      Employee(
+          srNo: 16,
+          activity: 'Roof sheeting',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 1.1),
+      Employee(
+          srNo: 17,
+          activity: 'Concreting around excavated area',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 0.6),
+      Employee(
+          srNo: 18,
+          activity: 'Thermoplastic paint',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 0.3),
+      Employee(
+          srNo: 19,
+          activity: 'Crash barrier ',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 0.3),
+      Employee(
+          srNo: 20,
+          activity: '5S activity',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 0.3),
+      Employee(
+          srNo: 21,
+          activity: 'Cable Trenching (for burried cable)',
           originalDuration: 1,
           startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
@@ -885,25 +1179,8 @@ class _StatutoryAprovalState extends State<StatutoryAproval> {
           percProgress: 0,
           weightage: 1.0),
       Employee(
-          srNo: 3,
-          activity: 'Fire NOC  for Electrical vehicle charging infrastructure',
-          originalDuration: 1,
-          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualDuration: 0,
-          delay: 0,
-          reasonDelay: '',
-          unit: 0,
-          scope: 0,
-          qtyExecuted: 0,
-          balanceQty: 0,
-          percProgress: 0,
-          weightage: 0.3),
-      Employee(
-          srNo: 4,
-          activity: 'Chief Inspector of Factory /Director(DISH Approval)',
+          srNo: 22,
+          activity: 'Compressor foundation and room',
           originalDuration: 1,
           startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
@@ -919,8 +1196,8 @@ class _StatutoryAprovalState extends State<StatutoryAproval> {
           percProgress: 0,
           weightage: 0.5),
       Employee(
-          srNo: 5,
-          activity: 'CEIG/EI Approval',
+          srNo: 23,
+          activity: 'DTB Room',
           originalDuration: 1,
           startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
@@ -934,10 +1211,10 @@ class _StatutoryAprovalState extends State<StatutoryAproval> {
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.3),
+          weightage: 0.5),
       Employee(
-          srNo: 6,
-          activity: 'Charging Shed Errection Approval',
+          srNo: 24,
+          activity: 'Road leveling and resurfacing',
           originalDuration: 1,
           startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
@@ -951,61 +1228,10 @@ class _StatutoryAprovalState extends State<StatutoryAproval> {
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.3),
+          weightage: 0.8),
       Employee(
-          srNo: 7,
-          activity: 'Effluent treatment plant',
-          originalDuration: 1,
-          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualDuration: 0,
-          delay: 0,
-          reasonDelay: '',
-          unit: 0,
-          scope: 0,
-          qtyExecuted: 0,
-          balanceQty: 0,
-          percProgress: 0,
-          weightage: 0.3),
-      Employee(
-          srNo: 8,
-          activity: 'Soild Waste Managent',
-          originalDuration: 1,
-          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualDuration: 0,
-          delay: 0,
-          reasonDelay: '',
-          unit: 0,
-          scope: 0,
-          qtyExecuted: 0,
-          balanceQty: 0,
-          percProgress: 0,
-          weightage: 0.3),
-      Employee(
-          srNo: 9,
-          activity: 'ETP Plant',
-          originalDuration: 1,
-          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          actualDuration: 0,
-          delay: 0,
-          reasonDelay: '',
-          unit: 0,
-          scope: 0,
-          qtyExecuted: 0,
-          balanceQty: 0,
-          percProgress: 0,
-          weightage: 0.3),
-      Employee(
-          srNo: 10,
-          activity: 'Hazardous waste approval ',
+          srNo: 25,
+          activity: 'Painiting ',
           originalDuration: 1,
           startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
@@ -1031,7 +1257,6 @@ class _StatutoryAprovalState extends State<StatutoryAproval> {
           table_data[data.columnName] = data.value;
         }
       }
-
       tabledata2.add(table_data);
       table_data = {};
     }
@@ -1040,10 +1265,8 @@ class _StatutoryAprovalState extends State<StatutoryAproval> {
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
         .collection('AllKeyEventsTable')
-        .doc('${widget.depoName}A5')
-        .set({
-      'data': tabledata2,
-    }).whenComplete(() {
+        .doc('${widget.depoName}A8')
+        .set({'data': tabledata2}).whenComplete(() {
       tabledata2.clear();
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

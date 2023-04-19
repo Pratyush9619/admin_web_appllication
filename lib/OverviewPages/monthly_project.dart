@@ -1,21 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-
-import '../MenuPage/datasource/monthlyproject_datasource.dart';
-import '../MenuPage/model/monthly_projectModel.dart';
+import '../datasource/monthlyproject_datasource.dart';
+import '../model/monthly_projectModel.dart';
 import '../components/loading_page.dart';
 import '../style.dart';
 import '../widgets/custom_appbar.dart';
 
 class MonthlyProject extends StatefulWidget {
+  String? userid;
   String? cityName;
   String? depoName;
-  MonthlyProject({super.key, required this.cityName, required this.depoName});
+  MonthlyProject(
+      {super.key,
+      required this.userid,
+      required this.cityName,
+      required this.depoName});
 
   @override
   State<MonthlyProject> createState() => _MonthlyProjectState();
@@ -39,6 +41,8 @@ class _MonthlyProjectState extends State<MonthlyProject> {
     _stream = FirebaseFirestore.instance
         .collection('MonthlyProjectReport')
         .doc('${widget.depoName}')
+        .collection('Monthly Data')
+        .doc(DateFormat.yMMM().format(DateTime.now()))
         .snapshots();
     _isloading = false;
     super.initState();
@@ -48,8 +52,10 @@ class _MonthlyProjectState extends State<MonthlyProject> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
+          // ignore: sort_child_properties_last
           child: CustomAppBar(
             text: ' ${widget.cityName}/ ${widget.depoName} / Monthly Report',
+            userid: widget.userid,
             haveSynced: true,
             store: () {
               StoreData();
@@ -458,6 +464,8 @@ class _MonthlyProjectState extends State<MonthlyProject> {
     FirebaseFirestore.instance
         .collection('MonthlyProjectReport')
         .doc('${widget.depoName}')
+        .collection('Monthly Data')
+        .doc(DateFormat.yMMM().format(DateTime.now()))
         .set({
       'data': tabledata2,
     }).whenComplete(() {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:web_appllication/MenuPage/datasource/qualitychecklist_datasource.dart';
+import 'package:web_appllication/OverviewPages/closure_report.dart';
 import 'package:web_appllication/OverviewPages/daily_project.dart';
 import 'package:web_appllication/OverviewPages/depot_overview.dart';
 import 'package:web_appllication/OverviewPages/monthly_project.dart';
@@ -7,20 +7,26 @@ import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 import 'package:web_appllication/OverviewPages/resource_allocation.dart';
 import 'package:web_appllication/OverviewPages/safety_checklist.dart';
 import 'package:web_appllication/style.dart';
-
-import '../../OverviewPages/detailed_Eng.dart';
+import 'package:web_appllication/widgets/custom_appbar.dart';
+import '../OverviewPages/detailed_Eng.dart';
 import '../KeyEvents/key_events.dart';
 
 class MyOverview extends StatefulWidget {
+  String userid;
   String depoName;
   String cityName;
-  MyOverview({super.key, required this.depoName, required this.cityName});
+  MyOverview(
+      {super.key,
+      required this.userid,
+      required this.depoName,
+      required this.cityName});
 
   @override
   State<MyOverview> createState() => _MyOverviewState();
 }
 
 class _MyOverviewState extends State<MyOverview> {
+  @override
   List<Widget> pages = [];
   List<IconData> icondata = [
     Icons.search_off_outlined,
@@ -68,10 +74,12 @@ class _MyOverviewState extends State<MyOverview> {
     ];
     pages = [
       DepotOverview(
+        userid: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
       KeyEvents(
+        userId: widget.userid,
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
@@ -80,50 +88,70 @@ class _MyOverviewState extends State<MyOverview> {
         cityName: widget.cityName,
       ),
       MonthlyProject(
+        userid: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
       DailyProject(
+        userId: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
       DetailedEng(
+        userId: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
-      DepotOverview(),
+      DepotOverview(
+        userid: widget.userid,
+        cityName: widget.cityName,
+        depoName: widget.depoName,
+      ),
       SafetyChecklist(
+        userId: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
       QualityChecklist(
+        userId: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
       KeyEvents(
+        userId: widget.userid,
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
-
+      KeyEvents(
+        userId: widget.userid,
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
+      ClosureReport(
+          userId: widget.userid,
+          cityName: widget.cityName,
+          depoName: widget.depoName)
       // KeyEvents(
+      //   userId: widget.userid,
       //   depoName: widget.depoName,
       //   cityName: widget.cityName,
       // ),
-      KeyEvents(
-        depoName: widget.depoName,
-        cityName: widget.cityName,
-      ),
-      KeyEvents(
-        depoName: widget.depoName,
-        cityName: widget.cityName,
-      ),
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Overview - ' + widget.cityName + ' - ' + widget.depoName),
-        backgroundColor: blue,
-      ),
+      appBar: PreferredSize(
+          // ignore: sort_child_properties_last
+          child: CustomAppBar(
+            text: 'Overview - ${widget.cityName} - ${widget.depoName}',
+            userid: widget.userid,
+          ),
+          preferredSize: const Size.fromHeight(50)),
+
+      // AppBar(
+      //   title: Text('Overview - ' + widget.cityName + ' - ' + widget.depoName),
+
+      //   backgroundColor: blue,
+      // ),
       body: GridView.count(
         crossAxisCount: 6,
         childAspectRatio: 0.99,
@@ -155,7 +183,7 @@ class _MyOverviewState extends State<MyOverview> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 10),
-              Container(
+              SizedBox(
                 height: 80,
                 width: 80,
                 child: Image.asset(img, fit: BoxFit.cover),

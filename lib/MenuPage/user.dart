@@ -1,15 +1,10 @@
 // ignore_for_file: dead_code
-
 import 'package:advanced_search/advanced_search.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:group_button/group_button.dart';
-import 'package:intl_phone_field/helpers.dart';
-import 'package:provider/provider.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/provider/depo_provider.dart';
-
 import '../style.dart';
 
 class MenuUserPage extends StatefulWidget {
@@ -159,7 +154,7 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Container(
                                       width: 120,
-                                      padding: EdgeInsets.all(5),
+                                      padding: const EdgeInsets.all(5),
                                       child: const Text(
                                         'Designation :',
                                         style: TextStyle(

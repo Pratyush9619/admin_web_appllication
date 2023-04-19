@@ -8,12 +8,12 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../model/daily_projectModel.dart';
 
 class DailyDataSource extends DataGridSource {
-  // String cityName;
-  // String depoName;
+  String depoName;
   BuildContext mainContext;
   DailyDataSource(
     this._montlyproject,
     this.mainContext,
+    this.depoName,
   ) {
     buildDataGridRows();
   }

@@ -3,21 +3,24 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:web_appllication/MenuPage/KeyEvents/ChartData.dart';
+import 'package:web_appllication/KeyEvents/ChartData.dart';
 import 'package:web_appllication/components/loading_page.dart';
-import 'package:web_appllication/provider/text_provider.dart';
 import 'package:web_appllication/style.dart';
 import 'package:web_appllication/widgets/custom_appbar.dart';
-import '../MenuPage/datasource/depot_overviewdatasource.dart';
-import '../MenuPage/model/depot_overview.dart';
+import '../datasource/depot_overviewdatasource.dart';
+import '../model/depot_overview.dart';
 
 class DepotOverview extends StatefulWidget {
+  String? userid;
   String? cityName;
   String? depoName;
-  DepotOverview({super.key, this.cityName, this.depoName});
+  DepotOverview(
+      {super.key,
+      required this.userid,
+      required this.cityName,
+      required this.depoName});
 
   @override
   State<DepotOverview> createState() => _DepotOverviewState();
@@ -31,6 +34,7 @@ class _DepotOverviewState extends State<DepotOverview> {
   FilePickerResult? result;
   FilePickerResult? result1;
   Uint8List? fileBytes;
+  bool _isloading = true;
   // TextEditingController? _textEditingController,
   //     _textEditingController2,
   //     _textEditingController3,
@@ -56,18 +60,39 @@ class _DepotOverviewState extends State<DepotOverview> {
 
   @override
   void initState() {
+    _fetchUserData();
     _employees = getEmployeeData();
+    // ignore: use_build_context_synchronously
     _employeeDataSource = DepotOverviewDatasource(_employees, context);
     _dataGridController = DataGridController();
     _stream = FirebaseFirestore.instance
         .collection('OverviewCollectionTable')
         .doc(widget.depoName)
+        .collection("OverviewTabledData")
+        .doc(widget.userid)
         .snapshots();
 
     _stream1 = FirebaseFirestore.instance
         .collection('OverviewCollection')
         .doc(widget.depoName)
+        .collection('OverviewFieldData')
+        .doc(widget.userid)
         .snapshots();
+
+    // _fetchUserData();
+
+    // _employees = getEmployeeData();
+    // _employeeDataSource = DepotOverviewDatasource(_employees, context);
+    // _dataGridController = DataGridController();
+    // _stream = FirebaseFirestore.instance
+    //     .collection('OverviewCollectionTable')
+    //     .doc(widget.depoName)
+    //     .snapshots();
+
+    // _stream1 = FirebaseFirestore.instance
+    //     .collection('OverviewCollection')
+    //     .doc(widget.depoName)
+    //     .snapshots();
     super.initState();
     // _textEditingController =
     //     TextEditingController(text: _textprovider.changedata);
@@ -81,8 +106,6 @@ class _DepotOverviewState extends State<DepotOverview> {
     //     TextEditingController(text: _textprovider.changedata);
     // _textEditingController6 =
     //     TextEditingController(text: _textprovider.changedata);
-
-    _fetchUserData();
   }
 
   final List<PieChartData> chartData = [
@@ -94,7 +117,7 @@ class _DepotOverviewState extends State<DepotOverview> {
 
   @override
   Widget build(BuildContext context) {
-    final textprovider _textprovider = Provider.of<textprovider>(context);
+    // final textprovider _textprovider = Provider.of<textprovider>(context);
 
     return Container(
       child: Scaffold(
@@ -102,6 +125,7 @@ class _DepotOverviewState extends State<DepotOverview> {
           // ignore: sort_child_properties_last
           child: CustomAppBar(
               text: '${widget.cityName}/ ${widget.depoName} /Depot Overview',
+              userid: widget.userid,
               // icon: Icons.logout,
               haveSynced: true,
               store: () {
@@ -818,10 +842,7 @@ class _DepotOverviewState extends State<DepotOverview> {
       child: Container(
         width: 500,
         child: StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection('OverviewCollection')
-              .doc(widget.depoName)
-              .snapshots(),
+          stream: _stream1,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return SingleChildScrollView(
@@ -1413,9 +1434,12 @@ class _DepotOverviewState extends State<DepotOverview> {
     await FirebaseFirestore.instance
         .collection('OverviewCollection')
         .doc(widget.depoName)
+        .collection("OverviewFieldData")
+        .doc(widget.userid)
         .get()
         .then((ds) {
       setState(() {
+        managername = ds.data()!['ManagerName'];
         address = ds.data()!['address'];
         scope = ds.data()!['scope'];
         required = ds.data()!['required'];

@@ -1,72 +1,157 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-
+import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 import '../Authentication/login_register.dart';
 import '../style.dart';
 
-class CustomAppBar extends StatelessWidget {
+class CustomAppBar extends StatefulWidget {
   final String? text;
+  String? userid;
   // final IconData? icon;
   final bool haveSynced;
+  final bool haveSummary;
   final void Function()? store;
+  VoidCallback? onTap;
+  bool havebottom;
+  bool isdetailedTab;
+  TabBar? tabBar;
 
-  CustomAppBar({super.key, this.text, this.haveSynced = false, this.store});
+  CustomAppBar(
+      {super.key,
+      this.text,
+      this.userid,
+      this.haveSynced = false,
+      this.haveSummary = false,
+      this.store,
+      this.onTap,
+      this.havebottom = false,
+      this.isdetailedTab = false,
+      this.tabBar});
 
+  @override
+  State<CustomAppBar> createState() => _CustomAppBarState();
+}
+
+class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: blue,
-        title: Text(
-          text.toString(),
-        ),
-        actions: [
-          haveSynced
-              ? Padding(
-                  padding:
-                      const EdgeInsets.only(right: 20, top: 10, bottom: 10),
-                  child: Container(
-                    height: 15,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.blue),
-                    child: TextButton(
-                        onPressed: () {
-                          store!();
-                        },
-                        child: Text(
-                          'Sync Data',
-                          style: TextStyle(color: white, fontSize: 20),
-                        )),
-                  ),
-                )
-              : Container(),
-          Padding(
-              padding: const EdgeInsets.only(right: 150),
-              child: GestureDetector(
-                  onTap: () {
-                    onWillPop(context);
-                  },
-                  child: Image.asset(
-                    'assets/logout.png',
-                    height: 20,
-                    width: 20,
-                  ))
-              //  IconButton(
-              //   icon: Icon(
-              //     Icons.logout_rounded,
-              //     size: 25,
-              //     color: white,
-              //   ),
-              //   onPressed: () {
-              //     onWillPop(context);
-              //   },
-              // )
-              )
-        ],
-      ),
-    );
+        appBar: AppBar(
+            backgroundColor: blue,
+            title: Text(
+              widget.text.toString(),
+            ),
+            actions: [
+              widget.haveSummary
+                  ? Padding(
+                      padding:
+                          const EdgeInsets.only(right: 40, top: 10, bottom: 10),
+                      child: Container(
+                        height: 15,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.blue),
+                        child: TextButton(
+                            onPressed: widget.onTap,
+                            child: Text(
+                              'View Summary',
+                              style: TextStyle(color: white, fontSize: 20),
+                            )),
+                      ),
+                    )
+                  : Container(),
+              widget.haveSynced
+                  ? Padding(
+                      padding:
+                          const EdgeInsets.only(right: 20, top: 10, bottom: 10),
+                      child: Container(
+                        height: 15,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.blue),
+                        child: TextButton(
+                            onPressed: () {
+                              widget.store!();
+                            },
+                            child: Text(
+                              'Sync Data',
+                              style: TextStyle(color: white, fontSize: 20),
+                            )),
+                      ),
+                    )
+                  : Container(),
+              Padding(
+                  padding: const EdgeInsets.only(right: 40),
+                  child: GestureDetector(
+                      onTap: () {
+                        onWillPop(context);
+                      },
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            'assets/logout.png',
+                            height: 20,
+                            width: 20,
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            widget.userid ?? '',
+                            style: const TextStyle(fontSize: 18),
+                          )
+                        ],
+                      ))),
+            ],
+            bottom: widget.havebottom
+                ? TabBar(
+                    labelColor: Colors.yellow,
+                    labelStyle: buttonWhite,
+                    unselectedLabelColor: white,
+
+                    //indicatorSize: TabBarIndicatorSize.label,
+                    indicator: MaterialIndicator(
+                      horizontalPadding: 24,
+                      bottomLeftRadius: 8,
+                      bottomRightRadius: 8,
+                      color: almostblack,
+                      paintingStyle: PaintingStyle.fill,
+                    ),
+
+                    tabs: const [
+                      Tab(text: "PSS"),
+                      Tab(text: "RMU"),
+                      Tab(text: "PSS"),
+                      Tab(text: "RMU"),
+                      Tab(text: "PSS"),
+                      Tab(text: "RMU"),
+                      Tab(text: "PSS"),
+                      Tab(text: "RMU"),
+                      Tab(text: "PSS"),
+                    ],
+                  )
+                : widget.isdetailedTab
+                    ? TabBar(
+                        labelColor: Colors.yellow,
+                        labelStyle: buttonWhite,
+                        unselectedLabelColor: white,
+
+                        //indicatorSize: TabBarIndicatorSize.label,
+                        indicator: MaterialIndicator(
+                          horizontalPadding: 24,
+                          bottomLeftRadius: 8,
+                          bottomRightRadius: 8,
+                          color: almostblack,
+                          paintingStyle: PaintingStyle.fill,
+                        ),
+
+                        tabs: const [
+                          Tab(text: "RFC Drawings of Civil Activities"),
+                          Tab(
+                              text:
+                                  "EV Layout Drawings of Electrical Activities"),
+                          Tab(text: "Shed Lighting Drawings & Specification"),
+                        ],
+                      )
+                    : widget.tabBar));
   }
 
   Future<bool> onWillPop(BuildContext context) async {
@@ -119,7 +204,7 @@ class CustomAppBar extends StatelessWidget {
                             Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => LoginRegister(),
+                                  builder: (context) => const LoginRegister(),
                                 ));
                             // exit(0);
                           },

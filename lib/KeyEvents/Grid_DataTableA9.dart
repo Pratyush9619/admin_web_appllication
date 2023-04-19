@@ -1,62 +1,51 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:web_appllication/MenuPage/KeyEvents/ChartData.dart';
-import 'package:web_appllication/MenuPage/datasource/employee_datasouce.dart';
-import 'package:web_appllication/MenuPage/model/employee.dart';
+import 'package:web_appllication/KeyEvents/ChartData.dart';
+import 'package:web_appllication/datasource/employee_datasouce.dart';
+import 'package:web_appllication/model/employee.dart';
+import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/style.dart';
-import '../../components/loading_page.dart';
-import '../../widgets/custom_appbar.dart';
+
+import '../widgets/custom_appbar.dart';
 
 void main() {
-  runApp(StatutoryAprovalA2());
+  runApp(StatutoryAprovalA9());
 }
 
 /// The application that contains datagrid on it.
 
 /// The home page of the application which hosts the datagrid.
-class StatutoryAprovalA2 extends StatefulWidget {
+class StatutoryAprovalA9 extends StatefulWidget {
   /// Creates the home page.
   String? depoName;
   String? cityName;
-
-  StatutoryAprovalA2({Key? key, this.depoName, this.cityName})
+  StatutoryAprovalA9({Key? key, this.depoName, this.cityName})
       : super(key: key);
 
   @override
-  _StatutoryAprovalA2State createState() => _StatutoryAprovalA2State();
+  _StatutoryAprovalA9State createState() => _StatutoryAprovalA9State();
 }
 
-class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
+class _StatutoryAprovalA9State extends State<StatutoryAprovalA9> {
   late EmployeeDataSource _employeeDataSource;
   List<Employee> _employees = <Employee>[];
   late DataGridController _dataGridController;
+  //  List<DataGridRow> dataGridRows = [];
+  DataGridRow? dataGridRow;
+  RowColumnIndex? rowColumnIndex;
+  GridColumn? column;
   List<dynamic> tabledata2 = [];
-  List<dynamic> weightage = [];
-  var alldata;
   bool _isLoading = false;
   bool _isInit = true;
   List<double> weight = [];
   List<int> yAxis = [];
   List<ChartData> chartData = [];
   Stream? _stream;
-
-  @override
-  void initState() {
-    _stream = FirebaseFirestore.instance
-        .collection('KeyEventsTable')
-        .doc(widget.depoName!)
-        .collection('AllKeyEventsTable')
-        .doc('${widget.depoName}A2')
-        .snapshots();
-
-    int length = _employees.length * 66;
-    super.initState();
-  }
+  var alldata;
 
   // @override
   // void didChangeDependencies() {
@@ -66,7 +55,6 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
   //     });
   //     getFirestoreData().whenComplete(() {
   //       setState(() {
-  //         loadchartdata();
   //         if (_employees.length == 0 || _employees.isEmpty) {
   //           _employees = getEmployeeData();
   //         }
@@ -86,26 +74,23 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
   // }
 
   @override
+  void initState() {
+    _stream = FirebaseFirestore.instance
+        .collection('KeyEventsTable')
+        .doc(widget.depoName!)
+        .collection('AllKeyEventsTable')
+        .doc('${widget.depoName}A9')
+        .snapshots();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // chartData = [
-    //   // ChartData('7', 32, Color.fromARGB(255, 124, 136, 135)),
-    //   // ChartData('6', 35, Colors.teal),
-    //   ChartData('5', 35, Colors.teal),
-    //   ChartData('4', 23, Colors.orange),
-    //   ChartData('3', 34, Colors.brown),
-    //   ChartData('2', 25, Colors.deepOrange),
-    //   ChartData('1', 50, Colors.blue),
-    //   // ChartData('A6', 35, Colors.teal),
-    //   // ChartData('A7', 23, Colors.orange),
-    //   // ChartData('A8', 34, Colors.brown),
-    //   // ChartData('A9', 25, Colors.deepOrange),
-    //   // ChartData('A20', 50, Colors.blue),
-    // ];
     return Scaffold(
       appBar: PreferredSize(
         // ignore: sort_child_properties_last
         child: CustomAppBar(
-          text: 'Key Events / ${widget.depoName!} /A2',
+          text: 'Key Events / ${widget.depoName!} /A9',
           haveSynced: true,
           store: () {
             StoreData();
@@ -118,10 +103,10 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
           : StreamBuilder(
               stream: _stream,
               builder: (context, snapshot) {
-                chartData = [];
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return LoadingPage();
                 }
+
                 if (!snapshot.hasData || snapshot.data.exists == false) {
                   _employees = getEmployeeData();
                   _employeeDataSource = EmployeeDataSource(
@@ -212,8 +197,8 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                     ),
                                     GridColumn(
                                       columnName: 'StartDate',
-                                      allowEditing: false,
-                                      width: 200,
+                                      allowEditing: true,
+                                      width: 180,
                                       label: Container(
                                         alignment: Alignment.center,
                                         child: Text('Start Date',
@@ -225,8 +210,8 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                     ),
                                     GridColumn(
                                       columnName: 'EndDate',
-                                      allowEditing: false,
-                                      width: 200,
+                                      width: 180,
+                                      allowEditing: true,
                                       label: Container(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 16.0),
@@ -298,6 +283,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                       label: Container(
                                         alignment: Alignment.center,
                                         child: Text('Reason For Delay',
+                                            textAlign: TextAlign.center,
                                             overflow: TextOverflow.values.first,
                                             style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
@@ -415,8 +401,8 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                         // Padding(
                         //   padding: const EdgeInsets.all(10.0),
                         //   child: ElevatedButton(
-                        //       style:
-                        //           ElevatedButton.styleFrom(backgroundColor: blue),
+                        //       style: ElevatedButton.styleFrom(
+                        //           backgroundColor: blue),
                         //       onPressed: () async {
                         //         showCupertinoDialog(
                         //           context: context,
@@ -470,7 +456,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                     child: Column(
                       children: [
                         Container(
-                          height: _employees.length * 66,
+                          height: _employees.length * 55,
                           child: Row(
                             children: [
                               Expanded(
@@ -721,7 +707,6 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                               ),
                               Container(
                                   width: 300,
-                                  height: _employees.length * 75,
                                   margin: EdgeInsets.only(top: 10),
                                   child: SfCartesianChart(
                                       title: ChartTitle(
@@ -735,10 +720,8 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                       series: <ChartSeries>[
                                         // Renders column chart
                                         BarSeries<ChartData, String>(
-                                            width: 0.5,
-                                            trackPadding: 0,
                                             dataLabelSettings:
-                                                const DataLabelSettings(
+                                                DataLabelSettings(
                                                     isVisible: true),
                                             dataSource: chartData,
                                             xValueMapper: (ChartData data, _) =>
@@ -820,57 +803,43 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
     );
   }
 
-  // Future<void> getFirestoreData() async {
-  //   FirebaseFirestore instance = FirebaseFirestore.instance;
-  //   CollectionReference tabledata = instance.collection(widget.depoName!);
+  Future<void> getFirestoreData() async {
+    FirebaseFirestore instance = FirebaseFirestore.instance;
+    CollectionReference tabledata = instance.collection(widget.depoName!);
 
-  //   DocumentSnapshot snapshot =
-  //       await tabledata.doc('${widget.depoName}A2').get();
-  //   var data = snapshot.data() as Map;
-  //   alldata = data['data'] as List<dynamic>;
+    DocumentSnapshot snapshot =
+        await tabledata.doc('${widget.depoName}A8').get();
+    var data = snapshot.data() as Map;
+    var alldata = data['data'] as List<dynamic>;
 
-  //   // _employees = [];
-  //   alldata.forEach((element) {
-  //     _employees.add(Employee.fromJson(element));
-  //   });
-
-  //   for (int i = 0; i < alldata.length; i++) {
-  //     var weightdata = alldata[i]['Weightage'];
-  //     var yaxisdata = alldata[i]['srNo'];
-  //     weight.add(weightdata);
-  //     yAxis.add(yaxisdata);
-  //   }
-  // }
-
-  // void loadchartdata() {
-  //   for (int i = 0; i < weight.length; i++) {
-  //     chartData.add(ChartData(yAxis[i].toString(), weight[i], Colors.green));
-  //   }
-  // }
+    _employees = [];
+    alldata.forEach((element) {
+      _employees.add(Employee.fromJson(element));
+    });
+  }
 
   List<Employee> getEmployeeData() {
     return [
       Employee(
-        srNo: 1,
-        activity: 'Initial Survey Of Depot With TML & STA Team.',
-        originalDuration: 1,
-        startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-        endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-        actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-        actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-        actualDuration: 0,
-        delay: 0,
-        reasonDelay: '',
-        unit: 0,
-        scope: 0,
-        qtyExecuted: 0,
-        balanceQty: 0,
-        percProgress: 0,
-        weightage: 0.5,
-      ),
+          srNo: 1,
+          activity: 'Earthing Pit erection with GI Flat',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 1),
       Employee(
           srNo: 2,
-          activity: 'Details Survey Of Depot With TPC Civil & Electrical Team',
+          activity: 'LA Arrangement with GI Flat on charging Shed',
           originalDuration: 1,
           startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
@@ -884,11 +853,10 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 1.0),
+          weightage: 0.20),
       Employee(
           srNo: 3,
-          activity:
-              'Survey Report Submission With Existing & Proposed Layout Drawings.',
+          activity: 'Installation of PSS',
           originalDuration: 1,
           startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
@@ -902,10 +870,78 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.3),
+          weightage: 2.0),
       Employee(
           srNo: 4,
-          activity: 'Job Scope Finalization & Preparation Of BOQ',
+          activity: 'Installation of Charger',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 2.0),
+      Employee(
+          srNo: 5,
+          activity: 'Installation of SFU Panel',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 0.50),
+      Employee(
+          srNo: 6,
+          activity: 'Laying of HT  cable Erection',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 4),
+      Employee(
+          srNo: 7,
+          activity: 'Laying of LT cable Erection',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 3),
+      Employee(
+          srNo: 8,
+          activity: 'Installation of VTPN/SPN DB',
           originalDuration: 1,
           startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
@@ -921,8 +957,8 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
           percProgress: 0,
           weightage: 0.5),
       Employee(
-          srNo: 5,
-          activity: 'Power Connection / Load Applied By STA To Discom.',
+          srNo: 9,
+          activity: 'Installation of Shed Lighting & other  arrangement ',
           originalDuration: 1,
           startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
           endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
@@ -936,7 +972,24 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
           qtyExecuted: 0,
           balanceQty: 0,
           percProgress: 0,
-          weightage: 0.3)
+          weightage: 1),
+      Employee(
+          srNo: 10,
+          activity: 'Commissioning & Testing  of Bus Depot ',
+          originalDuration: 1,
+          startDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          endDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualstartDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualendDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+          actualDuration: 0,
+          delay: 0,
+          reasonDelay: '',
+          unit: 0,
+          scope: 0,
+          qtyExecuted: 0,
+          balanceQty: 0,
+          percProgress: 0,
+          weightage: 1)
     ];
   }
 
@@ -948,7 +1001,6 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
           table_data[data.columnName] = data.value;
         }
       }
-
       tabledata2.add(table_data);
       table_data = {};
     }
@@ -957,14 +1009,13 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
         .collection('AllKeyEventsTable')
-        .doc('${widget.depoName}A2')
+        .doc('${widget.depoName}A9')
         .set({
       'data': tabledata2,
     }).whenComplete(() {
       tabledata2.clear();
-
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text('Data are synced'),
+        content: Text('Data are synced'),
         backgroundColor: blue,
       ));
     });

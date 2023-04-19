@@ -44,7 +44,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_admin_scaffold: ^1.1.2
-
   flutter_pdfview: ^1.2.5
   flutter_slider_indicator: ^1.0.0
   gantt_chart: ^0.1.0

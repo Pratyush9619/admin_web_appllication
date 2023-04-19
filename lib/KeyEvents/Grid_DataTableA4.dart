@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:web_appllication/MenuPage/KeyEvents/ChartData.dart';
-import 'package:web_appllication/MenuPage/datasource/employee_datasouce.dart';
-import 'package:web_appllication/MenuPage/model/employee.dart';
+import 'package:web_appllication/KeyEvents/ChartData.dart';
+import 'package:web_appllication/datasource/employee_datasouce.dart';
+import 'package:web_appllication/model/employee.dart';
 import 'package:web_appllication/components/loading_page.dart';
 
-import '../../style.dart';
-import '../../widgets/custom_appbar.dart';
+import '../style.dart';
+import '../widgets/custom_appbar.dart';
 
 void main() {
   runApp(StatutoryAprovalA4());
