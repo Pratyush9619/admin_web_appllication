@@ -5,23 +5,22 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-import '../model/quality_checklistModel.dart';
+import '../model/jmr.dart';
+import '../style.dart';
 
-class QualityCDIDataSource extends DataGridSource {
+class JmrDataSource extends DataGridSource {
   // BuildContext mainContext;
-  String cityName;
-  String depoName;
-  QualityCDIDataSource(this._checklistModel, this.cityName, this.depoName) {
+  JmrDataSource(this._JMRModels) {
     buildDataGridRows();
   }
   void buildDataGridRows() {
-    dataGridRows = _checklistModel
-        .map<DataGridRow>((dataGridRow) => dataGridRow.getDataGridRow())
-        .toList();
+    dataGridRows =
+        _JMRModels.map<DataGridRow>((dataGridRow) => dataGridRow.dataGridRow())
+            .toList();
   }
 
   @override
-  List<QualitychecklistModel> _checklistModel = [];
+  List<JMRModel> _JMRModels = [];
 
   List<DataGridRow> dataGridRows = [];
   final _dateFormatter = DateFormat.yMd();
@@ -68,7 +67,16 @@ class QualityCDIDataSource extends DataGridSource {
               Alignment.center,
           // : Alignment.center,
           padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child:
+          child: (dataGridCell.columnName == 'Delete')
+              ? IconButton(
+                  onPressed: () {
+                    dataGridRows.remove(row);
+                    notifyListeners();
+                  },
+                  icon: Icon(
+                    Icons.delete,
+                    color: red,
+                  ))
               // dataGridCell.columnName == 'button'
               //     ? LayoutBuilder(
               //         builder: (BuildContext context, BoxConstraints constraints) {
@@ -145,7 +153,7 @@ class QualityCDIDataSource extends DataGridSource {
               //                               final int dataRowIndex =
               //                                   dataGridRows.indexOf(row);
               //                               if (dataRowIndex != null) {
-              //                                 _checklistModel[dataRowIndex]
+              //                                 _JMRModels[dataRowIndex]
               //                                         .actualstartDate =
               //                                     DateFormat('dd-MM-yyyy')
               //                                         .format(date!);
@@ -153,66 +161,66 @@ class QualityCDIDataSource extends DataGridSource {
               //                                 dataGridRows[dataRowIndex] =
               //                                     DataGridRow(cells: [
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .srNo,
               //                                       columnName: 'srNo'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .activity,
               //                                       columnName: 'Activity'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex],
+              //                                       value: _JMRModels[dataRowIndex],
               //                                       columnName: 'button'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .originalDuration,
               //                                       columnName: 'OriginalDuration'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .startDate,
               //                                       columnName: 'StartDate'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .endDate,
               //                                       columnName: 'EndDate'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .actualstartDate,
               //                                       columnName: 'ActualStart'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .actualendDate,
               //                                       columnName: 'ActualEnd'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .actualDuration,
               //                                       columnName: 'ActualDuration'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .delay,
               //                                       columnName: 'Delay'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .unit,
               //                                       columnName: 'Unit'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .scope,
               //                                       columnName: 'QtyScope'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .qtyExecuted,
               //                                       columnName: 'QtyExecuted'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .balanceQty,
               //                                       columnName: 'BalancedQty'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .percProgress,
               //                                       columnName: 'Progress'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .weightage,
               //                                       columnName: 'Weightage'),
               //                                 ]);
@@ -232,7 +240,7 @@ class QualityCDIDataSource extends DataGridSource {
               //                                 Navigator.pop(context);
               //                               }
               //                               if (dataRowIndex != null) {
-              //                                 _checklistModel[dataRowIndex]
+              //                                 _JMRModels[dataRowIndex]
               //                                         .actualendDate =
               //                                     DateFormat('dd-MM-yyyy')
               //                                         .format(endDate!);
@@ -240,66 +248,66 @@ class QualityCDIDataSource extends DataGridSource {
               //                                 dataGridRows[dataRowIndex] =
               //                                     DataGridRow(cells: [
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .srNo,
               //                                       columnName: 'srNo'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .activity,
               //                                       columnName: 'Activity'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex],
+              //                                       value: _JMRModels[dataRowIndex],
               //                                       columnName: 'button'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .originalDuration,
               //                                       columnName: 'OriginalDuration'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .startDate,
               //                                       columnName: 'StartDate'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .endDate,
               //                                       columnName: 'EndDate'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .actualstartDate,
               //                                       columnName: 'ActualStart'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .actualendDate,
               //                                       columnName: 'ActualEnd'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .actualDuration,
               //                                       columnName: 'ActualDuration'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .delay,
               //                                       columnName: 'Delay'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .unit,
               //                                       columnName: 'Unit'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .scope,
               //                                       columnName: 'QtyScope'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .qtyExecuted,
               //                                       columnName: 'QtyExecuted'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .balanceQty,
               //                                       columnName: 'BalancedQty'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .percProgress,
               //                                       columnName: 'Progress'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .weightage,
               //                                       columnName: 'Weightage'),
               //                                 ]);
@@ -311,73 +319,73 @@ class QualityCDIDataSource extends DataGridSource {
               //                                 notifyListeners();
               //                               }
               //                               if (dataRowIndex != null) {
-              //                                 _checklistModel[dataRowIndex]
+              //                                 _JMRModels[dataRowIndex]
               //                                         .actualDuration =
               //                                     int.parse(diff.inDays.toString());
 
               //                                 dataGridRows[dataRowIndex] =
               //                                     DataGridRow(cells: [
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .srNo,
               //                                       columnName: 'srNo'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .activity,
               //                                       columnName: 'Activity'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex],
+              //                                       value: _JMRModels[dataRowIndex],
               //                                       columnName: 'button'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .originalDuration,
               //                                       columnName: 'OriginalDuration'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .startDate,
               //                                       columnName: 'StartDate'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .endDate,
               //                                       columnName: 'EndDate'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .actualstartDate,
               //                                       columnName: 'ActualStart'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .actualendDate,
               //                                       columnName: 'ActualEnd'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .actualDuration,
               //                                       columnName: 'ActualDuration'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .delay,
               //                                       columnName: 'Delay'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .unit,
               //                                       columnName: 'Unit'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .scope,
               //                                       columnName: 'QtyScope'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .qtyExecuted,
               //                                       columnName: 'QtyExecuted'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .balanceQty,
               //                                       columnName: 'BalancedQty'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .percProgress,
               //                                       columnName: 'Progress'),
               //                                   DataGridCell(
-              //                                       value: _checklistModel[dataRowIndex]
+              //                                       value: _JMRModels[dataRowIndex]
               //                                           .weightage,
               //                                       columnName: 'Weightage'),
               //                                 ]);
@@ -401,9 +409,9 @@ class QualityCDIDataSource extends DataGridSource {
               //             ],
               //           )
               //         :
-              Text(
-            dataGridCell.value.toString(),
-          ));
+              : Text(
+                  dataGridCell.value.toString(),
+                ));
     }).toList());
   }
 
@@ -433,25 +441,40 @@ class QualityCDIDataSource extends DataGridSource {
     if (column.columnName == 'srNo') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
           DataGridCell<int>(columnName: 'srNo', value: newCellValue);
-      _checklistModel[dataRowIndex].srNo = newCellValue as int;
-    } else if (column.columnName == 'checklist') {
+      _JMRModels[dataRowIndex].srNo = newCellValue as int;
+    } else if (column.columnName == 'Description') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
-          DataGridCell<String>(columnName: 'checklist', value: newCellValue);
-      _checklistModel[dataRowIndex].checklist = newCellValue.toString();
-    } else if (column.columnName == 'responsibility') {
+          DataGridCell<String>(columnName: 'Description', value: newCellValue);
+      _JMRModels[dataRowIndex].description = newCellValue.toString();
+    } else if (column.columnName == 'Activity') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
-          DataGridCell<String>(
-              columnName: 'responsibility', value: newCellValue);
-      _checklistModel[dataRowIndex].responsibility = newCellValue.toString();
-    } else if (column.columnName == 'reference') {
+          DataGridCell<String>(columnName: 'Activity', value: newCellValue);
+      _JMRModels[dataRowIndex].activity = newCellValue.toString();
+    } else if (column.columnName == 'RefNo') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
           DataGridCell<dynamic>(
-              columnName: 'reference', value: newCellValue as int);
-      _checklistModel[dataRowIndex].reference = newCellValue as dynamic;
+              columnName: 'RefNo', value: newCellValue as int);
+      _JMRModels[dataRowIndex].refNo = newCellValue as dynamic;
+    } else if (column.columnName == 'Abstract') {
+      dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
+          DataGridCell<String>(columnName: 'Abstract', value: newCellValue);
+      _JMRModels[dataRowIndex].jmrAbstract = newCellValue;
+    } else if (column.columnName == 'UOM') {
+      dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
+          DataGridCell<String>(columnName: 'UOM', value: newCellValue);
+      _JMRModels[dataRowIndex].uom = newCellValue;
+    } else if (column.columnName == 'Rate') {
+      dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
+          DataGridCell<double>(columnName: 'Rate', value: newCellValue);
+      _JMRModels[dataRowIndex].rate = newCellValue;
+    } else if (column.columnName == 'TotalQty') {
+      dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
+          DataGridCell<int>(columnName: 'TotalQty', value: newCellValue);
+      _JMRModels[dataRowIndex].totalQty = newCellValue;
     } else {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
-          DataGridCell<String>(columnName: 'observation', value: newCellValue);
-      _checklistModel[dataRowIndex].observation = newCellValue;
+          DataGridCell<double>(columnName: 'TotalAmount', value: newCellValue);
+      _JMRModels[dataRowIndex].totalAmount = newCellValue;
     }
   }
 
@@ -540,6 +563,6 @@ class QualityCDIDataSource extends DataGridSource {
         ? RegExp('[0-9]')
         : isDateTimeBoard
             ? RegExp('[0-9/]')
-            : RegExp('[a-zA-Z ]');
+            : RegExp('[a-zA-Z0-9.@!#^&*(){+-}%|<>?_=+,/ )]');
   }
 }

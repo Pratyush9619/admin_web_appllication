@@ -9,7 +9,9 @@ import '../model/quality_checklistModel.dart';
 
 class QualityCIDataSource extends DataGridSource {
   // BuildContext mainContext;
-  QualityCIDataSource(this._checklistModel) {
+  String cityName;
+  String depoName;
+  QualityCIDataSource(this._checklistModel, this.cityName, this.depoName) {
     buildDataGridRows();
   }
   void buildDataGridRows() {
@@ -446,14 +448,10 @@ class QualityCIDataSource extends DataGridSource {
           DataGridCell<dynamic>(
               columnName: 'reference', value: newCellValue as int);
       _checklistModel[dataRowIndex].reference = newCellValue as dynamic;
-    } else if (column.columnName == 'observation') {
+    } else {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
           DataGridCell<String>(columnName: 'observation', value: newCellValue);
       _checklistModel[dataRowIndex].observation = newCellValue;
-    } else {
-      dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
-          DataGridCell<double>(columnName: 'photoNo', value: newCellValue);
-      _checklistModel[dataRowIndex].photoNo = newCellValue;
     }
   }
 

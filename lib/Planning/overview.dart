@@ -10,6 +10,8 @@ import 'package:web_appllication/style.dart';
 import 'package:web_appllication/widgets/custom_appbar.dart';
 import '../OverviewPages/detailed_Eng.dart';
 import '../KeyEvents/key_events.dart';
+import '../OverviewPages/jmr.dart';
+import '../OverviewPages/testing_report.dart';
 
 class MyOverview extends StatefulWidget {
   String userid;
@@ -45,15 +47,29 @@ class _MyOverviewState extends State<MyOverview> {
     'assets/overview_image/overview.png',
     'assets/overview_image/project_planning.png',
     'assets/overview_image/resource.png',
-    'assets/overview_image/monitor.png',
     'assets/overview_image/daily_progress.png',
+    'assets/overview_image/monthly.png',
     'assets/overview_image/detailed_engineering.png',
     'assets/overview_image/jmr.png',
+    // 'assets/overview_image/safety.png',
     'assets/overview_image/safety.png',
-    'assets/overview_image/safety_checklist.jpeg',
-    'assets/overview_image/checklist_civil.png',
+    'assets/overview_image/quality.png',
+    // 'assets/overview_image/testing_commissioning.png',
     'assets/overview_image/testing_commissioning.png',
     'assets/overview_image/closure_report.png',
+    'assets/overview_image/easy_monitoring.jpg',
+    // 'assets/overview_image/overview.png',
+    // 'assets/overview_image/project_planning.png',
+    // 'assets/overview_image/resource.png',
+    // 'assets/overview_image/monitor.png',
+    // 'assets/overview_image/detailed_engineering.png',
+    // 'assets/overview_image/daily_progress.png',
+    // 'assets/overview_image/jmr.png',
+    // 'assets/overview_image/safety.png',
+    // 'assets/overview_image/safety_checklist.jpeg',
+    // 'assets/overview_image/checklist_civil.png',
+    // 'assets/overview_image/testing_commissioning.png',
+    // 'assets/overview_image/closure_report.png',
   ];
 
   @override
@@ -61,16 +77,16 @@ class _MyOverviewState extends State<MyOverview> {
     List<String> desription = [
       'Overview of Project Progress Status of ${widget.depoName} EV Bus Charging Infra',
       'Project Planning & Scheduling Bus Depot Wise [Gant Chart] ',
-      'Resource Allocation',
-      'Monthly Project Monitoring & Review',
+      'Resource Allocation Planning',
       'Submission of Daily Progress Report for Individual Project',
-      'Detailed Engineering of Project Documents like GTP, GA Drawing',
+      'Monthly Project Monitoring & Review',
+      'Detailed Engineering Of Project Documents like GTP, GA Drawing',
       'Online JMR verification for projects',
       'Safety check list & observation',
-      'Quality check list & observation',
-      'FQP Checklist for Civil & Electrical work',
+      'FQP Checklist for Civil,Electrical work & Quality Checklist',
       'Testing & Commissioning Reports of Equipment',
-      'Closure Report'
+      'Closure Report',
+      'Easy monitoring of O & M schedule for all the equipment of depots.',
     ];
     pages = [
       DepotOverview(
@@ -87,13 +103,13 @@ class _MyOverviewState extends State<MyOverview> {
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
-      MonthlyProject(
-        userid: widget.userid,
+      DailyProject(
+        userId: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
-      DailyProject(
-        userId: widget.userid,
+      MonthlyProject(
+        userid: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
@@ -102,8 +118,7 @@ class _MyOverviewState extends State<MyOverview> {
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
-      DepotOverview(
-        userid: widget.userid,
+      Jmr(
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
@@ -117,20 +132,19 @@ class _MyOverviewState extends State<MyOverview> {
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
-      KeyEvents(
-        userId: widget.userid,
-        depoName: widget.depoName,
+      TestingReport(
         cityName: widget.cityName,
-      ),
-      KeyEvents(
-        userId: widget.userid,
         depoName: widget.depoName,
-        cityName: widget.cityName,
       ),
       ClosureReport(
           userId: widget.userid,
           cityName: widget.cityName,
-          depoName: widget.depoName)
+          depoName: widget.depoName),
+      KeyEvents(
+        userId: widget.userid,
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
       // KeyEvents(
       //   userId: widget.userid,
       //   depoName: widget.depoName,

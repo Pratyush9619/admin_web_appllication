@@ -6,7 +6,6 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 import 'package:web_appllication/widgets/nodata_available.dart';
-import '../Authentication/auth_service.dart';
 import '../components/loading_page.dart';
 import '../datasource/dailyproject_datasource.dart';
 import '../datasource/monthlyproject_datasource.dart';
@@ -50,17 +49,14 @@ class _ViewSummaryState extends State<ViewSummary> {
   List<DailyProjectModel> dailyproject = <DailyProjectModel>[];
   late DailyDataSource _dailyDataSource;
   List<dynamic> tabledata2 = [];
-  Stream? _stream;
-  var alldata;
-  bool _isloading = false;
+  Stream? stream;
+  dynamic alldata;
+  bool isloading = false;
   dynamic userId;
 
   @override
   void initState() {
     super.initState();
-    // getUserId().then((value) {
-    //   _isloading = false;
-    // });
   }
 
   @override
@@ -68,7 +64,7 @@ class _ViewSummaryState extends State<ViewSummary> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-              ' ${widget.cityName} / ${widget.depoName} / ${widget.id} / View Summary'),
+              '${widget.cityName} / ${widget.depoName} / ${widget.id} / View Summary'),
           backgroundColor: blue,
         ),
         body: Column(
@@ -122,7 +118,9 @@ class _ViewSummaryState extends State<ViewSummary> {
                               );
                             },
                             icon: const Icon(Icons.today)),
-                        Text(DateFormat.yMMMMd().format(startdate!))
+                        Text(widget.id == 'Monthly Report'
+                            ? DateFormat.yMMM().format(startdate!)
+                            : DateFormat.yMMMMd().format(startdate!))
                       ],
                     ),
                   ),
@@ -135,7 +133,7 @@ class _ViewSummaryState extends State<ViewSummary> {
                         stream: FirebaseFirestore.instance
                             .collection('MonthlyProjectReport')
                             .doc('${widget.depoName}')
-                            .collection('Monthly Data')
+                            .collection(widget.userId)
                             .doc(DateFormat.yMMM().format(startdate!))
                             .snapshots(),
                         builder: (context, snapshot) {
@@ -374,359 +372,392 @@ class _ViewSummaryState extends State<ViewSummary> {
                           }
                         }),
                   )
-                // : widget.id == 'Daily Report'
-                //     ? Expanded(
-                //         child: StreamBuilder(
-                //         stream: FirebaseFirestore.instance
-                //             .collection('DailyProjectReport')
-                //             .doc('${widget.depoName}')
-                //             .collection(widget.userId)
-                //             .doc(DateFormat.yMMMMd().format(startdate!))
-                //             .snapshots(),
-                //         builder: (context, snapshot) {
-                //           if (snapshot.connectionState ==
-                //               ConnectionState.waiting) {
-                //             return LoadingPage();
-                //           } else if (!snapshot.hasData ||
-                //               snapshot.data!.exists == false) {
-                //             return const NodataAvailable();
-                //           } else {
-                //             alldata = '';
-                //             alldata = snapshot.data!['data'] as List<dynamic>;
-                //             dailyproject.clear();
-                //             alldata.forEach((element) {
-                //               dailyproject
-                //                   .add(DailyProjectModel.fromjson(element));
-                //               _dailyDataSource = DailyDataSource(
-                //                   dailyproject, context, widget.depoName!);
-                //               _dataGridController = DataGridController();
-                //             });
-                //             return SfDataGridTheme(
-                //               data: SfDataGridThemeData(headerColor: lightblue),
-                //               child: SfDataGrid(
-                //                   source: _dailyDataSource,
-                //                   allowEditing: true,
-                //                   frozenColumnsCount: 2,
-                //                   gridLinesVisibility: GridLinesVisibility.both,
-                //                   headerGridLinesVisibility:
-                //                       GridLinesVisibility.both,
-                //                   selectionMode: SelectionMode.single,
-                //                   navigationMode: GridNavigationMode.cell,
-                //                   columnWidthMode: ColumnWidthMode.auto,
-                //                   editingGestureType: EditingGestureType.tap,
-                //                   controller: _dataGridController,
-                //                   columns: [
-                //                     GridColumn(
-                //                       columnName: 'SiNo',
-                //                       autoFitPadding:
-                //                           const EdgeInsets.symmetric(
-                //                               horizontal: 16),
-                //                       allowEditing: true,
-                //                       width: 70,
-                //                       label: Container(
-                //                         padding: const EdgeInsets.symmetric(
-                //                             horizontal: 8.0),
-                //                         alignment: Alignment.center,
-                //                         child: Text('SI No.',
-                //                             overflow: TextOverflow.values.first,
-                //                             textAlign: TextAlign.center,
-                //                             style: TextStyle(
-                //                                 fontWeight: FontWeight.bold,
-                //                                 fontSize: 16,
-                //                                 color: white)
-                //                             //    textAlign: TextAlign.center,
-                //                             ),
-                //                       ),
-                //                     ),
-                //                     GridColumn(
-                //                       columnName: 'TypeOfActivity',
-                //                       autoFitPadding:
-                //                           const EdgeInsets.symmetric(
-                //                               horizontal: 16),
-                //                       allowEditing: true,
-                //                       width: 200,
-                //                       label: Container(
-                //                         padding: const EdgeInsets.symmetric(
-                //                             horizontal: 8.0),
-                //                         alignment: Alignment.center,
-                //                         child: Text('Type of Activity',
-                //                             overflow: TextOverflow.values.first,
-                //                             style: TextStyle(
-                //                                 fontWeight: FontWeight.bold,
-                //                                 fontSize: 16,
-                //                                 color: white)
-                //                             //    textAlign: TextAlign.center,
-                //                             ),
-                //                       ),
-                //                     ),
-                //                     GridColumn(
-                //                       columnName: 'ActivityDetails',
-                //                       autoFitPadding:
-                //                           const EdgeInsets.symmetric(
-                //                               horizontal: 16),
-                //                       allowEditing: true,
-                //                       width: 220,
-                //                       label: Container(
-                //                         padding: const EdgeInsets.symmetric(
-                //                             horizontal: 8.0),
-                //                         alignment: Alignment.center,
-                //                         child: Text('Activity Details',
-                //                             overflow: TextOverflow.values.first,
-                //                             style: TextStyle(
-                //                                 fontWeight: FontWeight.bold,
-                //                                 fontSize: 16,
-                //                                 color: white)
-                //                             //    textAlign: TextAlign.center,
-                //                             ),
-                //                       ),
-                //                     ),
-                //                     GridColumn(
-                //                       columnName: 'Progress',
-                //                       autoFitPadding:
-                //                           const EdgeInsets.symmetric(
-                //                               horizontal: 16),
-                //                       allowEditing: true,
-                //                       width: 320,
-                //                       label: Container(
-                //                         padding: const EdgeInsets.symmetric(
-                //                             horizontal: 8.0),
-                //                         alignment: Alignment.center,
-                //                         child: Text('Progress',
-                //                             overflow: TextOverflow.values.first,
-                //                             style: TextStyle(
-                //                                 fontWeight: FontWeight.bold,
-                //                                 fontSize: 16,
-                //                                 color: white)
-                //                             //    textAlign: TextAlign.center,
-                //                             ),
-                //                       ),
-                //                     ),
-                //                     GridColumn(
-                //                       columnName: 'Status',
-                //                       autoFitPadding:
-                //                           const EdgeInsets.symmetric(
-                //                               horizontal: 16),
-                //                       allowEditing: true,
-                //                       width: 320,
-                //                       label: Container(
-                //                         padding: const EdgeInsets.symmetric(
-                //                             horizontal: 8.0),
-                //                         alignment: Alignment.center,
-                //                         child: Text('Remark / Status',
-                //                             overflow: TextOverflow.values.first,
-                //                             style: TextStyle(
-                //                                 fontWeight: FontWeight.bold,
-                //                                 fontSize: 16,
-                //                                 color: white)
-                //                             //    textAlign: TextAlign.center,
-                //                             ),
-                //                       ),
-                //                     ),
-                //                     GridColumn(
-                //                       columnName: 'Delete',
-                //                       autoFitPadding:
-                //                           const EdgeInsets.symmetric(
-                //                               horizontal: 16),
-                //                       allowEditing: true,
-                //                       visible: false,
-                //                       width: 120,
-                //                       label: Container(
-                //                         padding: const EdgeInsets.symmetric(
-                //                             horizontal: 8.0),
-                //                         alignment: Alignment.center,
-                //                         child: Text('Delete Row',
-                //                             overflow: TextOverflow.values.first,
-                //                             style: TextStyle(
-                //                                 fontWeight: FontWeight.bold,
-                //                                 fontSize: 16,
-                //                                 color: white)
-                //                             //    textAlign: TextAlign.center,
-                //                             ),
-                //                       ),
-                //                     ),
-                //                   ]),
-                //             );
-                //           }
-                //         },
-                //       ))
-                //     : widget.id == 'Quality Checklist'
-                //         ? Expanded(
-                //             child: QualityChecklist(
-                //                 currentDate:
-                //                     DateFormat.yMMMMd().format(startdate!),
-                //                 isHeader: widget.isHeader,
-                //                 cityName: widget.cityName,
-                //                 depoName: widget.depoName))
-                //         : Expanded(
-                //             child: StreamBuilder(
-                //               stream: FirebaseFirestore.instance
-                //                   .collection('SafetyChecklistTable')
-                //                   .doc(widget.depoName!)
-                //                   .collection('Safety Data')
-                //                   .doc(DateFormat.yMMMMd().format(startdate!))
-                //                   .snapshots(),
-                //               builder: (context, snapshot) {
-                //                 if (snapshot.connectionState ==
-                //                     ConnectionState.waiting) {
-                //                   return LoadingPage();
-                //                 }
-                //                 if (!snapshot.hasData ||
-                //                     snapshot.data!.exists == false) {
-                //                   return const NodataAvailable();
-                //                 } else {
-                //                   alldata = '';
-                //                   alldata =
-                //                       snapshot.data!['data'] as List<dynamic>;
-                //                   safetylisttable.clear();
-                //                   alldata.forEach((element) {
-                //                     safetylisttable.add(
-                //                         SafetyChecklistModel.fromJson(element));
-                //                     _safetyChecklistDataSource =
-                //                         SafetyChecklistDataSource(
-                //                             safetylisttable);
-                //                     _dataGridController = DataGridController();
-                //                   });
-                //                   return SfDataGridTheme(
-                //                     data:
-                //                         SfDataGridThemeData(headerColor: blue),
-                //                     child: SfDataGrid(
-                //                       source: _safetyChecklistDataSource,
-                //                       //key: key,
+                : widget.id == 'Daily Report'
+                    ? Expanded(
+                        child: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('DailyProjectReport')
+                            .doc('${widget.depoName}')
+                            .collection(widget.userId)
+                            .doc(DateFormat.yMMMMd().format(startdate!))
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return LoadingPage();
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!.exists == false) {
+                            return const NodataAvailable();
+                          } else {
+                            alldata = '';
+                            alldata = snapshot.data!['data'] as List<dynamic>;
+                            dailyproject.clear();
+                            alldata.forEach((element) {
+                              dailyproject
+                                  .add(DailyProjectModel.fromjson(element));
+                              _dailyDataSource = DailyDataSource(
+                                  dailyproject, context, widget.depoName!);
+                              _dataGridController = DataGridController();
+                            });
+                            return SfDataGridTheme(
+                              data: SfDataGridThemeData(headerColor: blue),
+                              child: SfDataGrid(
+                                  source: _dailyDataSource,
+                                  allowEditing: true,
+                                  frozenColumnsCount: 2,
+                                  gridLinesVisibility: GridLinesVisibility.both,
+                                  headerGridLinesVisibility:
+                                      GridLinesVisibility.both,
+                                  selectionMode: SelectionMode.single,
+                                  navigationMode: GridNavigationMode.cell,
+                                  columnWidthMode: ColumnWidthMode.auto,
+                                  editingGestureType: EditingGestureType.tap,
+                                  controller: _dataGridController,
+                                  columns: [
+                                    GridColumn(
+                                      columnName: 'SiNo',
+                                      autoFitPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                      allowEditing: true,
+                                      width: 70,
+                                      label: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        alignment: Alignment.center,
+                                        child: Text('SI No.',
+                                            overflow: TextOverflow.values.first,
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                color: white)
+                                            //    textAlign: TextAlign.center,
+                                            ),
+                                      ),
+                                    ),
+                                    // GridColumn(
+                                    //   columnName: 'Date',
+                                    //   autoFitPadding:
+                                    //       const EdgeInsets.symmetric(
+                                    //           horizontal: 16),
+                                    //   allowEditing: false,
+                                    //   width: 160,
+                                    //   label: Container(
+                                    //     padding: const EdgeInsets.symmetric(
+                                    //         horizontal: 8.0),
+                                    //     alignment: Alignment.center,
+                                    //     child: Text('Date',
+                                    //         textAlign: TextAlign.center,
+                                    //         overflow: TextOverflow.values.first,
+                                    //         style: TextStyle(
+                                    //             fontWeight: FontWeight.bold,
+                                    //             fontSize: 16,
+                                    //             color: white)),
+                                    //   ),
+                                    // ),
+                                    // GridColumn(
+                                    //   visible: false,
+                                    //   columnName: 'State',
+                                    //   autoFitPadding:
+                                    //       const EdgeInsets.symmetric(horizontal: 16),
+                                    //   allowEditing: true,
+                                    //   width: 120,
+                                    //   label: Container(
+                                    //     padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    //     alignment: Alignment.center,
+                                    //     child: Text('State',
+                                    //         textAlign: TextAlign.center,
+                                    //         overflow: TextOverflow.values.first,
+                                    //         style: TextStyle(
+                                    //             fontWeight: FontWeight.bold,
+                                    //             fontSize: 16,
+                                    //             color: white)
+                                    //         //    textAlign: TextAlign.center,
+                                    //         ),
+                                    //   ),
+                                    // ),
+                                    // GridColumn(
+                                    //   visible: false,
+                                    //   columnName: 'DepotName',
+                                    //   autoFitPadding:
+                                    //       const EdgeInsets.symmetric(horizontal: 16),
+                                    //   allowEditing: true,
+                                    //   width: 150,
+                                    //   label: Container(
+                                    //     padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    //     alignment: Alignment.center,
+                                    //     child: Text('Depot Name',
+                                    //         overflow: TextOverflow.values.first,
+                                    //         style: TextStyle(
+                                    //             fontWeight: FontWeight.bold,
+                                    //             fontSize: 16,
+                                    //             color: white)
+                                    //         //    textAlign: TextAlign.center,
+                                    //         ),
+                                    //   ),
+                                    // ),
+                                    GridColumn(
+                                      columnName: 'TypeOfActivity',
+                                      autoFitPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                      allowEditing: true,
+                                      width: 200,
+                                      label: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        alignment: Alignment.center,
+                                        child: Text('Type of Activity',
+                                            overflow: TextOverflow.values.first,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                color: white)
+                                            //    textAlign: TextAlign.center,
+                                            ),
+                                      ),
+                                    ),
+                                    GridColumn(
+                                      columnName: 'ActivityDetails',
+                                      autoFitPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                      allowEditing: true,
+                                      width: 220,
+                                      label: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        alignment: Alignment.center,
+                                        child: Text('Activity Details',
+                                            overflow: TextOverflow.values.first,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                color: white)
+                                            //    textAlign: TextAlign.center,
+                                            ),
+                                      ),
+                                    ),
+                                    GridColumn(
+                                      columnName: 'Progress',
+                                      autoFitPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                      allowEditing: true,
+                                      width: 320,
+                                      label: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        alignment: Alignment.center,
+                                        child: Text('Progress',
+                                            overflow: TextOverflow.values.first,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                color: white)
+                                            //    textAlign: TextAlign.center,
+                                            ),
+                                      ),
+                                    ),
+                                    GridColumn(
+                                      columnName: 'Status',
+                                      autoFitPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                      allowEditing: true,
+                                      width: 320,
+                                      label: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        alignment: Alignment.center,
+                                        child: Text('Remark / Status',
+                                            overflow: TextOverflow.values.first,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                color: white)
+                                            //    textAlign: TextAlign.center,
+                                            ),
+                                      ),
+                                    ),
+                                  ]),
+                            );
+                          }
+                        },
+                      ))
+                    : widget.id == 'Quality Checklist'
+                        ? Expanded(
+                            child: QualityChecklist(
+                                userId: widget.userId,
+                                currentDate:
+                                    DateFormat.yMMMMd().format(startdate!),
+                                isHeader: widget.isHeader,
+                                cityName: widget.cityName,
+                                depoName: widget.depoName))
+                        : Expanded(
+                            child: StreamBuilder(
+                              stream: FirebaseFirestore.instance
+                                  .collection('SafetyChecklistTable')
+                                  .doc(widget.depoName!)
+                                  .collection(widget.userId)
+                                  .doc(DateFormat.yMMMMd().format(startdate!))
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return LoadingPage();
+                                }
+                                if (!snapshot.hasData ||
+                                    snapshot.data!.exists == false) {
+                                  return const NodataAvailable();
+                                } else {
+                                  alldata = '';
+                                  alldata =
+                                      snapshot.data!['data'] as List<dynamic>;
+                                  safetylisttable.clear();
+                                  alldata.forEach((element) {
+                                    safetylisttable.add(
+                                        SafetyChecklistModel.fromJson(element));
+                                    _safetyChecklistDataSource =
+                                        SafetyChecklistDataSource(
+                                            safetylisttable);
+                                    _dataGridController = DataGridController();
+                                  });
+                                  return SfDataGridTheme(
+                                    data:
+                                        SfDataGridThemeData(headerColor: blue),
+                                    child: SfDataGrid(
+                                      source: _safetyChecklistDataSource,
+                                      //key: key,
 
-                //                       allowEditing: true,
-                //                       frozenColumnsCount: 2,
-                //                       gridLinesVisibility:
-                //                           GridLinesVisibility.both,
-                //                       headerGridLinesVisibility:
-                //                           GridLinesVisibility.both,
-                //                       selectionMode: SelectionMode.single,
-                //                       navigationMode: GridNavigationMode.cell,
-                //                       columnWidthMode: ColumnWidthMode.auto,
-                //                       editingGestureType:
-                //                           EditingGestureType.tap,
-                //                       controller: _dataGridController,
+                                      allowEditing: true,
+                                      frozenColumnsCount: 2,
+                                      gridLinesVisibility:
+                                          GridLinesVisibility.both,
+                                      headerGridLinesVisibility:
+                                          GridLinesVisibility.both,
+                                      selectionMode: SelectionMode.single,
+                                      navigationMode: GridNavigationMode.cell,
+                                      columnWidthMode: ColumnWidthMode.auto,
+                                      editingGestureType:
+                                          EditingGestureType.tap,
+                                      controller: _dataGridController,
 
-                //                       columns: [
-                //                         GridColumn(
-                //                           columnName: 'srNo',
-                //                           autoFitPadding:
-                //                               const EdgeInsets.symmetric(
-                //                                   horizontal: 16),
-                //                           allowEditing: true,
-                //                           width: 80,
-                //                           label: Container(
-                //                             padding: const EdgeInsets.symmetric(
-                //                                 horizontal: 8.0),
-                //                             alignment: Alignment.center,
-                //                             child: Text('Sr No',
-                //                                 overflow:
-                //                                     TextOverflow.values.first,
-                //                                 style: TextStyle(
-                //                                     fontWeight: FontWeight.bold,
-                //                                     fontSize: 16,
-                //                                     color: white)),
-                //                           ),
-                //                         ),
-                //                         GridColumn(
-                //                           width: 450,
-                //                           columnName: 'Details',
-                //                           allowEditing: true,
-                //                           label: Container(
-                //                             padding: const EdgeInsets.symmetric(
-                //                                 horizontal: 8.0),
-                //                             alignment: Alignment.center,
-                //                             child: Text('Details of Enclosure ',
-                //                                 overflow:
-                //                                     TextOverflow.values.first,
-                //                                 style: TextStyle(
-                //                                     fontWeight: FontWeight.bold,
-                //                                     fontSize: 16,
-                //                                     color: white)),
-                //                           ),
-                //                         ),
-                //                         GridColumn(
-                //                           columnName: 'Status',
-                //                           allowEditing: true,
-                //                           width: 150,
-                //                           label: Container(
-                //                             padding: const EdgeInsets.all(8.0),
-                //                             alignment: Alignment.center,
-                //                             child: Text(
-                //                                 'Status of Submission of information/ documents ',
-                //                                 textAlign: TextAlign.center,
-                //                                 style: TextStyle(
-                //                                   fontWeight: FontWeight.bold,
-                //                                   fontSize: 16,
-                //                                   color: white,
-                //                                 )),
-                //                           ),
-                //                         ),
-                //                         GridColumn(
-                //                           columnName: 'Remark',
-                //                           allowEditing: true,
-                //                           width: 150,
-                //                           label: Container(
-                //                             padding: const EdgeInsets.symmetric(
-                //                                 horizontal: 8.0),
-                //                             alignment: Alignment.center,
-                //                             child: Text('Remarks',
-                //                                 overflow:
-                //                                     TextOverflow.values.first,
-                //                                 style: TextStyle(
-                //                                     fontWeight: FontWeight.bold,
-                //                                     fontSize: 16,
-                //                                     color: white)),
-                //                           ),
-                //                         ),
-                //                         GridColumn(
-                //                           columnName: 'Photo',
-                //                           allowEditing: false,
-                //                           width: 180,
-                //                           label: Container(
-                //                             padding: const EdgeInsets.symmetric(
-                //                                 horizontal: 8.0),
-                //                             alignment: Alignment.center,
-                //                             child: Text('Upload Photo',
-                //                                 overflow:
-                //                                     TextOverflow.values.first,
-                //                                 style: TextStyle(
-                //                                     fontWeight: FontWeight.bold,
-                //                                     fontSize: 16,
-                //                                     color: white)),
-                //                           ),
-                //                         ),
-                //                         GridColumn(
-                //                           columnName: 'ViewPhoto',
-                //                           allowEditing: false,
-                //                           width: 180,
-                //                           label: Container(
-                //                             padding: const EdgeInsets.symmetric(
-                //                                 horizontal: 8.0),
-                //                             alignment: Alignment.center,
-                //                             child: Text('View Photo',
-                //                                 overflow:
-                //                                     TextOverflow.values.first,
-                //                                 style: TextStyle(
-                //                                     fontWeight: FontWeight.bold,
-                //                                     fontSize: 16,
-                //                                     color: white)),
-                //                           ),
-                //                         ),
-                //                       ],
-                //                     ),
-                //                   );
-                //                 }
-                //               },
-                //             ),
-                //           )
-                : Container()
+                                      columns: [
+                                        GridColumn(
+                                          columnName: 'srNo',
+                                          autoFitPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 16),
+                                          allowEditing: true,
+                                          width: 80,
+                                          label: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            alignment: Alignment.center,
+                                            child: Text('Sr No',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                    color: white)),
+                                          ),
+                                        ),
+                                        GridColumn(
+                                          width: 450,
+                                          columnName: 'Details',
+                                          allowEditing: true,
+                                          label: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            alignment: Alignment.center,
+                                            child: Text('Details of Enclosure ',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                    color: white)),
+                                          ),
+                                        ),
+                                        GridColumn(
+                                          columnName: 'Status',
+                                          allowEditing: true,
+                                          width: 150,
+                                          label: Container(
+                                            padding: const EdgeInsets.all(8.0),
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                                'Status of Submission of information/ documents ',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  color: white,
+                                                )),
+                                          ),
+                                        ),
+                                        GridColumn(
+                                          columnName: 'Remark',
+                                          allowEditing: true,
+                                          width: 150,
+                                          label: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            alignment: Alignment.center,
+                                            child: Text('Remarks',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                    color: white)),
+                                          ),
+                                        ),
+                                        GridColumn(
+                                          columnName: 'Photo',
+                                          allowEditing: false,
+                                          width: 180,
+                                          label: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            alignment: Alignment.center,
+                                            child: Text('Upload Photo',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                    color: white)),
+                                          ),
+                                        ),
+                                        GridColumn(
+                                          columnName: 'ViewPhoto',
+                                          allowEditing: false,
+                                          width: 180,
+                                          label: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            alignment: Alignment.center,
+                                            child: Text('View Photo',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16,
+                                                    color: white)),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          )
           ],
         ));
   }
-
-  // Future<void> getUserId() async {
-  //   await AuthService().getCurrentUserId().then((value) {
-  //     userId = value;
-  //   });
-  // }
 }

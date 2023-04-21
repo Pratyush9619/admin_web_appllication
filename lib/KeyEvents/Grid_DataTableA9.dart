@@ -12,15 +12,10 @@ import 'package:web_appllication/style.dart';
 
 import '../widgets/custom_appbar.dart';
 
-void main() {
-  runApp(StatutoryAprovalA9());
-}
-
-/// The application that contains datagrid on it.
-
 /// The home page of the application which hosts the datagrid.
 class StatutoryAprovalA9 extends StatefulWidget {
   /// Creates the home page.
+  String? userid;
   String? depoName;
   String? cityName;
   StatutoryAprovalA9({Key? key, this.depoName, this.cityName})
@@ -78,7 +73,7 @@ class _StatutoryAprovalA9State extends State<StatutoryAprovalA9> {
     _stream = FirebaseFirestore.instance
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
-        .collection('AllKeyEventsTable')
+        .collection(widget.userid!)
         .doc('${widget.depoName}A9')
         .snapshots();
     super.initState();
@@ -1008,7 +1003,7 @@ class _StatutoryAprovalA9State extends State<StatutoryAprovalA9> {
     FirebaseFirestore.instance
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
-        .collection('AllKeyEventsTable')
+        .collection(widget.userid!)
         .doc('${widget.depoName}A9')
         .set({
       'data': tabledata2,

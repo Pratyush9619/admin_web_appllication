@@ -107,7 +107,18 @@ class _ResourceAllocationState extends State<ResourceAllocation> {
           title: Text('${widget.cityName} / ${widget.depoName} / Key Events '),
           backgroundColor: blue,
         ),
-        body: resourceCard()
+        body: const Scaffold(
+          body: Center(
+            child: Text(
+              'Testing & Commissioning flow \n Under Process',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 25,
+              ),
+            ),
+          ),
+        )
 
         // StreamBuilder(
         //   stream: FirebaseFirestore.instance

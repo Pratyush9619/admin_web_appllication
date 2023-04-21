@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:web_appllication/OverviewPages/summary.dart';
 import '../datasource/monthlyproject_datasource.dart';
 import '../model/monthly_projectModel.dart';
 import '../components/loading_page.dart';
@@ -41,7 +42,7 @@ class _MonthlyProjectState extends State<MonthlyProject> {
     _stream = FirebaseFirestore.instance
         .collection('MonthlyProjectReport')
         .doc('${widget.depoName}')
-        .collection('Monthly Data')
+        .collection(widget.userid!)
         .doc(DateFormat.yMMM().format(DateTime.now()))
         .snapshots();
     _isloading = false;
@@ -56,12 +57,22 @@ class _MonthlyProjectState extends State<MonthlyProject> {
           child: CustomAppBar(
             text: ' ${widget.cityName}/ ${widget.depoName} / Monthly Report',
             userid: widget.userid,
+            haveSummary: true,
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ViewSummary(
+                      userId: widget.userid,
+                      depoName: widget.depoName,
+                      cityName: widget.cityName,
+                      id: 'Monthly Report'),
+                )),
             haveSynced: true,
             store: () {
-              StoreData();
+              storeData();
             },
           ),
-          preferredSize: Size.fromHeight(50)),
+          preferredSize: const Size.fromHeight(50)),
       body: StreamBuilder(
           stream: _stream,
           builder: (context, snapshot) {
@@ -448,7 +459,7 @@ class _MonthlyProjectState extends State<MonthlyProject> {
     );
   }
 
-  void StoreData() {
+  void storeData() {
     Map<String, dynamic> table_data = Map();
     for (var i in monthlyDataSource.dataGridRows) {
       for (var data in i.getCells()) {
@@ -464,7 +475,7 @@ class _MonthlyProjectState extends State<MonthlyProject> {
     FirebaseFirestore.instance
         .collection('MonthlyProjectReport')
         .doc('${widget.depoName}')
-        .collection('Monthly Data')
+        .collection(widget.userid!)
         .doc(DateFormat.yMMM().format(DateTime.now()))
         .set({
       'data': tabledata2,

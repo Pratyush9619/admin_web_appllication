@@ -130,10 +130,17 @@ class _DetailedEngtState extends State<DetailedEng>
                       onTap: () {
                         onWillPop(context);
                       },
-                      child: Image.asset(
-                        'assets/logout.png',
-                        height: 20,
-                        width: 20,
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            'assets/logout.png',
+                            height: 20,
+                            width: 20,
+                          ),
+                          const SizedBox(width: 5),
+                          Text(widget.userId,
+                              style: const TextStyle(fontSize: 18))
+                        ],
                       ))
                   //  IconButton(
                   //   icon: Icon(

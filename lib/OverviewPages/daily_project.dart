@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:web_appllication/OverviewPages/summary.dart';
-
 import '../datasource/dailyproject_datasource.dart';
 import '../model/daily_projectModel.dart';
 import '../components/loading_page.dart';
@@ -130,26 +128,26 @@ class _DailyProjectState extends State<DailyProject> {
                                             ),
                                       ),
                                     ),
-                                    GridColumn(
-                                      columnName: 'Date',
-                                      autoFitPadding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 16),
-                                      allowEditing: false,
-                                      width: 160,
-                                      label: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8.0),
-                                        alignment: Alignment.center,
-                                        child: Text('Date',
-                                            textAlign: TextAlign.center,
-                                            overflow: TextOverflow.values.first,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                                color: white)),
-                                      ),
-                                    ),
+                                    // GridColumn(
+                                    //   columnName: 'Date',
+                                    //   autoFitPadding:
+                                    //       const EdgeInsets.symmetric(
+                                    //           horizontal: 16),
+                                    //   allowEditing: false,
+                                    //   width: 160,
+                                    //   label: Container(
+                                    //     padding: const EdgeInsets.symmetric(
+                                    //         horizontal: 8.0),
+                                    //     alignment: Alignment.center,
+                                    //     child: Text(' ,
+                                    //         textAlign: TextAlign.center,
+                                    //         overflow: TextOverflow.values.first,
+                                    //         style: TextStyle(
+                                    //             fontWeight: FontWeight.bold,
+                                    //             fontSize: 16,
+                                    //             color: white)),
+                                    //   ),
+                                    // ),
                                     // GridColumn(
                                     //   visible: false,
                                     //   columnName: 'State',
@@ -330,26 +328,26 @@ class _DailyProjectState extends State<DailyProject> {
                                             ),
                                       ),
                                     ),
-                                    GridColumn(
-                                      columnName: 'Date',
-                                      autoFitPadding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 16),
-                                      allowEditing: false,
-                                      width: 160,
-                                      label: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8.0),
-                                        alignment: Alignment.center,
-                                        child: Text('Date',
-                                            textAlign: TextAlign.center,
-                                            overflow: TextOverflow.values.first,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                                color: white)),
-                                      ),
-                                    ),
+                                    // GridColumn(
+                                    //   columnName: 'Date',
+                                    //   autoFitPadding:
+                                    //       const EdgeInsets.symmetric(
+                                    //           horizontal: 16),
+                                    //   allowEditing: false,
+                                    //   width: 160,
+                                    //   label: Container(
+                                    //     padding: const EdgeInsets.symmetric(
+                                    //         horizontal: 8.0),
+                                    //     alignment: Alignment.center,
+                                    //     child: Text('Date',
+                                    //         textAlign: TextAlign.center,
+                                    //         overflow: TextOverflow.values.first,
+                                    //         style: TextStyle(
+                                    //             fontWeight: FontWeight.bold,
+                                    //             fontSize: 16,
+                                    //             color: white)),
+                                    //   ),
+                                    // ),
                                     // GridColumn(
                                     //   visible: false,
                                     //   columnName: 'State',
@@ -490,7 +488,7 @@ class _DailyProjectState extends State<DailyProject> {
           onPressed: (() {
             DailyProject.add(DailyProjectModel(
                 siNo: 1,
-                date: DateFormat().add_yMd().format(DateTime.now()),
+                // date: DateFormat().add_yMd().format(DateTime.now()),
                 // state: "Maharashtra",
                 // depotName: 'depotName',
                 typeOfActivity: 'Electrical Infra',
@@ -519,6 +517,8 @@ class _DailyProjectState extends State<DailyProject> {
     FirebaseFirestore.instance
         .collection('DailyProjectReport')
         .doc('${widget.depoName}')
+        .collection(widget.userId!)
+        .doc(DateFormat.yMMMMd().format(DateTime.now()))
         .set({
       'data': tabledata2,
     }).whenComplete(() {
@@ -535,7 +535,7 @@ class _DailyProjectState extends State<DailyProject> {
     return [
       DailyProjectModel(
           siNo: 1,
-          date: DateFormat().add_yMd().format(DateTime.now()),
+          // date: DateFormat().add_yMd().format(DateTime.now()),
           // state: "Maharashtra",
           // depotName: 'depotName',
           typeOfActivity: 'Electrical Infra',

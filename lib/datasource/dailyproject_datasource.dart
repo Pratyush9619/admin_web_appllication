@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
-
 import '../model/daily_projectModel.dart';
 
 class DailyDataSource extends DataGridSource {
@@ -54,72 +53,75 @@ class DailyDataSource extends DataGridSource {
       return Container(
           alignment: Alignment.center,
           padding: EdgeInsets.symmetric(horizontal: 20.0),
-          child: (dataGridCell.columnName == 'Date')
-              ? Row(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        showDialog(
-                            context: mainContext,
-                            builder: (context) => AlertDialog(
-                                  title: const Text('All Date'),
-                                  content: Container(
-                                      height: 400,
-                                      width: 500,
-                                      child: SfDateRangePicker(
-                                        view: DateRangePickerView.month,
-                                        showTodayButton: true,
-                                        onSelectionChanged:
-                                            (DateRangePickerSelectionChangedArgs
-                                                args) {
-                                          if (args.value is PickerDateRange) {
-                                            rangeStartDate =
-                                                args.value.startDate;
-                                            rangeEndDate = args.value.endDate;
-                                          } else {
-                                            final List<PickerDateRange>
-                                                selectedRanges = args.value;
-                                          }
-                                        },
-                                        selectionMode:
-                                            DateRangePickerSelectionMode.single,
-                                        showActionButtons: true,
-                                        onSubmit: ((value) {
-                                          date =
-                                              DateTime.parse(value.toString());
+          child:
+              //  (dataGridCell.columnName == 'Date')
+              //     ? Row(
+              //         children: [
+              //           IconButton(
+              //             onPressed: () {
+              //               showDialog(
+              //                   context: mainContext,
+              //                   builder: (context) => AlertDialog(
+              //                         title: const Text('All Date'),
+              //                         content: Container(
+              //                             height: 400,
+              //                             width: 500,
+              //                             child: SfDateRangePicker(
+              //                               view: DateRangePickerView.month,
+              //                               showTodayButton: true,
+              //                               onSelectionChanged:
+              //                                   (DateRangePickerSelectionChangedArgs
+              //                                       args) {
+              //                                 if (args.value is PickerDateRange) {
+              //                                   rangeStartDate =
+              //                                       args.value.startDate;
+              //                                   rangeEndDate = args.value.endDate;
+              //                                 } else {
+              //                                   final List<PickerDateRange>
+              //                                       selectedRanges = args.value;
+              //                                 }
+              //                               },
+              //                               selectionMode:
+              //                                   DateRangePickerSelectionMode.single,
+              //                               showActionButtons: true,
+              //                               onSubmit: ((value) {
+              //                                 date =
+              //                                     DateTime.parse(value.toString());
 
-                                          final int dataRowIndex =
-                                              dataGridRows.indexOf(row);
-                                          if (dataRowIndex != null) {
-                                            final int dataRowIndex =
-                                                dataGridRows.indexOf(row);
-                                            dataGridRows[dataRowIndex]
-                                                    .getCells()[1] =
-                                                DataGridCell<String>(
-                                                    columnName: 'Date',
-                                                    value:
-                                                        DateFormat('dd-MM-yyyy')
-                                                            .format(date!));
-                                            _montlyproject[dataRowIndex].date =
-                                                DateFormat('dd-MM-yyyy')
-                                                    .format(date!);
-                                            notifyListeners();
+              //                                 final int dataRowIndex =
+              //                                     dataGridRows.indexOf(row);
+              //                                 if (dataRowIndex != null) {
+              //                                   final int dataRowIndex =
+              //                                       dataGridRows.indexOf(row);
+              //                                   dataGridRows[dataRowIndex]
+              //                                           .getCells()[1] =
+              //                                       DataGridCell<String>(
+              //                                           columnName: 'Date',
+              //                                           value:
+              //                                               DateFormat('dd-MM-yyyy')
+              //                                                   .format(date!));
+              //                                   _montlyproject[dataRowIndex].date =
+              //                                       DateFormat('dd-MM-yyyy')
+              //                                           .format(date!);
+              //                                   notifyListeners();
 
-                                            Navigator.pop(context);
-                                          }
-                                        }),
-                                      )),
-                                ));
-                      },
-                      icon: const Icon(Icons.calendar_today),
-                    ),
-                    Text(dataGridCell.value.toString()),
-                  ],
-                )
-              : Text(
-                  dataGridCell.value.toString(),
-                  textAlign: TextAlign.center,
-                ));
+              //                                   Navigator.pop(context);
+              //                                 }
+              //                               }),
+              //                             )),
+              //                       ));
+              //             },
+              //             icon: const Icon(Icons.calendar_today),
+              //           ),
+              //           Text(dataGridCell.value.toString()),
+              //         ],
+              //       )
+
+              //     :
+              Text(
+            dataGridCell.value.toString(),
+            textAlign: TextAlign.center,
+          ));
     }).toList());
   }
 
@@ -150,11 +152,12 @@ class DailyDataSource extends DataGridSource {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
           DataGridCell<int>(columnName: 'SiNo', value: newCellValue);
       _montlyproject[dataRowIndex].siNo = newCellValue as int;
-    } else if (column.columnName == 'Date') {
-      dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
-          DataGridCell<String>(columnName: 'Date', value: newCellValue);
-      _montlyproject[dataRowIndex].date = newCellValue.toString();
     }
+    // else if (column.columnName == 'Date') {
+    //   dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
+    //       DataGridCell<String>(columnName: 'Date', value: newCellValue);
+    //   _montlyproject[dataRowIndex].date = newCellValue.toString();
+    // }
     // else if (column.columnName == 'state') {
     //   dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
     //       DataGridCell<int>(columnName: 'state', value: newCellValue as int);

@@ -16,6 +16,7 @@ import 'package:web_appllication/KeyEvents/upload.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/provider/key_provider.dart';
 import 'package:web_appllication/style.dart';
+import '../widgets/custom_appbar.dart';
 import 'Grid_DataTableA2.dart';
 import 'Grid_DataTableA7.dart';
 import '../datasource/key_datasource.dart';
@@ -184,30 +185,37 @@ class _KeyEventsState extends State<KeyEvents> {
         depoName: widget.depoName,
       ),
       StatutoryAprovalA2(
+        userid: widget.userId,
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
       StatutoryAprovalA3(
+        userid: widget.userId,
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
       StatutoryAprovalA4(
+        userid: widget.userId,
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
       StatutoryAproval(
+        userid: widget.userId,
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
       StatutoryAprovalA6(
+        userid: widget.userId,
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
       StatutoryAprovalA7(
+        userid: widget.depoName,
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
       StatutoryAprovalA8(
+        userid: widget.userId,
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
@@ -216,6 +224,7 @@ class _KeyEventsState extends State<KeyEvents> {
         cityName: widget.cityName,
       ),
       StatutoryAprovalA10(
+        userid: widget.userId,
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
@@ -224,11 +233,18 @@ class _KeyEventsState extends State<KeyEvents> {
     return _isLoading
         ? LoadingPage()
         : Scaffold(
-            appBar: AppBar(
-              title:
-                  Text('Key Events - ${widget.cityName} - ${widget.depoName}'),
-              backgroundColor: blue,
-            ),
+            appBar: PreferredSize(
+                // ignore: sort_child_properties_last
+                child: CustomAppBar(
+                  text: 'Overview - ${widget.cityName} - ${widget.depoName}',
+                  userid: widget.userId,
+                ),
+                preferredSize: const Size.fromHeight(50)),
+            // AppBar(
+            //   title:
+            //       Text('Key Events - ${widget.cityName} - ${widget.depoName}'),
+            //   backgroundColor: blue,
+            // ),
             body: StreamBuilder(
                 stream: yourstream,
                 builder: (context, snapshot) {

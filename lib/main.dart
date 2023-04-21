@@ -11,6 +11,8 @@ import 'package:web_appllication/provider/text_provider.dart';
 import 'package:web_appllication/small_screen.dart';
 import 'package:web_appllication/style.dart';
 
+import 'Authentication/login_register.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -82,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // ResourceAllocation();
         //  EventsPage();
         // KeyEvents();
-        CitiesPage();
-    // LoginRegister();
+        // CitiesPage();
+        LoginRegister();
   }
 }

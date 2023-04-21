@@ -6,25 +6,19 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:web_appllication/datasource/employee_datasouce.dart';
 import 'package:web_appllication/datasource/employee_statutory.dart';
-
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/style.dart';
 import 'package:web_appllication/widgets/custom_appbar.dart';
-
 import '../model/employee_statutory.dart';
-
-void main() {
-  runApp(StatutoryAprovalA5());
-}
-
-/// The application that contains datagrid on it.
 
 /// The home page of the application which hosts the datagrid.
 class StatutoryAprovalA5 extends StatefulWidget {
   /// Creates the home page.
+  String? userid;
   String? depoName;
   String? cityName;
-  StatutoryAprovalA5({Key? key, this.depoName, this.cityName})
+  StatutoryAprovalA5(
+      {Key? key, required this.userid, this.depoName, this.cityName})
       : super(key: key);
 
   @override
@@ -52,7 +46,7 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
     _stream = FirebaseFirestore.instance
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
-        .collection('AllKeyEventsTable')
+        .collection(widget.userid!)
         .doc('${widget.depoName}A5')
         .snapshots();
     super.initState();
@@ -1067,7 +1061,7 @@ class _StatutoryAprovalA5State extends State<StatutoryAprovalA5> {
     FirebaseFirestore.instance
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
-        .collection('AllKeyEventsTable')
+        .collection(widget.userid!)
         .doc('${widget.depoName}A5')
         .set({
       'data': tabledata2,
