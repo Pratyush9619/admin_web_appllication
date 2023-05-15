@@ -5,9 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 
 import '../KeyEvents/upload.dart';
 import '../KeyEvents/viewFIle.dart';
+import '../KeyEvents/view_AllFiles.dart';
 import '../model/close_report.dart';
 import '../model/daily_projectModel.dart';
 import '../style.dart';
@@ -16,14 +18,11 @@ class CloseReportDataSource extends DataGridSource {
   String cityName;
   String depoName;
   BuildContext mainContext;
+  String userId;
 
   List data = [];
-  CloseReportDataSource(
-    this._montlyproject,
-    this.mainContext,
-    this.depoName,
-    this.cityName,
-  ) {
+  CloseReportDataSource(this._montlyproject, this.mainContext, this.depoName,
+      this.cityName, this.userId) {
     buildDataGridRows();
   }
   void buildDataGridRows() {
@@ -72,10 +71,12 @@ class CloseReportDataSource extends DataGridSource {
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => UploadDocument(
-                              title: 'DetailedEngRFC',
-                              cityName: cityName,
-                              depoName: depoName,
-                              activity: row.getCells()[3].value.toString()),
+                            title: 'DetailedEngRFC',
+                            cityName: cityName,
+                            depoName: depoName,
+                            activity: row.getCells()[3].value.toString(),
+                            userId: userId,
+                          ),
                         ));
                         // showDialog(
                         //     context: context,
@@ -105,7 +106,13 @@ class CloseReportDataSource extends DataGridSource {
                               ElevatedButton.styleFrom(backgroundColor: blue),
                           onPressed: () {
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => ViewFile()
+                                builder: (context) => ViewAllPdf(
+                                    title: 'ClosureReport',
+                                    cityName: cityName,
+                                    depoName: depoName,
+                                    userId: userId,
+                                    docId:
+                                        '${row.getCells()[0].value.toString()}')
                                 // UploadDocument(
                                 //     title: 'DetailedEngRFC',
                                 //     cityName: cityName,

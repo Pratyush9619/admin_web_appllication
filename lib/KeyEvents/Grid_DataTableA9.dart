@@ -10,6 +10,7 @@ import 'package:web_appllication/model/employee.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/style.dart';
 
+import '../Authentication/auth_service.dart';
 import '../widgets/custom_appbar.dart';
 
 /// The home page of the application which hosts the datagrid.
@@ -41,6 +42,9 @@ class _StatutoryAprovalA9State extends State<StatutoryAprovalA9> {
   List<ChartData> chartData = [];
   Stream? _stream;
   var alldata;
+  bool specificUser = true;
+  QuerySnapshot? snap;
+  dynamic companyId;
 
   // @override
   // void didChangeDependencies() {
@@ -70,6 +74,8 @@ class _StatutoryAprovalA9State extends State<StatutoryAprovalA9> {
 
   @override
   void initState() {
+    getUserId();
+    identifyUser();
     _stream = FirebaseFirestore.instance
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
@@ -86,7 +92,7 @@ class _StatutoryAprovalA9State extends State<StatutoryAprovalA9> {
         // ignore: sort_child_properties_last
         child: CustomAppBar(
           text: 'Key Events / ${widget.depoName!} /A9',
-          haveSynced: true,
+          haveSynced: specificUser ? true : false,
           store: () {
             StoreData();
           },
@@ -1014,5 +1020,22 @@ class _StatutoryAprovalA9State extends State<StatutoryAprovalA9> {
         backgroundColor: blue,
       ));
     });
+  }
+
+  Future<void> getUserId() async {
+    await AuthService().getCurrentUserId().then((value) {
+      companyId = value;
+    });
+  }
+
+  identifyUser() async {
+    snap = await FirebaseFirestore.instance.collection('Admin').get();
+
+    if (snap!.docs[0]['Employee Id'] == companyId &&
+        snap!.docs[0]['CompanyName'] == 'TATA MOTOR') {
+      setState(() {
+        specificUser = false;
+      });
+    }
   }
 }

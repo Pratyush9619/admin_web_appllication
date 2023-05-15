@@ -11,6 +11,7 @@ import 'package:web_appllication/KeyEvents/Grid_DataTableA4.dart';
 import 'package:web_appllication/KeyEvents/Grid_DataTableA6.dart';
 import 'package:web_appllication/KeyEvents/Grid_DataTableA8.dart';
 import 'package:web_appllication/KeyEvents/Grid_DataTableA9.dart';
+import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 import 'package:web_appllication/model/employee.dart';
 import 'package:web_appllication/KeyEvents/upload.dart';
 import 'package:web_appllication/components/loading_page.dart';
@@ -29,7 +30,7 @@ class KeyEvents extends StatefulWidget {
   String? userId;
   String? depoName;
   String? cityName;
-  KeyEvents({Key? key, required this.userId, this.depoName, this.cityName})
+  KeyEvents({Key? key, this.userId, this.depoName, this.cityName})
       : super(key: key);
 
   @override
@@ -182,6 +183,9 @@ class _KeyEventsState extends State<KeyEvents> {
   Widget build(BuildContext context) {
     menuwidget = [
       UploadDocument(
+        title: '',
+        activity: '',
+        userId: userId,
         depoName: widget.depoName,
       ),
       StatutoryAprovalA2(

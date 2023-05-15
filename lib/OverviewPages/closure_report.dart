@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:web_appllication/datasource/closereport_datasource.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
+import '../Authentication/auth_service.dart';
 import '../components/loading_page.dart';
 import '../model/close_report.dart';
 import '../style.dart';
@@ -13,10 +14,7 @@ class ClosureReport extends StatefulWidget {
   String? cityName;
   String? depoName;
   ClosureReport(
-      {super.key,
-      required this.userId,
-      required this.cityName,
-      required this.depoName});
+      {super.key, this.userId, required this.cityName, required this.depoName});
 
   @override
   State<ClosureReport> createState() => _ClosureReportState();
@@ -33,15 +31,20 @@ class _ClosureReportState extends State<ClosureReport> {
   var buses;
   var longitude, latitude, loa;
   dynamic userId;
+  dynamic companyId;
+  bool specificUser = false;
+  QuerySnapshot? snap;
   bool _isloading = true;
 
   @override
   void initState() {
     // _fetchClosureField();
     // getUserId().whenComplete(() {
+    getUserId();
+    identifyUser();
     closereport = getcloseReport();
-    _closeReportDataSource = CloseReportDataSource(
-        closereport, context, widget.depoName!, widget.cityName!);
+    _closeReportDataSource = CloseReportDataSource(closereport, context,
+        widget.depoName!, widget.cityName!, widget.userId!);
     _dataGridController = DataGridController();
     _stream = FirebaseFirestore.instance
         .collection('ClosureProjectReport')
@@ -65,7 +68,7 @@ class _ClosureReportState extends State<ClosureReport> {
             child: CustomAppBar(
               text: ' ${widget.cityName}/ ${widget.depoName} / Close Report',
               userid: widget.userId,
-              haveSynced: true,
+              haveSynced: specificUser ? true : false,
               store: () {
                 FirebaseFirestore.instance
                     .collection('ClosureReport')
@@ -753,6 +756,25 @@ class _ClosureReportState extends State<ClosureReport> {
         }
       },
     );
+  }
+
+  Future<void> getUserId() async {
+    await AuthService().getCurrentUserId().then((value) {
+      companyId = value;
+    });
+  }
+
+  identifyUser() async {
+    snap = await FirebaseFirestore.instance.collection('Admin').get();
+
+    for (int i = 0; i < snap!.docs.length; i++) {
+      if (snap!.docs[i]['Employee Id'] == companyId &&
+          snap!.docs[i]['CompanyName'] == 'TATA MOTOR') {
+        setState(() {
+          specificUser = false;
+        });
+      }
+    }
   }
 
   // void _fetchClosureField() async {

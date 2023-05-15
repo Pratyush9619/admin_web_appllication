@@ -88,7 +88,7 @@ Stream? _stream8;
 Stream? _stream9;
 
 TextEditingController ename = TextEditingController();
-var empName,
+dynamic empName,
     distev,
     vendorname,
     date,
@@ -101,6 +101,10 @@ var empName,
 dynamic alldata;
 int? _selectedIndex = 0;
 dynamic userId;
+dynamic companyId;
+bool specificUser = false;
+QuerySnapshot? snap;
+bool isloading = true;
 List<String> title = [
   'CHECKLIST FOR INSTALLATION OF PSS',
   'CHECKLIST FOR INSTALLATION OF RMU',
@@ -117,6 +121,8 @@ List<String> title = [
 class _QualityChecklistState extends State<QualityChecklist> {
   @override
   void initState() {
+    getUserId();
+    identifyUser();
     //   // final user = FirebaseAuth.instance.currentUser;
     //   // print('User$user');
     //   _isloading = false;
@@ -430,50 +436,53 @@ class _QualityChecklistState extends State<QualityChecklist> {
                                   )),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                right: 20, top: 10, bottom: 10),
-                            child: Container(
-                              height: 30,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: lightblue),
-                              child: TextButton(
-                                  onPressed: () {
-                                    FirebaseFirestore.instance
-                                        .collection(
-                                            'QualityChecklistCollection')
-                                        .doc('${widget.depoName}')
-                                        .collection('ChecklistData')
-                                        .doc(widget.currentDate)
-                                        .set({
-                                      'EmployeeName':
-                                          empName ?? 'Enter Employee Name',
-                                      'Dist EV': distev ?? 'Enter Dist EV',
-                                      'VendorName':
-                                          vendorname ?? 'Enter Vendor Name',
-                                      'Date': date ?? 'Enter Date',
-                                      'OlaNo': olano ?? 'Enter Ola No',
-                                      'PanelNo': panel ?? 'Enter Panel',
-                                      'DepotName':
-                                          depotname ?? 'Enter depot Name Name',
-                                      'CustomerName':
-                                          customername ?? 'Enter Customer Name'
-                                    });
-                                    storeData();
-                                  },
-                                  child: Text(
-                                    'Sync Data',
-                                    style:
-                                        TextStyle(color: white, fontSize: 20),
-                                  )),
-                            ),
-                          ),
+                          specificUser
+                              ? Padding(
+                                  padding: const EdgeInsets.only(
+                                      right: 20, top: 10, bottom: 10),
+                                  child: Container(
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: lightblue),
+                                    child: TextButton(
+                                        onPressed: () {
+                                          FirebaseFirestore.instance
+                                              .collection(
+                                                  'QualityChecklistCollection')
+                                              .doc('${widget.depoName}')
+                                              .collection('ChecklistData')
+                                              .doc(widget.currentDate)
+                                              .set({
+                                            'EmployeeName': empName ??
+                                                'Enter Employee Name',
+                                            'Dist EV':
+                                                distev ?? 'Enter Dist EV',
+                                            'VendorName': vendorname ??
+                                                'Enter Vendor Name',
+                                            'Date': date ?? 'Enter Date',
+                                            'OlaNo': olano ?? 'Enter Ola No',
+                                            'PanelNo': panel ?? 'Enter Panel',
+                                            'DepotName': depotname ??
+                                                'Enter depot Name Name',
+                                            'CustomerName': customername ??
+                                                'Enter Customer Name'
+                                          });
+                                          storeData();
+                                        },
+                                        child: Text(
+                                          'Sync Data',
+                                          style: TextStyle(
+                                              color: white, fontSize: 20),
+                                        )),
+                                  ),
+                                )
+                              : Container(),
                           Padding(
                               padding: const EdgeInsets.only(right: 150),
                               child: GestureDetector(
                                   onTap: () {
-                                    onWillPop(context);
+                                    // onWillPop(context);
                                   },
                                   child: Image.asset(
                                     'assets/logout.png',
@@ -2085,6 +2094,25 @@ class _QualityChecklistState extends State<QualityChecklist> {
         ],
       ),
     );
+  }
+
+  Future<void> getUserId() async {
+    await AuthService().getCurrentUserId().then((value) {
+      companyId = value;
+    });
+  }
+
+  identifyUser() async {
+    snap = await FirebaseFirestore.instance.collection('Admin').get();
+
+    for (int i = 0; i < snap!.docs.length; i++) {
+      if (snap!.docs[i]['Employee Id'] == companyId &&
+          snap!.docs[i]['CompanyName'] == 'TATA MOTOR') {
+        setState(() {
+          specificUser = false;
+        });
+      }
+    }
   }
 
   List<QualitychecklistModel> getData() {

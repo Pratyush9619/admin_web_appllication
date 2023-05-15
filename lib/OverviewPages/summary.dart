@@ -621,7 +621,10 @@ class _ViewSummaryState extends State<ViewSummary> {
                                         SafetyChecklistModel.fromJson(element));
                                     _safetyChecklistDataSource =
                                         SafetyChecklistDataSource(
-                                            safetylisttable);
+                                            safetylisttable,
+                                            widget.cityName!,
+                                            widget.depoName!,
+                                            widget.userId);
                                     _dataGridController = DataGridController();
                                   });
                                   return SfDataGridTheme(

@@ -30,6 +30,11 @@ class _RegisterPageState extends State<RegisterPage> {
   String? password;
   String? confpassword;
   bool _isHidden = true;
+  String? _selectedCompany = 'TATA POWER';
+  List<String> company = [
+    'TATA POWER',
+    'TATA MOTOR',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -243,9 +248,28 @@ class _RegisterPageState extends State<RegisterPage> {
                             });
                           }),
                       const SizedBox(height: 24),
+                      InputDecorator(
+                        decoration: const InputDecoration(
+                          hintText: 'Please choose a company Name',
+                        ),
+                        child: DropdownButton(
+                            isExpanded: true,
+                            value: _selectedCompany,
+                            items: company.map((companyNames) {
+                              return DropdownMenuItem(
+                                value: companyNames,
+                                child: Text(companyNames),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedCompany = value.toString();
+                              });
+                            }),
+                      ),
+                      const SizedBox(height: 24),
                       TextFormField(
                         textInputAction: TextInputAction.next,
-
                         decoration: InputDecoration(
                           labelText: "Password",
                           suffixIcon: InkWell(
@@ -449,6 +473,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   email!,
                   designation!,
                   department!,
+                  _selectedCompany!,
                   password!,
                   confpassword!,
                   firstname![0] + lastname![0] + phone!.substring(9, 13))

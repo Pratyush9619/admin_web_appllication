@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,6 +9,8 @@ import 'package:web_appllication/Planning/overview.dart';
 import 'package:web_appllication/Planning/userId.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/style.dart';
+
+import '../OverviewPages/daily_project.dart';
 
 class Mydepots extends StatefulWidget {
   String? cityName;
@@ -25,8 +26,8 @@ class _MydepotsState extends State<Mydepots> {
   String cityName = "";
   File? pickedImage;
   // Uint8List? webImage;
-  var webImage;
-  bool? _isLoading = true;
+  dynamic webImage;
+  bool? isLoading = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,12 +35,12 @@ class _MydepotsState extends State<Mydepots> {
         onPressed: () {
           PopupDialog(context);
         },
-        child: const Icon(Icons.add),
+        child: Icon(Icons.add),
         backgroundColor: blue,
       ),
       appBar: AppBar(
         backgroundColor: blue,
-        title: Text('Depots - ' + widget.cityName!),
+        title: Text('Depots - ${widget.cityName!}'),
       ),
       body: depolist(),
 
@@ -72,7 +73,7 @@ class _MydepotsState extends State<Mydepots> {
                               var selected = File(image.path);
                               setState(() {
                                 pickedImage = selected;
-                                _isLoading == false;
+                                isLoading == false;
                               });
                             } else {
                               print('No Image has been picked');
@@ -86,7 +87,7 @@ class _MydepotsState extends State<Mydepots> {
                               setState(() {
                                 webImage = f;
                                 pickedImage = File('a');
-                                _isLoading == false;
+                                isLoading == false;
                               });
                             } else {
                               print('No Image has been picked');
@@ -202,7 +203,7 @@ class _MydepotsState extends State<Mydepots> {
                           //   Navigator.pop(context);
                           //   pickedImage == null;
                           //   setState() {
-                          //     _isLoading = false;
+                          //     isLoading = false;
                           //   }
 
                           //   Navigator.pop(context);
@@ -269,23 +270,29 @@ class _MydepotsState extends State<Mydepots> {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                              builder: (context) => UserId(
-                                                    cityName: widget.cityName!,
-                                                    depoName: snapshot
-                                                            .data!.docs[index]
-                                                        ['DepoName'],
-                                                  )
-                                              //  MyOverview(
-                                              //       cityName: widget.cityName!,
-                                              //       depoName: snapshot
-                                              //               .data!.docs[index]
-                                              //           ['DepoName'],
-                                              //     )
-                                              // Mydepots(
-                                              //       cityName: snapshot.data!
-                                              //           .docs[index]['cityName'],
-                                              //     )
-                                              ));
+                                            builder: (context) =>
+                                            //  DailyProject(
+                                            //   // userId: widget.userid,
+                                            //   cityName: widget.cityName,
+                                            //   depoName: widget.depoName,
+                                            // ),
+                                             UserId(
+                                                  cityName: widget.cityName!,
+                                                  depoName: snapshot
+                                                          .data!.docs[index]
+                                                      ['DepoName'],
+                                                )
+                                            // MyOverview(
+                                            //   cityName: widget.cityName!,
+                                            //   depoName: snapshot
+                                            //           .data!.docs[index]
+                                            //       ['DepoName'],
+                                            // )
+                                            // Mydepots(
+                                            //       cityName: snapshot.data!
+                                            //           .docs[index]['cityName'],
+                                            //     )
+                                          ));
                                     },
                                     child: Text(
                                         snapshot.data!.docs[index]['DepoName']))
@@ -300,7 +307,7 @@ class _MydepotsState extends State<Mydepots> {
                     child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Container(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     height: 1000,
                     width: 1000,
                     decoration: BoxDecoration(
@@ -310,7 +317,7 @@ class _MydepotsState extends State<Mydepots> {
                       Image.asset(
                         'assets/Tata-Power.jpeg',
                       ),
-                      SizedBox(height: 50),
+                      const SizedBox(height: 50),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -319,7 +326,7 @@ class _MydepotsState extends State<Mydepots> {
                             height: 100,
                             width: 100,
                           ),
-                          SizedBox(width: 50),
+                          const SizedBox(width: 50),
                           Image.asset(
                             'assets/Green.jpeg',
                             height: 100,
@@ -330,7 +337,7 @@ class _MydepotsState extends State<Mydepots> {
                       const SizedBox(height: 50),
                       Center(
                         child: Container(
-                          padding: EdgeInsets.all(25),
+                          padding: const EdgeInsets.all(25),
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(color: blue)),

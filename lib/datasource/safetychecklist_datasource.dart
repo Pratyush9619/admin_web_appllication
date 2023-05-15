@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:web_appllication/KeyEvents/view_AllFiles.dart';
+import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 
 import '../KeyEvents/upload.dart';
 import '../KeyEvents/viewFIle.dart';
@@ -11,7 +13,11 @@ import '../model/safety_checklistModel.dart';
 
 class SafetyChecklistDataSource extends DataGridSource {
   // BuildContext mainContext;
-  SafetyChecklistDataSource(this._checklistModel) {
+  String cityName;
+  String depoName;
+  dynamic userId;
+  SafetyChecklistDataSource(
+      this._checklistModel, this.cityName, this.depoName, this.userId) {
     buildDataGridRows();
   }
   void buildDataGridRows() {
@@ -85,9 +91,10 @@ class SafetyChecklistDataSource extends DataGridSource {
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => UploadDocument(
-                                title: 'SafetyChecklist',
-                                activity:
-                                    '${row.getCells()[1].value.toString()}'),
+                              title: 'SafetyChecklist',
+                              activity: '${row.getCells()[1].value.toString()}',
+                              userId: userId,
+                            ),
                           ));
                         },
                         child: const Text('Upload'));
@@ -100,7 +107,13 @@ class SafetyChecklistDataSource extends DataGridSource {
                         return ElevatedButton(
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => ViewFile()
+                                  builder: (context) => ViewAllPdf(
+                                      title: 'SafetyChecklist',
+                                      cityName: cityName,
+                                      depoName: depoName,
+                                      userId: userId,
+                                      docId:
+                                          '${row.getCells()[0].value.toString()}')
                                   // UploadDocument(
                                   //     title: 'SafetyChecklist',
                                   //     activity:

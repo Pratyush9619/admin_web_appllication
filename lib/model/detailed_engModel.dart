@@ -35,6 +35,7 @@ class DetailedEngModel {
     return DataGridRow(cells: [
       DataGridCell(columnName: 'SiNo', value: siNo),
       const DataGridCell<Widget>(columnName: 'button', value: null),
+      const DataGridCell<Widget>(columnName: 'ViewDrawing', value: null),
       DataGridCell(columnName: 'Title', value: title),
       DataGridCell(columnName: 'Number', value: number),
       DataGridCell(columnName: 'PreparationDate', value: preparationDate),

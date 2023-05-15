@@ -9,6 +9,7 @@ import 'package:web_appllication/Planning/depot.dart';
 import 'package:web_appllication/Service/database_service.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/style.dart';
+import '../Authentication/auth_service.dart';
 
 class CitiesPage extends StatefulWidget {
   const CitiesPage({super.key});
@@ -23,6 +24,13 @@ class _CitiesPageState extends State<CitiesPage> {
   // Uint8List? webImage;
   var webImage;
   bool? _isLoading = true;
+  dynamic userId;
+
+  @override
+  void initState() {
+    getUserId();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -255,5 +263,11 @@ class _CitiesPageState extends State<CitiesPage> {
             return LoadingPage();
           }
         });
+  }
+
+  Future<void> getUserId() async {
+    await AuthService().getCurrentUserId().then((value) {
+      userId = value;
+    });
   }
 }

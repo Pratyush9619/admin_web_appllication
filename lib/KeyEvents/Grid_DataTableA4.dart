@@ -9,6 +9,7 @@ import 'package:web_appllication/datasource/employee_datasouce.dart';
 import 'package:web_appllication/model/employee.dart';
 import 'package:web_appllication/components/loading_page.dart';
 
+import '../Authentication/auth_service.dart';
 import '../style.dart';
 import '../widgets/custom_appbar.dart';
 
@@ -42,6 +43,9 @@ class _StatutoryAprovalA4State extends State<StatutoryAprovalA4> {
   List<ChartData> chartData = [];
   Stream? _stream;
   var alldata;
+  bool specificUser = true;
+  QuerySnapshot? snap;
+  dynamic companyId;
 
   // @override
   // void didChangeDependencies() {
@@ -66,6 +70,8 @@ class _StatutoryAprovalA4State extends State<StatutoryAprovalA4> {
 
   @override
   void initState() {
+    getUserId();
+    identifyUser();
     _stream = FirebaseFirestore.instance
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
@@ -82,7 +88,7 @@ class _StatutoryAprovalA4State extends State<StatutoryAprovalA4> {
         // ignore: sort_child_properties_last
         child: CustomAppBar(
           text: 'Key Events / ${widget.depoName!} /A4',
-          haveSynced: true,
+          haveSynced: specificUser ? true : false,
           store: () {
             StoreData();
           },
@@ -881,5 +887,22 @@ class _StatutoryAprovalA4State extends State<StatutoryAprovalA4> {
         backgroundColor: blue,
       ));
     });
+  }
+
+  Future<void> getUserId() async {
+    await AuthService().getCurrentUserId().then((value) {
+      companyId = value;
+    });
+  }
+
+  identifyUser() async {
+    snap = await FirebaseFirestore.instance.collection('Admin').get();
+
+    if (snap!.docs[0]['Employee Id'] == companyId &&
+        snap!.docs[0]['CompanyName'] == 'TATA MOTOR') {
+      setState(() {
+        specificUser = false;
+      });
+    }
   }
 }

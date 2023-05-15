@@ -277,8 +277,6 @@ class _SignInPageState extends State<SignInPage> {
                   builder: (context) => const SmallScreen(),
                 ));
           });
-          // ignore: use_build_context_synchronously
-
         } else {
           // ignore: use_build_context_synchronously
           Navigator.pop(context);

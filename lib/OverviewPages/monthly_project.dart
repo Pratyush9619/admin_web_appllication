@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:web_appllication/OverviewPages/summary.dart';
+import '../Authentication/auth_service.dart';
 import '../datasource/monthlyproject_datasource.dart';
 import '../model/monthly_projectModel.dart';
 import '../components/loading_page.dart';
@@ -15,10 +16,7 @@ class MonthlyProject extends StatefulWidget {
   String? cityName;
   String? depoName;
   MonthlyProject(
-      {super.key,
-      required this.userid,
-      required this.cityName,
-      required this.depoName});
+      {super.key, this.userid, required this.cityName, required this.depoName});
 
   @override
   State<MonthlyProject> createState() => _MonthlyProjectState();
@@ -30,7 +28,10 @@ class _MonthlyProjectState extends State<MonthlyProject> {
   late DataGridController _dataGridController;
   List<dynamic> tabledata2 = [];
   Stream? _stream;
-  var alldata;
+  bool specificUser = true;
+  QuerySnapshot? snap;
+  dynamic companyId;
+  dynamic alldata;
   bool _isloading = true;
   @override
   void initState() {
@@ -39,6 +40,8 @@ class _MonthlyProjectState extends State<MonthlyProject> {
     // monthlyDataSource = MonthlyDataSource(monthlyProject, context);
     // _dataGridController = DataGridController();
     // TODO: implement initState
+    getUserId();
+    identifyUser();
     _stream = FirebaseFirestore.instance
         .collection('MonthlyProjectReport')
         .doc('${widget.depoName}')
@@ -67,7 +70,7 @@ class _MonthlyProjectState extends State<MonthlyProject> {
                       cityName: widget.cityName,
                       id: 'Monthly Report'),
                 )),
-            haveSynced: true,
+            haveSynced: specificUser ? true : false,
             store: () {
               storeData();
             },
@@ -585,5 +588,24 @@ class _MonthlyProjectState extends State<MonthlyProject> {
           status: '',
           action: ''),
     ];
+  }
+
+  Future<void> getUserId() async {
+    await AuthService().getCurrentUserId().then((value) {
+      companyId = value;
+    });
+  }
+
+  identifyUser() async {
+    snap = await FirebaseFirestore.instance.collection('Admin').get();
+
+    for (int i = 0; i < snap!.docs.length; i++) {
+      if (snap!.docs[i]['Employee Id'] == companyId &&
+          snap!.docs[i]['CompanyName'] == 'TATA MOTOR') {
+        setState(() {
+          specificUser = false;
+        });
+      }
+    }
   }
 }

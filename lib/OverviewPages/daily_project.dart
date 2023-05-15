@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:web_appllication/OverviewPages/summary.dart';
+import '../Authentication/auth_service.dart';
 import '../datasource/dailyproject_datasource.dart';
 import '../model/daily_projectModel.dart';
 import '../components/loading_page.dart';
@@ -14,11 +15,12 @@ class DailyProject extends StatefulWidget {
   String? userId;
   String? cityName;
   String? depoName;
-  DailyProject(
-      {super.key,
-      required this.userId,
-      required this.cityName,
-      required this.depoName});
+  DailyProject({
+    super.key,
+    this.userId,
+    this.cityName,
+    required this.depoName,
+  });
 
   @override
   State<DailyProject> createState() => _DailyProjectState();
@@ -31,9 +33,14 @@ class _DailyProjectState extends State<DailyProject> {
   List<dynamic> tabledata2 = [];
   Stream? _stream;
   bool _isLoading = true;
-  var alldata;
+  bool specificUser = true;
+  QuerySnapshot? snap;
+  dynamic companyId;
+  dynamic alldata;
   @override
   void initState() {
+    getUserId();
+    identifyUser();
     getmonthlyReport();
     DailyProject = getmonthlyReport();
     _dailyDataSource = DailyDataSource(DailyProject, context, widget.depoName!);
@@ -42,8 +49,8 @@ class _DailyProjectState extends State<DailyProject> {
     _stream = FirebaseFirestore.instance
         .collection('DailyProjectReport')
         .doc('${widget.depoName}')
-        .collection(widget.userId!)
-        .doc(DateFormat.yMMMMd().format(DateTime.now()))
+        // .collection(widget.userId!)
+        // .doc(DateFormat.yMMMMd().format(DateTime.now()))
         .snapshots();
 
     _isLoading = false;
@@ -60,7 +67,7 @@ class _DailyProjectState extends State<DailyProject> {
           child: CustomAppBar(
             text: ' ${widget.cityName}/ ${widget.depoName} / Dailly Report',
             userid: widget.userId,
-            haveSynced: true,
+            haveSynced: specificUser ? true : false,
             haveSummary: true,
             onTap: () => Navigator.push(
                 context,
@@ -73,7 +80,7 @@ class _DailyProjectState extends State<DailyProject> {
                   ),
                 )),
             store: () {
-              StoreData();
+              storeData();
             },
           ),
           preferredSize: const Size.fromHeight(50)),
@@ -501,7 +508,7 @@ class _DailyProjectState extends State<DailyProject> {
     );
   }
 
-  void StoreData() {
+  void storeData() {
     Map<String, dynamic> table_data = Map();
     for (var i in _dailyDataSource.dataGridRows) {
       for (var data in i.getCells()) {
@@ -543,5 +550,24 @@ class _DailyProjectState extends State<DailyProject> {
           progress: '',
           status: '')
     ];
+  }
+
+  Future<void> getUserId() async {
+    await AuthService().getCurrentUserId().then((value) {
+      companyId = value;
+    });
+  }
+
+  identifyUser() async {
+    snap = await FirebaseFirestore.instance.collection('Admin').get();
+
+    for (int i = 0; i < snap!.docs.length; i++) {
+      if (snap!.docs[i]['Employee Id'] == companyId &&
+          snap!.docs[i]['CompanyName'] == 'TATA MOTOR') {
+        setState(() {
+          specificUser = false;
+        });
+      }
+    }
   }
 }

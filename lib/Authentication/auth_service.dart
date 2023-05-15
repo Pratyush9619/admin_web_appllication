@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 FirebaseAuth firebaseauth = FirebaseAuth.instance;
 
@@ -34,22 +35,33 @@ class AuthService {
       String email,
       String designation,
       String department,
+      String companyName,
       String password,
       String confirmpassword,
       String id) async {
     print("Data is uploading");
 
-    FirebaseFirestore.instance.collection("Admin").doc().set({
+    FirebaseFirestore.instance
+        .collection("Admin")
+        .doc(firebaseauth.currentUser!.displayName)
+        .set({
       "FirstName": firstname,
       "LastName": lastname,
       "Phone Number": phone,
       "Email": email,
       "Designation": designation,
       "Department": department,
+      "CompanyName": companyName,
       "Password": password,
       "ConfirmPassword": confirmpassword,
       'Employee Id': id
     });
     return true;
+  }
+
+  Future<String> getCurrentUserId() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final String data = sharedPreferences.getString('employeeId').toString();
+    return data;
   }
 }
