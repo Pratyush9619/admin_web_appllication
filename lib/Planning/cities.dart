@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:web_appllication/OverviewPages/safety_checklist.dart';
 import 'package:web_appllication/Planning/depot.dart';
 import 'package:web_appllication/Service/database_service.dart';
 import 'package:web_appllication/components/loading_page.dart';
@@ -23,27 +24,33 @@ class _CitiesPageState extends State<CitiesPage> {
   File? pickedImage;
   // Uint8List? webImage;
   var webImage;
-  bool? _isLoading = true;
+  bool _isLoading = true;
   dynamic userId;
+  String? companyName;
 
   @override
   void initState() {
     getUserId();
+    getcompany();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          PopupDialog(context);
-        },
-        child: const Icon(Icons.add),
-        backgroundColor: blue,
-      ),
-      body: citylist(),
-    );
+    return _isLoading
+        ? LoadingPage()
+        : Scaffold(
+            floatingActionButton: companyName == 'TATA POWER'
+                ? FloatingActionButton(
+                    onPressed: () {
+                      PopupDialog(context);
+                    },
+                    child: const Icon(Icons.add),
+                    backgroundColor: blue,
+                  )
+                : Container(),
+            body: citylist(),
+          );
   }
 
   PopupDialog(BuildContext context) {
@@ -268,6 +275,15 @@ class _CitiesPageState extends State<CitiesPage> {
   Future<void> getUserId() async {
     await AuthService().getCurrentUserId().then((value) {
       userId = value;
+    });
+  }
+
+  Future<void> getcompany() async {
+    await AuthService().getCurrentCompanyName().then((value) {
+      companyName = value;
+      setState(() {
+        _isLoading = false;
+      });
     });
   }
 }

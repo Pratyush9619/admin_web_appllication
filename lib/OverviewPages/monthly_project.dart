@@ -5,6 +5,7 @@ import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:web_appllication/OverviewPages/summary.dart';
 import '../Authentication/auth_service.dart';
+import '../FirebaseApi/firebase_api.dart';
 import '../datasource/monthlyproject_datasource.dart';
 import '../model/monthly_projectModel.dart';
 import '../components/loading_page.dart';
@@ -42,13 +43,28 @@ class _MonthlyProjectState extends State<MonthlyProject> {
     // TODO: implement initState
     getUserId();
     identifyUser();
-    _stream = FirebaseFirestore.instance
-        .collection('MonthlyProjectReport')
-        .doc('${widget.depoName}')
-        .collection(widget.userid!)
-        .doc(DateFormat.yMMM().format(DateTime.now()))
-        .snapshots();
-    _isloading = false;
+    // _stream = FirebaseFirestore.instance
+    //     .collection('MonthlyProjectReport')
+    //     .doc('${widget.depoName}')
+    //     .collection(widget.userid!)
+    //     .doc(DateFormat.yMMM().format(DateTime.now()))
+    //     .snapshots();
+    docss.clear();
+    FirebaseApi()
+        .getTableData('MonthlyProjectReport', widget.depoName!, 'AllMonthData')
+        .whenComplete(() {
+      print(docss);
+      FirebaseApi()
+          .nestedTableData(docss, 'MonthlyProjectReport', widget.depoName!,
+              'AllMonthData', 'MonthData', monthlyProject, 'Monthly')
+          .whenComplete(() {
+        monthlyDataSource = MonthlyDataSource(monthlyProject, context);
+        _dataGridController = DataGridController();
+        setState(() {
+          _isloading = false;
+        });
+      });
+    });
     super.initState();
   }
 
@@ -76,389 +92,416 @@ class _MonthlyProjectState extends State<MonthlyProject> {
             },
           ),
           preferredSize: const Size.fromHeight(50)),
-      body: StreamBuilder(
-          stream: _stream,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return LoadingPage();
-            } else if (!snapshot.hasData || snapshot.data.exists == false) {
-              monthlyProject = getmonthlyReport();
-              monthlyDataSource = MonthlyDataSource(monthlyProject, context);
-              _dataGridController = DataGridController();
-              return Column(
-                children: [
-                  Expanded(
-                      child: SfDataGridTheme(
-                    data: SfDataGridThemeData(headerColor: blue),
-                    child: SfDataGrid(
-                        source: monthlyDataSource,
-                        allowEditing: true,
-                        frozenColumnsCount: 2,
-                        gridLinesVisibility: GridLinesVisibility.both,
-                        headerGridLinesVisibility: GridLinesVisibility.both,
-                        selectionMode: SelectionMode.single,
-                        navigationMode: GridNavigationMode.cell,
-                        columnWidthMode: ColumnWidthMode.auto,
-                        editingGestureType: EditingGestureType.tap,
-                        controller: _dataGridController,
-                        columns: [
-                          GridColumn(
-                            columnName: 'ActivityNo',
-                            autoFitPadding:
-                                const EdgeInsets.symmetric(horizontal: 16),
-                            allowEditing: false,
-                            width: 160,
-                            label: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              alignment: Alignment.center,
-                              child: Text('Activities SI. No as per Gant Chart',
-                                  overflow: TextOverflow.values.first,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: white)
-                                  //    textAlign: TextAlign.center,
-                                  ),
-                            ),
-                          ),
-                          GridColumn(
-                            columnName: 'ActivityDetails',
-                            autoFitPadding:
-                                const EdgeInsets.symmetric(horizontal: 16),
-                            allowEditing: false,
-                            width: 240,
-                            label: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              alignment: Alignment.center,
-                              child: Text('Activities Details',
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.values.first,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: white)),
-                            ),
-                          ),
-                          // GridColumn(
-                          //   columnName: 'Duration',
-                          //   autoFitPadding:
-                          //       const EdgeInsets.symmetric(horizontal: 16),
-                          //   allowEditing: false,
-                          //   width: 120,
-                          //   label: Container(
-                          //     padding:
-                          //         const EdgeInsets.symmetric(horizontal: 8.0),
-                          //     alignment: Alignment.center,
-                          //     child: Text('Duration in Days',
-                          //         textAlign: TextAlign.center,
-                          //         overflow: TextOverflow.values.first,
-                          //         style: TextStyle(
-                          //             fontWeight: FontWeight.bold,
-                          //             fontSize: 16,
-                          //             color: white)
-                          //         //    textAlign: TextAlign.center,
-                          //         ),
-                          //   ),
-                          // ),
-                          // GridColumn(
-                          //   columnName: 'StartDate',
-                          //   autoFitPadding:
-                          //       const EdgeInsets.symmetric(horizontal: 16),
-                          //   allowEditing: false,
-                          //   width: 160,
-                          //   label: Container(
-                          //     padding:
-                          //         const EdgeInsets.symmetric(horizontal: 8.0),
-                          //     alignment: Alignment.center,
-                          //     child: Text('Start Date',
-                          //         overflow: TextOverflow.values.first,
-                          //         style: TextStyle(
-                          //             fontWeight: FontWeight.bold,
-                          //             fontSize: 16,
-                          //             color: white)
-                          //         //    textAlign: TextAlign.center,
-                          //         ),
-                          //   ),
-                          // ),
-                          // GridColumn(
-                          //   columnName: 'EndDate',
-                          //   autoFitPadding:
-                          //       const EdgeInsets.symmetric(horizontal: 16),
-                          //   allowEditing: false,
-                          //   width: 120,
-                          //   label: Container(
-                          //     padding:
-                          //         const EdgeInsets.symmetric(horizontal: 8.0),
-                          //     alignment: Alignment.center,
-                          //     child: Text('End Date',
-                          //         overflow: TextOverflow.values.first,
-                          //         style: TextStyle(
-                          //             fontWeight: FontWeight.bold,
-                          //             fontSize: 16,
-                          //             color: white)
-                          //         //    textAlign: TextAlign.center,
-                          //         ),
-                          //   ),
-                          // ),
-                          GridColumn(
-                            columnName: 'Progress',
-                            autoFitPadding:
-                                const EdgeInsets.symmetric(horizontal: 16),
+      body: _isloading
+          ? LoadingPage()
+          : StreamBuilder(
+              stream: _stream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return LoadingPage();
+                }
+                //else if (!snapshot.hasData || snapshot.data.exists == false) {
+                //   // monthlyProject = getmonthlyReport();
+                //   // monthlyDataSource = MonthlyDataSource(monthlyProject, context);
+                //   // _dataGridController = DataGridController();
+                //   return Text('data');
+                //   // Column(
+                //   //   children: [
+                //   //     Expanded(
+                //   //         child: SfDataGridTheme(
+                //   //       data: SfDataGridThemeData(headerColor: blue),
+                //   //       child: SfDataGrid(
+                //   //           source: monthlyDataSource,
+                //   //           allowEditing: true,
+                //   //           frozenColumnsCount: 2,
+                //   //           gridLinesVisibility: GridLinesVisibility.both,
+                //   //           headerGridLinesVisibility: GridLinesVisibility.both,
+                //   //           selectionMode: SelectionMode.single,
+                //   //           navigationMode: GridNavigationMode.cell,
+                //   //           columnWidthMode: ColumnWidthMode.auto,
+                //   //           editingGestureType: EditingGestureType.tap,
+                //   //           controller: _dataGridController,
+                //   //           columns: [
+                //   //             GridColumn(
+                //   //               columnName: 'ActivityNo',
+                //   //               autoFitPadding:
+                //   //                   const EdgeInsets.symmetric(horizontal: 16),
+                //   //               allowEditing: false,
+                //   //               width: 160,
+                //   //               label: Container(
+                //   //                 padding:
+                //   //                     const EdgeInsets.symmetric(horizontal: 8.0),
+                //   //                 alignment: Alignment.center,
+                //   //                 child: Text('Activities SI. No as per Gant Chart',
+                //   //                     overflow: TextOverflow.values.first,
+                //   //                     textAlign: TextAlign.center,
+                //   //                     style: TextStyle(
+                //   //                         fontWeight: FontWeight.bold,
+                //   //                         fontSize: 16,
+                //   //                         color: white)
+                //   //                     //    textAlign: TextAlign.center,
+                //   //                     ),
+                //   //               ),
+                //   //             ),
+                //   //             GridColumn(
+                //   //               columnName: 'ActivityDetails',
+                //   //               autoFitPadding:
+                //   //                   const EdgeInsets.symmetric(horizontal: 16),
+                //   //               allowEditing: false,
+                //   //               width: 240,
+                //   //               label: Container(
+                //   //                 padding:
+                //   //                     const EdgeInsets.symmetric(horizontal: 8.0),
+                //   //                 alignment: Alignment.center,
+                //   //                 child: Text('Activities Details',
+                //   //                     textAlign: TextAlign.center,
+                //   //                     overflow: TextOverflow.values.first,
+                //   //                     style: TextStyle(
+                //   //                         fontWeight: FontWeight.bold,
+                //   //                         fontSize: 16,
+                //   //                         color: white)),
+                //   //               ),
+                //   //             ),
+                //   //             // GridColumn(
+                //   //             //   columnName: 'Duration',
+                //   //             //   autoFitPadding:
+                //   //             //       const EdgeInsets.symmetric(horizontal: 16),
+                //   //             //   allowEditing: false,
+                //   //             //   width: 120,
+                //   //             //   label: Container(
+                //   //             //     padding:
+                //   //             //         const EdgeInsets.symmetric(horizontal: 8.0),
+                //   //             //     alignment: Alignment.center,
+                //   //             //     child: Text('Duration in Days',
+                //   //             //         textAlign: TextAlign.center,
+                //   //             //         overflow: TextOverflow.values.first,
+                //   //             //         style: TextStyle(
+                //   //             //             fontWeight: FontWeight.bold,
+                //   //             //             fontSize: 16,
+                //   //             //             color: white)
+                //   //             //         //    textAlign: TextAlign.center,
+                //   //             //         ),
+                //   //             //   ),
+                //   //             // ),
+                //   //             // GridColumn(
+                //   //             //   columnName: 'StartDate',
+                //   //             //   autoFitPadding:
+                //   //             //       const EdgeInsets.symmetric(horizontal: 16),
+                //   //             //   allowEditing: false,
+                //   //             //   width: 160,
+                //   //             //   label: Container(
+                //   //             //     padding:
+                //   //             //         const EdgeInsets.symmetric(horizontal: 8.0),
+                //   //             //     alignment: Alignment.center,
+                //   //             //     child: Text('Start Date',
+                //   //             //         overflow: TextOverflow.values.first,
+                //   //             //         style: TextStyle(
+                //   //             //             fontWeight: FontWeight.bold,
+                //   //             //             fontSize: 16,
+                //   //             //             color: white)
+                //   //             //         //    textAlign: TextAlign.center,
+                //   //             //         ),
+                //   //             //   ),
+                //   //             // ),
+                //   //             // GridColumn(
+                //   //             //   columnName: 'EndDate',
+                //   //             //   autoFitPadding:
+                //   //             //       const EdgeInsets.symmetric(horizontal: 16),
+                //   //             //   allowEditing: false,
+                //   //             //   width: 120,
+                //   //             //   label: Container(
+                //   //             //     padding:
+                //   //             //         const EdgeInsets.symmetric(horizontal: 8.0),
+                //   //             //     alignment: Alignment.center,
+                //   //             //     child: Text('End Date',
+                //   //             //         overflow: TextOverflow.values.first,
+                //   //             //         style: TextStyle(
+                //   //             //             fontWeight: FontWeight.bold,
+                //   //             //             fontSize: 16,
+                //   //             //             color: white)
+                //   //             //         //    textAlign: TextAlign.center,
+                //   //             //         ),
+                //   //             //   ),
+                //   //             // ),
+                //   //             GridColumn(
+                //   //               columnName: 'Progress',
+                //   //               autoFitPadding:
+                //   //                   const EdgeInsets.symmetric(horizontal: 16),
+                //   //               allowEditing: true,
+                //   //               width: 250,
+                //   //               label: Container(
+                //   //                 padding:
+                //   //                     const EdgeInsets.symmetric(horizontal: 8.0),
+                //   //                 alignment: Alignment.center,
+                //   //                 child: Text('Progress',
+                //   //                     overflow: TextOverflow.values.first,
+                //   //                     style: TextStyle(
+                //   //                         fontWeight: FontWeight.bold,
+                //   //                         fontSize: 16,
+                //   //                         color: white)
+                //   //                     //    textAlign: TextAlign.center,
+                //   //                     ),
+                //   //               ),
+                //   //             ),
+                //   //             GridColumn(
+                //   //               columnName: 'Status',
+                //   //               autoFitPadding:
+                //   //                   const EdgeInsets.symmetric(horizontal: 16),
+                //   //               allowEditing: true,
+                //   //               width: 250,
+                //   //               label: Container(
+                //   //                 padding:
+                //   //                     const EdgeInsets.symmetric(horizontal: 8.0),
+                //   //                 alignment: Alignment.center,
+                //   //                 child: Text('Status',
+                //   //                     overflow: TextOverflow.values.first,
+                //   //                     style: TextStyle(
+                //   //                         fontWeight: FontWeight.bold,
+                //   //                         fontSize: 16,
+                //   //                         color: white)
+                //   //                     //    textAlign: TextAlign.center,
+                //   //                     ),
+                //   //               ),
+                //   //             ),
+                //   //             GridColumn(
+                //   //               columnName: 'Action',
+                //   //               autoFitPadding:
+                //   //                   const EdgeInsets.symmetric(horizontal: 16),
+                //   //               allowEditing: true,
+                //   //               width: 250,
+                //   //               label: Container(
+                //   //                 padding:
+                //   //                     const EdgeInsets.symmetric(horizontal: 8.0),
+                //   //                 alignment: Alignment.center,
+                //   //                 child: Text('Next Month Action Plan',
+                //   //                     overflow: TextOverflow.values.first,
+                //   //                     style: TextStyle(
+                //   //                         fontWeight: FontWeight.bold,
+                //   //                         fontSize: 16,
+                //   //                         color: white)
+                //   //                     //    textAlign: TextAlign.center,
+                //   //                     ),
+                //   //               ),
+                //   //             ),
+                //   //           ]),
+                //   //     )),
+                //   //   ],
+                //   // );
+                // }
+                else {
+                  // alldata = snapshot.data['data'] as List<dynamic>;
+                  // monthlyProject.clear();
+                  // alldata.forEach((element) {
+                  //   monthlyProject.add(MonthlyProjectModel.fromjson(element));
+                  //   monthlyDataSource = MonthlyDataSource(monthlyProject, context);
+                  //   _dataGridController = DataGridController();
+                  // });
+                  return Column(
+                    children: [
+                      Expanded(
+                          child: SfDataGridTheme(
+                        data: SfDataGridThemeData(headerColor: blue),
+                        child: SfDataGrid(
+                            source: monthlyDataSource,
                             allowEditing: true,
-                            width: 250,
-                            label: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              alignment: Alignment.center,
-                              child: Text('Progress',
-                                  overflow: TextOverflow.values.first,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: white)
-                                  //    textAlign: TextAlign.center,
-                                  ),
-                            ),
-                          ),
-                          GridColumn(
-                            columnName: 'Status',
-                            autoFitPadding:
-                                const EdgeInsets.symmetric(horizontal: 16),
-                            allowEditing: true,
-                            width: 250,
-                            label: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              alignment: Alignment.center,
-                              child: Text('Status',
-                                  overflow: TextOverflow.values.first,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: white)
-                                  //    textAlign: TextAlign.center,
-                                  ),
-                            ),
-                          ),
-                          GridColumn(
-                            columnName: 'Action',
-                            autoFitPadding:
-                                const EdgeInsets.symmetric(horizontal: 16),
-                            allowEditing: true,
-                            width: 250,
-                            label: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              alignment: Alignment.center,
-                              child: Text('Next Month Action Plan',
-                                  overflow: TextOverflow.values.first,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: white)
-                                  //    textAlign: TextAlign.center,
-                                  ),
-                            ),
-                          ),
-                        ]),
-                  )),
-                ],
-              );
-            } else {
-              alldata = snapshot.data['data'] as List<dynamic>;
-              monthlyProject.clear();
-              alldata.forEach((element) {
-                monthlyProject.add(MonthlyProjectModel.fromjson(element));
-                monthlyDataSource = MonthlyDataSource(monthlyProject, context);
-                _dataGridController = DataGridController();
-              });
-              return Column(
-                children: [
-                  Expanded(
-                      child: SfDataGridTheme(
-                    data: SfDataGridThemeData(headerColor: blue),
-                    child: SfDataGrid(
-                        source: monthlyDataSource,
-                        allowEditing: true,
-                        frozenColumnsCount: 2,
-                        gridLinesVisibility: GridLinesVisibility.both,
-                        headerGridLinesVisibility: GridLinesVisibility.both,
-                        selectionMode: SelectionMode.single,
-                        navigationMode: GridNavigationMode.cell,
-                        columnWidthMode: ColumnWidthMode.auto,
-                        editingGestureType: EditingGestureType.tap,
-                        controller: _dataGridController,
-                        columns: [
-                          GridColumn(
-                            columnName: 'ActivityNo',
-                            autoFitPadding:
-                                const EdgeInsets.symmetric(horizontal: 16),
-                            allowEditing: false,
-                            width: 160,
-                            label: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              alignment: Alignment.center,
-                              child: Text('Activities SI. No as per Gant Chart',
-                                  overflow: TextOverflow.values.first,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: white)
-                                  //    textAlign: TextAlign.center,
-                                  ),
-                            ),
-                          ),
-                          GridColumn(
-                            columnName: 'ActivityDetails',
-                            autoFitPadding:
-                                const EdgeInsets.symmetric(horizontal: 16),
-                            allowEditing: false,
-                            width: 240,
-                            label: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              alignment: Alignment.center,
-                              child: Text('Activities Details',
-                                  textAlign: TextAlign.center,
-                                  overflow: TextOverflow.values.first,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: white)),
-                            ),
-                          ),
-                          // GridColumn(
-                          //   columnName: 'Duration',
-                          //   autoFitPadding:
-                          //       const EdgeInsets.symmetric(horizontal: 16),
-                          //   allowEditing: false,
-                          //   width: 120,
-                          //   label: Container(
-                          //     padding:
-                          //         const EdgeInsets.symmetric(horizontal: 8.0),
-                          //     alignment: Alignment.center,
-                          //     child: Text('Duration in Days',
-                          //         textAlign: TextAlign.center,
-                          //         overflow: TextOverflow.values.first,
-                          //         style: TextStyle(
-                          //             fontWeight: FontWeight.bold,
-                          //             fontSize: 16,
-                          //             color: white)
-                          //         //    textAlign: TextAlign.center,
-                          //         ),
-                          //   ),
-                          // ),
-                          // GridColumn(
-                          //   columnName: 'StartDate',
-                          //   autoFitPadding:
-                          //       const EdgeInsets.symmetric(horizontal: 16),
-                          //   allowEditing: false,
-                          //   width: 160,
-                          //   label: Container(
-                          //     padding:
-                          //         const EdgeInsets.symmetric(horizontal: 8.0),
-                          //     alignment: Alignment.center,
-                          //     child: Text('Start Date',
-                          //         overflow: TextOverflow.values.first,
-                          //         style: TextStyle(
-                          //             fontWeight: FontWeight.bold,
-                          //             fontSize: 16,
-                          //             color: white)
-                          //         //    textAlign: TextAlign.center,
-                          //         ),
-                          //   ),
-                          // ),
-                          // GridColumn(
-                          //   columnName: 'EndDate',
-                          //   autoFitPadding:
-                          //       const EdgeInsets.symmetric(horizontal: 16),
-                          //   allowEditing: false,
-                          //   width: 120,
-                          //   label: Container(
-                          //     padding:
-                          //         const EdgeInsets.symmetric(horizontal: 8.0),
-                          //     alignment: Alignment.center,
-                          //     child: Text('End Date',
-                          //         overflow: TextOverflow.values.first,
-                          //         style: TextStyle(
-                          //             fontWeight: FontWeight.bold,
-                          //             fontSize: 16,
-                          //             color: white)
-                          //         //    textAlign: TextAlign.center,
-                          //         ),
-                          //   ),
-                          // ),
-                          GridColumn(
-                            columnName: 'Progress',
-                            autoFitPadding:
-                                const EdgeInsets.symmetric(horizontal: 16),
-                            allowEditing: true,
-                            width: 250,
-                            label: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              alignment: Alignment.center,
-                              child: Text('Progress',
-                                  overflow: TextOverflow.values.first,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: white)
-                                  //    textAlign: TextAlign.center,
-                                  ),
-                            ),
-                          ),
-                          GridColumn(
-                            columnName: 'Status',
-                            autoFitPadding:
-                                const EdgeInsets.symmetric(horizontal: 16),
-                            allowEditing: true,
-                            width: 250,
-                            label: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              alignment: Alignment.center,
-                              child: Text('Status',
-                                  overflow: TextOverflow.values.first,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: white)
-                                  //    textAlign: TextAlign.center,
-                                  ),
-                            ),
-                          ),
-                          GridColumn(
-                            columnName: 'Action',
-                            autoFitPadding:
-                                const EdgeInsets.symmetric(horizontal: 16),
-                            allowEditing: true,
-                            width: 250,
-                            label: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              alignment: Alignment.center,
-                              child: Text('Next Month Action Plan',
-                                  overflow: TextOverflow.values.first,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: white)
-                                  //    textAlign: TextAlign.center,
-                                  ),
-                            ),
-                          ),
-                        ]),
-                  )),
-                ],
-              );
-            }
-          }),
+                            frozenColumnsCount: 2,
+                            gridLinesVisibility: GridLinesVisibility.both,
+                            headerGridLinesVisibility: GridLinesVisibility.both,
+                            selectionMode: SelectionMode.single,
+                            navigationMode: GridNavigationMode.cell,
+                            columnWidthMode: ColumnWidthMode.auto,
+                            editingGestureType: EditingGestureType.tap,
+                            controller: _dataGridController,
+                            columns: [
+                              GridColumn(
+                                columnName: 'User ID',
+                                autoFitPadding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                allowEditing: false,
+                                width: 160,
+                                label: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  alignment: Alignment.center,
+                                  child: Text('User ID',
+                                      overflow: TextOverflow.values.first,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: white)
+                                      //    textAlign: TextAlign.center,
+                                      ),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'ActivityNo',
+                                autoFitPadding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                allowEditing: false,
+                                width: 160,
+                                label: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                      'Activities SI. No as per Gant Chart',
+                                      overflow: TextOverflow.values.first,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: white)
+                                      //    textAlign: TextAlign.center,
+                                      ),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'ActivityDetails',
+                                autoFitPadding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                allowEditing: false,
+                                width: 240,
+                                label: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  alignment: Alignment.center,
+                                  child: Text('Activities Details',
+                                      textAlign: TextAlign.center,
+                                      overflow: TextOverflow.values.first,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: white)),
+                                ),
+                              ),
+                              // GridColumn(
+                              //   columnName: 'Duration',
+                              //   autoFitPadding:
+                              //       const EdgeInsets.symmetric(horizontal: 16),
+                              //   allowEditing: false,
+                              //   width: 120,
+                              //   label: Container(
+                              //     padding:
+                              //         const EdgeInsets.symmetric(horizontal: 8.0),
+                              //     alignment: Alignment.center,
+                              //     child: Text('Duration in Days',
+                              //         textAlign: TextAlign.center,
+                              //         overflow: TextOverflow.values.first,
+                              //         style: TextStyle(
+                              //             fontWeight: FontWeight.bold,
+                              //             fontSize: 16,
+                              //             color: white)
+                              //         //    textAlign: TextAlign.center,
+                              //         ),
+                              //   ),
+                              // ),
+                              // GridColumn(
+                              //   columnName: 'StartDate',
+                              //   autoFitPadding:
+                              //       const EdgeInsets.symmetric(horizontal: 16),
+                              //   allowEditing: false,
+                              //   width: 160,
+                              //   label: Container(
+                              //     padding:
+                              //         const EdgeInsets.symmetric(horizontal: 8.0),
+                              //     alignment: Alignment.center,
+                              //     child: Text('Start Date',
+                              //         overflow: TextOverflow.values.first,
+                              //         style: TextStyle(
+                              //             fontWeight: FontWeight.bold,
+                              //             fontSize: 16,
+                              //             color: white)
+                              //         //    textAlign: TextAlign.center,
+                              //         ),
+                              //   ),
+                              // ),
+                              // GridColumn(
+                              //   columnName: 'EndDate',
+                              //   autoFitPadding:
+                              //       const EdgeInsets.symmetric(horizontal: 16),
+                              //   allowEditing: false,
+                              //   width: 120,
+                              //   label: Container(
+                              //     padding:
+                              //         const EdgeInsets.symmetric(horizontal: 8.0),
+                              //     alignment: Alignment.center,
+                              //     child: Text('End Date',
+                              //         overflow: TextOverflow.values.first,
+                              //         style: TextStyle(
+                              //             fontWeight: FontWeight.bold,
+                              //             fontSize: 16,
+                              //             color: white)
+                              //         //    textAlign: TextAlign.center,
+                              //         ),
+                              //   ),
+                              // ),
+                              GridColumn(
+                                columnName: 'Progress',
+                                autoFitPadding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                allowEditing: true,
+                                width: 250,
+                                label: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  alignment: Alignment.center,
+                                  child: Text('Progress',
+                                      overflow: TextOverflow.values.first,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: white)
+                                      //    textAlign: TextAlign.center,
+                                      ),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'Status',
+                                autoFitPadding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                allowEditing: true,
+                                width: 250,
+                                label: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  alignment: Alignment.center,
+                                  child: Text('Status',
+                                      overflow: TextOverflow.values.first,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: white)
+                                      //    textAlign: TextAlign.center,
+                                      ),
+                                ),
+                              ),
+                              GridColumn(
+                                columnName: 'Action',
+                                autoFitPadding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                allowEditing: true,
+                                width: 250,
+                                label: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  alignment: Alignment.center,
+                                  child: Text('Next Month Action Plan',
+                                      overflow: TextOverflow.values.first,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: white)
+                                      //    textAlign: TextAlign.center,
+                                      ),
+                                ),
+                              ),
+                            ]),
+                      )),
+                    ],
+                  );
+                }
+              }),
     );
   }
 
@@ -492,103 +535,103 @@ class _MonthlyProjectState extends State<MonthlyProject> {
     });
   }
 
-  List<MonthlyProjectModel> getmonthlyReport() {
-    return [
-      MonthlyProjectModel(
-          activityNo: 'A1',
-          activityDetails: 'Letter of Award From TML',
-          // duration: 1,
-          // startDate: DateFormat().add_yMd().format(DateTime.now()),
-          // endDate: DateFormat().add_yMd().format(DateTime.now()),
-          progress: '',
-          status: '',
-          action: ''),
-      MonthlyProjectModel(
-          activityNo: 'A2',
-          activityDetails:
-              'Site Survey, Job scope finalization  and Proposed layout submission',
-          // duration: 1,
-          // startDate: DateFormat().add_yMd().format(DateTime.now()),
-          // endDate: DateFormat().add_yMd().format(DateTime.now()),
-          progress: '',
-          status: '',
-          action: ''),
-      MonthlyProjectModel(
-          activityNo: 'A3',
-          activityDetails:
-              'Detailed Engineering for Approval of  Civil & Electrical  Layout, GA Drawing from TML',
-          // duration: 1,
-          // startDate: DateFormat().add_yMd().format(DateTime.now()),
-          // endDate: DateFormat().add_yMd().format(DateTime.now()),
-          progress: '',
-          status: '',
-          action: ''),
-      MonthlyProjectModel(
-          activityNo: 'A4',
-          activityDetails: 'Site Mobalization activity Completed',
-          // duration: 1,
-          // startDate: DateFormat().add_yMd().format(DateTime.now()),
-          // endDate: DateFormat().add_yMd().format(DateTime.now()),
-          progress: '',
-          status: '',
-          action: ''),
-      MonthlyProjectModel(
-          activityNo: 'A5',
-          activityDetails: 'Approval of statutory clearances of BUS Depot',
-          // duration: 1,
-          // startDate: DateFormat().add_yMd().format(DateTime.now()),
-          // endDate: DateFormat().add_yMd().format(DateTime.now()),
-          progress: '',
-          status: '',
-          action: ''),
-      MonthlyProjectModel(
-          activityNo: 'A6',
-          activityDetails: 'Procurement of Order Finalisation Completed',
-          // duration: 1,
-          // startDate: DateFormat().add_yMd().format(DateTime.now()),
-          // endDate: DateFormat().add_yMd().format(DateTime.now()),
-          progress: '',
-          status: '',
-          action: ''),
-      MonthlyProjectModel(
-          activityNo: 'A7',
-          activityDetails: 'Receipt of all Materials at Site',
-          // duration: 1,
-          // startDate: DateFormat().add_yMd().format(DateTime.now()),
-          // endDate: DateFormat().add_yMd().format(DateTime.now()),
-          progress: '',
-          status: '',
-          action: ''),
-      MonthlyProjectModel(
-          activityNo: 'A8',
-          activityDetails: 'Civil Infra Development completed at Bus Depot',
-          // duration: 1,
-          // startDate: DateFormat().add_yMd().format(DateTime.now()),
-          // endDate: DateFormat().add_yMd().format(DateTime.now()),
-          progress: '',
-          status: '',
-          action: ''),
-      MonthlyProjectModel(
-          activityNo: 'A9',
-          activityDetails:
-              'Electrical Infra Development completed at Bus Depot',
-          // duration: 1,
-          // startDate: DateFormat().add_yMd().format(DateTime.now()),
-          // endDate: DateFormat().add_yMd().format(DateTime.now()),
-          progress: '',
-          status: '',
-          action: ''),
-      MonthlyProjectModel(
-          activityNo: 'A10',
-          activityDetails: 'Bus Depot work Completed & Handover to TML',
-          // duration: 1,
-          // startDate: DateFormat().add_yMd().format(DateTime.now()),
-          // endDate: DateFormat().add_yMd().format(DateTime.now()),
-          progress: '',
-          status: '',
-          action: ''),
-    ];
-  }
+  // List<MonthlyProjectModel> getmonthlyReport() {
+  //   return [
+  //     MonthlyProjectModel(
+  //         activityNo: 'A1',
+  //         activityDetails: 'Letter of Award From TML',
+  //         // duration: 1,
+  //         // startDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         // endDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         progress: '',
+  //         status: '',
+  //         action: ''),
+  //     MonthlyProjectModel(
+  //         activityNo: 'A2',
+  //         activityDetails:
+  //             'Site Survey, Job scope finalization  and Proposed layout submission',
+  //         // duration: 1,
+  //         // startDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         // endDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         progress: '',
+  //         status: '',
+  //         action: ''),
+  //     MonthlyProjectModel(
+  //         activityNo: 'A3',
+  //         activityDetails:
+  //             'Detailed Engineering for Approval of  Civil & Electrical  Layout, GA Drawing from TML',
+  //         // duration: 1,
+  //         // startDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         // endDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         progress: '',
+  //         status: '',
+  //         action: ''),
+  //     MonthlyProjectModel(
+  //         activityNo: 'A4',
+  //         activityDetails: 'Site Mobalization activity Completed',
+  //         // duration: 1,
+  //         // startDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         // endDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         progress: '',
+  //         status: '',
+  //         action: ''),
+  //     MonthlyProjectModel(
+  //         activityNo: 'A5',
+  //         activityDetails: 'Approval of statutory clearances of BUS Depot',
+  //         // duration: 1,
+  //         // startDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         // endDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         progress: '',
+  //         status: '',
+  //         action: ''),
+  //     MonthlyProjectModel(
+  //         activityNo: 'A6',
+  //         activityDetails: 'Procurement of Order Finalisation Completed',
+  //         // duration: 1,
+  //         // startDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         // endDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         progress: '',
+  //         status: '',
+  //         action: ''),
+  //     MonthlyProjectModel(
+  //         activityNo: 'A7',
+  //         activityDetails: 'Receipt of all Materials at Site',
+  //         // duration: 1,
+  //         // startDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         // endDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         progress: '',
+  //         status: '',
+  //         action: ''),
+  //     MonthlyProjectModel(
+  //         activityNo: 'A8',
+  //         activityDetails: 'Civil Infra Development completed at Bus Depot',
+  //         // duration: 1,
+  //         // startDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         // endDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         progress: '',
+  //         status: '',
+  //         action: ''),
+  //     MonthlyProjectModel(
+  //         activityNo: 'A9',
+  //         activityDetails:
+  //             'Electrical Infra Development completed at Bus Depot',
+  //         // duration: 1,
+  //         // startDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         // endDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         progress: '',
+  //         status: '',
+  //         action: ''),
+  //     MonthlyProjectModel(
+  //         activityNo: 'A10',
+  //         activityDetails: 'Bus Depot work Completed & Handover to TML',
+  //         // duration: 1,
+  //         // startDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         // endDate: DateFormat().add_yMd().format(DateTime.now()),
+  //         progress: '',
+  //         status: '',
+  //         action: ''),
+  //   ];
+  // }
 
   Future<void> getUserId() async {
     await AuthService().getCurrentUserId().then((value) {

@@ -42,6 +42,7 @@ class DetailedEngModel {
       DataGridCell(columnName: 'SubmissionDate', value: submissionDate),
       DataGridCell(columnName: 'ApproveDate', value: approveDate),
       DataGridCell(columnName: 'ReleaseDate', value: releaseDate),
+      const DataGridCell<Widget>(columnName: 'Delete', value: null),
     ]);
   }
 }

@@ -5,6 +5,7 @@ import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import '../Authentication/auth_service.dart';
 
+import '../FirebaseApi/firebase_api.dart';
 import '../components/loading_page.dart';
 import '../datasource/detailedengEV_datasource.dart';
 import '../datasource/detailedengShed_datasource.dart';
@@ -16,7 +17,8 @@ class DetailedEng extends StatefulWidget {
   String? cityName;
   String? depoName;
   String? userId;
-  DetailedEng({super.key, required this.cityName, required this.depoName, this.userId});
+  DetailedEng(
+      {super.key, required this.cityName, required this.depoName, this.userId});
 
   @override
   State<DetailedEng> createState() => _DetailedEngtState();
@@ -45,55 +47,71 @@ class _DetailedEngtState extends State<DetailedEng>
 
   @override
   void initState() {
-    getmonthlyReport();
-    getmonthlyReportEv();
-    getUserId().whenComplete(() {
-      DetailedProject = getmonthlyReport();
-      _detailedDataSource = DetailedEngSource(DetailedProject, context,
-          widget.cityName.toString(), widget.depoName.toString(), userId);
-      _dataGridController = DataGridController();
+    // getmonthlyReport();
+    // getmonthlyReportEv();
+    // getUserId().whenComplete(() {
+    // DetailedProject = getmonthlyReport();
+    _detailedDataSource = DetailedEngSource(DetailedProject, context,
+        widget.cityName.toString(), widget.depoName.toString());
+    _dataGridController = DataGridController();
 
-      DetailedProjectev = getmonthlyReportEv();
-      _detailedEngSourceev = DetailedEngSourceEV(DetailedProjectev, context,
-          widget.cityName.toString(), widget.depoName.toString(), userId);
-      _dataGridController = DataGridController();
+    // DetailedProjectev = getmonthlyReportEv();
+    _detailedEngSourceev = DetailedEngSourceEV(DetailedProjectev, context,
+        widget.cityName.toString(), widget.depoName.toString());
+    _dataGridController = DataGridController();
 
-      DetailedProjectshed = getmonthlyReportEv();
-      _detailedEngSourceShed = DetailedEngSourceShed(
-          DetailedProjectshed,
-          context,
-          widget.cityName.toString(),
-          widget.depoName.toString(),
-          userId);
-      _dataGridController = DataGridController();
-      _controller = TabController(length: 3, vsync: this);
+    // DetailedProjectshed = getmonthlyReportEv();
+    _detailedEngSourceShed = DetailedEngSourceShed(DetailedProjectshed, context,
+        widget.cityName.toString(), widget.depoName.toString());
+    _dataGridController = DataGridController();
+    _controller = TabController(length: 3, vsync: this);
 
-      _stream = FirebaseFirestore.instance
-          .collection('DetailEngineering')
-          .doc('${widget.depoName}')
-          .collection('RFC LAYOUT DRAWING')
-          .doc(userId)
-          .snapshots();
+    _stream = FirebaseFirestore.instance
+        .collection('DetailEngineering')
+        .doc('${widget.depoName}')
+        .collection('RFC LAYOUT DRAWING')
+        .doc(userId)
+        .snapshots();
 
-      _stream1 = FirebaseFirestore.instance
-          .collection('DetailEngineering')
-          .doc('${widget.depoName}')
-          .collection('EV LAYOUT DRAWING')
-          .doc(userId)
-          .snapshots();
+    _stream1 = FirebaseFirestore.instance
+        .collection('DetailEngineering')
+        .doc('${widget.depoName}')
+        .collection('EV LAYOUT DRAWING')
+        .doc(userId)
+        .snapshots();
 
-      _stream2 = FirebaseFirestore.instance
-          .collection('DetailEngineering')
-          .doc('${widget.depoName}')
-          .collection('Shed LAYOUT DRAWING')
-          .doc(userId)
-          .snapshots();
+    _stream2 = FirebaseFirestore.instance
+        .collection('DetailEngineering')
+        .doc('${widget.depoName}')
+        .collection('Shed LAYOUT DRAWING')
+        .doc(userId)
+        .snapshots();
 
-      _isloading = false;
-      setState(() {});
-    });
+    _isloading = false;
+
+    // });
 
     super.initState();
+    // FirebaseApi.getAllId().then((value) {
+    //   num_id = dataList.length;
+    //   getTableData().whenComplete(() {
+    //     // DetailedProject = getmonthlyReport();
+    //     _detailedDataSource = DetailedEngSource(DetailedProject, context,
+    //         widget.cityName.toString(), widget.depoName.toString());
+    //     _dataGridController = DataGridController();
+
+    //     // DetailedProjectev = getmonthlyReportEv();
+    //     _detailedEngSourceev = DetailedEngSourceEV(DetailedProjectev, context,
+    //         widget.cityName.toString(), widget.depoName.toString());
+    //     _dataGridController = DataGridController();
+
+    //     // DetailedProjectshed = getmonthlyReportEv();
+    //     _detailedEngSourceShed = DetailedEngSourceShed(DetailedProjectshed,
+    //         context, widget.cityName.toString(), widget.depoName.toString());
+    //     _dataGridController = DataGridController();
+    //     _controller = TabController(length: 3, vsync: this);
+    //   });
+    // });
   }
 
   @override
@@ -205,6 +223,7 @@ class _DetailedEngtState extends State<DetailedEng>
   Future<void> getUserId() async {
     await AuthService().getCurrentUserId().then((value) {
       userId = value;
+      setState(() {});
     });
   }
 
@@ -600,11 +619,11 @@ class _DetailedEngtState extends State<DetailedEng>
                           DetailedProject.add(
                               DetailedEngModel.fromjsaon(element));
                           _detailedDataSource = DetailedEngSource(
-                              DetailedProject,
-                              context,
-                              widget.cityName.toString(),
-                              widget.depoName.toString(),
-                              userId);
+                            DetailedProject,
+                            context,
+                            widget.cityName.toString(),
+                            widget.depoName.toString(),
+                          );
                           _dataGridController = DataGridController();
                         });
 
@@ -1063,11 +1082,11 @@ class _DetailedEngtState extends State<DetailedEng>
                         DetailedProjectev.add(
                             DetailedEngModel.fromjsaon(element));
                         _detailedEngSourceev = DetailedEngSourceEV(
-                            DetailedProjectev,
-                            context,
-                            widget.cityName.toString(),
-                            widget.depoName.toString(),
-                            userId);
+                          DetailedProjectev,
+                          context,
+                          widget.cityName.toString(),
+                          widget.depoName.toString(),
+                        );
                         _dataGridController = DataGridController();
                       });
 
@@ -1542,11 +1561,11 @@ class _DetailedEngtState extends State<DetailedEng>
                           DetailedProjectshed.add(
                               DetailedEngModel.fromjsaon(element));
                           _detailedEngSourceShed = DetailedEngSourceShed(
-                              DetailedProjectshed,
-                              context,
-                              widget.cityName.toString(),
-                              widget.depoName.toString(),
-                              userId);
+                            DetailedProjectshed,
+                            context,
+                            widget.cityName.toString(),
+                            widget.depoName.toString(),
+                          );
                           _dataGridController = DataGridController();
                         });
 
@@ -1777,5 +1796,63 @@ class _DetailedEngtState extends State<DetailedEng>
             _detailedEngSourceShed.updateDatagridSource();
           }),
         ));
+  }
+
+  Future getTableData() async {
+    await FirebaseFirestore.instance
+        .collection('DetailEngineering')
+        .doc('${widget.depoName}')
+        .collection('RFC LAYOUT DRAWING')
+        .get()
+        .then((value) {
+      value.docs.forEach((element) {
+        for (int i = 0; i < element.data()["data"].length; i++) {
+          print(element.data()["data"][i]);
+          // DetailedProject
+          //     .add(DetailedEngModel.fromJson(element.data()['data'][i]));
+          DetailedProject.add(
+              DetailedEngModel.fromjsaon(element.data()["data"][i]));
+        }
+      });
+    });
+    // .doc(widget.userid)
+    // .snapshots();
+    print(DetailedProject.length);
+    // setState(() {});
+
+    await FirebaseFirestore.instance
+        .collection('DetailEngineering')
+        .doc('${widget.depoName}')
+        .collection('EV LAYOUT DRAWING')
+        .get()
+        .then((value) {
+      value.docs.forEach((element) {
+        for (int i = 0; i < element.data()["data"].length; i++) {
+          print(element.data()["data"][i]);
+          // DetailedProject
+          //     .add(DetailedEngModel.fromJson(element.data()['data'][i]));
+          DetailedProjectev.add(
+              DetailedEngModel.fromjsaon(element.data()["data"][i]));
+        }
+      });
+    });
+
+    await FirebaseFirestore.instance
+        .collection('DetailEngineering')
+        .doc('${widget.depoName}')
+        .collection('Shed LAYOUT DRAWING')
+        .get()
+        .then((value) {
+      value.docs.forEach((element) {
+        for (int i = 0; i < element.data()["data"].length; i++) {
+          print(element.data()["data"][i]);
+          // DetailedProject
+          //     .add(DetailedEngModel.fromJson(element.data()['data'][i]));
+          DetailedProjectshed.add(
+              DetailedEngModel.fromjsaon(element.data()["data"][i]));
+        }
+      });
+    });
+    setState(() {});
   }
 }

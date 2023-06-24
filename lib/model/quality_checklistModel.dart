@@ -41,7 +41,7 @@ class QualitychecklistModel {
       // DataGridCell<int>(columnName: 'photoNo', value: photoNo),
       const DataGridCell<Widget>(columnName: 'Upload', value: null),
       const DataGridCell<Widget>(columnName: 'View', value: null),
-      const DataGridCell(columnName: 'Delete', value: null)
+      // const DataGridCell(columnName: 'Delete', value: null)
     ]);
   }
 }

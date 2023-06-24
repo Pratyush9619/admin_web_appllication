@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:web_appllication/FirebaseApi/firebase_api.dart';
 import 'package:web_appllication/KeyEvents/Grid_DataTable51.dart';
 import 'package:web_appllication/KeyEvents/Grid_DataTableA10.dart';
 import 'package:web_appllication/KeyEvents/Grid_DataTableA3.dart';
@@ -64,8 +65,9 @@ class _KeyEventsState extends State<KeyEvents> {
   String? asdate;
   String? aedate;
   var alldata;
-  bool _isLoading = true;
+  bool _isLoading = false;
   bool _isInit = true;
+  int? num_id;
   int? length;
   String? sdate2,
       sdate3,
@@ -168,7 +170,10 @@ class _KeyEventsState extends State<KeyEvents> {
     yourstream = FirebaseFirestore.instance
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
-        .collection(widget.userId!)
+        .collection('KeyDataTable')
+        .doc(widget.depoName)
+        .collection('KeyAllEvents')
+        // .collection(widget.userId!)
         // .doc('${widget.depoName}')
         .snapshots();
 
@@ -177,62 +182,62 @@ class _KeyEventsState extends State<KeyEvents> {
     super.initState();
   }
 
-  List<Widget> menuwidget = [];
+  // List<Widget> menuwidget = [];
 
   @override
   Widget build(BuildContext context) {
-    menuwidget = [
-      UploadDocument(
-        title: '',
-        activity: '',
-        userId: userId,
-        depoName: widget.depoName,
-      ),
-      StatutoryAprovalA2(
-        userid: widget.userId,
-        depoName: widget.depoName,
-        cityName: widget.cityName,
-      ),
-      StatutoryAprovalA3(
-        userid: widget.userId,
-        depoName: widget.depoName,
-        cityName: widget.cityName,
-      ),
-      StatutoryAprovalA4(
-        userid: widget.userId,
-        depoName: widget.depoName,
-        cityName: widget.cityName,
-      ),
-      StatutoryAproval(
-        userid: widget.userId,
-        depoName: widget.depoName,
-        cityName: widget.cityName,
-      ),
-      StatutoryAprovalA6(
-        userid: widget.userId,
-        depoName: widget.depoName,
-        cityName: widget.cityName,
-      ),
-      StatutoryAprovalA7(
-        userid: widget.depoName,
-        depoName: widget.depoName,
-        cityName: widget.cityName,
-      ),
-      StatutoryAprovalA8(
-        userid: widget.userId,
-        depoName: widget.depoName,
-        cityName: widget.cityName,
-      ),
-      StatutoryAprovalA9(
-        depoName: widget.depoName,
-        cityName: widget.cityName,
-      ),
-      StatutoryAprovalA10(
-        userid: widget.userId,
-        depoName: widget.depoName,
-        cityName: widget.cityName,
-      ),
-    ];
+    // menuwidget = [
+    //   UploadDocument(
+    //     title: '',
+    //     activity: '',
+    //     userId: userId,
+    //     depoName: widget.depoName,
+    //   ),
+    //   StatutoryAprovalA2(
+    //     // userid: widget.userId,
+    //     depoName: widget.depoName,
+    //     cityName: widget.cityName,
+    //   ),
+    //   StatutoryAprovalA3(
+    //     userid: widget.userId,
+    //     depoName: widget.depoName,
+    //     cityName: widget.cityName,
+    //   ),
+    //   StatutoryAprovalA4(
+    //     userid: widget.userId,
+    //     depoName: widget.depoName,
+    //     cityName: widget.cityName,
+    //   ),
+    //   StatutoryAproval(
+    //     userid: widget.userId,
+    //     depoName: widget.depoName,
+    //     cityName: widget.cityName,
+    //   ),
+    //   StatutoryAprovalA6(
+    //     userid: widget.userId,
+    //     depoName: widget.depoName,
+    //     cityName: widget.cityName,
+    //   ),
+    //   StatutoryAprovalA7(
+    //     userid: widget.depoName,
+    //     depoName: widget.depoName,
+    //     cityName: widget.cityName,
+    //   ),
+    //   StatutoryAprovalA8(
+    //     userid: widget.userId,
+    //     depoName: widget.depoName,
+    //     cityName: widget.cityName,
+    //   ),
+    //   StatutoryAprovalA9(
+    //     depoName: widget.depoName,
+    //     cityName: widget.cityName,
+    //   ),
+    //   StatutoryAprovalA10(
+    //     userid: widget.userId,
+    //     depoName: widget.depoName,
+    //     cityName: widget.cityName,
+    //   ),
+    // ];
 
     return _isLoading
         ? LoadingPage()
@@ -568,9 +573,15 @@ class _KeyEventsState extends State<KeyEvents> {
                                           details.rowColumnIndex.rowIndex - 1];
 
                                   Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => menuwidget[
-                                          details.rowColumnIndex.rowIndex -
-                                              1]));
+                                      builder: (context) => StatutoryAprovalA2(
+                                          cityName: widget.cityName,
+                                          depoName: widget.depoName,
+                                          events:
+                                              '${row.getCells()[0].value.toString()}')
+                                      // menuwidget[
+                                      //     details.rowColumnIndex.rowIndex -
+                                      //         1]
+                                      ));
                                 },
                                 allowEditing: true,
                                 frozenColumnsCount: 2,
@@ -868,8 +879,14 @@ class _KeyEventsState extends State<KeyEvents> {
                                       details.rowColumnIndex.rowIndex - 1];
 
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => menuwidget[
-                                      details.rowColumnIndex.rowIndex - 1]));
+                                  builder: (context) => StatutoryAprovalA2(
+                                      cityName: widget.cityName,
+                                      depoName: widget.depoName,
+                                      events:
+                                          '${row.getCells()[0].value.toString()}')
+                                  //  menuwidget[
+                                  //     details.rowColumnIndex.rowIndex - 1]
+                                  ));
                             },
                             allowEditing: true,
                             frozenColumnsCount: 2,
@@ -1573,6 +1590,37 @@ class _KeyEventsState extends State<KeyEvents> {
       ),
     ];
   }
+
+  Future getTableData() async {
+    for (int i = 0; i < num_id!; i++) {
+      var res = await FirebaseFirestore.instance
+          .collection('KeyEventsTable')
+          .doc(widget.depoName!)
+          .collection(dataList[i])
+          .get()
+          .then((value) {
+        value.docs.forEach((element) {
+          for (int i = 0; i < element.data().length; i++) {
+            print(element.data()['data'][i]);
+            _employees.add(Employee.fromJson(element.data()[i]));
+            print(_employees.length);
+          }
+        });
+        setState(() {});
+      });
+
+      // value.docs.forEach((element) {
+      //   for (int i = 0; i < element.data()["data"].length; i++) {
+      //     print(element.data()['data'][i]);
+      //     _employees.add(Employee.fromJson(element.data()['data'][i]));
+      //     print(_employees.length);
+      //   }
+      // });
+    }
+  }
+  // .doc(widget.userid)
+  // .snapshots();
+  // print(_employees.length);
 }
 
 //   return StreamBuilder(

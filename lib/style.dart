@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Color black = Color(0xff000000);
-Color green = Color.fromARGB(255, 88, 221, 128);
-Color almostblack = Color(0xff000000).withOpacity(0.87);
-Color almostWhite = Color(0xffffffff).withOpacity(0.87);
-Color blue = Color.fromARGB(255, 9, 83, 161);
-Color lightblue = Color(0xff009eff);
-Color white = Color(0xffffffff);
+Color black = const Color(0xff000000);
+Color green = const Color.fromARGB(255, 88, 221, 128);
+Color almostblack = const Color(0xff000000).withOpacity(0.87);
+Color almostWhite = const Color(0xffffffff).withOpacity(0.87);
+Color blue = const Color.fromARGB(255, 9, 83, 161);
+Color lightblue = const Color(0xff009eff);
+Color white = const Color(0xffffffff);
 
 TextStyle formtext = const TextStyle(
   fontSize: 13,
@@ -17,13 +17,9 @@ TextStyle tableheader = const TextStyle(
   fontWeight: FontWeight.bold,
   fontSize: 14,
 );
-TextStyle bodyText1 = GoogleFonts.ibmPlexSans(
-    fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5);
-TextStyle bodyText1white = GoogleFonts.ibmPlexSans(
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-    letterSpacing: 0.5,
-    color: almostWhite);
+// TextStyle bodyText1 = GoogleFonts.ibmPlexSans(
+//     fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5);
+
 TextStyle bodyText2 = GoogleFonts.ibmPlexSans(
     fontSize: 14,
     fontWeight: FontWeight.w400,
@@ -36,11 +32,11 @@ TextStyle bodyText2White = GoogleFonts.ibmPlexSans(
     fontWeight: FontWeight.w400,
     letterSpacing: 0.25,
     color: almostWhite);
-TextStyle bodyText2Blue = GoogleFonts.ibmPlexSans(
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
-    letterSpacing: 0.25,
-    color: blue);
+// TextStyle bodyText2Blue = GoogleFonts.ibmPlexSans(
+//     fontSize: 14,
+//     fontWeight: FontWeight.w400,
+//     letterSpacing: 0.25,
+//     color: blue);
 TextStyle bodyText2red = GoogleFonts.ibmPlexSans(
     fontSize: 14, fontWeight: FontWeight.w400, letterSpacing: 0.25, color: red);
 TextStyle bodyText2White38 = GoogleFonts.ibmPlexSans(

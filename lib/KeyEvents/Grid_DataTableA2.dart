@@ -1,13 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:web_appllication/KeyEvents/ChartData.dart';
 import 'package:web_appllication/datasource/employee_datasouce.dart';
 import 'package:web_appllication/model/employee.dart';
+import 'package:web_appllication/model/employee_statutory.dart';
 import 'package:web_appllication/style.dart';
 import '../Authentication/auth_service.dart';
+import '../FirebaseApi/firebase_api.dart';
 import '../components/loading_page.dart';
 import '../widgets/custom_appbar.dart';
 
@@ -16,12 +19,16 @@ import '../widgets/custom_appbar.dart';
 /// The home page of the application which hosts the datagrid.
 class StatutoryAprovalA2 extends StatefulWidget {
   /// Creates the home page.
-  String? userid;
+  // String? userid;
+  String events;
   String? depoName;
   String? cityName;
 
   StatutoryAprovalA2(
-      {Key? key, required this.userid, this.depoName, this.cityName})
+      {Key? key,
+      required this.events,
+      required this.depoName,
+      required this.cityName})
       : super(key: key);
 
   @override
@@ -31,11 +38,12 @@ class StatutoryAprovalA2 extends StatefulWidget {
 class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
   late EmployeeDataSource _employeeDataSource;
   List<Employee> _employees = <Employee>[];
+  List<EmployeeStatutory> statutory = <EmployeeStatutory>[];
   late DataGridController _dataGridController;
   List<dynamic> tabledata2 = [];
   List<dynamic> weightage = [];
   var alldata;
-  bool _isLoading = false;
+  bool _isLoading = true;
   bool _isInit = true;
   List<double> weight = [];
   List<int> yAxis = [];
@@ -44,20 +52,39 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
   bool specificUser = true;
   QuerySnapshot? snap;
   dynamic companyId;
+  int? num_id;
+  List docss = [];
 
   @override
   void initState() {
     getUserId();
     identifyUser();
-    _stream = FirebaseFirestore.instance
-        .collection('KeyEventsTable')
-        .doc(widget.depoName!)
-        .collection(widget.userid!)
-        .doc('${widget.depoName}A2')
-        .snapshots();
+    // _stream = FirebaseFirestore.instance
+    //     .collection('KeyEventsTable')
+    //     .doc(widget.depoName!)
+    //     .collection('ZW3210')
+    //     .doc('${widget.depoName}${widget.events}')
+    //     .snapshots();
+
+    // FirebaseApi.getAllId().then((value) {
+    //   num_id = dataList.length;
+    _employeeDataSource = EmployeeDataSource(
+        _employees, context, widget.cityName, widget.depoName);
+    _dataGridController = DataGridController();
+
+    getTableData().whenComplete(() {
+      nestedTableData(docss).whenComplete(() {
+        _employeeDataSource = EmployeeDataSource(
+            _employees, context, widget.cityName, widget.depoName);
+        _dataGridController = DataGridController();
+      });
+    });
+
+    super.initState();
+
+    // });
 
     int length = _employees.length * 66;
-    super.initState();
   }
 
   // @override
@@ -107,7 +134,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
       appBar: PreferredSize(
         // ignore: sort_child_properties_last
         child: CustomAppBar(
-          text: 'Key Events / ${widget.depoName!} /A2',
+          text: 'Key Events / ${widget.depoName!} /${widget.events}',
           haveSynced: specificUser ? true : false,
           store: () {
             StoreData();
@@ -125,7 +152,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                   return LoadingPage();
                 }
                 if (!snapshot.hasData || snapshot.data.exists == false) {
-                  _employees = getEmployeeData();
+                  // _employees = getEmployeeData();
                   _employeeDataSource = EmployeeDataSource(
                       _employees, context, widget.cityName, widget.depoName);
                   _dataGridController = DataGridController();
@@ -449,24 +476,24 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                     ),
                   );
                 } else {
-                  alldata = snapshot.data['data'] as List<dynamic>;
-                  _employees.clear();
-                  alldata.forEach((element) {
-                    _employees.add(Employee.fromJson(element));
-                    _employeeDataSource = EmployeeDataSource(
-                        _employees, context, widget.cityName, widget.depoName);
-                    _dataGridController = DataGridController();
-                  });
-                  for (int i = 0; i < alldata.length; i++) {
-                    var weightdata = alldata[i]['Weightage'];
-                    var yaxisdata = alldata[i]['srNo'];
-                    weight.add(weightdata);
-                    yAxis.add(yaxisdata);
-                  }
-                  for (int i = weight.length - 1; i >= 0; i--) {
-                    chartData.add(ChartData(
-                        yAxis[i].toString(), weight[i], Colors.green));
-                  }
+                  // alldata = snapshot.data['data'] as List<dynamic>;
+                  // _employees.clear();
+                  // alldata.forEach((element) {
+                  //   _employees.add(Employee.fromJson(element));
+                  //   _employeeDataSource = EmployeeDataSource(
+                  //       _employees, context, widget.cityName, widget.depoName);
+                  //   _dataGridController = DataGridController();
+                  // });
+                  // for (int i = 0; i < alldata.length; i++) {
+                  //   var weightdata = alldata[i]['Weightage'];
+                  //   var yaxisdata = alldata[i]['srNo'];
+                  //   weight.add(weightdata);
+                  //   yAxis.add(yaxisdata);
+                  // }
+                  // for (int i = weight.length - 1; i >= 0; i--) {
+                  //   chartData.add(ChartData(
+                  //       yAxis[i].toString(), weight[i], Colors.green));
+                  // }
 
                   return SingleChildScrollView(
                     child: Column(
@@ -958,8 +985,12 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
     FirebaseFirestore.instance
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
-        .collection(widget.userid!)
-        .doc('${widget.depoName}A2')
+        .collection('KeyDataTable')
+        .doc(widget.depoName)
+        .collection('KeyAllEvents')
+        .doc('${widget.depoName}${widget.events}')
+        // .collection(widget.userid!)
+        // .doc('${widget.depoName}A2')
         .set({
       'data': tabledata2,
     }).whenComplete(() {
@@ -987,5 +1018,52 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
         specificUser = false;
       });
     }
+  }
+
+  Future getTableData() async {
+    await FirebaseFirestore.instance
+        .collection('KeyEventsTable')
+        .doc(widget.depoName!)
+        .collection('KeyDataTable')
+        .get()
+        .then((value) {
+      value.docs.forEach((element) {
+        String documentId = element.id;
+        print('Document ID: $documentId');
+        docss.add(documentId);
+        // nestedTableData(docss);
+      });
+    });
+  }
+
+  Future<void> nestedTableData(docss) async {
+    for (int i = 0; i < docss.length; i++) {
+      await FirebaseFirestore.instance
+          .collection('KeyEventsTable')
+          .doc(widget.depoName!)
+          .collection('KeyDataTable')
+          .doc(docss[i])
+          .collection('KeyAllEvents')
+          .get()
+          .then((value) {
+        value.docs.forEach((element) {
+          print('after');
+          if (element.id == '${widget.depoName}${widget.events}') {
+            for (int i = 0; i < element.data()['data'].length; i++) {
+              if (widget.events == 'A5') {
+                statutory
+                    .add(EmployeeStatutory.fromJson(element.data()['data'][i]));
+                print(_employees);
+              }
+              _employees.add(Employee.fromJson(element.data()['data'][i]));
+              print(_employees);
+            }
+          }
+        });
+      });
+    }
+    setState(() {
+      _isLoading = false;
+    });
   }
 }

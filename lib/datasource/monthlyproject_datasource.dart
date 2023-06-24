@@ -6,6 +6,7 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../model/monthly_projectModel.dart';
+import '../style.dart';
 
 class MonthlyDataSource extends DataGridSource {
   // String cityName;
@@ -51,10 +52,20 @@ class MonthlyDataSource extends DataGridSource {
     DateTime? endDate1;
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((dataGridCell) {
+      Color? columnbackgroundcolor;
+
+      if (dataGridCell.columnName == 'User ID') {
+        columnbackgroundcolor = blue;
+      }
       return Container(
+          color: columnbackgroundcolor,
           alignment: Alignment.center,
           padding: EdgeInsets.symmetric(horizontal: 20.0),
-          child:
+          child: dataGridCell.columnName == 'User ID'
+              ? Text(
+                  dataGridCell.value.toString(),
+                  style: TextStyle(color: white),
+                )
               // dataGridCell.columnName == 'StartDate'
               //     ? Row(
               //         children: [
@@ -257,10 +268,10 @@ class MonthlyDataSource extends DataGridSource {
               //         ],
               //       )
               //     :
-              Text(
-            dataGridCell.value.toString(),
-            textAlign: TextAlign.center,
-          ));
+              : Text(
+                  dataGridCell.value.toString(),
+                  textAlign: TextAlign.center,
+                ));
     }).toList());
   }
 
@@ -287,7 +298,11 @@ class MonthlyDataSource extends DataGridSource {
     if (newCellValue == null || oldValue == newCellValue) {
       return;
     }
-    if (column.columnName == 'activityNo') {
+    if (column.columnName == 'User ID') {
+      dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
+          DataGridCell<int>(columnName: 'User ID', value: newCellValue);
+      _montlyproject[dataRowIndex].tbluserid = newCellValue;
+    } else if (column.columnName == 'activityNo') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
           DataGridCell<int>(columnName: 'activityNo', value: newCellValue);
       _montlyproject[dataRowIndex].activityNo = newCellValue as int;

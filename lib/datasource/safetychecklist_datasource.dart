@@ -7,6 +7,7 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:web_appllication/KeyEvents/view_AllFiles.dart';
 import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 
+import '../FirebaseApi/firebase_api.dart';
 import '../KeyEvents/upload.dart';
 import '../KeyEvents/viewFIle.dart';
 import '../model/safety_checklistModel.dart';
@@ -15,9 +16,9 @@ class SafetyChecklistDataSource extends DataGridSource {
   // BuildContext mainContext;
   String cityName;
   String depoName;
-  dynamic userId;
+  // dynamic userId;
   SafetyChecklistDataSource(
-      this._checklistModel, this.cityName, this.depoName, this.userId) {
+      this._checklistModel, this.cityName, this.depoName) {
     buildDataGridRows();
   }
   void buildDataGridRows() {
@@ -111,7 +112,7 @@ class SafetyChecklistDataSource extends DataGridSource {
                                       title: 'SafetyChecklist',
                                       cityName: cityName,
                                       depoName: depoName,
-                                      userId: userId,
+                                      userId: docss[1],
                                       docId:
                                           '${row.getCells()[0].value.toString()}')
                                   // UploadDocument(
@@ -191,7 +192,11 @@ class SafetyChecklistDataSource extends DataGridSource {
     if (newCellValue == null || oldValue == newCellValue) {
       return;
     }
-    if (column.columnName == 'srNo') {
+    if (column.columnName == 'User ID') {
+      dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
+          DataGridCell<int>(columnName: 'User ID', value: newCellValue);
+      _checklistModel[dataRowIndex].tbluserid = newCellValue;
+    } else if (column.columnName == 'srNo') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
           DataGridCell<double>(
               columnName: 'srNo', value: newCellValue as double);

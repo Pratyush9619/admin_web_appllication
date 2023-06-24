@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web_appllication/KeyEvents/Grid_DataTableA2.dart';
 import 'package:web_appllication/OverviewPages/closure_report.dart';
 import 'package:web_appllication/OverviewPages/daily_project.dart';
 import 'package:web_appllication/OverviewPages/depot_overview.dart';
@@ -11,14 +12,13 @@ import 'package:web_appllication/widgets/custom_appbar.dart';
 import '../OverviewPages/detailed_Eng.dart';
 import '../KeyEvents/key_events.dart';
 import '../OverviewPages/jmr.dart';
+import '../OverviewPages/material_vendor.dart';
 import '../OverviewPages/testing_report.dart';
 
 class MyOverview extends StatefulWidget {
-  String? userid;
   String depoName;
   String cityName;
-  MyOverview(
-      {super.key, this.userid, required this.depoName, required this.cityName});
+  MyOverview({super.key, required this.depoName, required this.cityName});
 
   @override
   State<MyOverview> createState() => _MyOverviewState();
@@ -74,7 +74,7 @@ class _MyOverviewState extends State<MyOverview> {
     List<String> desription = [
       'Overview of Project Progress Status of ${widget.depoName} EV Bus Charging Infra',
       'Project Planning & Scheduling Bus Depot Wise [Gant Chart] ',
-      'Resource Allocation Planning',
+      'Material Procurement & Vendor Finalization Status',
       'Submission of Daily Progress Report for Individual Project',
       'Monthly Project Monitoring & Review',
       'Detailed Engineering Of Project Documents like GTP, GA Drawing',
@@ -87,31 +87,36 @@ class _MyOverviewState extends State<MyOverview> {
     ];
     pages = [
       DepotOverview(
-        userid: widget.userid,
+        // userid: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
+      // StatutoryAprovalA2(
+      //   depoName: widget.depoName,
+      //   cityName: widget.cityName,
+      // ),
       KeyEvents(
-        userId: widget.userid,
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
-      ResourceAllocation(
-        depoName: widget.depoName,
+      MaterialProcurement(
         cityName: widget.cityName,
+        depoName: widget.depoName,
       ),
+      // ResourceAllocation(
+      //   depoName: widget.depoName,
+      //   cityName: widget.cityName,
+      // ),
       DailyProject(
-        userId: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
       MonthlyProject(
-        userid: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
       DetailedEng(
-        userId: widget.userid,
+        // userId: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
@@ -120,12 +125,12 @@ class _MyOverviewState extends State<MyOverview> {
         depoName: widget.depoName,
       ),
       SafetyChecklist(
-        userId: widget.userid,
+        // userId: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
       QualityChecklist(
-        userId: widget.userid,
+        // userId: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
@@ -134,11 +139,11 @@ class _MyOverviewState extends State<MyOverview> {
         depoName: widget.depoName,
       ),
       ClosureReport(
-          userId: widget.userid,
+          // userId: widget.userid,
           cityName: widget.cityName,
           depoName: widget.depoName),
       KeyEvents(
-        userId: widget.userid,
+        // userId: widget.userid,
         depoName: widget.depoName,
         cityName: widget.cityName,
       ),
@@ -149,7 +154,7 @@ class _MyOverviewState extends State<MyOverview> {
           // ignore: sort_child_properties_last
           child: CustomAppBar(
             text: 'Overview - ${widget.cityName} - ${widget.depoName}',
-            userid: widget.userid,
+            // userid: widget.userid,
           ),
           preferredSize: const Size.fromHeight(50)),
 

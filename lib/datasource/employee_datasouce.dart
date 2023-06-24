@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:web_appllication/KeyEvents/view_AllFiles.dart';
 import 'package:web_appllication/model/employee.dart';
 import 'package:web_appllication/KeyEvents/viewFIle.dart';
 
@@ -89,30 +90,34 @@ class EmployeeDataSource extends DataGridSource {
                   return ElevatedButton(
                       onPressed: () {
                         Navigator.of(ctx).push(MaterialPageRoute(
-                          builder: (context) => ViewFile(
-                              cityName: cityName,
-                              depoName: depoName,
-                              activity:
-                                  '${row.getCells()[1].value.toString()}'),
+                          builder: (context) => ViewAllPdf(
+                            title: '',
+                            docId: '',
+                            cityName: cityName!,
+                            depoName: depoName!,
+                            // activity:
+                            //     '${row.getCells()[1].value.toString()}'
+                          ),
                         ));
-                        // showDialog(
-                        //     context: context,
-                        //     builder: (context) => AlertDialog(
-                        //         content: SizedBox(
-                        //             height: 100,
-                        //             child: Column(
-                        //               mainAxisAlignment:
-                        //                   MainAxisAlignment.spaceBetween,
-                        //               children: [
-                        //                 Text(
-                        //                     'Employee ID: ${row.getCells()[0].value.toString()}'),
-                        //                 Text(
-                        //                     'Employee Name: ${row.getCells()[1].value.toString()}'),
-                        //                 Text(
-                        //                     'Employee Designation: ${row.getCells()[2].value.toString()}'),
-                        //               ],
-                        //             ))));
                       },
+                      // showDialog(
+                      //     context: context,
+                      //     builder: (context) => AlertDialog(
+                      //         content: SizedBox(
+                      //             height: 100,
+                      //             child: Column(
+                      //               mainAxisAlignment:
+                      //                   MainAxisAlignment.spaceBetween,
+                      //               children: [
+                      //                 Text(
+                      //                     'Employee ID: ${row.getCells()[0].value.toString()}'),
+                      //                 Text(
+                      //                     'Employee Name: ${row.getCells()[1].value.toString()}'),
+                      //                 Text(
+                      //                     'Employee Designation: ${row.getCells()[2].value.toString()}'),
+                      //               ],
+                      //             ))));
+
                       child: const Text('View'));
                 })
               : (dataGridCell.columnName == 'ActualStart')

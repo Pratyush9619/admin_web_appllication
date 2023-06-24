@@ -64,4 +64,10 @@ class AuthService {
     final String data = sharedPreferences.getString('employeeId').toString();
     return data;
   }
+
+  Future<String> getCurrentCompanyName() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    final String data = sharedPreferences.getString('companyName').toString();
+    return data;
+  }
 }

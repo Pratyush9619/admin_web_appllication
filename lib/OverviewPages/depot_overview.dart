@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -9,6 +10,7 @@ import 'package:web_appllication/KeyEvents/ChartData.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/style.dart';
 import 'package:web_appllication/widgets/custom_appbar.dart';
+import '../KeyEvents/view_AllFiles.dart';
 import '../datasource/depot_overviewdatasource.dart';
 import '../model/depot_overview.dart';
 
@@ -62,18 +64,23 @@ class _DepotOverviewState extends State<DepotOverview> {
   @override
   void initState() {
     getUserId().whenComplete(() => identifyUser());
-    _fetchUserData();
+    // _fetchUserData();
 
-    _employees = getEmployeeData();
-    // ignore: use_build_context_synchronously
+    // _employees = getEmployeeData();
     _employeeDataSource = DepotOverviewDatasource(_employees, context);
     _dataGridController = DataGridController();
-    _stream = FirebaseFirestore.instance
-        .collection('OverviewCollectionTable')
-        .doc(widget.depoName)
-        .collection("OverviewTabledData")
-        .doc(widget.userid)
-        .snapshots();
+    // ignore: use_build_context_synchronously
+    getTableData().whenComplete(() {
+      _employeeDataSource = DepotOverviewDatasource(_employees, context);
+      _dataGridController = DataGridController();
+    });
+
+    // _stream = FirebaseFirestore.instance
+    //     .collection('OverviewCollectionTable')
+    //     .doc(widget.depoName)
+    //     .collection("OverviewTabledData")
+    //     .doc(widget.userid)
+    //     .snapshots();
 
     _stream1 = FirebaseFirestore.instance
         .collection('OverviewCollection')
@@ -97,6 +104,7 @@ class _DepotOverviewState extends State<DepotOverview> {
     //     .doc(widget.depoName)
     //     .snapshots();
     super.initState();
+
     // _textEditingController =
     //     TextEditingController(text: _textprovider.changedata);
     // _textEditingController2 =
@@ -136,6 +144,8 @@ class _DepotOverviewState extends State<DepotOverview> {
                 FirebaseFirestore.instance
                     .collection('OverviewCollection')
                     .doc(widget.depoName)
+                    .collection("OverviewFieldData")
+                    .doc(widget.userid)
                     .set({
                   'address': address ?? '',
                   'scope': scope ?? '',
@@ -309,7 +319,6 @@ class _DepotOverviewState extends State<DepotOverview> {
                                 //     ),
                                 //   ],
                                 // ),
-
                                 Padding(
                                   padding: const EdgeInsets.all(5.0),
                                   child: Container(
@@ -357,6 +366,7 @@ class _DepotOverviewState extends State<DepotOverview> {
                                                 const EdgeInsets.symmetric(
                                                     horizontal: 16),
                                             allowEditing: true,
+                                            visible: false,
                                             label: Container(
                                               alignment: Alignment.center,
                                               child: Text(
@@ -924,12 +934,7 @@ class _DepotOverviewState extends State<DepotOverview> {
       child: Container(
         width: 550,
         child: StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection('OverviewCollection')
-              .doc(widget.depoName)
-              .collection("OverviewFieldData")
-              .doc(widget.userid)
-              .snapshots(),
+          stream: _stream1,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return SingleChildScrollView(
@@ -1286,7 +1291,7 @@ class _DepotOverviewState extends State<DepotOverview> {
                               minLines: 1,
                               autofocus: false,
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 13),
+                              style: const TextStyle(fontSize: 13),
                               onChanged: (value) {
                                 civilmanagername = value;
                               }),
@@ -1381,10 +1386,11 @@ class _DepotOverviewState extends State<DepotOverview> {
                               ElevatedButton(
                                   onPressed: () async {
                                     result = await FilePicker.platform
-                                        .pickFiles(
-                                            type: FileType.custom,
-                                            withData: true,
-                                            allowedExtensions: ['pdf']);
+                                        .pickFiles(type: FileType.any
+                                            // type: FileType.custom,
+                                            // withData: true,
+                                            // allowedExtensions: ['pdf']
+                                            );
                                     fileBytes = result!.files.first.bytes;
                                     if (result == null) {
                                       print("No file selected");
@@ -1427,8 +1433,16 @@ class _DepotOverviewState extends State<DepotOverview> {
                             IconButton(
                                 alignment: Alignment.bottomRight,
                                 padding: const EdgeInsets.only(bottom: 5),
-                                onPressed: () {},
-                                icon: Icon(Icons.delete, color: red))
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => ViewAllPdf(
+                                          title: '/BOQElectrical',
+                                          cityName: widget.cityName!,
+                                          depoName: widget.depoName!,
+                                          userId: widget.userid!,
+                                          docId: 'electrical')));
+                                },
+                                icon: Icon(Icons.folder, color: yellow))
                           ],
                         ),
                       ],
@@ -1459,11 +1473,12 @@ class _DepotOverviewState extends State<DepotOverview> {
                               ElevatedButton(
                                   onPressed: () async {
                                     result2 = await FilePicker.platform
-                                        .pickFiles(
-                                            type: FileType.custom,
-                                            withData: true,
-                                            allowedExtensions: ['pdf']);
-                                    fileBytes2 = result!.files.first.bytes;
+                                        .pickFiles(type: FileType.any
+                                            // type: FileType.custom,
+                                            // withData: true,
+                                            // allowedExtensions: ['pdf']
+                                            );
+                                    fileBytes2 = result2!.files.first.bytes;
                                     if (result2 == null) {
                                       print("No file selected");
                                     } else {
@@ -1504,9 +1519,17 @@ class _DepotOverviewState extends State<DepotOverview> {
                                 )),
                             IconButton(
                                 alignment: Alignment.bottomRight,
-                                padding: EdgeInsets.only(bottom: 5),
-                                onPressed: () {},
-                                icon: Icon(Icons.delete, color: red))
+                                padding: const EdgeInsets.only(bottom: 5),
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => ViewAllPdf(
+                                          title: '/BOQSurvey',
+                                          cityName: widget.cityName!,
+                                          depoName: widget.depoName!,
+                                          userId: widget.userid!,
+                                          docId: 'survey')));
+                                },
+                                icon: Icon(Icons.folder, color: yellow))
                           ],
                         ),
                         // TextFormField(
@@ -1638,12 +1661,13 @@ class _DepotOverviewState extends State<DepotOverview> {
                               ElevatedButton(
                                   onPressed: () async {
                                     result1 = await FilePicker.platform
-                                        .pickFiles(
-                                            type: FileType.custom,
-                                            withData: true,
-                                            allowedExtensions: ['pdf']);
+                                        .pickFiles(type: FileType.any
+                                            // type: FileType.custom,
+                                            // withData: true,
+                                            // allowedExtensions: ['pdf']
+                                            );
                                     fileBytes1 = result1!.files.first.bytes;
-                                    if (result == null) {
+                                    if (result1 == null) {
                                       print("No file selected");
                                     } else {
                                       setState(() {});
@@ -1684,10 +1708,18 @@ class _DepotOverviewState extends State<DepotOverview> {
                             IconButton(
                                 alignment: Alignment.bottomRight,
                                 padding: EdgeInsets.only(bottom: 5),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => ViewAllPdf(
+                                          title: '/BOQCivil',
+                                          cityName: widget.cityName!,
+                                          depoName: widget.depoName!,
+                                          userId: widget.userid!,
+                                          docId: 'civil')));
+                                },
                                 icon: Icon(
-                                  Icons.delete,
-                                  color: red,
+                                  Icons.folder,
+                                  color: yellow,
                                 ))
                           ],
                         ),
@@ -1809,6 +1841,28 @@ class _DepotOverviewState extends State<DepotOverview> {
     }
   }
 
+  Future getTableData() async {
+    var res = await FirebaseFirestore.instance
+        .collection('OverviewCollectionTable')
+        .doc(widget.depoName)
+        .collection("OverviewTabledData")
+        .get()
+        .then((value) {
+      value.docs.forEach((element) {
+        for (int i = 0; i < element.data()["data"].length; i++) {
+          print(element.data()['data'][i]);
+          _employees
+              .add(DepotOverviewModel.fromJson(element.data()['data'][i]));
+          print(_employees.length);
+        }
+      });
+    });
+    // .doc(widget.userid)
+    // .snapshots();
+    print(_employees.length);
+    setState(() {});
+  }
+
   void _fetchUserData() async {
     await FirebaseFirestore.instance
         .collection('OverviewCollection')
@@ -1825,6 +1879,12 @@ class _DepotOverviewState extends State<DepotOverview> {
         charger = ds.data()!['charger'];
         load = ds.data()!['load'];
         powerSource = ds.data()!['powerSource'];
+        electmanagername = ds.data()!['ElectricalManagerName'];
+        elecEng = ds.data()!['ElectricalEng'];
+        elecVendor = ds.data()!['ElectricalVendor'];
+        civilmanagername = ds.data()!['CivilManagerName'];
+        civilEng = ds.data()!['CivilEng'];
+        civilVendor = ds.data()!['CivilVendor'];
       });
     });
   }
@@ -1845,13 +1905,32 @@ class _DepotOverviewState extends State<DepotOverview> {
         .doc(widget.depoName)
         .set({
       'data': tabledata2,
-    }).whenComplete(() {
+    }).whenComplete(() async {
       tabledata2.clear();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text('Data are synced'),
-        backgroundColor: blue,
-      ));
+      tabledata2.clear();
+      if (fileBytes != null || fileBytes1 != null || fileBytes2 != null) {
+        await FirebaseStorage.instance
+            .ref(
+                'BOQElectrical/${widget.cityName}/${widget.depoName}/${widget.userid}/electrical/${result!.files.first.name}')
+            .putData(
+                fileBytes!, SettableMetadata(contentType: 'application/pdf'));
+        await FirebaseStorage.instance
+            .ref(
+                'BOQCivil/${widget.cityName}/${widget.depoName}/${widget.userid}/civil/${result1!.files.first.name}')
+            .putData(
+                fileBytes1!, SettableMetadata(contentType: 'application/pdf'));
+
+        await FirebaseStorage.instance
+            .ref(
+                'BOQSurvey/${widget.cityName}/${widget.depoName}/${widget.userid}/survey/${result1!.files.first.name}')
+            .putData(
+                fileBytes2!, SettableMetadata(contentType: 'application/pdf'));
+      }
     });
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: const Text('Data are synced'),
+      backgroundColor: blue,
+    ));
   }
 }
 

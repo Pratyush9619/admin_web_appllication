@@ -4,12 +4,17 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 
+import '../KeyEvents/upload.dart';
 import '../model/quality_checklistModel.dart';
 
 class QualityChecklistDataSource extends DataGridSource {
-  // BuildContext mainContext;
-  QualityChecklistDataSource(this._checklistModel) {
+  BuildContext mainContext;
+  String cityName;
+  String depoName;
+  QualityChecklistDataSource(
+      this._checklistModel, this.mainContext, this.cityName, this.depoName) {
     buildDataGridRows();
   }
   void buildDataGridRows() {
@@ -66,37 +71,38 @@ class QualityChecklistDataSource extends DataGridSource {
               Alignment.center,
           // : Alignment.center,
           padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child:
-              // dataGridCell.columnName == 'button'
-              //     ? LayoutBuilder(
-              //         builder: (BuildContext context, BoxConstraints constraints) {
-              //         return ElevatedButton(
-              //             onPressed: () {
-              //               Navigator.of(context).push(MaterialPageRoute(
-              //                 builder: (context) => UploadDocument(
-              //                     activity:
-              //                         '${row.getCells()[1].value.toString()}'),
-              //               ));
-              //               // showDialog(
-              //               //     context: context,
-              //               //     builder: (context) => AlertDialog(
-              //               //         content: SizedBox(
-              //               //             height: 100,
-              //               //             child: Column(
-              //               //               mainAxisAlignment:
-              //               //                   MainAxisAlignment.spaceBetween,
-              //               //               children: [
-              //               //                 Text(
-              //               //                     'JMRModel ID: ${row.getCells()[0].value.toString()}'),
-              //               //                 Text(
-              //               //                     'JMRModel Name: ${row.getCells()[1].value.toString()}'),
-              //               //                 Text(
-              //               //                     'JMRModel Designation: ${row.getCells()[2].value.toString()}'),
-              //               //               ],
-              //               //             ))));
-              //             },
-              //             child: const Text('Upload'));
-              //       })
+          child: dataGridCell.columnName == 'Upload'
+              ? LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                  return ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => UploadDocument(
+                            title: '',
+                            activity: '${row.getCells()[1].value.toString()}',
+                            userId: userId,
+                          ),
+                        ));
+                        //               // showDialog(
+                        //               //     context: context,
+                        //               //     builder: (context) => AlertDialog(
+                        //               //         content: SizedBox(
+                        //               //             height: 100,
+                        //               //             child: Column(
+                        //               //               mainAxisAlignment:
+                        //               //                   MainAxisAlignment.spaceBetween,
+                        //               //               children: [
+                        //               //                 Text(
+                        //               //                     'JMRModel ID: ${row.getCells()[0].value.toString()}'),
+                        //               //                 Text(
+                        //               //                     'JMRModel Name: ${row.getCells()[1].value.toString()}'),
+                        //               //                 Text(
+                        //               //                     'JMRModel Designation: ${row.getCells()[2].value.toString()}'),
+                        //               //               ],
+                        //               //             ))));
+                      },
+                      child: const Text('Upload'));
+                })
               //     : dataGridCell.columnName == 'ActualStart' ||
               //             dataGridCell.columnName == 'ActualEnd'
               //         ? Row(
@@ -398,10 +404,10 @@ class QualityChecklistDataSource extends DataGridSource {
               //               Text(dataGridCell.value.toString()),
               //             ],
               //           )
-              //         :
-              Text(
-            dataGridCell.value.toString(),
-          ));
+
+              : Text(
+                  dataGridCell.value.toString(),
+                ));
     }).toList());
   }
 

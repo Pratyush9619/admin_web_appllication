@@ -57,9 +57,12 @@ dependencies:
   jiffy: ^5.0.0
   open_app_file: ^4.0.1
   path_provider: ^2.0.11
+  pdf: null
+  pdfx:
   provider: ^6.0.5
   shared_preferences: ^2.0.15
   syncfusion_flutter_charts: ^20.3.58
+  syncfusion_flutter_core: null
   syncfusion_flutter_datagrid: ^20.4.38
   syncfusion_flutter_datepicker: ^20.4.38
   syncfusion_flutter_pdfviewer: ^20.3.58

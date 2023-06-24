@@ -12,14 +12,14 @@ class ViewAllPdf extends StatefulWidget {
   String title;
   String cityName;
   String depoName;
-  String userId;
+  String? userId;
   String docId;
   ViewAllPdf(
       {super.key,
       required this.title,
       required this.cityName,
       required this.depoName,
-      required this.userId,
+      this.userId,
       required this.docId});
 
   @override

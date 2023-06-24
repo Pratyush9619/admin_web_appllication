@@ -21,7 +21,7 @@ class UploadDocument extends StatefulWidget {
       {super.key,
       required this.title,
       required this.activity,
-      required this.userId,
+      this.userId,
       this.cityName,
       this.depoName});
 

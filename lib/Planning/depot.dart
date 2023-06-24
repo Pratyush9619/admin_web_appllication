@@ -10,6 +10,7 @@ import 'package:web_appllication/Planning/userId.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/style.dart';
 
+import '../Authentication/auth_service.dart';
 import '../OverviewPages/daily_project.dart';
 
 class Mydepots extends StatefulWidget {
@@ -27,25 +28,36 @@ class _MydepotsState extends State<Mydepots> {
   File? pickedImage;
   // Uint8List? webImage;
   dynamic webImage;
-  bool? isLoading = true;
+  String? companyName;
+  bool isLoading = true;
+  @override
+  void initState() {
+    super.initState();
+    getcompany();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          PopupDialog(context);
-        },
-        child: Icon(Icons.add),
-        backgroundColor: blue,
-      ),
-      appBar: AppBar(
-        backgroundColor: blue,
-        title: Text('Depots - ${widget.cityName!}'),
-      ),
-      body: depolist(),
+    return isLoading
+        ? LoadingPage()
+        : Scaffold(
+            floatingActionButton: companyName == 'TATA POWER'
+                ? FloatingActionButton(
+                    onPressed: () {
+                      PopupDialog(context);
+                    },
+                    child: Icon(Icons.add),
+                    backgroundColor: blue,
+                  )
+                : Container(),
+            appBar: AppBar(
+              backgroundColor: blue,
+              title: Text('Depots - ${widget.cityName!}'),
+            ),
+            body: depolist(),
 
-      // Center(child: Text(widget.cityName!)),
-    );
+            // Center(child: Text(widget.cityName!)),
+          );
   }
 
   PopupDialog(BuildContext context) {
@@ -270,29 +282,29 @@ class _MydepotsState extends State<Mydepots> {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) =>
-                                            //  DailyProject(
-                                            //   // userId: widget.userid,
-                                            //   cityName: widget.cityName,
-                                            //   depoName: widget.depoName,
-                                            // ),
-                                             UserId(
-                                                  cityName: widget.cityName!,
-                                                  depoName: snapshot
-                                                          .data!.docs[index]
-                                                      ['DepoName'],
-                                                )
-                                            // MyOverview(
-                                            //   cityName: widget.cityName!,
-                                            //   depoName: snapshot
-                                            //           .data!.docs[index]
-                                            //       ['DepoName'],
-                                            // )
-                                            // Mydepots(
-                                            //       cityName: snapshot.data!
-                                            //           .docs[index]['cityName'],
-                                            //     )
-                                          ));
+                                              builder: (context) =>
+                                                  //  DailyProject(
+                                                  //   // userId: widget.userid,
+                                                  //   cityName: widget.cityName,
+                                                  //   depoName: widget.depoName,
+                                                  // ),
+                                                  //  UserId(
+                                                  //       cityName: widget.cityName!,
+                                                  //       depoName: snapshot
+                                                  //               .data!.docs[index]
+                                                  //           ['DepoName'],
+                                                  //     )
+                                                  MyOverview(
+                                                    cityName: widget.cityName!,
+                                                    depoName: snapshot
+                                                            .data!.docs[index]
+                                                        ['DepoName'],
+                                                  )
+                                              // Mydepots(
+                                              //       cityName: snapshot.data!
+                                              //           .docs[index]['cityName'],
+                                              //     )
+                                              ));
                                     },
                                     child: Text(
                                         snapshot.data!.docs[index]['DepoName']))
@@ -366,5 +378,14 @@ class _MydepotsState extends State<Mydepots> {
             return LoadingPage();
           }
         });
+  }
+
+  Future<void> getcompany() async {
+    await AuthService().getCurrentCompanyName().then((value) {
+      companyName = value;
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 }

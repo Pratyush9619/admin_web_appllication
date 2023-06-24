@@ -21,8 +21,7 @@ class StatutoryAprovalA3 extends StatefulWidget {
   String? userid;
   String? depoName;
   String? cityName;
-  StatutoryAprovalA3(
-      {Key? key, required this.userid, this.depoName, this.cityName})
+  StatutoryAprovalA3({Key? key, this.userid, this.depoName, this.cityName})
       : super(key: key);
 
   @override

@@ -13,10 +13,10 @@ import '../style.dart';
 class DetailedEngSource extends DataGridSource {
   String cityName;
   String depoName;
-  String userId;
+
   BuildContext mainContext;
-  DetailedEngSource(this._detailedeng, this.mainContext, this.cityName,
-      this.depoName, this.userId) {
+  DetailedEngSource(
+      this._detailedeng, this.mainContext, this.cityName, this.depoName) {
     buildDataGridRows();
   }
   void buildDataGridRows() {
@@ -136,7 +136,7 @@ class DetailedEngSource extends DataGridSource {
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => UploadDocument(
-                                userId: userId,
+                                // userId: userId,
                                 title: 'DetailedEngRFC',
                                 cityName: cityName,
                                 depoName: depoName,
@@ -174,7 +174,7 @@ class DetailedEngSource extends DataGridSource {
                                       title: 'DetailedEngRFC',
                                       cityName: cityName,
                                       depoName: depoName,
-                                      userId: userId,
+                                      // userId: userId,
                                       docId:
                                           '${row.getCells()[4].value.toString()}')
                                   // ViewFile()

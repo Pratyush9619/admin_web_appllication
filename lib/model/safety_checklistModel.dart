@@ -7,7 +7,7 @@ class SafetyChecklistModel {
     required this.status,
     required this.remark,
     required this.photo,
-
+    required this.tbluserid,
     // required this.weightage,
   });
 
@@ -16,9 +16,11 @@ class SafetyChecklistModel {
   String status;
   String remark;
   String photo;
+  String? tbluserid;
 
   factory SafetyChecklistModel.fromJson(Map<String, dynamic> json) {
     return SafetyChecklistModel(
+      tbluserid: json['User ID'],
       srNo: json['srNo'],
       details: json['Details'],
       remark: json['Remark'],
@@ -30,9 +32,9 @@ class SafetyChecklistModel {
 
   DataGridRow getDataGridRow() {
     return DataGridRow(cells: <DataGridCell>[
+      DataGridCell(columnName: 'User ID', value: tbluserid),
       DataGridCell<double>(columnName: 'srNo', value: srNo),
       DataGridCell<String>(columnName: 'Details', value: details),
-
       DataGridCell<String>(columnName: 'Status', value: status),
       DataGridCell<String>(columnName: 'Remark', value: remark),
       DataGridCell<String>(columnName: 'Photo', value: photo),

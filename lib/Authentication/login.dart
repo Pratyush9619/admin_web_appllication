@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_appllication/Authentication/reset_password.dart';
+import 'package:web_appllication/Planning/cities.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/main.dart';
 import 'package:web_appllication/small_screen.dart';
@@ -20,6 +21,7 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
   bool isloading = false;
+  String _companyName = '';
   String _id = "";
   String _pass = "";
   bool _isHidden = true;
@@ -268,14 +270,27 @@ class _SignInPageState extends State<SignInPage> {
 
       try {
         if (_pass == snap.docs[0]['Password'] &&
-            _id == snap.docs[0]['Employee Id']) {
+            _id == snap.docs[0]['Employee Id'] &&
+            snap.docs[0]['CompanyName'] == 'TATA POWER') {
           _sharedPreferences = await SharedPreferences.getInstance();
+          _sharedPreferences.setString(
+              'companyName', snap.docs[0]['CompanyName']);
           _sharedPreferences.setString('employeeId', _id).then((_) {
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const SmallScreen(),
                 ));
+          });
+        } else if (_pass == snap.docs[0]['Password'] &&
+            _id == snap.docs[0]['Employee Id'] &&
+            snap.docs[0]['CompanyName'] == 'TATA MOTOR') {
+          _sharedPreferences = await SharedPreferences.getInstance();
+          _sharedPreferences.setString(
+              'companyName', snap.docs[0]['CompanyName']);
+          _sharedPreferences.setString('employeeId', _id).then((_) {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const CitiesPage()));
           });
         } else {
           // ignore: use_build_context_synchronously

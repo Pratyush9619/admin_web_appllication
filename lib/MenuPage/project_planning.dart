@@ -12,6 +12,6 @@ class ProjectPanning extends StatefulWidget {
 class _ProjectPanningState extends State<ProjectPanning> {
   @override
   Widget build(BuildContext context) {
-    return CitiesPage();
+    return const CitiesPage();
   }
 }
