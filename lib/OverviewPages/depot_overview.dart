@@ -34,7 +34,6 @@ class _DepotOverviewState extends State<DepotOverview> {
   FilePickerResult? result1;
   FilePickerResult? result2;
   Uint8List? fileBytes;
-  bool _isloading = true;
   bool specificUser = true;
 
   dynamic address,
@@ -60,32 +59,43 @@ class _DepotOverviewState extends State<DepotOverview> {
   Uint8List? fileBytes2;
   QuerySnapshot? snap;
   bool isloading = true;
+  String? companyName;
+
+  List id = [];
 
   @override
   void initState() {
-    getUserId().whenComplete(() => identifyUser());
-    // _fetchUserData();
-
-    // _employees = getEmployeeData();
     _employeeDataSource = DepotOverviewDatasource(_employees, context);
     _dataGridController = DataGridController();
-    // ignore: use_build_context_synchronously
-    getTableData().whenComplete(() {
-      _employeeDataSource = DepotOverviewDatasource(_employees, context);
-      _dataGridController = DataGridController();
+    getUserId().whenComplete(() {
+      identifyUser();
+
+      getFieldUserId().whenComplete(() {
+        // _fetchUserData().then((value) {
+        _stream1 = FirebaseFirestore.instance
+            .collection('OverviewCollection')
+            .doc(widget.depoName)
+            .collection('OverviewFieldData')
+            .doc(id[0])
+            .snapshots();
+        getTableData().whenComplete(() {
+          _employeeDataSource = DepotOverviewDatasource(_employees, context);
+          _dataGridController = DataGridController();
+          isloading = false;
+          setState(() {});
+        });
+      });
     });
+    //});
 
-    // _stream = FirebaseFirestore.instance
-    //     .collection('OverviewCollectionTable')
-    //     .doc(widget.depoName)
-    //     .collection("OverviewTabledData")
-    //     .doc(widget.userid)
-    //     .snapshots();
+    // _employees = getEmployeeData();
 
-    _stream1 = FirebaseFirestore.instance
-        .collection('OverviewCollection')
+    // ignore: use_build_context_synchronously
+
+    _stream = FirebaseFirestore.instance
+        .collection('OverviewCollectionTable')
         .doc(widget.depoName)
-        .collection('OverviewFieldData')
+        .collection("OverviewTabledData")
         .doc(widget.userid)
         .snapshots();
 
@@ -103,6 +113,7 @@ class _DepotOverviewState extends State<DepotOverview> {
     //     .collection('OverviewCollection')
     //     .doc(widget.depoName)
     //     .snapshots();
+
     super.initState();
 
     // _textEditingController =
@@ -117,7 +128,6 @@ class _DepotOverviewState extends State<DepotOverview> {
     //     TextEditingController(text: _textprovider.changedata);
     // _textEditingController6 =
     //     TextEditingController(text: _textprovider.changedata);
-    isloading = false;
   }
 
   final List<PieChartData> chartData = [
@@ -139,7 +149,8 @@ class _DepotOverviewState extends State<DepotOverview> {
               text: '${widget.cityName}/ ${widget.depoName} /Depot Overview',
               userid: widget.userid,
               // icon: Icons.logout,
-              haveSynced: specificUser ? true : false,
+              haveSynced: false,
+              // specificUser ? true : false,
               store: () {
                 FirebaseFirestore.instance
                     .collection('OverviewCollection')
@@ -906,25 +917,28 @@ class _DepotOverviewState extends State<DepotOverview> {
                   ),
                 ],
               ),
-        floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.add),
-            onPressed: (() {
-              _employees.add(DepotOverviewModel(
-                  srNo: 1,
-                  date: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-                  riskDescription: 'dedd',
-                  typeRisk: 'Material Supply',
-                  impactRisk: 'High',
-                  owner: 'Pratyush',
-                  migrateAction: ' lkmlm',
-                  contigentAction: 'mlkmlk',
-                  progressAction: 'iio',
-                  reason: '',
-                  TargetDate: DateFormat('dd-MM-yyyy').format(DateTime.now()),
-                  status: 'Close'));
-              _employeeDataSource.buildDataGridRows();
-              _employeeDataSource.updateDatagridSource();
-            })),
+        floatingActionButton: companyName == 'TATA POWER'
+            ? FloatingActionButton(
+                child: Icon(Icons.add),
+                onPressed: (() {
+                  _employees.add(DepotOverviewModel(
+                      srNo: 1,
+                      date: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+                      riskDescription: 'dedd',
+                      typeRisk: 'Material Supply',
+                      impactRisk: 'High',
+                      owner: 'Pratyush',
+                      migrateAction: ' lkmlm',
+                      contigentAction: 'mlkmlk',
+                      progressAction: 'iio',
+                      reason: '',
+                      TargetDate:
+                          DateFormat('dd-MM-yyyy').format(DateTime.now()),
+                      status: 'Close'));
+                  _employeeDataSource.buildDataGridRows();
+                  _employeeDataSource.updateDatagridSource();
+                }))
+            : Container(),
       ),
     );
   }
@@ -934,33 +948,137 @@ class _DepotOverviewState extends State<DepotOverview> {
       child: Container(
         width: 550,
         child: StreamBuilder(
-          stream: _stream1,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 280,
-                          child: Text('Depots location and Address ',
-                              textAlign: TextAlign.start, style: formtext),
-                        ),
-                        Container(
+            stream: _stream1,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 280,
+                            child: Text('Depots location and Address ',
+                                textAlign: TextAlign.start, style: formtext),
+                          ),
+                          Container(
+                              width: 200,
+                              height: 35,
+                              child: TextFormField(
+                                  decoration: const InputDecoration(
+                                    enabled: true,
+                                  ),
+                                  initialValue: snapshot.data!
+                                          .data()
+                                          .toString()
+                                          .contains('address')
+                                      ? snapshot.data!.get('address') ?? ''
+                                      : '',
+                                  maxLines: 1,
+                                  textInputAction: TextInputAction.done,
+                                  minLines: 1,
+                                  autofocus: false,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 13),
+                                  onChanged: (value) {
+                                    address = value;
+                                  },
+                                  onSaved: (value) {
+                                    address = value;
+                                  })),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 200,
+                            child: Text('No of Buses in Scope',
+                                textAlign: TextAlign.start, style: formtext),
+                          ),
+                          Container(
                             width: 200,
                             height: 35,
                             child: TextFormField(
-                                decoration: const InputDecoration(
-                                  enabled: true,
-                                ),
+                                decoration:
+                                    const InputDecoration(enabled: true),
                                 initialValue: snapshot.data!
                                         .data()
                                         .toString()
-                                        .contains('address')
-                                    ? snapshot.data!.get('address') ?? ''
-                                    : 'Enter Address',
+                                        .contains('scope')
+                                    ? snapshot.data!.get('scope') ?? ''
+                                    : '',
+                                maxLines: 1,
+                                textInputAction: TextInputAction.done,
+                                minLines: 1,
+                                autofocus: false,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 13),
+                                onSaved: (newValue) {
+                                  scope = newValue;
+                                },
+                                onChanged: (value) {
+                                  scope = value;
+                                }),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 200,
+                            child: Text('No. of Charger Required ',
+                                textAlign: TextAlign.start, style: formtext),
+                          ),
+                          SizedBox(
+                            width: 200,
+                            height: 35,
+                            child: TextFormField(
+                                decoration:
+                                    const InputDecoration(enabled: true),
+                                initialValue: snapshot.data!
+                                        .data()
+                                        .toString()
+                                        .contains('required')
+                                    ? snapshot.data!.get('required') ?? ''
+                                    : '',
+                                maxLines: 1,
+                                textInputAction: TextInputAction.done,
+                                minLines: 1,
+                                autofocus: false,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 13),
+                                onChanged: (value) {
+                                  required = value;
+                                }),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 200,
+                            child: Text('Rating Of charger ',
+                                textAlign: TextAlign.start, style: formtext),
+                          ),
+                          Container(
+                            width: 200,
+                            height: 35,
+                            child: TextFormField(
+                                decoration:
+                                    const InputDecoration(enabled: true),
+                                initialValue: snapshot.data!
+                                        .data()
+                                        .toString()
+                                        .contains('charger')
+                                    ? snapshot.data!.get('charger') ?? ''
+                                    : '',
                                 maxLines: 1,
                                 textInputAction: TextInputAction.done,
                                 minLines: 1,
@@ -968,856 +1086,768 @@ class _DepotOverviewState extends State<DepotOverview> {
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(fontSize: 13),
                                 onChanged: (value) {
-                                  address = value;
-                                },
-                                onSaved: (value) {
-                                  address = value;
-                                })),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 200,
-                          child: Text('No of Buses in Scope',
-                              textAlign: TextAlign.start, style: formtext),
-                        ),
-                        Container(
-                          width: 200,
-                          height: 35,
-                          child: TextFormField(
-                              decoration: const InputDecoration(enabled: true),
-                              initialValue: snapshot.data!
-                                      .data()
-                                      .toString()
-                                      .contains('scope')
-                                  ? snapshot.data!.get('scope') ?? ''
-                                  : 'Enter scope',
-                              maxLines: 1,
-                              textInputAction: TextInputAction.done,
-                              minLines: 1,
-                              autofocus: false,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 13),
-                              onSaved: (newValue) {
-                                scope = newValue;
-                              },
-                              onChanged: (value) {
-                                scope = value;
-                              }),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 200,
-                          child: Text('No. of Charger Required ',
-                              textAlign: TextAlign.start, style: formtext),
-                        ),
-                        SizedBox(
-                          width: 200,
-                          height: 35,
-                          child: TextFormField(
-                              decoration: const InputDecoration(enabled: true),
-                              initialValue: snapshot.data!
-                                      .data()
-                                      .toString()
-                                      .contains('required')
-                                  ? snapshot.data!.get('required') ?? ''
-                                  : 'Enter Required',
-                              maxLines: 1,
-                              textInputAction: TextInputAction.done,
-                              minLines: 1,
-                              autofocus: false,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 13),
-                              onChanged: (value) {
-                                required = value;
-                              }),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 200,
-                          child: Text('Rating Of charger ',
-                              textAlign: TextAlign.start, style: formtext),
-                        ),
-                        Container(
-                          width: 200,
-                          height: 35,
-                          child: TextFormField(
-                              decoration: const InputDecoration(enabled: true),
-                              initialValue: snapshot.data!
-                                      .data()
-                                      .toString()
-                                      .contains('charger')
-                                  ? snapshot.data!.get('charger') ?? ''
-                                  : 'Enter no. of Charger',
-                              maxLines: 1,
-                              textInputAction: TextInputAction.done,
-                              minLines: 1,
-                              autofocus: false,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 13),
-                              onChanged: (value) {
-                                charger = value;
-                              }),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 200,
-                          child: Text('Required Sanctioned load ',
-                              textAlign: TextAlign.start, style: formtext),
-                        ),
-                        Container(
-                          width: 200,
-                          height: 35,
-                          child: TextFormField(
-                              decoration: const InputDecoration(enabled: true),
-                              initialValue: snapshot.data!
-                                      .data()
-                                      .toString()
-                                      .contains('load')
-                                  ? snapshot.data!.get('load') ?? ''
-                                  : 'Enter  load ',
-                              maxLines: 1,
-                              textInputAction: TextInputAction.done,
-                              minLines: 1,
-                              autofocus: false,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 13),
-                              onChanged: (value) {
-                                load = value;
-                              }),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 280,
-                          child: Text('Existing Utility for power source ',
-                              textAlign: TextAlign.start, style: formtext),
-                        ),
-                        Container(
-                          width: 200,
-                          height: 35,
-                          child: TextFormField(
-                              decoration: const InputDecoration(enabled: true),
-                              initialValue: snapshot.data!
-                                      .data()
-                                      .toString()
-                                      .contains('powerSource')
-                                  ? snapshot.data!.get('powerSource') ?? ''
-                                  : 'Enter  PowerSource ',
-                              textInputAction: TextInputAction.done,
-                              minLines: 1,
-                              autofocus: false,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 13),
-                              onChanged: (value) {
-                                powerSource = value;
-                              }),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: blue),
-                          child: Text('Electrical',
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: white)),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 280,
-                          child: Text('Project Manager ',
-                              textAlign: TextAlign.start, style: formtext),
-                        ),
-                        Container(
-                          width: 200,
-                          height: 35,
-                          child: TextFormField(
-                              decoration: const InputDecoration(enabled: true),
-                              initialValue: snapshot.data!
-                                      .data()
-                                      .toString()
-                                      .contains('ElectricalManagerName')
-                                  ? snapshot.data!
-                                          .get('ElectricalManagerName') ??
-                                      ''
-                                  : '',
-                              textInputAction: TextInputAction.done,
-                              minLines: 1,
-                              autofocus: false,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 13),
-                              onChanged: (value) {
-                                electmanagername = value;
-                              }),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 280,
-                          child: Text('Electrical Engineer ',
-                              textAlign: TextAlign.start, style: formtext),
-                        ),
-                        Container(
-                          width: 200,
-                          height: 35,
-                          child: TextFormField(
-                              decoration: const InputDecoration(enabled: true),
-                              initialValue: snapshot.data!
-                                      .data()
-                                      .toString()
-                                      .contains('ElectricalEng')
-                                  ? snapshot.data!.get('ElectricalEng') ?? ''
-                                  : '',
-                              textInputAction: TextInputAction.done,
-                              minLines: 1,
-                              autofocus: false,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 13),
-                              onChanged: (value) {
-                                elecEng = value;
-                              }),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 280,
-                          child: Text('Electrical Vendor',
-                              textAlign: TextAlign.start, style: formtext),
-                        ),
-                        Container(
-                          width: 200,
-                          height: 35,
-                          child: TextFormField(
-                              decoration: const InputDecoration(enabled: true),
-                              initialValue: snapshot.data!
-                                      .data()
-                                      .toString()
-                                      .contains('ElectricalVendor')
-                                  ? snapshot.data!.get('ElectricalVendor') ?? ''
-                                  : '',
-                              textInputAction: TextInputAction.done,
-                              minLines: 1,
-                              autofocus: false,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 13),
-                              onChanged: (value) {
-                                elecVendor = value;
-                              }),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: blue),
-                          child: Text('Civil',
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: white)),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 280,
-                          child: Text('Project Manager ',
-                              textAlign: TextAlign.start, style: formtext),
-                        ),
-                        Container(
-                          width: 200,
-                          height: 35,
-                          child: TextFormField(
-                              decoration: const InputDecoration(enabled: true),
-                              initialValue: snapshot.data!
-                                      .data()
-                                      .toString()
-                                      .contains('CivilManagerName')
-                                  ? snapshot.data!.get('CivilManagerName') ?? ''
-                                  : '',
-                              textInputAction: TextInputAction.done,
-                              minLines: 1,
-                              autofocus: false,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 13),
-                              onChanged: (value) {
-                                civilmanagername = value;
-                              }),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 280,
-                          child: Text('Civil Engineer ',
-                              textAlign: TextAlign.start, style: formtext),
-                        ),
-                        Container(
-                          width: 200,
-                          height: 35,
-                          child: TextFormField(
-                              decoration: const InputDecoration(enabled: true),
-                              initialValue: snapshot.data!
-                                      .data()
-                                      .toString()
-                                      .contains('CivilEng')
-                                  ? snapshot.data!.get('CivilEng') ?? ''
-                                  : '',
-                              textInputAction: TextInputAction.done,
-                              minLines: 1,
-                              autofocus: false,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 13),
-                              onChanged: (value) {
-                                civilEng = value;
-                              }),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 280,
-                          child: Text('Civil Vendor',
-                              textAlign: TextAlign.start, style: formtext),
-                        ),
-                        Container(
-                          width: 200,
-                          height: 35,
-                          child: TextFormField(
-                              decoration: const InputDecoration(enabled: true),
-                              initialValue: snapshot.data!
-                                      .data()
-                                      .toString()
-                                      .contains('CivilVendor')
-                                  ? snapshot.data!.get('CivilVendor') ?? ''
-                                  : '',
-                              textInputAction: TextInputAction.done,
-                              minLines: 1,
-                              autofocus: false,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 13),
-                              onChanged: (value) {
-                                civilVendor = value;
-                              }),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 5),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.only(right: 30),
-                          width: 280,
-                          height: 35,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'BOQ Electrical',
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                    color: black),
-                              ),
-                              ElevatedButton(
-                                  onPressed: () async {
-                                    result = await FilePicker.platform
-                                        .pickFiles(type: FileType.any
-                                            // type: FileType.custom,
-                                            // withData: true,
-                                            // allowedExtensions: ['pdf']
-                                            );
-                                    fileBytes = result!.files.first.bytes;
-                                    if (result == null) {
-                                      print("No file selected");
-                                    } else {
-                                      setState(() {});
-                                      result?.files.forEach((element) {
-                                        print(element.name);
-                                      });
-                                    }
-                                  },
-                                  child: const Text(
-                                    'Pick file',
-                                    textAlign: TextAlign.end,
-                                  ))
-                            ],
+                                  charger = value;
+                                }),
                           ),
-                        ),
-                        const SizedBox(width: 4),
-                        Row(
-                          children: [
-                            Container(
-                                padding: const EdgeInsets.all(5),
-                                width: 150,
-                                height: 35,
-                                decoration: BoxDecoration(
-                                    color: lightblue,
-                                    border: Border.all(color: grey),
-                                    borderRadius: BorderRadius.circular(5)),
-                                child: Row(
-                                  children: [
-                                    if (result != null)
-                                      Text(
-                                        result!.files.first.name,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 15, color: white),
-                                      ),
-                                  ],
-                                )),
-                            IconButton(
-                                alignment: Alignment.bottomRight,
-                                padding: const EdgeInsets.only(bottom: 5),
-                                onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => ViewAllPdf(
-                                          title: '/BOQElectrical',
-                                          cityName: widget.cityName!,
-                                          depoName: widget.depoName!,
-                                          userId: widget.userid!,
-                                          docId: 'electrical')));
-                                },
-                                icon: Icon(Icons.folder, color: yellow))
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 200,
+                            child: Text('Required Sanctioned load ',
+                                textAlign: TextAlign.start, style: formtext),
+                          ),
+                          Container(
+                            width: 200,
+                            height: 35,
+                            child: TextFormField(
+                                decoration:
+                                    const InputDecoration(enabled: true),
+                                initialValue: snapshot.data!
+                                        .data()
+                                        .toString()
+                                        .contains('load')
+                                    ? snapshot.data!.get('load') ?? ''
+                                    : '',
+                                maxLines: 1,
+                                textInputAction: TextInputAction.done,
+                                minLines: 1,
+                                autofocus: false,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 13),
+                                onChanged: (value) {
+                                  load = value;
+                                }),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 280,
+                            child: Text('Existing Utility for power source ',
+                                textAlign: TextAlign.start, style: formtext),
+                          ),
+                          Container(
+                            width: 200,
+                            height: 35,
+                            child: TextFormField(
+                                decoration:
+                                    const InputDecoration(enabled: true),
+                                initialValue: snapshot.data!
+                                        .data()
+                                        .toString()
+                                        .contains('powerSource')
+                                    ? snapshot.data!.get('powerSource') ?? ''
+                                    : '',
+                                textInputAction: TextInputAction.done,
+                                minLines: 1,
+                                autofocus: false,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 13),
+                                onChanged: (value) {
+                                  powerSource = value;
+                                }),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: blue),
+                            child: Text('Electrical',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: white)),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 280,
+                            child: Text('Project Manager ',
+                                textAlign: TextAlign.start, style: formtext),
+                          ),
+                          Container(
+                            width: 200,
+                            height: 35,
+                            child: TextFormField(
+                                decoration:
+                                    const InputDecoration(enabled: true),
+                                initialValue: snapshot.data!
+                                        .data()
+                                        .toString()
+                                        .contains('ElectricalManagerName')
+                                    ? snapshot.data!
+                                            .get('ElectricalManagerName') ??
+                                        ''
+                                    : '',
+                                textInputAction: TextInputAction.done,
+                                minLines: 1,
+                                autofocus: false,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 13),
+                                onChanged: (value) {
+                                  electmanagername = value;
+                                }),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 280,
+                            child: Text('Electrical Engineer ',
+                                textAlign: TextAlign.start, style: formtext),
+                          ),
+                          Container(
+                            width: 200,
+                            height: 35,
+                            child: TextFormField(
+                                decoration:
+                                    const InputDecoration(enabled: true),
+                                initialValue: snapshot.data!
+                                        .data()
+                                        .toString()
+                                        .contains('ElectricalEng')
+                                    ? snapshot.data!.get('ElectricalEng') ?? ''
+                                    : '',
+                                textInputAction: TextInputAction.done,
+                                minLines: 1,
+                                autofocus: false,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 13),
+                                onChanged: (value) {
+                                  elecEng = value;
+                                }),
+                          ),
+                        ],
+                      ),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.only(right: 30),
-                          width: 280,
-                          height: 35,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  'Details of Survey Report',
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 280,
+                            child: Text('Electrical Vendor',
+                                textAlign: TextAlign.start, style: formtext),
+                          ),
+                          Container(
+                            width: 200,
+                            height: 35,
+                            child: TextFormField(
+                                decoration:
+                                    const InputDecoration(enabled: true),
+                                initialValue: snapshot.data!
+                                        .data()
+                                        .toString()
+                                        .contains('ElectricalVendor')
+                                    ? snapshot.data!.get('ElectricalVendor') ??
+                                        ''
+                                    : '',
+                                textInputAction: TextInputAction.done,
+                                minLines: 1,
+                                autofocus: false,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 13),
+                                onChanged: (value) {
+                                  elecVendor = value;
+                                }),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: blue),
+                            child: Text('Civil',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: white)),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 280,
+                            child: Text('Project Manager ',
+                                textAlign: TextAlign.start, style: formtext),
+                          ),
+                          Container(
+                            width: 200,
+                            height: 35,
+                            child: TextFormField(
+                                decoration:
+                                    const InputDecoration(enabled: true),
+                                initialValue: snapshot.data!
+                                        .data()
+                                        .toString()
+                                        .contains('CivilManagerName')
+                                    ? snapshot.data!.get('CivilManagerName') ??
+                                        ''
+                                    : '',
+                                textInputAction: TextInputAction.done,
+                                minLines: 1,
+                                autofocus: false,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 13),
+                                onChanged: (value) {
+                                  civilmanagername = value;
+                                }),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 280,
+                            child: Text('Civil Engineer ',
+                                textAlign: TextAlign.start, style: formtext),
+                          ),
+                          Container(
+                            width: 200,
+                            height: 35,
+                            child: TextFormField(
+                                decoration:
+                                    const InputDecoration(enabled: true),
+                                initialValue: snapshot.data!
+                                        .data()
+                                        .toString()
+                                        .contains('CivilEng')
+                                    ? snapshot.data!.get('CivilEng') ?? ''
+                                    : '',
+                                textInputAction: TextInputAction.done,
+                                minLines: 1,
+                                autofocus: false,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 13),
+                                onChanged: (value) {
+                                  civilEng = value;
+                                }),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 280,
+                            child: Text('Civil Vendor',
+                                textAlign: TextAlign.start, style: formtext),
+                          ),
+                          Container(
+                            width: 200,
+                            height: 35,
+                            child: TextFormField(
+                                decoration:
+                                    const InputDecoration(enabled: true),
+                                initialValue: snapshot.data!
+                                        .data()
+                                        .toString()
+                                        .contains('CivilVendor')
+                                    ? snapshot.data!.get('CivilVendor') ?? ''
+                                    : '',
+                                textInputAction: TextInputAction.done,
+                                minLines: 1,
+                                autofocus: false,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 13),
+                                onChanged: (value) {
+                                  civilVendor = value;
+                                }),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 5),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.only(right: 30),
+                            width: 280,
+                            height: 35,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'BOQ Electrical',
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
                                       color: black),
                                 ),
-                              ),
-                              ElevatedButton(
-                                  onPressed: () async {
-                                    result2 = await FilePicker.platform
-                                        .pickFiles(type: FileType.any
-                                            // type: FileType.custom,
-                                            // withData: true,
-                                            // allowedExtensions: ['pdf']
-                                            );
-                                    fileBytes2 = result2!.files.first.bytes;
-                                    if (result2 == null) {
-                                      print("No file selected");
-                                    } else {
-                                      setState(() {});
-                                      result2?.files.forEach((element) {
-                                        print(element.name);
-                                      });
-                                    }
-                                  },
-                                  child: const Text(
-                                    'Pick file',
-                                    textAlign: TextAlign.end,
-                                  ))
-                            ],
+                                ElevatedButton(
+                                    onPressed: () async {
+                                      result = await FilePicker.platform
+                                          .pickFiles(type: FileType.any
+                                              // type: FileType.custom,
+                                              // withData: true,
+                                              // allowedExtensions: ['pdf']
+                                              );
+                                      fileBytes = result!.files.first.bytes;
+                                      if (result == null) {
+                                        print("No file selected");
+                                      } else {
+                                        setState(() {});
+                                        result?.files.forEach((element) {
+                                          print(element.name);
+                                        });
+                                      }
+                                    },
+                                    child: const Text(
+                                      'Pick file',
+                                      textAlign: TextAlign.end,
+                                    ))
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 4),
-                        Row(
-                          children: [
-                            Container(
-                                padding: const EdgeInsets.all(5),
-                                width: 150,
-                                height: 35,
-                                decoration: BoxDecoration(
-                                    color: lightblue,
-                                    border: Border.all(color: grey),
-                                    borderRadius: BorderRadius.circular(5)),
-                                child: Row(
-                                  children: [
-                                    if (result2 != null)
-                                      Text(
-                                        result2!.files.first.name,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 15, color: white),
-                                      ),
-                                  ],
-                                )),
-                            IconButton(
-                                alignment: Alignment.bottomRight,
-                                padding: const EdgeInsets.only(bottom: 5),
-                                onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => ViewAllPdf(
-                                          title: '/BOQSurvey',
-                                          cityName: widget.cityName!,
-                                          depoName: widget.depoName!,
-                                          userId: widget.userid!,
-                                          docId: 'survey')));
-                                },
-                                icon: Icon(Icons.folder, color: yellow))
-                          ],
-                        ),
-                        // TextFormField(
-                        //     initialValue: snapshot.data!
-                        //             .data()
-                        //             .toString()
-                        //             .contains('powerSource')
-                        //         ? snapshot.data!.get('powerSource') ??
-                        //             'Enter  PowerSource '
-                        //         : 'Enter  PowerSource ',
-                        //     textInputAction: TextInputAction.done,
-                        //     minLines: 1,
-                        //     autofocus: false,
-                        //     textAlign: TextAlign.center,
-                        //     style: TextStyle(fontSize: 15),
-                        //     onChanged: (value) {
-                        //       powerSource = value;
-                        //     }),
-
-                        // Container(
-                        //     width: 200,
-                        //     height: 100,
-                        //     child: Column(
-                        //       children: [
-                        //         Row(
-                        //           mainAxisAlignment:
-                        //               MainAxisAlignment.spaceBetween,
-                        //           children: [
-                        //             if (result != null)
-                        //               const Padding(
-                        //                 padding: const EdgeInsets.all(8.0),
-                        //               ),
-                        //             ElevatedButton(
-                        //                 onPressed: () async {
-                        //                   result = await FilePicker.platform
-                        //                       .pickFiles(
-                        //                           type: FileType.custom,
-                        //                           withData: true,
-                        //                           allowedExtensions: ['pdf']);
-                        //                   if (result == null) {
-                        //                     print("No file selected");
-                        //                   } else {
-                        //                     setState(() {});
-                        //                     result?.files.forEach((element) {
-                        //                       print(element.name);
-                        //                     });
-                        //                   }
-                        //                 },
-                        //                 child: const Text(
-                        //                   'Pick file',
-                        //                   textAlign: TextAlign.end,
-                        //                 )),
-                        //             ElevatedButton(
-                        //                 onPressed: () async {
-                        //                   result = await FilePicker.platform
-                        //                       .pickFiles(withData: true);
-                        //                   if (result == null) {
-                        //                     print("No file selected");
-                        //                   } else {
-                        //                     setState(() {});
-                        //                     result?.files.forEach((element) {
-                        //                       print(element.name);
-                        //                     });
-                        //                   }
-                        //                 },
-                        //                 child: Row(
-                        //                   children: [
-                        //                     if (result != null)
-                        //                       Container(
-                        //                         width: 65,
-                        //                         child: Text(
-                        //                           result!.files.first.name,
-                        //                           overflow:
-                        //                               TextOverflow.ellipsis,
-                        //                           textAlign: TextAlign.end,
-                        //                         ),
-                        //                       )
-                        //                   ],
-                        //                 )),
-                        //           ],
-                        //         ),
-                        //         Container(
-                        //             width: 200,
-                        //             height: 70,
-                        //             child: Row(
-                        //               mainAxisAlignment:
-                        //                   MainAxisAlignment.spaceBetween,
-                        //               children: [
-                        //                 if (result != null)
-                        //                   Padding(
-                        //                     padding: const EdgeInsets.all(8.0),
-                        //                     child: Container(
-                        //                       width: 170,
-                        //                       child: Text(
-                        //                         result!.files.first.name,
-                        //                         overflow: TextOverflow.ellipsis,
-                        //                         style: const TextStyle(
-                        //                             fontSize: 16,
-                        //                             fontWeight:
-                        //                                 FontWeight.bold),
-                        //                       ),
-                        //                     ),
-                        //                   ),
-                        //               ],
-                        //             )),
-                        //       ],
-                        //     )),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.only(right: 30),
-                          width: 280,
-                          height: 35,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          const SizedBox(width: 4),
+                          Row(
                             children: [
-                              Text(
-                                'BOQ Civil',
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                    color: black),
-                              ),
-                              ElevatedButton(
-                                  onPressed: () async {
-                                    result1 = await FilePicker.platform
-                                        .pickFiles(type: FileType.any
-                                            // type: FileType.custom,
-                                            // withData: true,
-                                            // allowedExtensions: ['pdf']
-                                            );
-                                    fileBytes1 = result1!.files.first.bytes;
-                                    if (result1 == null) {
-                                      print("No file selected");
-                                    } else {
-                                      setState(() {});
-                                      result?.files.forEach((element) {
-                                        print(element.name);
-                                      });
-                                    }
+                              Container(
+                                  padding: const EdgeInsets.all(5),
+                                  width: 150,
+                                  height: 35,
+                                  decoration: BoxDecoration(
+                                      color: lightblue,
+                                      border: Border.all(color: grey),
+                                      borderRadius: BorderRadius.circular(5)),
+                                  child: Row(
+                                    children: [
+                                      if (result != null)
+                                        Text(
+                                          result!.files.first.name,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: 15, color: white),
+                                        ),
+                                    ],
+                                  )),
+                              IconButton(
+                                  alignment: Alignment.bottomRight,
+                                  padding: const EdgeInsets.only(bottom: 5),
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) => ViewAllPdf(
+                                                title: '/BOQElectrical',
+                                                cityName: widget.cityName!,
+                                                depoName: widget.depoName!,
+                                                userId: id[0],
+                                                docId: 'electrical')));
                                   },
-                                  child: const Text(
-                                    'Pick file',
-                                    textAlign: TextAlign.end,
+                                  icon: Icon(Icons.folder, color: yellow))
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.only(right: 30),
+                            width: 280,
+                            height: 35,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    'Details of Survey Report',
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: black),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                    onPressed: () async {
+                                      result2 = await FilePicker.platform
+                                          .pickFiles(type: FileType.any
+                                              // type: FileType.custom,
+                                              // withData: true,
+                                              // allowedExtensions: ['pdf']
+                                              );
+                                      fileBytes2 = result2!.files.first.bytes;
+                                      if (result2 == null) {
+                                        print("No file selected");
+                                      } else {
+                                        setState(() {});
+                                        result2?.files.forEach((element) {
+                                          print(element.name);
+                                        });
+                                      }
+                                    },
+                                    child: const Text(
+                                      'Pick file',
+                                      textAlign: TextAlign.end,
+                                    ))
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Row(
+                            children: [
+                              Container(
+                                  padding: const EdgeInsets.all(5),
+                                  width: 150,
+                                  height: 35,
+                                  decoration: BoxDecoration(
+                                      color: lightblue,
+                                      border: Border.all(color: grey),
+                                      borderRadius: BorderRadius.circular(5)),
+                                  child: Row(
+                                    children: [
+                                      if (result2 != null)
+                                        Text(
+                                          result2!.files.first.name,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: 15, color: white),
+                                        ),
+                                    ],
+                                  )),
+                              IconButton(
+                                  alignment: Alignment.bottomRight,
+                                  padding: const EdgeInsets.only(bottom: 5),
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) => ViewAllPdf(
+                                                title: '/BOQSurvey',
+                                                cityName: widget.cityName!,
+                                                depoName: widget.depoName!,
+                                                userId: id[0],
+                                                docId: 'survey')));
+                                  },
+                                  icon: Icon(Icons.folder, color: yellow))
+                            ],
+                          ),
+                          // TextFormField(
+                          //     initialValue: snapshot.data!
+                          //             .data()
+                          //             .toString()
+                          //             .contains('powerSource')
+                          //         ? snapshot.data!.get('powerSource') ??
+                          //             'Enter  PowerSource '
+                          //         : 'Enter  PowerSource ',
+                          //     textInputAction: TextInputAction.done,
+                          //     minLines: 1,
+                          //     autofocus: false,
+                          //     textAlign: TextAlign.center,
+                          //     style: TextStyle(fontSize: 15),
+                          //     onChanged: (value) {
+                          //       powerSource = value;
+                          //     }),
+
+                          // Container(
+                          //     width: 200,
+                          //     height: 100,
+                          //     child: Column(
+                          //       children: [
+                          //         Row(
+                          //           mainAxisAlignment:
+                          //               MainAxisAlignment.spaceBetween,
+                          //           children: [
+                          //             if (result != null)
+                          //               const Padding(
+                          //                 padding: const EdgeInsets.all(8.0),
+                          //               ),
+                          //             ElevatedButton(
+                          //                 onPressed: () async {
+                          //                   result = await FilePicker.platform
+                          //                       .pickFiles(
+                          //                           type: FileType.custom,
+                          //                           withData: true,
+                          //                           allowedExtensions: ['pdf']);
+                          //                   if (result == null) {
+                          //                     print("No file selected");
+                          //                   } else {
+                          //                     setState(() {});
+                          //                     result?.files.forEach((element) {
+                          //                       print(element.name);
+                          //                     });
+                          //                   }
+                          //                 },
+                          //                 child: const Text(
+                          //                   'Pick file',
+                          //                   textAlign: TextAlign.end,
+                          //                 )),
+                          //             ElevatedButton(
+                          //                 onPressed: () async {
+                          //                   result = await FilePicker.platform
+                          //                       .pickFiles(withData: true);
+                          //                   if (result == null) {
+                          //                     print("No file selected");
+                          //                   } else {
+                          //                     setState(() {});
+                          //                     result?.files.forEach((element) {
+                          //                       print(element.name);
+                          //                     });
+                          //                   }
+                          //                 },
+                          //                 child: Row(
+                          //                   children: [
+                          //                     if (result != null)
+                          //                       Container(
+                          //                         width: 65,
+                          //                         child: Text(
+                          //                           result!.files.first.name,
+                          //                           overflow:
+                          //                               TextOverflow.ellipsis,
+                          //                           textAlign: TextAlign.end,
+                          //                         ),
+                          //                       )
+                          //                   ],
+                          //                 )),
+                          //           ],
+                          //         ),
+                          //         Container(
+                          //             width: 200,
+                          //             height: 70,
+                          //             child: Row(
+                          //               mainAxisAlignment:
+                          //                   MainAxisAlignment.spaceBetween,
+                          //               children: [
+                          //                 if (result != null)
+                          //                   Padding(
+                          //                     padding: const EdgeInsets.all(8.0),
+                          //                     child: Container(
+                          //                       width: 170,
+                          //                       child: Text(
+                          //                         result!.files.first.name,
+                          //                         overflow: TextOverflow.ellipsis,
+                          //                         style: const TextStyle(
+                          //                             fontSize: 16,
+                          //                             fontWeight:
+                          //                                 FontWeight.bold),
+                          //                       ),
+                          //                     ),
+                          //                   ),
+                          //               ],
+                          //             )),
+                          //       ],
+                          //     )),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.only(right: 30),
+                            width: 280,
+                            height: 35,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'BOQ Civil',
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                      color: black),
+                                ),
+                                ElevatedButton(
+                                    onPressed: () async {
+                                      result1 = await FilePicker.platform
+                                          .pickFiles(type: FileType.any
+                                              // type: FileType.custom,
+                                              // withData: true,
+                                              // allowedExtensions: ['pdf']
+                                              );
+                                      fileBytes1 = result1!.files.first.bytes;
+                                      if (result1 == null) {
+                                        print("No file selected");
+                                      } else {
+                                        setState(() {});
+                                        result?.files.forEach((element) {
+                                          print(element.name);
+                                        });
+                                      }
+                                    },
+                                    child: const Text(
+                                      'Pick file',
+                                      textAlign: TextAlign.end,
+                                    ))
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Row(
+                            children: [
+                              Container(
+                                  padding: const EdgeInsets.all(5),
+                                  width: 150,
+                                  height: 35,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: grey),
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: lightblue),
+                                  child: Row(
+                                    children: [
+                                      if (result1 != null)
+                                        Text(
+                                          result1!.files.first.name,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: 15, color: white),
+                                        ),
+                                    ],
+                                  )),
+                              IconButton(
+                                  alignment: Alignment.bottomRight,
+                                  padding: EdgeInsets.only(bottom: 5),
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) => ViewAllPdf(
+                                                title: '/BOQCivil',
+                                                cityName: widget.cityName!,
+                                                depoName: widget.depoName!,
+                                                userId: id[0],
+                                                docId: 'civil')));
+                                  },
+                                  icon: Icon(
+                                    Icons.folder,
+                                    color: yellow,
                                   ))
                             ],
                           ),
-                        ),
-                        const SizedBox(width: 4),
-                        Row(
-                          children: [
-                            Container(
-                                padding: const EdgeInsets.all(5),
-                                width: 150,
-                                height: 35,
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: grey),
-                                    borderRadius: BorderRadius.circular(5),
-                                    color: lightblue),
-                                child: Row(
-                                  children: [
-                                    if (result1 != null)
-                                      Text(
-                                        result1!.files.first.name,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 15, color: white),
-                                      ),
-                                  ],
-                                )),
-                            IconButton(
-                                alignment: Alignment.bottomRight,
-                                padding: EdgeInsets.only(bottom: 5),
-                                onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => ViewAllPdf(
-                                          title: '/BOQCivil',
-                                          cityName: widget.cityName!,
-                                          depoName: widget.depoName!,
-                                          userId: widget.userid!,
-                                          docId: 'civil')));
-                                },
-                                icon: Icon(
-                                  Icons.folder,
-                                  color: yellow,
-                                ))
-                          ],
-                        ),
 
-                        // Container(
-                        //     width: 200,
-                        //     height: 80,
-                        //     child: Column(
-                        //       children: [
-                        //         Row(
-                        //           mainAxisAlignment:
-                        //               MainAxisAlignment.spaceBetween,
-                        //           children: [
-                        //             if (result1 != null)
-                        //               const Padding(
-                        //                 padding: const EdgeInsets.only(top: 10),
-                        //               ),
-                        //             ElevatedButton(
-                        //                 onPressed: () async {
-                        //                   result1 = await FilePicker.platform
-                        //                       .pickFiles(withData: true);
-                        //                   if (result1 == null) {
-                        //                     print("No file selected");
-                        //                   } else {
-                        //                     setState(() {});
-                        //                     result1?.files.forEach((element) {
-                        //                       print(element.name);
-                        //                     });
-                        //                   }
-                        //                 },
-                        //                 child: const Text('Pick file')),
-                        //             ElevatedButton(
-                        //                 onPressed: () async {
-                        //                   result1 = await FilePicker.platform
-                        //                       .pickFiles(withData: true);
-                        //                   if (result1 == null) {
-                        //                     print("No file selected");
-                        //                   } else {
-                        //                     setState(() {});
-                        //                     result1?.files.forEach((element) {
-                        //                       print(element.name);
-                        //                     });
-                        //                   }
-                        //                 },
-                        //                 child: const Text('Pick file')),
-                        //           ],
-                        //         ),
-                        //         Container(
-                        //             child: Row(
-                        //           mainAxisAlignment:
-                        //               MainAxisAlignment.spaceBetween,
-                        //           children: [
-                        //             if (result1 != null)
-                        //               Padding(
-                        //                 padding: const EdgeInsets.all(8.0),
-                        //                 child: Container(
-                        //                   decoration: BoxDecoration(
-                        //                       borderRadius:
-                        //                           BorderRadius.circular(10)),
-                        //                   width: 150,
-                        //                   child: Text(
-                        //                     result1!.files.first.name,
-                        //                     overflow: TextOverflow.ellipsis,
-                        //                     style: const TextStyle(
-                        //                         fontSize: 14,
-                        //                         fontWeight: FontWeight.bold),
-                        //                   ),
-                        //                 ),
-                        //               ),
-                        //           ],
-                        //         )),
-                        //       ],
-                        //     )),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    // Center(
-                    //     child: SfCircularChart(
-                    //   legend: Legend(
-                    //       isVisible: true, position: LegendPosition.right),
-                    //   series: [
-                    //     PieSeries<PieChartData, String>(
-                    //         dataLabelSettings:
-                    //             const DataLabelSettings(isVisible: true),
-                    //         dataSource: chartData,
-                    //         pointColorMapper: (PieChartData data, _) =>
-                    //             data.color,
-                    //         xValueMapper: (PieChartData data, _) => data.x,
-                    //         yValueMapper: (PieChartData data, _) => data.y)
-                    //   ],
-                    // ))
-                  ],
-                ),
-              );
-            }
-            return LoadingPage();
-          },
-        ),
+                          // Container(
+                          //     width: 200,
+                          //     height: 80,
+                          //     child: Column(
+                          //       children: [
+                          //         Row(
+                          //           mainAxisAlignment:
+                          //               MainAxisAlignment.spaceBetween,
+                          //           children: [
+                          //             if (result1 != null)
+                          //               const Padding(
+                          //                 padding: const EdgeInsets.only(top: 10),
+                          //               ),
+                          //             ElevatedButton(
+                          //                 onPressed: () async {
+                          //                   result1 = await FilePicker.platform
+                          //                       .pickFiles(withData: true);
+                          //                   if (result1 == null) {
+                          //                     print("No file selected");
+                          //                   } else {
+                          //                     setState(() {});
+                          //                     result1?.files.forEach((element) {
+                          //                       print(element.name);
+                          //                     });
+                          //                   }
+                          //                 },
+                          //                 child: const Text('Pick file')),
+                          //             ElevatedButton(
+                          //                 onPressed: () async {
+                          //                   result1 = await FilePicker.platform
+                          //                       .pickFiles(withData: true);
+                          //                   if (result1 == null) {
+                          //                     print("No file selected");
+                          //                   } else {
+                          //                     setState(() {});
+                          //                     result1?.files.forEach((element) {
+                          //                       print(element.name);
+                          //                     });
+                          //                   }
+                          //                 },
+                          //                 child: const Text('Pick file')),
+                          //           ],
+                          //         ),
+                          //         Container(
+                          //             child: Row(
+                          //           mainAxisAlignment:
+                          //               MainAxisAlignment.spaceBetween,
+                          //           children: [
+                          //             if (result1 != null)
+                          //               Padding(
+                          //                 padding: const EdgeInsets.all(8.0),
+                          //                 child: Container(
+                          //                   decoration: BoxDecoration(
+                          //                       borderRadius:
+                          //                           BorderRadius.circular(10)),
+                          //                   width: 150,
+                          //                   child: Text(
+                          //                     result1!.files.first.name,
+                          //                     overflow: TextOverflow.ellipsis,
+                          //                     style: const TextStyle(
+                          //                         fontSize: 14,
+                          //                         fontWeight: FontWeight.bold),
+                          //                   ),
+                          //                 ),
+                          //               ),
+                          //           ],
+                          //         )),
+                          //       ],
+                          //     )),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      // Center(
+                      //     child: SfCircularChart(
+                      //   legend: Legend(
+                      //       isVisible: true, position: LegendPosition.right),
+                      //   series: [
+                      //     PieSeries<PieChartData, String>(
+                      //         dataLabelSettings:
+                      //             const DataLabelSettings(isVisible: true),
+                      //         dataSource: chartData,
+                      //         pointColorMapper: (PieChartData data, _) =>
+                      //             data.color,
+                      //         xValueMapper: (PieChartData data, _) => data.x,
+                      //         yValueMapper: (PieChartData data, _) => data.y)
+                      //   ],
+                      // ))
+                    ],
+                  ),
+                );
+              } else {
+                return LoadingPage();
+              }
+            }),
       ),
     );
   }
@@ -1863,12 +1893,28 @@ class _DepotOverviewState extends State<DepotOverview> {
     setState(() {});
   }
 
-  void _fetchUserData() async {
+  Future getFieldUserId() async {
+    await FirebaseFirestore.instance
+        .collection('OverviewCollection')
+        .doc(widget.depoName!)
+        .collection('OverviewFieldData')
+        .get()
+        .then((value) {
+      value.docs.forEach((element) {
+        String documentId = element.id;
+        id.add(documentId);
+        print('$id');
+        // nestedTableData(docss);
+      });
+    });
+  }
+
+  Future<void> _fetchUserData() async {
     await FirebaseFirestore.instance
         .collection('OverviewCollection')
         .doc(widget.depoName)
         .collection("OverviewFieldData")
-        .doc(widget.userid)
+        .doc(id[0])
         .get()
         .then((ds) {
       setState(() {
@@ -1885,6 +1931,15 @@ class _DepotOverviewState extends State<DepotOverview> {
         civilmanagername = ds.data()!['CivilManagerName'];
         civilEng = ds.data()!['CivilEng'];
         civilVendor = ds.data()!['CivilVendor'];
+      });
+    });
+  }
+
+  Future<void> getcompany() async {
+    await AuthService().getCurrentCompanyName().then((value) {
+      companyName = value;
+      setState(() {
+        isloading = false;
       });
     });
   }

@@ -740,7 +740,7 @@ class DetailedEngSource extends DataGridSource {
       _detailedeng[dataRowIndex].siNo = newCellValue;
     } else if (column.columnName == 'Number') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
-          DataGridCell<int>(columnName: 'Number', value: newCellValue);
+          DataGridCell<dynamic>(columnName: 'Number', value: newCellValue);
       _detailedeng[dataRowIndex].number = newCellValue;
     } else if (column.columnName == 'Title') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =

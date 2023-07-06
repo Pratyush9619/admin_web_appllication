@@ -37,6 +37,7 @@ dynamic alldata;
 bool specificUser = true;
 QuerySnapshot? snap;
 dynamic companyId;
+List id = [];
 
 bool _isloading = true;
 dynamic depotlocation,
@@ -65,18 +66,28 @@ class _SafetyChecklistState extends State<SafetyChecklist> {
         safetylisttable, widget.cityName!, widget.depoName!);
     _dataGridController = DataGridController();
 
-    _stream1 = FirebaseFirestore.instance
-        .collection('SafetyFieldData')
-        .doc(widget.depoName!)
-        .collection('ZW3210')
-        .doc(DateFormat.yMMMMd().format(DateTime.now()))
-        .snapshots();
-    // _stream = FirebaseFirestore.instance
-    //     .collection('SafetyChecklistTable')
-    //     .doc(widget.depoName!)
-    //     .collection('ZW3210')
-    //     .doc(DateFormat.yMMMMd().format(DateTime.now()))
-    //     .snapshots();
+    getFieldUserId().whenComplete(() {
+      _stream = FirebaseFirestore.instance
+          .collection('SafetyChecklistTable')
+          .doc(widget.depoName!)
+          .collection('AllSafetyData')
+          .doc(id[0])
+          .collection('SafetyData')
+          .doc('June 12, 2023')
+          // .doc(DateFormat.yMMMMd().format(DateTime.now()))
+          .snapshots();
+
+      _stream1 = FirebaseFirestore.instance
+          .collection('SafetyFieldData')
+          .doc(widget.depoName!)
+          .collection(id[0])
+          .doc('June 22, 2023')
+          // .doc(DateFormat.yMMMMd().format(DateTime.now()))
+          .snapshots();
+
+      _isloading = false;
+      setState(() {});
+    });
 
     docss.clear();
     FirebaseApi()
@@ -148,7 +159,7 @@ class _SafetyChecklistState extends State<SafetyChecklist> {
           ? LoadingPage()
           : Column(
               children: [
-                const DateRange(),
+                // const DateRange(),
                 Expanded(
                   child: StreamBuilder(
                       stream: _stream1,
@@ -1302,6 +1313,22 @@ class _SafetyChecklistState extends State<SafetyChecklist> {
     );
   }
 
+  Future getFieldUserId() async {
+    await FirebaseFirestore.instance
+        .collection('SafetyChecklistTable')
+        .doc(widget.depoName!)
+        .collection('AllSafetyData')
+        .get()
+        .then((value) {
+      value.docs.forEach((element) {
+        String documentId = element.id;
+        id.add(documentId);
+        print('$id');
+        // nestedTableData(docss);
+      });
+    });
+  }
+
   // Future<void> getUserId() async {
   //   await AuthService().getCurrentUserId().then((value) {
   //     userId = value;
@@ -1343,7 +1370,7 @@ class _SafetyChecklistState extends State<SafetyChecklist> {
         .collection('SafetyChecklistTable')
         .doc(widget.depoName!)
         .collection('AllSafetyData')
-        .doc('PP0687')
+        .doc(widget.userId)
         .collection('SafetyData')
         .doc(DateFormat.yMMMMd().format(DateTime.now()))
         .set(

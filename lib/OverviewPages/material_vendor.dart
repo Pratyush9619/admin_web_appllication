@@ -35,7 +35,7 @@ class _MaterialProcurementState extends State<MaterialProcurement> {
 
   @override
   void initState() {
-    _materialprocurement = getmonthlyReport();
+    // _materialprocurement = getmonthlyReport();
     _materialDatasource = MaterialDatasource(
         _materialprocurement, context, widget.cityName, widget.depoName);
     _dataGridController = DataGridController();
@@ -44,6 +44,8 @@ class _MaterialProcurementState extends State<MaterialProcurement> {
         _materialDatasource = MaterialDatasource(
             _materialprocurement, context, widget.cityName, widget.depoName);
         _dataGridController = DataGridController();
+        _isloading = false;
+        setState(() {});
       },
     );
     // getUserId().whenComplete(() {
@@ -67,7 +69,7 @@ class _MaterialProcurementState extends State<MaterialProcurement> {
             child: CustomAppBar(
               text:
                   ' ${widget.cityName}/ ${widget.depoName} / Material Procurement',
-              haveSummary: true,
+              haveSummary: false,
               // onTap: () => Navigator.push(
               //     context,
               //     MaterialPageRoute(
@@ -78,7 +80,7 @@ class _MaterialProcurementState extends State<MaterialProcurement> {
               //         // userId: userId,
               //       ),
               //     )),
-              haveSynced: true,
+              haveSynced: false,
               store: () {
                 _showDialog(context);
                 // FirebaseApi().defaultKeyEventsField(
@@ -715,9 +717,9 @@ class _MaterialProcurementState extends State<MaterialProcurement> {
 
   Future getTableData() async {
     var res = await FirebaseFirestore.instance
-        .collection('OverviewCollectionTable')
+        .collection('MaterialProcurement')
         .doc(widget.depoName)
-        .collection("OverviewTabledData")
+        .collection("Material Data")
         .get()
         .then((value) {
       value.docs.forEach((element) {

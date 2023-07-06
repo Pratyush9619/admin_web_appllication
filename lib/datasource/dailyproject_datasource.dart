@@ -148,7 +148,11 @@ class DailyDataSource extends DataGridSource {
     if (newCellValue == null || oldValue == newCellValue) {
       return;
     }
-    if (column.columnName == 'SiNo') {
+    if (column.columnName == 'Date') {
+      dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
+          DataGridCell<String>(columnName: 'Date', value: newCellValue);
+      _montlyproject[dataRowIndex].siNo = newCellValue;
+    } else if (column.columnName == 'SiNo') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
           DataGridCell<int>(columnName: 'SiNo', value: newCellValue);
       _montlyproject[dataRowIndex].siNo = newCellValue as int;

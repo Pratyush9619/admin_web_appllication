@@ -76,7 +76,7 @@ class _MonthlyProjectState extends State<MonthlyProject> {
           child: CustomAppBar(
             text: ' ${widget.cityName}/ ${widget.depoName} / Monthly Report',
             userid: widget.userid,
-            haveSummary: true,
+            haveSummary: false,
             onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -313,27 +313,27 @@ class _MonthlyProjectState extends State<MonthlyProject> {
                             editingGestureType: EditingGestureType.tap,
                             controller: _dataGridController,
                             columns: [
-                              GridColumn(
-                                columnName: 'User ID',
-                                autoFitPadding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                allowEditing: false,
-                                width: 160,
-                                label: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  alignment: Alignment.center,
-                                  child: Text('User ID',
-                                      overflow: TextOverflow.values.first,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                          color: white)
-                                      //    textAlign: TextAlign.center,
-                                      ),
-                                ),
-                              ),
+                              // GridColumn(
+                              //   columnName: 'User ID',
+                              //   autoFitPadding:
+                              //       const EdgeInsets.symmetric(horizontal: 16),
+                              //   allowEditing: false,
+                              //   width: 160,
+                              //   label: Container(
+                              //     padding: const EdgeInsets.symmetric(
+                              //         horizontal: 8.0),
+                              //     alignment: Alignment.center,
+                              //     child: Text('User ID',
+                              //         overflow: TextOverflow.values.first,
+                              //         textAlign: TextAlign.center,
+                              //         style: TextStyle(
+                              //             fontWeight: FontWeight.bold,
+                              //             fontSize: 16,
+                              //             color: white)
+                              //         //    textAlign: TextAlign.center,
+                              //         ),
+                              //   ),
+                              // ),
                               GridColumn(
                                 columnName: 'ActivityNo',
                                 autoFitPadding:

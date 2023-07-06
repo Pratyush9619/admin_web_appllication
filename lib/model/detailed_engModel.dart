@@ -14,7 +14,7 @@ class DetailedEngModel {
 
   int? siNo;
   String? title;
-  int? number;
+  dynamic number;
   String? preparationDate;
   String? submissionDate;
   String? approveDate;

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -378,8 +380,8 @@ class _ViewSummaryState extends State<ViewSummary> {
                         stream: FirebaseFirestore.instance
                             .collection('DailyProjectReport')
                             .doc('${widget.depoName}')
-                            .collection(widget.userId)
-                            .doc(DateFormat.yMMMMd().format(startdate!))
+                            .collection('ZW3210')
+                            .doc(DateFormat.yMMMMd().format(DateTime.now()))
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==

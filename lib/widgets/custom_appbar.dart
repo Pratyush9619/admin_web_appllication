@@ -14,6 +14,7 @@ class CustomAppBar extends StatefulWidget {
   VoidCallback? onTap;
   bool havebottom;
   bool isdetailedTab;
+  bool isdownload;
   TabBar? tabBar;
 
   CustomAppBar(
@@ -25,6 +26,7 @@ class CustomAppBar extends StatefulWidget {
       this.store,
       this.onTap,
       this.havebottom = false,
+      this.isdownload = false,
       this.isdetailedTab = false,
       this.tabBar});
 
@@ -42,24 +44,29 @@ class _CustomAppBarState extends State<CustomAppBar> {
               widget.text.toString(),
             ),
             actions: [
-              widget.haveSummary
+              widget.isdownload
                   ? Padding(
-                      padding:
-                          const EdgeInsets.only(right: 40, top: 10, bottom: 10),
-                      child: Container(
-                        height: 15,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.blue),
-                        child: TextButton(
-                            onPressed: widget.onTap,
-                            child: Text(
-                              'View Summary',
-                              style: TextStyle(color: white, fontSize: 20),
-                            )),
-                      ),
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(Icons.download),
                     )
-                  : Container(),
+                  : widget.haveSummary
+                      ? Padding(
+                          padding: const EdgeInsets.only(
+                              right: 40, top: 10, bottom: 10),
+                          child: Container(
+                            height: 15,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.blue),
+                            child: TextButton(
+                                onPressed: widget.onTap,
+                                child: Text(
+                                  'View Summary',
+                                  style: TextStyle(color: white, fontSize: 20),
+                                )),
+                          ),
+                        )
+                      : Container(),
               widget.haveSynced
                   ? Padding(
                       padding:
