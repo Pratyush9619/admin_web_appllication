@@ -10,6 +10,7 @@ import 'package:web_appllication/widgets/nodata_available.dart';
 import 'quality_checklist.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 import '../Authentication/auth_service.dart';
 import '../components/loading_page.dart';
@@ -17,28 +18,14 @@ import 'package:web_appllication/style.dart';
 
 int? _selectedIndex = 0;
 // String currentDate = DateFormat.yMMMMd().format(DateTime.now());
-List<String> tabForCivil = [
-  'Exc',
-  'BackFilling',
-  'Massonary',
-  'Glazzing',
-  'Ceilling',
-  'Flooring',
-  'Inspection',
-  'Ironite',
-  'Painting',
-  'Paving',
-  'Roofing',
-  'Proofing'
-];
 
-class CivilQualityChecklist extends StatefulWidget {
+class ElectricalQualityChecklist extends StatefulWidget {
   String? cityName;
   String? depoName;
   String? currentDate;
   bool? isHeader;
 
-  CivilQualityChecklist(
+  ElectricalQualityChecklist(
       {super.key,
       required this.cityName,
       required this.depoName,
@@ -46,11 +33,26 @@ class CivilQualityChecklist extends StatefulWidget {
       this.isHeader = true});
 
   @override
-  State<CivilQualityChecklist> createState() => _CivilQualityChecklistState();
+  State<ElectricalQualityChecklist> createState() =>
+      _ElectricalQualityChecklistState();
 }
 
-class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
-  //Quality Project Row List for view summary
+class _ElectricalQualityChecklistState
+    extends State<ElectricalQualityChecklist> {
+  List tabForElec = [
+    'PSS',
+    'RMU',
+    'CT',
+    'CMU',
+    'ACDB',
+    'CI',
+    'CDI',
+    'MSP',
+    'CHARGER',
+    'EARTH PIT'
+  ];
+
+//Quality Project Row List for view summary
   List<List<dynamic>> rowList = [];
 
   CollectionReference? _collectionReference;
@@ -63,75 +65,64 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
   CollectionReference? _collectionReference7;
   CollectionReference? _collectionReference8;
   CollectionReference? _collectionReference9;
-  CollectionReference? _collectionReference10;
-  CollectionReference? _collectionReference11;
 
   bool _isloading = true;
 
   initializeStream() {
     _collectionReference = FirebaseFirestore.instance
-        .collection('CivilQualityChecklist')
+        .collection('ElectricalQualityChecklist')
         .doc('${widget.depoName}')
         .collection('userId');
 
     _collectionReference1 = FirebaseFirestore.instance
-        .collection('CivilQualityChecklist')
+        .collection('ElectricalQualityChecklist')
         .doc('${widget.depoName}')
         .collection('userId');
 
     _collectionReference2 = FirebaseFirestore.instance
-        .collection('CivilQualityChecklist')
+        .collection('ElectricalQualityChecklist')
         .doc('${widget.depoName}')
         .collection('userId');
 
     _collectionReference3 = FirebaseFirestore.instance
-        .collection('CivilQualityChecklist')
+        .collection('ElectricalQualityChecklist')
         .doc('${widget.depoName}')
         .collection('userId');
 
     _collectionReference4 = FirebaseFirestore.instance
-        .collection('CivilQualityChecklist')
+        .collection('ElectricalQualityChecklist')
         .doc('${widget.depoName}')
         .collection('userId');
 
     _collectionReference5 = FirebaseFirestore.instance
-        .collection('CivilQualityChecklist')
+        .collection('ElectricalQualityChecklist')
         .doc('${widget.depoName}')
         .collection('userId');
 
     _collectionReference6 = FirebaseFirestore.instance
-        .collection('CivilQualityChecklist')
+        .collection('ElectricalQualityChecklist')
         .doc('${widget.depoName}')
         .collection('userId');
 
     _collectionReference7 = FirebaseFirestore.instance
-        .collection('CivilQualityChecklist')
+        .collection('ElectricalQualityChecklist')
         .doc('${widget.depoName}')
         .collection('userId');
 
     _collectionReference8 = FirebaseFirestore.instance
-        .collection('CivilQualityChecklist')
+        .collection('ElectricalQualityChecklist')
         .doc('${widget.depoName}')
         .collection('userId');
 
     _collectionReference9 = FirebaseFirestore.instance
-        .collection('CivilQualityChecklist')
-        .doc('${widget.depoName}')
-        .collection('userId');
-
-    _collectionReference10 = FirebaseFirestore.instance
-        .collection('CivilQualityChecklist')
-        .doc('${widget.depoName}')
-        .collection('userId');
-
-    _collectionReference11 = FirebaseFirestore.instance
-        .collection('CivilQualityChecklist')
+        .collection('ElectricalQualityChecklist')
         .doc('${widget.depoName}')
         .collection('userId');
   }
 
   @override
   void initState() {
+    storeImages();
     super.initState();
     getUserId().whenComplete(() {
       initializeStream();
@@ -142,9 +133,8 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
 
   @override
   Widget build(BuildContext context) {
-    rowList.clear();
     return DefaultTabController(
-        length: 12,
+        length: 10,
         child: Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
@@ -154,7 +144,7 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
               labelStyle: buttonWhite,
               unselectedLabelColor: white,
 
-              //indicatorSize: TabBarIndicatorSize.label,
+//indicatorSize: TabBarIndicatorSize.label,
 
               indicator: MaterialIndicator(
                 horizontalPadding: 24,
@@ -168,18 +158,16 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
                 setState(() {});
               },
               tabs: const [
-                Tab(text: "Exc"),
-                Tab(text: "B.F"),
-                Tab(text: "Mass"),
-                Tab(text: "D.W.G"),
-                Tab(text: "F.C"),
-                Tab(text: "F&T"),
-                Tab(text: "G.I"),
-                Tab(text: "I.F"),
-                Tab(text: "Painting"),
-                Tab(text: "Paving"),
-                Tab(text: "WC&R"),
-                Tab(text: "Proofing"),
+                Tab(text: "PSS"),
+                Tab(text: "RMU"),
+                Tab(text: "CT"),
+                Tab(text: "CMU"),
+                Tab(text: "ACDB"),
+                Tab(text: "CI"),
+                Tab(text: "CDI"),
+                Tab(text: "MSP"),
+                Tab(text: "CHARGER"),
+                Tab(text: "EARTH PIT"),
               ],
             ),
           ),
@@ -195,9 +183,7 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
                   civilupperScreen(6),
                   civilupperScreen(7),
                   civilupperScreen(8),
-                  civilupperScreen(9),
-                  civilupperScreen(10),
-                  civilupperScreen(11),
+                  civilupperScreen(9)
                 ]),
         ));
   }
@@ -231,33 +217,25 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
                                                 ? fetchData(
                                                     _collectionReference8!,
                                                     selectedIndex)
-                                                : selectedIndex == 9
-                                                    ? fetchData(
-                                                        _collectionReference9!,
-                                                        selectedIndex)
-                                                    : selectedIndex == 10
-                                                        ? fetchData(
-                                                            _collectionReference10!,
-                                                            selectedIndex)
-                                                        : fetchData(
-                                                            _collectionReference11!,
-                                                            selectedIndex),
+                                                : fetchData(
+                                                    _collectionReference9!,
+                                                    selectedIndex),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return LoadingPage();
-                // Center(
-                //     child: Column(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     LoadingPage(),
-                //     // Text(
-                //     //   'Collecting Data...',
-                //     //   style: TextStyle(
-                //     //     fontSize: 16,
-                //     //   ),
-                //     // ),
-                //   ],
-                // ));
+                return Center(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    LoadingPage()
+                    // CircularProgressIndicator(),
+                    // Text(
+                    //   'Collecting Data...',
+                    //   style: TextStyle(
+                    //     fontSize: 16,
+                    //   ),
+                    // ),
+                  ],
+                ));
               } else if (snapshot.hasError) {
                 return const Center(
                   child: Text('Error fetching data'),
@@ -265,18 +243,18 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
               } else if (snapshot.hasData) {
                 final data = snapshot.data!;
 
-                if (!snapshot.hasData) {
-                  return NodataAvailable();
-                  // const Center(
-                  //   child: Text(
-                  //     'No Data Available for Selected Depo',
-                  //     style: TextStyle(
-                  //       fontWeight: FontWeight.bold,
-                  //       fontSize: 20,
-                  //     ),
-                  //   ),
-                  // );
-                }
+                // if (data.isEmpty) {
+                //   return NodataAvailable();
+                //   //  const Center(
+                //   //   child: Text(
+                //   //     'No Data Available for Selected Depo',
+                //   //     style: TextStyle(
+                //   //       fontWeight: FontWeight.bold,
+                //   //       fontSize: 20,
+                //   //     ),
+                //   //   ),
+                //   // );
+                // }
 
                 return Center(
                   child: Column(
@@ -365,6 +343,20 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
           );
   }
 
+  Future<void> storeImages() async {
+    final sourcePath = 'SafetyChecklist/Bengaluru/BMTC KR Puram-29/JT4610/1';
+
+    final path =
+        'QualityChecklist/Electrical_Engineer/${widget.cityName}/${widget.depoName}/ZW3210'
+        '/${tabForElec[_selectedIndex!]} TABLE/April 11, 2023';
+
+    Reference pathRef = FirebaseStorage.instance.ref().child(path);
+    Reference sourceRef = FirebaseStorage.instance.ref().child(sourcePath);
+    ListResult result = await sourceRef.listAll();
+    final downloadUrl = await result.items.first.getDownloadURL();
+    await pathRef.putString(downloadUrl);
+  }
+
   Future<void> getUserId() async {
     await AuthService().getCurrentUserId().then((value) {
       userId = value;
@@ -374,7 +366,6 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
   Future<List<List<dynamic>>> fetchData(
       CollectionReference colRef, int selectedIndex) async {
     if (selectedIndex == _selectedIndex) {
-      rowList.clear();
       if (_selectedIndex == 0) {
         setState(() {});
       }
@@ -385,6 +376,8 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
 
   Future<void> getRowsForFutureBuilder(
       CollectionReference currentColReference) async {
+    rowList.clear();
+
     QuerySnapshot querySnapshot = await currentColReference.get();
 
     List<dynamic> userIdList = querySnapshot.docs.map((e) => e.id).toList();
@@ -392,7 +385,7 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
     for (int i = 0; i < userIdList.length; i++) {
       QuerySnapshot userEntryDate = await currentColReference
           .doc(userIdList[i])
-          .collection('${tabForCivil[_selectedIndex!]} TABLE')
+          .collection('${tabForElec[_selectedIndex!]} TABLE')
           .get();
 
       List<dynamic> withDateData = userEntryDate.docs.map((e) => e.id).toList();
@@ -433,11 +426,11 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
     //Getting safety Field Data from firestore
 
     DocumentSnapshot elecFieldDocSanpshot = await FirebaseFirestore.instance
-        .collection('CivilChecklistField')
+        .collection('ElectricalChecklistField')
         .doc('${widget.depoName}')
         .collection('userId')
         .doc(user_id)
-        .collection('${tabForCivil[_selectedIndex!]} TABLE')
+        .collection('${tabForElec[_selectedIndex!]} TABLE')
         .doc(date)
         .get();
 
@@ -445,14 +438,14 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
         elecFieldDocSanpshot.data() as Map<String, dynamic>;
 
     List<List<dynamic>> fieldData = [
-      ['PROJECT :', '${electricalMapData['Project']}'],
-      ['P.O.No. :', '${electricalMapData['PO No']}'],
-      ['CONTRACTOR :', '${electricalMapData['Contractor']}'],
-      ['DESCRIPTION : ', '${electricalMapData['Description']}'],
-      ['SYSTEM / BLDG. :', '${electricalMapData['System']}'],
-      ['REF DOCUMENT1 :', '${electricalMapData['Ref Document1']}'],
-      ['REF DOCUMENT2 :', '${electricalMapData['Ref Document2']}'],
-      ['REF DOCUMENT3 :', '${electricalMapData['Ref Document3']}'],
+      ['EMPLOYEE NAME :', '${electricalMapData['EmployeeName']}'],
+      ['DIST EV :', '${electricalMapData['Dist EV']}'],
+      ['VENDOR NAME :', '${electricalMapData['VendorName']}'],
+      ['DATE : ', '${electricalMapData['Date']}'],
+      ['OLA NUMBER :', '${electricalMapData['OlaNo']}'],
+      ['PANEL SR NO :', '${electricalMapData['PanelNo']}'],
+      ['DEPOT NAME :', '${electricalMapData['DepotName']}'],
+      ['CUSTOMER NAME :', '${electricalMapData['CustomerName']}'],
     ];
 
     List<pw.TableRow> rows = [];
@@ -504,11 +497,11 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
     List<dynamic> userData = [];
 
     DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
-        .collection('CivilQualityChecklist')
+        .collection('ElectricalQualityChecklist')
         .doc('${widget.depoName}')
         .collection('userId')
         .doc(user_id)
-        .collection('${tabForCivil[_selectedIndex!]} TABLE')
+        .collection('${tabForElec[_selectedIndex!]} TABLE')
         .doc(date)
         .get();
 
@@ -516,13 +509,13 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
         documentSnapshot.data() as Map<String, dynamic>;
     if (docData.isNotEmpty) {
       userData.addAll(docData['data']);
-
+      print('userdata - $userData');
       List<dynamic> imageUrls = [];
 
       for (Map<String, dynamic> mapData in userData) {
         String images_Path =
-            'gs://tp-zap-solz.appspot.com/QualityChecklist/Civil_Engineer/'
-            '${widget.cityName}/${widget.depoName}/$user_id/${tabForCivil[_selectedIndex!]} TABLE/$date/${mapData['srNo']}';
+            'gs://tp-zap-solz.appspot.com/QualityChecklist/Electrical_Engineer/'
+            '${widget.cityName}/${widget.depoName}/$user_id/${tabForElec[_selectedIndex!]} TABLE/$date/${mapData['srNo']}';
 
         ListResult result =
             await FirebaseStorage.instance.ref().child(images_Path).listAll();
@@ -664,7 +657,7 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
                 pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      pw.Text('Civil Quality Report',
+                      pw.Text('Electrical Quality Report',
                           textScaleFactor: 2,
                           style: const pw.TextStyle(color: PdfColors.blue700)),
                       pw.Container(
@@ -741,7 +734,7 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
                 pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      pw.Text('Civil Quality Report',
+                      pw.Text('Electrical Quality Report',
                           textScaleFactor: 2,
                           style: const pw.TextStyle(color: PdfColors.blue700)),
                       pw.Container(
@@ -799,7 +792,7 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
     );
 
     final List<int> pdfData = await pdf.save();
-    final String pdfPath = 'CivilQualityReport($user_id/$date).pdf';
+    final String pdfPath = 'ElectricalQualityReport($user_id/$date).pdf';
 
     // Save the PDF file to device storage
     if (kIsWeb) {

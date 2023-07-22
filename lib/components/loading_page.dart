@@ -1,30 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:web_appllication/style.dart';
+import 'package:lottie/lottie.dart';
 
-class LoadingPage extends StatefulWidget {
+class LoadingPage extends StatelessWidget {
+  LoadingPage({super.key});
+
   @override
-  _LoadingPageState createState() => _LoadingPageState();
-}
-
-class _LoadingPageState extends State<LoadingPage> {
-  // @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Colors.white,
+    return Container(
+        alignment: Alignment.center,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              color: Colors.white,
-              child: Center(
-                child: CircularProgressIndicator(color: blue),
-              ),
-            ),
+            Image.asset('animations/loading_animation.gif'),
+            const SizedBox(height: 10),
+            const Text(
+              'Loading...',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            )
           ],
-        ),
-      ),
-    );
+        )
+        // Lottie.asset('animations/loading.json'),
+        );
   }
 }

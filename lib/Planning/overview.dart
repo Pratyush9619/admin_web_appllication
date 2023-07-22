@@ -6,13 +6,15 @@ import 'package:web_appllication/OverviewPages/depot_overview.dart';
 import 'package:web_appllication/OverviewPages/monthly_project.dart';
 import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 import 'package:web_appllication/OverviewPages/resource_allocation.dart';
-import 'package:web_appllication/OverviewPages/safety_checklist.dart';
+import 'package:web_appllication/OverviewPages/safety_summary.dart';
 import 'package:web_appllication/style.dart';
 import 'package:web_appllication/widgets/custom_appbar.dart';
 import '../OverviewPages/detailed_Eng.dart';
 import '../KeyEvents/key_events.dart';
+import '../OverviewPages/easy_monitoring.dart';
 import '../OverviewPages/jmr.dart';
 import '../OverviewPages/material_vendor.dart';
+import '../OverviewPages/monthly_summary.dart';
 import '../OverviewPages/testing_report.dart';
 
 class MyOverview extends StatefulWidget {
@@ -111,10 +113,14 @@ class _MyOverviewState extends State<MyOverview> {
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
-      MonthlyProject(
+      MonthlySummary(
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
+      // MonthlyProject(
+      //   cityName: widget.cityName,
+      //   depoName: widget.depoName,
+      // ),
       DetailedEng(
         // userId: widget.userid,
         cityName: widget.cityName,
@@ -124,11 +130,16 @@ class _MyOverviewState extends State<MyOverview> {
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
-      SafetyChecklist(
-        // userId: widget.userid,
-        cityName: widget.cityName,
+      SafetySummary(
         depoName: widget.depoName,
+        cityName: widget.cityName,
+        id: 'Safety Report',
       ),
+      // SafetyChecklist(
+      //   // userId: widget.userid,
+      //   cityName: widget.cityName,
+      //   depoName: widget.depoName,
+      // ),
       QualityChecklist(
         // userId: widget.userid,
         cityName: widget.cityName,
@@ -142,11 +153,16 @@ class _MyOverviewState extends State<MyOverview> {
           // userId: widget.userid,
           cityName: widget.cityName,
           depoName: widget.depoName),
-      KeyEvents(
-        // userId: widget.userid,
-        depoName: widget.depoName,
+
+      EasyMonitoring(
         cityName: widget.cityName,
-      ),
+        depoName: widget.depoName,
+      )
+      // KeyEvents(
+      //   // userId: widget.userid,
+      //   depoName: widget.depoName,
+      //   cityName: widget.cityName,
+      // ),
     ];
 
     return Scaffold(

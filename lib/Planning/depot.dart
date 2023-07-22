@@ -12,6 +12,7 @@ import 'package:web_appllication/style.dart';
 
 import '../Authentication/auth_service.dart';
 import '../OverviewPages/daily_project.dart';
+import '../widgets/custom_appbar.dart';
 
 class Mydepots extends StatefulWidget {
   String? cityName;
@@ -38,26 +39,32 @@ class _MydepotsState extends State<Mydepots> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? LoadingPage()
-        : Scaffold(
-            floatingActionButton: companyName == 'TATA POWER'
-                ? FloatingActionButton(
-                    onPressed: () {
-                      PopupDialog(context);
-                    },
-                    child: Icon(Icons.add),
-                    backgroundColor: blue,
-                  )
-                : Container(),
-            appBar: AppBar(
+    return Scaffold(
+      floatingActionButton: companyName == 'TATA POWER'
+          ? FloatingActionButton(
+              onPressed: () {
+                PopupDialog(context);
+              },
+              child: Icon(Icons.add),
               backgroundColor: blue,
-              title: Text('Depots - ${widget.cityName!}'),
-            ),
-            body: depolist(),
+            )
+          : Container(),
+      appBar: PreferredSize(
+          // ignore: sort_child_properties_last
+          child: CustomAppBar(
+            text: 'Depots - ${widget.cityName}',
+            // userid: widget.userid,
+          ),
+          preferredSize: const Size.fromHeight(50)),
 
-            // Center(child: Text(widget.cityName!)),
-          );
+      //  AppBar(
+      //   backgroundColor: blue,
+      //   title: Text('Depots - ${widget.cityName!}'),
+      // ),
+      body: isLoading ? LoadingPage() : depolist(),
+
+      // Center(child: Text(widget.cityName!)),
+    );
   }
 
   PopupDialog(BuildContext context) {

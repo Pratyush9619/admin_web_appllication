@@ -5,6 +5,7 @@ import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:web_appllication/FirebaseApi/firebase_api.dart';
+import 'package:web_appllication/OverviewPages/safety_summary.dart';
 import 'package:web_appllication/OverviewPages/summary.dart';
 import 'package:web_appllication/model/employee_statutory.dart';
 import '../Authentication/auth_service.dart';
@@ -123,12 +124,15 @@ class _SafetyChecklistState extends State<SafetyChecklist> {
             onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ViewSummary(
-                      userId: widget.userId,
-                      cityName: widget.cityName.toString(),
-                      depoName: widget.depoName.toString(),
-                      id: 'Safety Checklist Report'),
-                )),
+                    builder: (context) => SafetySummary(
+                          depoName: widget.depoName,
+                        )
+                    // ViewSummary(
+                    //     userId: widget.userId,
+                    //     cityName: widget.cityName.toString(),
+                    //     depoName: widget.depoName.toString(),
+                    //     id: 'Safety Checklist Report'),
+                    )),
             haveSynced: specificUser ? true : false,
             store: () {
               store();

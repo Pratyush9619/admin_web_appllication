@@ -622,26 +622,29 @@ class _MaterialProcurementState extends State<MaterialProcurement> {
                   ),
                 )),
               ]),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: (() {
-            _materialprocurement.add(MaterialProcurementModel(
-                cityName: '',
-                details: '',
-                olaNo: '',
-                vendorName: '',
-                oemApproval: '',
-                oemClearance: '',
-                croPlacement: '',
-                croVendor: '',
-                croNumber: '',
-                unit: '',
-                qty: 1,
-                materialSite: DateFormat().add_yMd().format(DateTime.now())));
-            _materialDatasource.buildDataGridRows();
-            _materialDatasource.updateDatagridSource();
-          }),
-        ));
+        floatingActionButton: AuthService().getcompany() == 'TATA POWER'
+            ? FloatingActionButton(
+                child: Icon(Icons.add),
+                onPressed: (() {
+                  _materialprocurement.add(MaterialProcurementModel(
+                      cityName: '',
+                      details: '',
+                      olaNo: '',
+                      vendorName: '',
+                      oemApproval: '',
+                      oemClearance: '',
+                      croPlacement: '',
+                      croVendor: '',
+                      croNumber: '',
+                      unit: '',
+                      qty: 1,
+                      materialSite:
+                          DateFormat().add_yMd().format(DateTime.now())));
+                  _materialDatasource.buildDataGridRows();
+                  _materialDatasource.updateDatagridSource();
+                }),
+              )
+            : Container());
   }
 
   void storeData() {

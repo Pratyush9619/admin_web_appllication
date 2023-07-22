@@ -68,6 +68,8 @@ dependencies:
   syncfusion_flutter_pdfviewer: ^20.3.58
   syncfusion_flutter_xlsio: ^20.4.50-beta
   tab_indicator_styler: ^2.0.0
+  lottie:
+  printing: ^5.10.4
 
 dev_dependencies:
   flutter_lints: ^2.0.0
@@ -88,6 +90,7 @@ flutter:
     - assets/
     - assets/flags/
     - assets/overview_image/
+    - animations/
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

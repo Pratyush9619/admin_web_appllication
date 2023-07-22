@@ -17,8 +17,8 @@ class _NodataAvailableState extends State<NodataAvailable> {
             child: Padding(
       padding: const EdgeInsets.all(10.0),
       child: Container(
-        padding: EdgeInsets.all(10),
-        height: 1000,
+        padding: const EdgeInsets.all(10),
+        height: 800,
         width: 1000,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -36,7 +36,7 @@ class _NodataAvailableState extends State<NodataAvailable> {
                 height: 100,
                 width: 100,
               ),
-              SizedBox(width: 50),
+              SizedBox(width: 70),
               Image.asset(
                 'assets/Green.jpeg',
                 height: 100,

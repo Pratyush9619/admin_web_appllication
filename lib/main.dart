@@ -9,6 +9,7 @@ import 'package:web_appllication/provider/text_provider.dart';
 import 'package:web_appllication/small_screen.dart';
 import 'package:web_appllication/style.dart';
 import 'Authentication/login_register.dart';
+import 'Planning/cities.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -76,12 +77,12 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return
-        //  MenuUserPage();
+        // MenuUserPage();
         // DepotOverview();
         // ResourceAllocation();
         //  EventsPage();
         // KeyEvents();
-        // CitiesPage();
+        //   CitiesPage();
         const LoginRegister();
     // const PdfSummary();
   }

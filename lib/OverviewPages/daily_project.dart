@@ -87,7 +87,7 @@ class _DailyProjectState extends State<DailyProject> {
       appBar: PreferredSize(
           // ignore: sort_child_properties_last
           child: CustomAppBar(
-            text: ' ${widget.cityName}/ ${widget.depoName} / Dailly Report',
+            text: ' ${widget.cityName}/ ${widget.depoName} / Daily Report',
             userid: widget.userId,
             haveSynced: false,
             //specificUser ? true : false,
@@ -746,15 +746,11 @@ class _DailyProjectState extends State<DailyProject> {
   Future<void> nestedTableData(docss) async {
     showCupertinoDialog(
       context: context,
-      builder: (context) => const CupertinoAlertDialog(
+      builder: (context) => CupertinoAlertDialog(
         content: SizedBox(
-          height: 50,
-          width: 50,
-          child: Center(
-            child: CircularProgressIndicator(
-              color: Colors.white,
-            ),
-          ),
+          // height: 50,
+          // width: 50,
+          child: Center(child: LoadingPage()),
         ),
       ),
     );
