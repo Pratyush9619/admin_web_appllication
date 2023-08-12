@@ -9,6 +9,8 @@ import 'package:web_appllication/OverviewPages/resource_allocation.dart';
 import 'package:web_appllication/OverviewPages/safety_summary.dart';
 import 'package:web_appllication/style.dart';
 import 'package:web_appllication/widgets/custom_appbar.dart';
+import '../KeyEvents/key_eventsUser.dart';
+import '../OverviewPages/closure_summary_table.dart';
 import '../OverviewPages/detailed_Eng.dart';
 import '../KeyEvents/key_events.dart';
 import '../OverviewPages/easy_monitoring.dart';
@@ -97,10 +99,14 @@ class _MyOverviewState extends State<MyOverview> {
       //   depoName: widget.depoName,
       //   cityName: widget.cityName,
       // ),
-      KeyEvents(
-        depoName: widget.depoName,
+      KeyEventsUser(
         cityName: widget.cityName,
+        depoName: widget.depoName,
       ),
+      // KeyEvents(
+      //   depoName: widget.depoName,
+      //   cityName: widget.cityName,
+      // ),
       MaterialProcurement(
         cityName: widget.cityName,
         depoName: widget.depoName,
@@ -149,10 +155,12 @@ class _MyOverviewState extends State<MyOverview> {
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
-      ClosureReport(
-          // userId: widget.userid,
-          cityName: widget.cityName,
-          depoName: widget.depoName),
+      ClosureSummaryTable(
+        // userId: widget.userid,
+        cityName: widget.cityName,
+        depoName: widget.depoName,
+        id: 'Closure Report',
+      ),
 
       EasyMonitoring(
         cityName: widget.cityName,

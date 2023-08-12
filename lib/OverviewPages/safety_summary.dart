@@ -27,6 +27,7 @@ class SafetySummary extends StatefulWidget {
 class _SafetySummaryState extends State<SafetySummary> {
   //Daily Project Row List for view summary
   List<List<dynamic>> rowList = [];
+  bool enableLoading = false;
 
   @override
   void initState() {
@@ -34,6 +35,7 @@ class _SafetySummaryState extends State<SafetySummary> {
   }
 
   Future<List<List<dynamic>>> fetchData() async {
+
     await getRowsForFutureBuilder();
     return rowList;
   }
@@ -48,7 +50,9 @@ class _SafetySummaryState extends State<SafetySummary> {
             userid: widget.userId,
           ),
           preferredSize: const Size.fromHeight(50)),
-      body: FutureBuilder<List<List<dynamic>>>(
+      body: enableLoading ?
+        LoadingPage()
+    : FutureBuilder<List<List<dynamic>>>(
         future: fetchData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -75,15 +79,7 @@ class _SafetySummaryState extends State<SafetySummary> {
 
             if (data.isEmpty) {
               return NodataAvailable();
-              // const Center(
-              //   child: Text(
-              //     'No Data Available for Selected Depo',
-              //     style: TextStyle(
-              //       fontWeight: FontWeight.bold,
-              //       fontSize: 20,
-              //     ),
-              //   ),
-              // );
+
             }
 
             return Column(
@@ -172,6 +168,7 @@ class _SafetySummaryState extends State<SafetySummary> {
   }
 
   Future<void> getRowsForFutureBuilder() async {
+    rowList.clear();
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('SafetyChecklistTable2')
         .doc('${widget.depoName}')
@@ -197,7 +194,12 @@ class _SafetySummaryState extends State<SafetySummary> {
     }
   }
 
-  Future<void> _generatePDF(String user_id, String date, int decision) async {
+  Future<void> _generatePDF(String userId, String date, int decision) async {
+
+    setState(() {
+  enableLoading = true;
+    });
+
     final headerStyle =
         pw.TextStyle(fontSize: 15, fontWeight: pw.FontWeight.bold);
 
@@ -213,7 +215,7 @@ class _SafetySummaryState extends State<SafetySummary> {
       (await rootBundle.load('assets/Tata-Power.jpeg')).buffer.asUint8List(),
     );
 
-    final white_background = pw.MemoryImage(
+    final whiteBackground = pw.MemoryImage(
       (await rootBundle.load('assets/white_background2.jpeg'))
           .buffer
           .asUint8List(),
@@ -225,7 +227,7 @@ class _SafetySummaryState extends State<SafetySummary> {
         .collection('SafetyFieldData2')
         .doc('${widget.depoName}')
         .collection('userId')
-        .doc(user_id)
+        .doc(userId)
         .collection('date')
         .doc(date)
         .get();
@@ -311,7 +313,7 @@ class _SafetySummaryState extends State<SafetySummary> {
         .collection('SafetyChecklistTable2')
         .doc('${widget.depoName}')
         .collection('userId')
-        .doc(user_id)
+        .doc(userId)
         .collection('date')
         .doc(date)
         .get();
@@ -323,10 +325,10 @@ class _SafetySummaryState extends State<SafetySummary> {
       List<dynamic> imageUrls = [];
 
       for (Map<String, dynamic> mapData in userData) {
-        String images_Path =
-            'gs://tp-zap-solz.appspot.com/SafetyChecklist/Bengaluru/${widget.depoName}/$user_id/${mapData['srNo']}';
+        String imagesPath =
+            'gs://tp-zap-solz.appspot.com/SafetyChecklist/Bengaluru/${widget.depoName}/$userId/${mapData['srNo']}';
         ListResult result =
-            await FirebaseStorage.instance.ref().child(images_Path).listAll();
+            await FirebaseStorage.instance.ref().child(imagesPath).listAll();
 
         if (result.items.isNotEmpty) {
           for (var image in result.items) {
@@ -337,7 +339,7 @@ class _SafetySummaryState extends State<SafetySummary> {
           if (imageUrls.length < 8) {
             int imageLoop = 8 - imageUrls.length;
             for (int i = 0; i < imageLoop; i++) {
-              imageUrls.add(white_background);
+              imageUrls.add(whiteBackground);
             }
           }
         }
@@ -481,7 +483,7 @@ class _SafetySummaryState extends State<SafetySummary> {
           return pw.Container(
               alignment: pw.Alignment.centerRight,
               margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
-              child: pw.Text('User ID - $user_id',
+              child: pw.Text('User ID - $userId',
                   // 'Page ${context.pageNumber} of ${context.pagesCount}',
                   style: pw.Theme.of(context)
                       .defaultTextStyle
@@ -558,7 +560,7 @@ class _SafetySummaryState extends State<SafetySummary> {
           return pw.Container(
               alignment: pw.Alignment.centerRight,
               margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
-              child: pw.Text('User ID - $user_id',
+              child: pw.Text('User ID - $userId',
                   // 'Page ${context.pageNumber} of ${context.pagesCount}',
                   style: pw.Theme.of(context)
                       .defaultTextStyle
@@ -626,13 +628,10 @@ class _SafetySummaryState extends State<SafetySummary> {
     } else {
       const Text('Sorry it is not ready for mobile platform');
     }
-    // // For mobile platforms
-    // final String dir = (await getApplicationDocumentsDirectory()).path;
-    // final String path = '$dir/$pdfPath';
-    // final File file = File(path);
-    // await file.writeAsBytes(pdfData);
-    //
-    // // Open the PDF file for preview or download
-    // OpenFile.open(file.path);
+
+    setState(() {
+      enableLoading = false;
+    });
+
   }
 }

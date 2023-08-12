@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web_appllication/provider/text_provider.dart';
-
 import '../components/loading_page.dart';
 import '../style.dart';
 

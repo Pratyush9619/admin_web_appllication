@@ -1,26 +1,17 @@
 import 'dart:html';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gantt_chart/gantt_chart.dart';
 import 'package:intl/intl.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:web_appllication/FirebaseApi/firebase_api.dart';
-import 'package:web_appllication/KeyEvents/Grid_DataTable51.dart';
-import 'package:web_appllication/KeyEvents/Grid_DataTableA10.dart';
-import 'package:web_appllication/KeyEvents/Grid_DataTableA3.dart';
-import 'package:web_appllication/KeyEvents/Grid_DataTableA4.dart';
-import 'package:web_appllication/KeyEvents/Grid_DataTableA6.dart';
-import 'package:web_appllication/KeyEvents/Grid_DataTableA8.dart';
-import 'package:web_appllication/KeyEvents/Grid_DataTableA9.dart';
-import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 import 'package:web_appllication/model/employee.dart';
-import 'package:web_appllication/KeyEvents/upload.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/provider/key_provider.dart';
 import 'package:web_appllication/style.dart';
 import '../widgets/custom_appbar.dart';
+import '../widgets/keyboard_listener.dart';
 import 'Grid_DataTableA2.dart';
-import 'Grid_DataTableA7.dart';
 import '../datasource/key_datasource.dart';
 
 /// The application that contains datagrid on it.
@@ -31,7 +22,7 @@ class KeyEvents extends StatefulWidget {
   String? userId;
   String? depoName;
   String? cityName;
-  KeyEvents({Key? key, this.userId, this.depoName, this.cityName})
+  KeyEvents({Key? key, required this.userId, this.depoName, this.cityName})
       : super(key: key);
 
   @override
@@ -106,6 +97,15 @@ class _KeyEventsState extends State<KeyEvents> {
       aedate9,
       aedate10;
 
+  // calculate perc of progress
+  List<GanttEventBase> ganttdata = [];
+  List<String> startDate = [];
+  List<String> endDate = [];
+  List<String> actualstart = [];
+  List<String> actualend = [];
+  List<int> srNo = [];
+  final scrollController = ScrollController();
+
   List<double> weight2 = [];
   List<double> weight3 = [];
   List<double> weight4 = [];
@@ -165,13 +165,59 @@ class _KeyEventsState extends State<KeyEvents> {
       actualstartdate9,
       actualenddate9;
 
+  double? perc2 = 0,
+      perc3 = 0,
+      perc4 = 0,
+      perc5 = 0,
+      perc6 = 0,
+      perc7 = 0,
+      perc8 = 0,
+      perc9 = 0,
+      perc10 = 0;
+  int balanceQty2 = 0,
+      balanceQty3 = 0,
+      balanceQty4 = 0,
+      balanceQty5 = 0,
+      balanceQty6 = 0,
+      balanceQty7 = 0,
+      balanceQty8 = 0,
+      balanceQty9 = 0,
+      balanceQty10 = 0;
+  int scope2 = 0,
+      scope3 = 0,
+      scope4 = 0,
+      scope5 = 0,
+      scope6 = 0,
+      scope7 = 0,
+      scope8 = 0,
+      scope9 = 0,
+      scope10 = 0;
+  int totalBalanceQty2 = 0,
+      totalBalanceQty3 = 0,
+      totalBalanceQty4 = 0,
+      totalBalanceQty5 = 0,
+      totalBalanceQty6 = 0,
+      totalBalanceQty7 = 0,
+      totalBalanceQty8 = 0,
+      totalBalanceQty9 = 0,
+      totalBalanceQty10 = 0;
+  int totalscope2 = 0,
+      totalscope3 = 0,
+      totalscope4 = 0,
+      totalscope5 = 0,
+      totalscope6 = 0,
+      totalscope7 = 0,
+      totalscope8 = 0,
+      totalscope9 = 0,
+      totalscope10 = 0;
+
   @override
   void initState() {
     yourstream = FirebaseFirestore.instance
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
         .collection('KeyDataTable')
-        .doc(widget.depoName)
+        .doc('ZW3210')
         .collection('KeyAllEvents')
         // .collection(widget.userId!)
         // .doc('${widget.depoName}')
@@ -241,322 +287,754 @@ class _KeyEventsState extends State<KeyEvents> {
 
     return _isLoading
         ? LoadingPage()
-        : Scaffold(
-            appBar: PreferredSize(
-                // ignore: sort_child_properties_last
-                child: CustomAppBar(
-                  text: 'Overview - ${widget.cityName} - ${widget.depoName}',
-                  userid: widget.userId,
-                ),
-                preferredSize: const Size.fromHeight(50)),
-            // AppBar(
-            //   title:
-            //       Text('Key Events - ${widget.cityName} - ${widget.depoName}'),
-            //   backgroundColor: blue,
-            // ),
-            body: StreamBuilder(
-                stream: yourstream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data.docs.length != 0) {
-                      int length = snapshot.data.docs.length;
-                      startdate.clear();
-                      enddate.clear();
-                      asstartdate.clear();
-                      asenddate.clear();
-                      weight.clear();
-                      for (int i = 0; i < length; i++) {
-                        for (int j = 0; j < length; j++) {
-                          if (snapshot.data.docs[j].reference.id.toString() ==
-                              '${widget.depoName}A10') {
-                            var alldataA10 =
+        : keyBoardArrow(
+            scrollController: scrollController,
+            myScaffold: Scaffold(
+                appBar: PreferredSize(
+                    // ignore: sort_child_properties_last
+                    child: CustomAppBar(
+                      text:
+                          'Overview - ${widget.cityName} - ${widget.depoName}',
+                      userid: widget.userId,
+                    ),
+                    preferredSize: const Size.fromHeight(50)),
+                // AppBar(
+                //   title:
+                //       Text('Key Events - ${widget.cityName} - ${widget.depoName}'),
+                //   backgroundColor: blue,
+                // ),
+                body: StreamBuilder(
+                    stream: yourstream,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        if (snapshot.data.docs.length != 0) {
+                          int length = snapshot.data.docs.length;
+                          startdate.clear();
+                          enddate.clear();
+                          asstartdate.clear();
+                          asenddate.clear();
+                          weight.clear();
+                          for (int i = 0; i < length; i++) {
+                            for (int j = 0; j < length; j++) {
+                              totalscope10 = 0;
+                              totalBalanceQty10 = 0;
+                              totalweightage = 0;
+                              if (snapshot.data.docs[j].reference.id
+                                      .toString() ==
+                                  '${widget.depoName}A10') {
+                                var alldataA10 = snapshot.data.docs[j]['data']
+                                    as List<dynamic>;
+                                sdate10 = alldataA10[0]['StartDate'];
+                                edate10 = alldataA10[alldataA10.length - 1]
+                                    ['EndDate'];
+                                asdate10 = alldataA10[0]['ActualStart'];
+                                aedate10 = alldataA10[alldataA10.length - 1]
+                                    ['ActualEnd'];
+
+                                for (int i = 0; i < alldataA10.length; i++) {
+                                  perc10 = 0;
+                                  scope10 = alldataA10[i]['QtyScope'];
+                                  balanceQty10 = alldataA10[i]['QtyScope'] -
+                                      alldataA10[i]['QtyExecuted'];
+                                  var weightage = alldataA10[i]['Weightage'];
+                                  totalscope10 = scope10 + totalscope10;
+                                  totalBalanceQty10 =
+                                      balanceQty10 + totalBalanceQty10;
+                                  totalweightage = totalweightage + weightage;
+                                }
+                                perc10 = ((totalBalanceQty10 / totalscope10) *
+                                    totalweightage);
+                                weight10.add(totalweightage);
+                              }
+                            }
+
+                            for (int j = 0; j < length; j++) {
+                              totalscope2 = 0;
+                              totalBalanceQty2 = 0;
+                              totalweightage = 0;
+                              if (snapshot.data.docs[j].reference.id
+                                      .toString() ==
+                                  '${widget.depoName}A2') {
+                                var alldataA2 = snapshot.data.docs[j]['data']
+                                    as List<dynamic>;
+                                sdate2 = alldataA2[0]['StartDate'];
+                                edate2 =
+                                    alldataA2[alldataA2.length - 1]['EndDate'];
+                                asdate2 = alldataA2[0]['ActualStart'];
+                                aedate2 = alldataA2[alldataA2.length - 1]
+                                    ['ActualEnd'];
+
+                                for (int i = 0; i < alldataA2.length; i++) {
+                                  perc2 = 0;
+                                  scope2 = alldataA2[i]['QtyScope'];
+                                  balanceQty2 = alldataA2[i]['QtyScope'] -
+                                      alldataA2[i]['QtyExecuted'];
+
+                                  var weightage = alldataA2[i]['Weightage'];
+                                  totalweightage = totalweightage + weightage;
+                                  totalscope2 = scope2 + totalscope2;
+                                  totalBalanceQty2 =
+                                      balanceQty2 + totalBalanceQty2;
+                                }
+                                perc2 = ((totalBalanceQty2 / totalscope2) *
+                                    totalweightage);
+                                print(perc2);
+                                weight2.add(totalweightage);
+                              }
+                            }
+
+                            for (int j = 0; j < length; j++) {
+                              totalscope3 = 0;
+                              totalBalanceQty3 = 0;
+                              totalweightage = 0;
+                              if (snapshot.data.docs[j].reference.id
+                                      .toString() ==
+                                  '${widget.depoName}A3') {
+                                var alldataA3 = snapshot.data.docs[j]['data']
+                                    as List<dynamic>;
+                                sdate3 = alldataA3[0]['StartDate'];
+                                edate3 =
+                                    alldataA3[alldataA3.length - 1]['EndDate'];
+                                asdate3 = alldataA3[0]['ActualStart'];
+                                aedate3 = alldataA3[alldataA3.length - 1]
+                                    ['ActualEnd'];
+
+                                for (int i = 0; i < alldataA3.length; i++) {
+                                  perc3 = 0;
+                                  scope3 = alldataA3[i]['QtyScope'];
+                                  balanceQty3 = alldataA3[i]['QtyScope'] -
+                                      alldataA3[i]['QtyExecuted'];
+                                  var weightage = alldataA3[i]['Weightage'];
+                                  totalweightage = totalweightage + weightage;
+                                  totalscope3 = scope3 + totalscope3;
+                                  totalBalanceQty3 =
+                                      balanceQty3 + totalBalanceQty3;
+                                }
+                                perc3 = ((totalBalanceQty3 / totalscope3) *
+                                    totalweightage);
+                                print(perc3);
+                                weight3.add(totalweightage);
+                              }
+                            }
+
+                            for (int j = 0; j < length; j++) {
+                              totalscope4 = 0;
+                              totalBalanceQty4 = 0;
+                              totalweightage = 0;
+                              if (snapshot.data.docs[j].reference.id
+                                      .toString() ==
+                                  '${widget.depoName}A4') {
+                                var alldataA4 = snapshot.data.docs[j]['data']
+                                    as List<dynamic>;
+                                sdate4 = alldataA4[0]['StartDate'];
+                                edate4 =
+                                    alldataA4[alldataA4.length - 1]['EndDate'];
+                                asdate4 = alldataA4[0]['ActualStart'];
+                                aedate4 = alldataA4[alldataA4.length - 1]
+                                    ['ActualEnd'];
+
+                                for (int i = 0; i < alldataA4.length; i++) {
+                                  perc4 = 0;
+                                  scope4 = alldataA4[i]['QtyScope'];
+                                  balanceQty4 = alldataA4[i]['QtyScope'] -
+                                      alldataA4[i]['QtyExecuted'];
+                                  var weightage = alldataA4[i]['Weightage'];
+                                  totalweightage = totalweightage + weightage;
+                                  totalscope4 = scope4 + totalscope4;
+                                  totalBalanceQty4 =
+                                      balanceQty4 + totalBalanceQty4;
+                                }
+                                perc4 = ((totalBalanceQty4 / totalscope4) *
+                                    totalweightage);
+                                weight4.add(totalweightage);
+                              }
+                            }
+
+                            for (int j = 0; j < length; j++) {
+                              totalscope5 = 0;
+                              totalBalanceQty5 = 0;
+                              totalweightage = 0;
+                              if (snapshot.data.docs[j].reference.id
+                                      .toString() ==
+                                  '${widget.depoName}A5') {
+                                var alldataA5 = snapshot.data.docs[j]['data']
+                                    as List<dynamic>;
+                                sdate5 = alldataA5[0]['StartDate'];
+                                edate5 =
+                                    alldataA5[alldataA5.length - 1]['EndDate'];
+                                asdate5 = alldataA5[0]['ActualStart'];
+                                aedate5 = alldataA5[alldataA5.length - 1]
+                                    ['ActualEnd'];
+
+                                for (int i = 0; i < alldataA5.length; i++) {
+                                  perc5 = 0;
+                                  scope5 = alldataA5[i]['QtyScope'];
+                                  balanceQty5 = alldataA5[i]['QtyScope'] -
+                                      alldataA5[i]['QtyExecuted'];
+                                  var weightage = alldataA5[i]['Weightage'];
+                                  totalscope5 = scope5 + totalscope5;
+                                  totalBalanceQty5 =
+                                      balanceQty5 + totalBalanceQty5;
+                                  totalweightage = totalweightage + weightage;
+                                }
+                                perc5 = ((totalBalanceQty5 / totalscope5) *
+                                    totalweightage);
+                                weight5.add(totalweightage);
+                              }
+                            }
+
+                            for (int j = 0; j < length; j++) {
+                              totalscope6 = 0;
+                              totalBalanceQty6 = 0;
+                              totalweightage = 0;
+                              if (snapshot.data.docs[j].reference.id
+                                      .toString() ==
+                                  '${widget.depoName}A6') {
+                                var alldataA6 = snapshot.data.docs[j]['data']
+                                    as List<dynamic>;
+                                sdate6 = alldataA6[0]['StartDate'];
+                                edate6 =
+                                    alldataA6[alldataA6.length - 1]['EndDate'];
+                                asdate6 = alldataA6[0]['ActualStart'];
+                                aedate6 = alldataA6[alldataA6.length - 1]
+                                    ['ActualEnd'];
+
+                                for (int i = 0; i < alldataA6.length; i++) {
+                                  perc6 = 0;
+                                  scope6 = alldataA6[i]['QtyScope'];
+                                  balanceQty6 = alldataA6[i]['QtyScope'] -
+                                      alldataA6[i]['QtyExecuted'];
+                                  totalscope6 = scope6 + totalscope6;
+                                  totalBalanceQty6 =
+                                      balanceQty6 + totalBalanceQty6;
+                                  var weightage = alldataA6[i]['Weightage'];
+                                  totalweightage = totalweightage + weightage;
+                                }
+                                perc6 = ((totalBalanceQty6 / totalscope6) *
+                                    totalweightage);
+                                weight6.add(totalweightage);
+                              }
+                            }
+
+                            for (int j = 0; j < length; j++) {
+                              totalscope7 = 0;
+                              totalBalanceQty7 = 0;
+                              totalweightage = 0;
+                              if (snapshot.data.docs[j].reference.id
+                                      .toString() ==
+                                  '${widget.depoName}A7') {
+                                var alldataA7 = snapshot.data.docs[j]['data']
+                                    as List<dynamic>;
+                                sdate7 = alldataA7[0]['StartDate'];
+                                edate7 =
+                                    alldataA7[alldataA7.length - 1]['EndDate'];
+                                asdate7 = alldataA7[0]['ActualStart'];
+                                aedate7 = alldataA7[alldataA7.length - 1]
+                                    ['ActualEnd'];
+
+                                for (int i = 0; i < alldataA7.length; i++) {
+                                  perc7 = 0;
+                                  scope7 = alldataA7[i]['QtyScope'];
+                                  balanceQty7 = alldataA7[i]['QtyScope'] -
+                                      alldataA7[i]['QtyExecuted'];
+                                  totalscope7 = scope7 + totalscope7;
+                                  totalBalanceQty7 =
+                                      balanceQty7 + totalBalanceQty7;
+                                  var weightage = alldataA7[i]['Weightage'];
+                                  totalweightage = totalweightage + weightage;
+                                }
+                                perc7 = ((totalBalanceQty7 / totalscope7) *
+                                    totalweightage);
+                                weight7.add(totalweightage);
+                              }
+                            }
+
+                            for (int j = 0; j < length; j++) {
+                              totalscope8 = 0;
+                              totalBalanceQty8 = 0;
+                              totalweightage = 0;
+                              if (snapshot.data.docs[j].reference.id
+                                      .toString() ==
+                                  '${widget.depoName}A8') {
+                                var alldataA8 = snapshot.data.docs[j]['data']
+                                    as List<dynamic>;
+                                sdate8 = alldataA8[0]['StartDate'];
+                                edate8 =
+                                    alldataA8[alldataA8.length - 1]['EndDate'];
+                                asdate8 = alldataA8[0]['ActualStart'];
+                                aedate8 = alldataA8[alldataA8.length - 1]
+                                    ['ActualEnd'];
+
+                                for (int i = 0; i < alldataA8.length; i++) {
+                                  perc8 = 0;
+                                  scope8 = alldataA8[i]['QtyScope'];
+                                  balanceQty8 = alldataA8[i]['QtyScope'] -
+                                      alldataA8[i]['QtyExecuted'];
+                                  var weightage = alldataA8[i]['Weightage'];
+                                  totalscope8 = scope8 + totalscope8;
+                                  totalBalanceQty8 =
+                                      balanceQty8 + totalBalanceQty8;
+                                  totalweightage = totalweightage + weightage;
+                                }
+                                perc8 = ((totalBalanceQty8 / totalscope8) *
+                                    totalweightage);
+                                weight8.add(totalweightage);
+                              }
+                            }
+
+                            for (int j = 0; j < length; j++) {
+                              totalscope9 = 0;
+                              totalBalanceQty9 = 0;
+                              totalweightage = 0;
+                              if (snapshot.data.docs[j].reference.id
+                                      .toString() ==
+                                  '${widget.depoName}A9') {
+                                var alldataA9 = snapshot.data.docs[j]['data']
+                                    as List<dynamic>;
+                                sdate9 = alldataA9[0]['StartDate'];
+                                edate9 =
+                                    alldataA9[alldataA9.length - 1]['EndDate'];
+                                asdate9 = alldataA9[0]['ActualStart'];
+                                aedate9 = alldataA9[alldataA9.length - 1]
+                                    ['ActualEnd'];
+
+                                for (int i = 0; i < alldataA9.length; i++) {
+                                  perc9 = 0;
+                                  scope9 = alldataA9[i]['QtyScope'];
+                                  balanceQty9 = alldataA9[i]['QtyScope'] -
+                                      alldataA9[i]['QtyExecuted'];
+                                  totalscope9 = scope9 + totalscope9;
+                                  totalBalanceQty9 =
+                                      balanceQty9 + totalBalanceQty9;
+                                  var weightage = alldataA9[i]['Weightage'];
+                                  totalweightage = totalweightage + weightage;
+                                }
+                              }
+                              perc9 = ((totalBalanceQty9 / totalscope9) *
+                                  totalweightage);
+                              weight9.add(totalweightage);
+                            }
+                          }
+                          startDate.clear();
+                          enddate.clear();
+                          actualstart.clear();
+                          actualend.clear();
+                          srNo.clear();
+                          for (int j = 0; j < length; j++) {
+                            // if (snapshot.data.docs[j].reference.id.toString() ==
+                            //     '${widget.depoName}A$j') {
+                            if (j != 0) {
+                              var startdate = '';
+                              var endDate = '';
+                              var actualDate = '';
+                              var actualEnd = '';
+                              var srno;
+
+                              var allchartdata = snapshot.data.docs[j]['data']
+                                  as List<dynamic>;
+                              startdate = allchartdata[0]['StartDate'];
+                              endDate = allchartdata[allchartdata.length - 1]
+                                  ['EndDate'];
+                              actualDate = allchartdata[0]['ActualStart'];
+                              actualEnd = allchartdata[allchartdata.length - 1]
+                                  ['ActualEnd'];
+
+                              srno = j;
+
+                              startDate.add(startdate);
+                              enddate.add(endDate);
+                              actualstart.add(actualDate);
+                              actualend.add(actualEnd);
+                              srNo.add(srno);
+                            }
+                          }
+                          for (int j = 0; j < 1; j++) {
+                            // if (snapshot.data.docs[j].reference.id.toString() ==
+                            //     '${widget.depoName}A$j') {
+
+                            var startdate = '';
+                            var endDate = '';
+                            var actualDate = '';
+                            var actualEnd = '';
+                            var srno;
+
+                            var allchartdata =
                                 snapshot.data.docs[j]['data'] as List<dynamic>;
-                            sdate10 = alldataA10[0]['StartDate'];
-                            edate10 =
-                                alldataA10[alldataA10.length - 1]['EndDate'];
-                            asdate10 = alldataA10[0]['ActualStart'];
-                            aedate10 =
-                                alldataA10[alldataA10.length - 1]['ActualEnd'];
+                            startdate = allchartdata[0]['StartDate'];
+                            endDate = allchartdata[allchartdata.length - 1]
+                                ['EndDate'];
+                            actualDate = allchartdata[0]['ActualStart'];
+                            actualEnd = allchartdata[allchartdata.length - 1]
+                                ['ActualEnd'];
 
-                            for (int i = 0; i < alldataA10.length; i++) {
-                              var weightage = alldataA10[i]['Weightage'];
-                              totalweightage = totalweightage + weightage;
-                            }
-                            weight10.add(totalweightage);
+                            srno = j;
+
+                            startDate.add(startdate);
+                            enddate.add(endDate);
+                            actualstart.add(actualDate);
+                            actualend.add(actualEnd);
+                            srNo.add(srno);
                           }
-                        }
+                          for (int i = 0; i < 1; i++) {
+                            ganttdata.add(GanttAbsoluteEvent(
+                              displayNameBuilder: (context) {
+                                int sr = 1;
+                                return sr.toString();
+                              },
+                              startDate: DateTime.now(),
+                              endDate: DateTime.now(),
+                            ));
 
-                        for (int j = 0; j < length; j++) {
-                          if (snapshot.data.docs[j].reference.id.toString() ==
-                              '${widget.depoName}A2') {
-                            var alldataA2 =
-                                snapshot.data.docs[j]['data'] as List<dynamic>;
-                            sdate2 = alldataA2[0]['StartDate'];
-                            edate2 = alldataA2[alldataA2.length - 1]['EndDate'];
-                            asdate2 = alldataA2[0]['ActualStart'];
-                            aedate2 =
-                                alldataA2[alldataA2.length - 1]['ActualEnd'];
-
-                            for (int i = 0; i < alldataA2.length; i++) {
-                              var weightage = alldataA2[i]['Weightage'];
-                              totalweightage = totalweightage + weightage;
-                            }
-                            weight2.add(totalweightage);
+                            ganttdata.add(GanttAbsoluteEvent(
+                              displayNameBuilder: (context) {
+                                return '';
+                              },
+                              startDate: DateTime.now(),
+                              endDate: DateTime.now(),
+                              //displayName: yAxis[i].toString()
+                            ));
                           }
-                        }
 
-                        for (int j = 0; j < length; j++) {
-                          if (snapshot.data.docs[j].reference.id.toString() ==
-                              '${widget.depoName}A3') {
-                            var alldataA3 =
-                                snapshot.data.docs[j]['data'] as List<dynamic>;
-                            sdate3 = alldataA3[0]['StartDate'];
-                            edate3 = alldataA3[alldataA3.length - 1]['EndDate'];
-                            asdate3 = alldataA3[0]['ActualStart'];
-                            aedate3 =
-                                alldataA3[alldataA3.length - 1]['ActualEnd'];
+                          for (int i = 0; i < length; i++) {
+                            ganttdata.add(GanttAbsoluteEvent(
+                                displayNameBuilder: (context) {
+                                  int sr = i + 2;
+                                  // int ss = sr + 1;
+                                  return sr.toString();
+                                },
+                                startDate: DateFormat('dd-MM-yyyy')
+                                    .parse(startDate[i]),
+                                endDate:
+                                    DateFormat('dd-MM-yyyy').parse(enddate[i]),
+                                suggestedColor: yellow));
 
-                            for (int i = 0; i < alldataA3.length; i++) {
-                              var weightage = alldataA3[i]['Weightage'];
-                              totalweightage = totalweightage + weightage;
-                            }
-                            weight3.add(totalweightage);
+                            ganttdata.add(GanttAbsoluteEvent(
+                                displayNameBuilder: (context) {
+                                  return '';
+                                },
+                                startDate: DateFormat('dd-MM-yyyy')
+                                    .parse(actualstart[i]),
+                                endDate: DateFormat('dd-MM-yyyy')
+                                    .parse(actualend[i]),
+                                //displayName: yAxis[i].toString()
+                                suggestedColor: actualstart[i] == actualend[i]
+                                    ? green
+                                    : red));
                           }
+                          _employees = getEmployeeData();
+                          _keyDataSourceKeyEvents =
+                              KeyDataSourceKeyEvents(_employees, context);
+                          _dataGridController = DataGridController();
+
+                          return Container(
+                              height: 600,
+                              child: Row(children: [
+                                Expanded(
+                                  child: SfDataGrid(
+                                    source: _keyDataSourceKeyEvents,
+                                    onCellTap:
+                                        (DataGridCellTapDetails details) {
+                                      final DataGridRow row =
+                                          _keyDataSourceKeyEvents.effectiveRows[
+                                              details.rowColumnIndex.rowIndex -
+                                                  1];
+
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  StatutoryAprovalA2(
+                                                      userid: widget.userId,
+                                                      cityName: widget.cityName,
+                                                      depoName: widget.depoName,
+                                                      events: row
+                                                          .getCells()[0]
+                                                          .value
+                                                          .toString())));
+                                    },
+                                    allowEditing: true,
+                                    frozenColumnsCount: 2,
+                                    editingGestureType: EditingGestureType.tap,
+                                    headerGridLinesVisibility:
+                                        GridLinesVisibility.both,
+                                    gridLinesVisibility:
+                                        GridLinesVisibility.both,
+                                    selectionMode: SelectionMode.single,
+                                    navigationMode: GridNavigationMode.cell,
+                                    columnWidthMode: ColumnWidthMode.auto,
+                                    controller: _dataGridController,
+                                    // onQueryRowHeight: (details) {
+                                    //   return details.rowIndex == 0 ? 60.0 : 49.0;
+                                    // },
+                                    columns: [
+                                      GridColumn(
+                                        columnName: 'srNo',
+                                        autoFitPadding: EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        allowEditing: false,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Sr No',
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+
+                                            //    textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'Activity',
+                                        allowEditing: false,
+                                        width: 220,
+                                        label: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16.0),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Activity',
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'OriginalDuration',
+                                        allowEditing: false,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Original Duration',
+                                            overflow: TextOverflow.values.first,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'StartDate',
+                                        allowEditing: false,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Start Date',
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'EndDate',
+                                        allowEditing: false,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'End Date',
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'ActualStart',
+                                        allowEditing: false,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Actual Start',
+                                            overflow: TextOverflow.values.first,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'ActualEnd',
+                                        allowEditing: false,
+                                        label: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16.0),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            textAlign: TextAlign.center,
+                                            'Actual End',
+                                            overflow: TextOverflow.values.first,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'ActualDuration',
+                                        allowEditing: false,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Actual Duration',
+                                            overflow: TextOverflow.values.first,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'Delay',
+                                        allowEditing: false,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Delay',
+                                            overflow: TextOverflow.values.first,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      // GridColumn(
+                                      //   columnName: 'Dependency',
+                                      //   allowEditing: false,
+                                      //   label: Container(
+                                      //     alignment: Alignment.center,
+                                      //     child: Text(
+                                      //       'Dependency',
+                                      //       overflow: TextOverflow.values.first,
+                                      //       style: const TextStyle(
+                                      //           fontWeight: FontWeight.bold,
+                                      //           fontSize: 16),
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                      // GridColumn(
+                                      //   columnName: 'QtyScope',
+                                      //   allowEditing: false,
+                                      //   label: Container(
+                                      //     alignment: Alignment.center,
+                                      //     child: Text(
+                                      //       'Oty as per scope',
+                                      //       overflow: TextOverflow.values.first,
+                                      //       style: const TextStyle(
+                                      //           fontWeight: FontWeight.bold,
+                                      //           fontSize: 16),
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                      // GridColumn(
+                                      //   columnName: 'QtyExecuted',
+                                      //   allowEditing: false,
+                                      //   label: Container(
+                                      //     alignment: Alignment.center,
+                                      //     child: Text(
+                                      //       'Qty executed',
+                                      //       overflow: TextOverflow.values.first,
+                                      //       style: const TextStyle(
+                                      //           fontWeight: FontWeight.bold,
+                                      //           fontSize: 16),
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                      // GridColumn(
+                                      //   columnName: 'BalancedQty',
+                                      //   allowEditing: false,
+                                      //   label: Container(
+                                      //     width: 150,
+                                      //     alignment: Alignment.center,
+                                      //     child: Text(
+                                      //       'Balanced Qty',
+                                      //       overflow: TextOverflow.values.first,
+                                      //       style: const TextStyle(
+                                      //           fontWeight: FontWeight.bold,
+                                      //           fontSize: 16),
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                      GridColumn(
+                                        columnName: 'Progress',
+                                        allowEditing: false,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            '% of Progress',
+                                            overflow: TextOverflow.values.first,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                      GridColumn(
+                                        columnName: 'Weightage',
+                                        allowEditing: false,
+                                        label: Container(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Weightage',
+                                            overflow: TextOverflow.values.first,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                    width: 450,
+                                    child: GanttChartView(
+                                      events: ganttdata,
+                                      scrollController: scrollController,
+                                      scrollPhysics: BouncingScrollPhysics(),
+                                      maxDuration: null,
+                                      // const Duration(days: 30 * 2),
+                                      // optional, set to null for infinite horizontal scroll
+                                      startDate:
+                                          DateTime(2023, 8, 1), //required
+                                      dayWidth: 40, //column width for each day
+                                      dayHeaderHeight: 35,
+                                      eventHeight: 25, //row height for events
+
+                                      stickyAreaWidth: 80, //sticky area width
+                                      showStickyArea:
+                                          true, //show sticky area or not
+                                      showDays: true, //show days or not
+                                      startOfTheWeek: WeekDay
+                                          .monday, //custom start of the week
+                                      weekHeaderHeight: 35,
+                                      weekEnds: const {
+                                        // WeekDay.saturday,
+                                        // WeekDay.sunday
+                                      }, //custom weekends
+                                      isExtraHoliday: (context, day) {
+                                        //define custom holiday logic for each day
+                                        return DateUtils.isSameDay(
+                                            DateTime(2023, 7, 1), day);
+                                      },
+                                    ))
+                              ]));
                         }
-
-                        for (int j = 0; j < length; j++) {
-                          if (snapshot.data.docs[j].reference.id.toString() ==
-                              '${widget.depoName}A4') {
-                            var alldataA4 =
-                                snapshot.data.docs[j]['data'] as List<dynamic>;
-                            sdate4 = alldataA4[0]['StartDate'];
-                            edate4 = alldataA4[alldataA4.length - 1]['EndDate'];
-                            asdate4 = alldataA4[0]['ActualStart'];
-                            aedate4 =
-                                alldataA4[alldataA4.length - 1]['ActualEnd'];
-
-                            for (int i = 0; i < alldataA4.length; i++) {
-                              var weightage = alldataA4[i]['Weightage'];
-                              totalweightage = totalweightage + weightage;
-                            }
-                            weight4.add(totalweightage);
-                          }
-                        }
-
-                        for (int j = 0; j < length; j++) {
-                          if (snapshot.data.docs[j].reference.id.toString() ==
-                              '${widget.depoName}A5') {
-                            var alldataA5 =
-                                snapshot.data.docs[4]['data'] as List<dynamic>;
-                            sdate5 = alldataA5[0]['StartDate'];
-                            edate5 = alldataA5[alldataA5.length - 1]['EndDate'];
-                            asdate5 = alldataA5[0]['ActualStart'];
-                            aedate5 =
-                                alldataA5[alldataA5.length - 1]['ActualEnd'];
-
-                            for (int i = 0; i < alldataA5.length; i++) {
-                              var weightage = alldataA5[i]['Weightage'];
-                              totalweightage = totalweightage + weightage;
-                            }
-                            weight5.add(totalweightage);
-                          }
-                        }
-
-                        for (int j = 0; j < length; j++) {
-                          if (snapshot.data.docs[j].reference.id.toString() ==
-                              '${widget.depoName}A6') {
-                            var alldataA6 =
-                                snapshot.data.docs[j]['data'] as List<dynamic>;
-                            sdate6 = alldataA6[0]['StartDate'];
-                            edate6 = alldataA6[alldataA6.length - 1]['EndDate'];
-                            asdate6 = alldataA6[0]['ActualStart'];
-                            aedate6 =
-                                alldataA6[alldataA6.length - 1]['ActualEnd'];
-
-                            for (int i = 0; i < alldataA6.length; i++) {
-                              var weightage = alldataA6[i]['Weightage'];
-                              totalweightage = totalweightage + weightage;
-                            }
-                            weight6.add(totalweightage);
-                          }
-                        }
-
-                        for (int j = 0; j < length; j++) {
-                          if (snapshot.data.docs[j].reference.id.toString() ==
-                              '${widget.depoName}A7') {
-                            var alldataA7 =
-                                snapshot.data.docs[j]['data'] as List<dynamic>;
-                            sdate7 = alldataA7[0]['StartDate'];
-                            edate7 = alldataA7[alldataA7.length - 1]['EndDate'];
-                            asdate7 = alldataA7[0]['ActualStart'];
-                            aedate7 =
-                                alldataA7[alldataA7.length - 1]['ActualEnd'];
-
-                            for (int i = 0; i < alldataA7.length; i++) {
-                              var weightage = alldataA7[i]['Weightage'];
-                              totalweightage = totalweightage + weightage;
-                            }
-                            weight7.add(totalweightage);
-                          }
-                        }
-
-                        for (int j = 0; j < length; j++) {
-                          if (snapshot.data.docs[j].reference.id.toString() ==
-                              '${widget.depoName}A8') {
-                            var alldataA8 =
-                                snapshot.data.docs[j]['data'] as List<dynamic>;
-                            sdate8 = alldataA8[0]['StartDate'];
-                            edate8 = alldataA8[alldataA8.length - 1]['EndDate'];
-                            asdate8 = alldataA8[0]['ActualStart'];
-                            aedate8 =
-                                alldataA8[alldataA8.length - 1]['ActualEnd'];
-
-                            for (int i = 0; i < alldataA8.length; i++) {
-                              var weightage = alldataA8[i]['Weightage'];
-                              totalweightage = totalweightage + weightage;
-                            }
-                            weight8.add(totalweightage);
-                          }
-                        }
-
-                        for (int j = 0; j < length; j++) {
-                          if (snapshot.data.docs[j].reference.id.toString() ==
-                              '${widget.depoName}A9') {
-                            var alldataA9 =
-                                snapshot.data.docs[j]['data'] as List<dynamic>;
-                            sdate9 = alldataA9[0]['StartDate'];
-                            edate9 = alldataA9[alldataA9.length - 1]['EndDate'];
-                            asdate9 = alldataA9[0]['ActualStart'];
-                            aedate9 =
-                                alldataA9[alldataA9.length - 1]['ActualEnd'];
-
-                            for (int i = 0; i < alldataA9.length; i++) {
-                              var weightage = alldataA9[i]['Weightage'];
-                              totalweightage = totalweightage + weightage;
-                            }
-                          }
-                          weight9.add(totalweightage);
-                        }
+                      } else {
+                        return LoadingPage();
                       }
-                      // }
-                      // if (i == 4) {
-                      //   var alldataA5 =
-                      //       snapshot.data.docs[i]['data'] as List<dynamic>;
-                      //   sdate = alldataA5[0]['StartDate'];
-                      //   edate = alldataA5[alldataA5.length - 1]['EndDate'];
-                      //   asdate = alldataA5[0]['ActualStart'];
-                      //   aedate = alldataA5[alldataA5.length - 1]['ActualEnd'];
-                      //   startdate.add(sdate!);
-                      //   enddate.add(edate!);
-                      //   asstartdate.add(asdate!);
-                      //   asenddate.add(aedate!);
-                      //   print('Start$startdate');
-                      //   print('Start$enddate');
-                      //   for (int i = 0; i < alldataA5.length; i++) {
-                      //     var weightage = alldataA5[i]['Weightage'];
-                      //     totalweightage = totalweightage + weightage;
-                      //   }
-                      //   weight.add(totalweightage);
-                      // } else {
-                      //   alldata =
-                      //       snapshot.data.docs[i]['data'] as List<dynamic>;
-                      //   sdate = alldata[0]['StartDate'];
-                      //   edate = alldata[alldata.length - 1]['EndDate'];
-                      //   asdate = alldata[0]['ActualStart'];
-                      //   aedate = alldata[alldata.length - 1]['ActualEnd'];
-                      //   startdate.add(sdate!);
-                      //   enddate.add(edate!);
-                      //   asstartdate.add(asdate!);
-                      //   asenddate.add(aedate!);
-                      //   print('Start$startdate');
-                      //   print('End$enddate');
 
-                      // for (int i = 0; i < alldata.length; i++) {
-                      //   var weightage = alldata[i]['Weightage'];
-                      //   totalweightage = totalweightage + weightage;
-                      // }
-
-                      // weight.add(totalweightage);
-                      chartData = [
-                        ChartData(
-                            'A10',
-                            weight.asMap().containsKey(8) ? weight[8] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A9',
-                            weight.asMap().containsKey(7) ? weight[7] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A8',
-                            weight.asMap().containsKey(6) ? weight[6] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A7',
-                            weight.asMap().containsKey(5) ? weight[5] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A6',
-                            weight.asMap().containsKey(4) ? weight[4] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A5',
-                            weight.asMap().containsKey(3) ? weight[3] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A4',
-                            weight.asMap().containsKey(2) ? weight[2] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A3',
-                            weight.asMap().containsKey(1) ? weight[1] : 0,
-                            Colors.yellow),
-                        ChartData(
-                            'A2',
-                            weight.asMap().containsKey(0) ? weight[0] : 0,
-                            Colors.yellow),
-                        ChartData('A1', 5, Colors.yellow),
-                      ];
-                      chartData2 = [
-                        ChartData(
-                            'A10',
-                            weight.asMap().containsKey(8) ? weight[8] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A9',
-                            weight.asMap().containsKey(7) ? weight[7] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A8',
-                            weight.asMap().containsKey(6) ? weight[6] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A7',
-                            weight.asMap().containsKey(5) ? weight[5] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A6',
-                            weight.asMap().containsKey(4) ? weight[4] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A5',
-                            weight.asMap().containsKey(3) ? weight[3] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A4',
-                            weight.asMap().containsKey(2) ? weight[2] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A3',
-                            weight.asMap().containsKey(1) ? weight[1] : 0,
-                            Colors.red),
-                        ChartData(
-                            'A2',
-                            weight.asMap().containsKey(0) ? weight[0] : 0,
-                            Colors.red),
-                        ChartData('A1', 5, Colors.red),
-                      ];
-
-                      _employees = getEmployeeData();
+                      _employees = getDefaultEmployeeData();
                       _keyDataSourceKeyEvents =
                           KeyDataSourceKeyEvents(_employees, context);
                       _dataGridController = DataGridController();
@@ -574,13 +1052,13 @@ class _KeyEventsState extends State<KeyEvents> {
 
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) => StatutoryAprovalA2(
+                                          userid: widget.userId,
                                           cityName: widget.cityName,
                                           depoName: widget.depoName,
                                           events:
                                               '${row.getCells()[0].value.toString()}')
-                                      // menuwidget[
-                                      //     details.rowColumnIndex.rowIndex -
-                                      //         1]
+                                      //  menuwidget[
+                                      //     details.rowColumnIndex.rowIndex - 1]
                                       ));
                                 },
                                 allowEditing: true,
@@ -599,8 +1077,8 @@ class _KeyEventsState extends State<KeyEvents> {
                                 columns: [
                                   GridColumn(
                                     columnName: 'srNo',
-                                    autoFitPadding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
+                                    autoFitPadding:
+                                        EdgeInsets.symmetric(horizontal: 16),
                                     allowEditing: false,
                                     label: Container(
                                       alignment: Alignment.center,
@@ -640,6 +1118,7 @@ class _KeyEventsState extends State<KeyEvents> {
                                       child: Text(
                                         'Original Duration',
                                         overflow: TextOverflow.values.first,
+                                        textAlign: TextAlign.center,
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
@@ -677,12 +1156,12 @@ class _KeyEventsState extends State<KeyEvents> {
                                   GridColumn(
                                     columnName: 'ActualStart',
                                     allowEditing: false,
-                                    width: 150,
                                     label: Container(
                                       alignment: Alignment.center,
                                       child: Text(
                                         'Actual Start',
                                         overflow: TextOverflow.values.first,
+                                        textAlign: TextAlign.center,
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
@@ -692,12 +1171,12 @@ class _KeyEventsState extends State<KeyEvents> {
                                   GridColumn(
                                     columnName: 'ActualEnd',
                                     allowEditing: false,
-                                    width: 150,
                                     label: Container(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 16.0),
                                       alignment: Alignment.center,
                                       child: Text(
+                                        textAlign: TextAlign.center,
                                         'Actual End',
                                         overflow: TextOverflow.values.first,
                                         style: const TextStyle(
@@ -714,6 +1193,7 @@ class _KeyEventsState extends State<KeyEvents> {
                                       child: Text(
                                         'Actual Duration',
                                         overflow: TextOverflow.values.first,
+                                        textAlign: TextAlign.center,
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
@@ -728,26 +1208,27 @@ class _KeyEventsState extends State<KeyEvents> {
                                       child: Text(
                                         'Delay',
                                         overflow: TextOverflow.values.first,
+                                        textAlign: TextAlign.center,
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
                                       ),
                                     ),
                                   ),
-                                  GridColumn(
-                                    columnName: 'Dependency',
-                                    allowEditing: false,
-                                    label: Container(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Dependency',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
-                                    ),
-                                  ),
+                                  // GridColumn(
+                                  //   columnName: 'Dependency',
+                                  //   allowEditing: false,
+                                  //   label: Container(
+                                  //     alignment: Alignment.center,
+                                  //     child: Text(
+                                  //       'Dependency',
+                                  //       overflow: TextOverflow.values.first,
+                                  //       style: const TextStyle(
+                                  //           fontWeight: FontWeight.bold,
+                                  //           fontSize: 16),
+                                  //     ),
+                                  //   ),
+                                  // ),
                                   // GridColumn(
                                   //   columnName: 'QtyScope',
                                   //   allowEditing: false,
@@ -799,6 +1280,7 @@ class _KeyEventsState extends State<KeyEvents> {
                                       child: Text(
                                         '% of Progress',
                                         overflow: TextOverflow.values.first,
+                                        textAlign: TextAlign.center,
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
@@ -813,6 +1295,7 @@ class _KeyEventsState extends State<KeyEvents> {
                                       child: Text(
                                         'Weightage',
                                         overflow: TextOverflow.values.first,
+                                        textAlign: TextAlign.center,
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16),
@@ -821,313 +1304,10 @@ class _KeyEventsState extends State<KeyEvents> {
                                   ),
                                 ],
                               ),
-                            ),
-                            Container(
-                                width: 300,
-                                margin: EdgeInsets.only(top: 10),
-                                child: SfCartesianChart(
-                                    title: ChartTitle(
-                                        text: 'All Events Wightage Graph'),
-                                    primaryXAxis: CategoryAxis(
-                                        // title: AxisTitle(text: 'Key Events')
-                                        ),
-                                    primaryYAxis: NumericAxis(
-                                        // title: AxisTitle(text: 'Weightage')
-                                        ),
-                                    series: <ChartSeries>[
-                                      // Renders column chart
-                                      BarSeries<ChartData, String>(
-                                          dataSource: chartData2,
-                                          xValueMapper: (ChartData data, _) =>
-                                              data.x,
-                                          yValueMapper: (ChartData data, _) =>
-                                              data.y,
-                                          pointColorMapper:
-                                              (ChartData data, _) => data.y1),
-
-                                      BarSeries<ChartData, String>(
-                                          dataSource: chartData,
-                                          dataLabelSettings: DataLabelSettings(
-                                              isVisible: true),
-                                          xValueMapper: (ChartData data, _) =>
-                                              data.x,
-                                          yValueMapper: (ChartData data, _) =>
-                                              data.y,
-                                          pointColorMapper:
-                                              (ChartData data, _) => data.y1)
-                                    ]))
+                            )
                           ]));
-                    }
-                  } else {
-                    return LoadingPage();
-                  }
-
-                  _employees = getDefaultEmployeeData();
-                  _keyDataSourceKeyEvents =
-                      KeyDataSourceKeyEvents(_employees, context);
-                  _dataGridController = DataGridController();
-
-                  return Container(
-                      height: 580,
-                      child: Row(children: [
-                        Expanded(
-                          child: SfDataGrid(
-                            source: _keyDataSourceKeyEvents,
-                            onCellTap: (DataGridCellTapDetails details) {
-                              final DataGridRow row =
-                                  _keyDataSourceKeyEvents.effectiveRows[
-                                      details.rowColumnIndex.rowIndex - 1];
-
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => StatutoryAprovalA2(
-                                      cityName: widget.cityName,
-                                      depoName: widget.depoName,
-                                      events:
-                                          '${row.getCells()[0].value.toString()}')
-                                  //  menuwidget[
-                                  //     details.rowColumnIndex.rowIndex - 1]
-                                  ));
-                            },
-                            allowEditing: true,
-                            frozenColumnsCount: 2,
-                            editingGestureType: EditingGestureType.tap,
-                            headerGridLinesVisibility: GridLinesVisibility.both,
-                            gridLinesVisibility: GridLinesVisibility.both,
-                            selectionMode: SelectionMode.single,
-                            navigationMode: GridNavigationMode.cell,
-                            columnWidthMode: ColumnWidthMode.auto,
-                            controller: _dataGridController,
-                            // onQueryRowHeight: (details) {
-                            //   return details.rowIndex == 0 ? 60.0 : 49.0;
-                            // },
-                            columns: [
-                              GridColumn(
-                                columnName: 'srNo',
-                                autoFitPadding:
-                                    EdgeInsets.symmetric(horizontal: 16),
-                                allowEditing: false,
-                                label: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Sr No',
-                                    overflow: TextOverflow.values.first,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-
-                                    //    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                columnName: 'Activity',
-                                allowEditing: false,
-                                width: 220,
-                                label: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Activity',
-                                    overflow: TextOverflow.values.first,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                columnName: 'OriginalDuration',
-                                allowEditing: false,
-                                label: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Original Duration',
-                                    overflow: TextOverflow.values.first,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                columnName: 'StartDate',
-                                allowEditing: false,
-                                label: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Start Date',
-                                    overflow: TextOverflow.values.first,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                columnName: 'EndDate',
-                                allowEditing: false,
-                                label: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'End Date',
-                                    overflow: TextOverflow.values.first,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                columnName: 'ActualStart',
-                                allowEditing: false,
-                                width: 150,
-                                label: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Actual Start',
-                                    overflow: TextOverflow.values.first,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                columnName: 'ActualEnd',
-                                allowEditing: false,
-                                width: 150,
-                                label: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Actual End',
-                                    overflow: TextOverflow.values.first,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                columnName: 'ActualDuration',
-                                allowEditing: false,
-                                label: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Actual Duration',
-                                    overflow: TextOverflow.values.first,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                columnName: 'Delay',
-                                allowEditing: false,
-                                label: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Delay',
-                                    overflow: TextOverflow.values.first,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                columnName: 'Dependency',
-                                allowEditing: false,
-                                label: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Dependency',
-                                    overflow: TextOverflow.values.first,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                ),
-                              ),
-                              // GridColumn(
-                              //   columnName: 'QtyScope',
-                              //   allowEditing: false,
-                              //   label: Container(
-                              //     alignment: Alignment.center,
-                              //     child: Text(
-                              //       'Oty as per scope',
-                              //       overflow: TextOverflow.values.first,
-                              //       style: const TextStyle(
-                              //           fontWeight: FontWeight.bold,
-                              //           fontSize: 16),
-                              //     ),
-                              //   ),
-                              // ),
-                              // GridColumn(
-                              //   columnName: 'QtyExecuted',
-                              //   allowEditing: false,
-                              //   label: Container(
-                              //     alignment: Alignment.center,
-                              //     child: Text(
-                              //       'Qty executed',
-                              //       overflow: TextOverflow.values.first,
-                              //       style: const TextStyle(
-                              //           fontWeight: FontWeight.bold,
-                              //           fontSize: 16),
-                              //     ),
-                              //   ),
-                              // ),
-                              // GridColumn(
-                              //   columnName: 'BalancedQty',
-                              //   allowEditing: false,
-                              //   label: Container(
-                              //     width: 150,
-                              //     alignment: Alignment.center,
-                              //     child: Text(
-                              //       'Balanced Qty',
-                              //       overflow: TextOverflow.values.first,
-                              //       style: const TextStyle(
-                              //           fontWeight: FontWeight.bold,
-                              //           fontSize: 16),
-                              //     ),
-                              //   ),
-                              // ),
-                              GridColumn(
-                                columnName: 'Progress',
-                                allowEditing: false,
-                                label: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    '% of Progress',
-                                    overflow: TextOverflow.values.first,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                ),
-                              ),
-                              GridColumn(
-                                columnName: 'Weightage',
-                                allowEditing: false,
-                                label: Container(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Weightage',
-                                    overflow: TextOverflow.values.first,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ]));
-                })); //  _isLoading
+                    })),
+          ); //  _isLoading
 
     //     ? LoadingPage()
     //     :

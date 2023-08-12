@@ -13,15 +13,15 @@ class JMRModel {
     required this.totalAmount,
   });
 
-  int? srNo;
+  dynamic srNo;
   String? description;
   dynamic activity;
   dynamic refNo;
   dynamic jmrAbstract;
   String? uom;
-  double? rate;
-  int? totalQty;
-  double? totalAmount;
+  dynamic rate;
+  dynamic totalQty;
+  dynamic totalAmount;
 
   factory JMRModel.fromjson(Map<String, dynamic> json) {
     return JMRModel(
@@ -38,7 +38,7 @@ class JMRModel {
 
   DataGridRow dataGridRow() {
     return DataGridRow(cells: <DataGridCell>[
-      DataGridCell<int>(columnName: 'srNo', value: srNo),
+      DataGridCell<dynamic>(columnName: 'srNo', value: srNo),
       DataGridCell<String>(columnName: 'description', value: description),
       DataGridCell<dynamic>(columnName: 'activity', value: activity),
       DataGridCell<dynamic>(columnName: 'RefNo', value: refNo),

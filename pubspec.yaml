@@ -46,7 +46,7 @@ dependencies:
   flutter_admin_scaffold: ^1.1.2
   flutter_pdfview: ^1.2.5
   flutter_slider_indicator: ^1.0.0
-  gantt_chart: ^0.1.0
+  gantt_chart: ^0.3.0
   get: ^4.6.5
   google_fonts: ^3.0.1
   group_button: ^5.2.2
@@ -70,6 +70,8 @@ dependencies:
   tab_indicator_styler: ^2.0.0
   lottie:
   printing: ^5.10.4
+  pie_chart: ^5.3.2
+  percent_indicator: ^4.2.3
 
 dev_dependencies:
   flutter_lints: ^2.0.0

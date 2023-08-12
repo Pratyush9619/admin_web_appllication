@@ -5,6 +5,7 @@ import 'package:web_appllication/MenuPage/admin.dart';
 import 'package:web_appllication/MenuPage/home.dart';
 import 'package:web_appllication/MenuPage/project_planning.dart';
 import 'package:web_appllication/MenuPage/user.dart';
+import 'package:web_appllication/provider/key_provider.dart';
 import 'package:web_appllication/provider/text_provider.dart';
 import 'package:web_appllication/small_screen.dart';
 import 'package:web_appllication/style.dart';
@@ -29,8 +30,14 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<textprovider>(
-        create: (context) => textprovider(),
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<textprovider>(
+            create: (context) => textprovider(),
+          ),
+          ChangeNotifierProvider<KeyProvider>(
+              create: (context) => KeyProvider())
+        ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'TATA POWER CONTROL PANEL',
@@ -82,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // ResourceAllocation();
         //  EventsPage();
         // KeyEvents();
-        //   CitiesPage();
+        // const CitiesPage();
         const LoginRegister();
     // const PdfSummary();
   }

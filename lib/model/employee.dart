@@ -65,7 +65,7 @@ class Employee {
     return DataGridRow(cells: <DataGridCell>[
       DataGridCell<dynamic>(columnName: 'srNo', value: srNo),
       DataGridCell<String>(columnName: 'Activity', value: activity),
-      const DataGridCell<Widget>(columnName: 'button', value: null),
+      // const DataGridCell<Widget>(columnName: 'button', value: null),
       DataGridCell<int>(
           columnName: 'OriginalDuration', value: originalDuration),
       DataGridCell<String>(columnName: 'StartDate', value: startDate),
@@ -97,7 +97,7 @@ class Employee {
       DataGridCell<String>(columnName: 'ActualEnd', value: actualendDate),
       DataGridCell<int>(columnName: 'ActuaslDuration', value: actualDuration),
       DataGridCell<int>(columnName: 'Delay', value: delay),
-      DataGridCell<String>(columnName: 'Dependency', value: dependency),
+      // DataGridCell<String>(columnName: 'Dependency', value: dependency),
       // DataGridCell<int>(columnName: 'Unit', value: unit),
       // DataGridCell<int>(columnName: 'QtyScope', value: scope),
       // DataGridCell<int>(columnName: 'QtyExecuted', value: qtyExecuted),

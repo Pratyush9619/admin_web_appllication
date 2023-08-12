@@ -137,7 +137,7 @@ class _SafetyChecklistState extends State<SafetyChecklist> {
             store: () {
               store();
               FirebaseFirestore.instance
-                  .collection('SafetyFieldData')
+                  .collection('SafetyFieldData2')
                   .doc('${widget.depoName}')
                   .collection(widget.userId!)
                   .doc(DateFormat.yMMMMd().format(DateTime.now()))

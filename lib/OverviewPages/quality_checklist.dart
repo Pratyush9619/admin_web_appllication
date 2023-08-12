@@ -222,70 +222,8 @@ class _QualityChecklistState extends State<QualityChecklist> {
               automaticallyImplyLeading:
                   widget.isHeader! ? widget.isHeader! : false,
               backgroundColor: blue,
-              title: widget.isHeader!
-                  ? Text(
-                      '${widget.cityName} / ${widget.depoName} / Quality Checklist')
-                  : const Text(''),
-              actions: [
-                widget.isHeader!
-                    ? Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                right: 40, top: 10, bottom: 10),
-                            child: Container(
-                              height: 30,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.blue),
-                              child: TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ViewSummary(
-                                            depoName: widget.depoName,
-                                            cityName: widget.cityName,
-                                            id: 'Quality Checklist',
-                                            userId: userId,
-                                            selectedtab:
-                                                _selectedIndex.toString(),
-                                            isHeader: false,
-                                          ),
-                                        ));
-                                  },
-                                  child: Text(
-                                    'View Summary',
-                                    style:
-                                        TextStyle(color: white, fontSize: 20),
-                                  )),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                right: 20, top: 10, bottom: 10),
-                            child: Container(
-                              height: 30,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: lightblue),
-                            ),
-                          ),
-                          Padding(
-                              padding: const EdgeInsets.only(right: 150),
-                              child: GestureDetector(
-                                  onTap: () {
-                                    // onWillPop(context);
-                                  },
-                                  child: Image.asset(
-                                    'assets/logout.png',
-                                    height: 20,
-                                    width: 20,
-                                  )))
-                        ],
-                      )
-                    : Container(),
-              ],
+              title: Text(
+                  '${widget.cityName} / ${widget.depoName} / Quality Checklist'),
               // leading:
               bottom: PreferredSize(
                 preferredSize: const Size(double.infinity, 50),
@@ -321,9 +259,9 @@ class _QualityChecklistState extends State<QualityChecklist> {
                 currentDate: widget.currentDate,
               ),
               ElectricalQualityChecklist(
-                  cityName: widget.cityName,
-                  depoName: widget.depoName,
-                  currentDate: widget.currentDate,
+                cityName: widget.cityName,
+                depoName: widget.depoName,
+                currentDate: widget.currentDate,
               )
             ]),
           )),
@@ -335,7 +273,4 @@ class _QualityChecklistState extends State<QualityChecklist> {
       userId = value;
     });
   }
-
-
-  
 }

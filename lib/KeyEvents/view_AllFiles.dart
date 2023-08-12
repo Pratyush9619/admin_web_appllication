@@ -70,7 +70,7 @@ class _ViewAllPdfState extends State<ViewAllPdf> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('PDF List'),
+        title: Text('${widget.cityName} / ${widget.depoName} / View Files'),
         backgroundColor: blue,
       ),
       body: _isload
@@ -121,27 +121,33 @@ class _ViewAllPdfState extends State<ViewAllPdf> {
     );
   }
 
-  Widget buildFile(BuildContext context, FirebaseFile file) => ListTile(
-        // leading: ClipOval(
-        //   child: Image.network(
-        //     file.url,
-        //     width: 52,
-        //     height: 52,
-        //     fit: BoxFit.cover,
-        //   ),
-        // ),
-        title: Text(
-          file.name,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            decoration: TextDecoration.underline,
-            color: Colors.blue,
-          ),
+  Widget buildFile(BuildContext context, FirebaseFile file) {
+    final isImage = ['.jpeg', '.jpg', '.png'].any(file.name.contains);
+    final isPdf = ['.pdf'].any(file.name.contains);
+    final isexcel = ['.xlsx'].any(file.name.contains);
+    return Column(
+      children: [
+        InkWell(
+          child: Container(
+              padding: const EdgeInsets.all(10),
+              margin: const EdgeInsets.all(10),
+              alignment: Alignment.center,
+              height: 120,
+              width: 120,
+              child: isImage
+                  ? Image.network(
+                      file.url,
+                      fit: BoxFit.fill,
+                    )
+                  : Image.asset('assets/pdf_logo.jpeg')),
+          //PdfThumbnail.fromFile(file.ref.fullPath, currentPage: 2)),
+          onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => ImagePage(file: file))),
         ),
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => ImagePage(file: file),
-        )),
-      );
+        Text(file.name)
+      ],
+    );
+  }
 
   Widget buildHeader(int length) => ListTile(
         tileColor: Colors.blue,

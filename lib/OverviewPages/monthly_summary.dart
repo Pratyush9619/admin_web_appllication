@@ -22,6 +22,7 @@ class MonthlySummary extends StatefulWidget {
 }
 
 class _MonthlySummaryState extends State<MonthlySummary> {
+  bool enableLoading = false;
   List<dynamic> temp = [];
 
   //Daily Project Row List for view summary
@@ -61,143 +62,148 @@ class _MonthlySummaryState extends State<MonthlySummary> {
         ),
         preferredSize: const Size.fromHeight(50),
       ),
-      body: FutureBuilder<List<List<dynamic>>>(
-        future: fetchData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return LoadingPage();
-            // Center(
-            //     child: Column(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: const [
-            //     CircularProgressIndicator(),
-            //     Text(
-            //       'Collecting Data...',
-            //       style: TextStyle(
-            //         fontSize: 16,
-            //       ),
-            //     ),
-            //   ],
-            // ));
-          } else if (snapshot.hasError) {
-            return const Center(
-              child: Text('Error fetching data'),
-            );
-          } else if (snapshot.hasData) {
-            final data = snapshot.data!;
+      body: enableLoading
+          ? LoadingPage()
+          : FutureBuilder<List<List<dynamic>>>(
+              future: fetchData(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return LoadingPage();
+                  // Center(
+                  //     child: Column(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: const [
+                  //     CircularProgressIndicator(),
+                  //     Text(
+                  //       'Collecting Data...',
+                  //       style: TextStyle(
+                  //         fontSize: 16,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ));
+                } else if (snapshot.hasError) {
+                  return const Center(
+                    child: Text('Error fetching data'),
+                  );
+                } else if (snapshot.hasData) {
+                  final data = snapshot.data!;
 
-            if (data.isEmpty) {
-              return const Center(
-                child: Text(
-                  'No Data Available for Selected Depo',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-              );
-            }
-
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SingleChildScrollView(
-                  padding:
-                      const EdgeInsets.only(left: 3.0, right: 3.0, bottom: 5.0),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: DataTable(
-                      showBottomBorder: true,
-                      sortAscending: true,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey[600]!,
-                          width: 1.0,
+                  if (data.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'No Data Available for Selected Depo',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
                         ),
                       ),
-                      columnSpacing: 150.0,
-                      headingRowColor: MaterialStateColor.resolveWith(
-                          (states) => Colors.blue[800]!),
-                      headingTextStyle: const TextStyle(color: Colors.white),
-                      columns: const [
-                        DataColumn(
-                          label: Text(
-                            'User_ID',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Text(
-                            'Date',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Text(
-                            'Monthly Report Data',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Text(
-                            'PDF Download',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ),
-                      ],
-                      rows: data.map(
-                        (rowData) {
-                          return DataRow(
-                            cells: [
-                              DataCell(
-                                Text(rowData[0]),
+                    );
+                  }
+
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SingleChildScrollView(
+                        padding: const EdgeInsets.only(
+                            left: 3.0, right: 3.0, bottom: 5.0),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: DataTable(
+                            showBottomBorder: true,
+                            sortAscending: true,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey[600]!,
+                                width: 1.0,
                               ),
-                              DataCell(Text(rowData[2])),
-                              DataCell(ElevatedButton(
-                                onPressed: () {
-                                  _generatePDF(rowData[0], rowData[2], 1);
-                                },
-                                child: const Text('View Report'),
-                              )),
-                              DataCell(
-                                ElevatedButton(
-                                  onPressed: () {
-                                    _generatePDF(rowData[0], rowData[2], 2);
-                                  },
-                                  child: const Text('Download'),
+                            ),
+                            columnSpacing: 150.0,
+                            headingRowColor: MaterialStateColor.resolveWith(
+                                (states) => Colors.blue[800]!),
+                            headingTextStyle:
+                                const TextStyle(color: Colors.white),
+                            columns: const [
+                              DataColumn(
+                                label: Text(
+                                  'User_ID',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  'Date',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  'Monthly Report Data',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                              DataColumn(
+                                label: Text(
+                                  'PDF Download',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
                                 ),
                               ),
                             ],
-                          );
-                        },
-                      ).toList(),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          }
+                            rows: data.map(
+                              (rowData) {
+                                return DataRow(
+                                  cells: [
+                                    DataCell(
+                                      Text(rowData[0]),
+                                    ),
+                                    DataCell(Text(rowData[2])),
+                                    DataCell(ElevatedButton(
+                                      onPressed: () {
+                                        _generatePDF(rowData[0], rowData[2], 1);
+                                      },
+                                      child: const Text('View Report'),
+                                    )),
+                                    DataCell(
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          _generatePDF(
+                                              rowData[0], rowData[2], 2);
+                                        },
+                                        child: const Text('Download'),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ).toList(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
 
-          return Container();
-        },
-      ),
+                return Container();
+              },
+            ),
     );
   }
 
   Future<void> getMonthlyData() async {
+    rowList.clear();
     QuerySnapshot querySnapshot1 = await FirebaseFirestore.instance
         .collection('MonthlyProjectReport2')
         .doc('${widget.depoName}')
@@ -221,6 +227,10 @@ class _MonthlySummaryState extends State<MonthlySummary> {
   }
 
   Future<void> _generatePDF(String userId, String date, int decision) async {
+    setState(() {
+      enableLoading = true;
+    });
+
     final profileImage = pw.MemoryImage(
       (await rootBundle.load('assets/Tata-Power.jpeg')).buffer.asUint8List(),
     );
@@ -377,5 +387,9 @@ class _MonthlySummaryState extends State<MonthlySummary> {
       //Write code so that it can be downloaded in android
       print('Sorry it is not ready for mobile platform');
     }
+
+    setState(() {
+      enableLoading = false;
+    });
   }
 }

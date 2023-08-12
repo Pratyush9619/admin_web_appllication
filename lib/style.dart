@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 Color black = const Color(0xff000000);
-Color green = const Color.fromARGB(255, 88, 221, 128);
+Color green = Colors.green;
 Color almostblack = const Color(0xff000000).withOpacity(0.87);
 Color almostWhite = const Color(0xffffffff).withOpacity(0.87);
 Color blue = const Color.fromARGB(255, 9, 83, 161);
@@ -130,7 +130,8 @@ TextStyle overlineWhite60 = GoogleFonts.ibmPlexSans(
     fontWeight: FontWeight.w400,
     letterSpacing: 1.5,
     color: white60);
-Color red = Color(0xffff2e50);
+// Color red = Color(0xffff2e50);
+Color red = Colors.red;
 Color red2 = Color(0xffff526e);
 
 //********************* */

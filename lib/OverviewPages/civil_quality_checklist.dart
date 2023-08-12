@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -6,7 +7,6 @@ import 'dart:convert';
 import 'dart:html' as html;
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import 'package:web_appllication/widgets/nodata_available.dart';
 import 'quality_checklist.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +14,25 @@ import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 import '../Authentication/auth_service.dart';
 import '../components/loading_page.dart';
 import 'package:web_appllication/style.dart';
+import 'dart:js' as js;
 
 int? _selectedIndex = 0;
+
+List<String> completeTabForCivil = [
+  'Excavation',
+  'BackFilling',
+  'Brick / Block Massonary',
+  'Doors, Windows, Hardware & Glazing',
+  'False Ceiling',
+  'Flooring & Tiling',
+  'Grouting Inspection',
+  'Ironite / Ips Flooring',
+  'Painting',
+  'Interlock Paving Work',
+  'Wall Cladding & Roofing',
+  'Water Proofing'
+];
+
 // String currentDate = DateFormat.yMMMMd().format(DateTime.now());
 List<String> tabForCivil = [
   'Exc',
@@ -50,6 +67,7 @@ class CivilQualityChecklist extends StatefulWidget {
 }
 
 class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
+  bool enablePdfLoading = false;
   //Quality Project Row List for view summary
   List<List<dynamic>> rowList = [];
 
@@ -136,73 +154,78 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
     getUserId().whenComplete(() {
       initializeStream();
       _isloading = false;
+
       setState(() {});
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    rowList.clear();
-    return DefaultTabController(
-        length: 12,
-        child: Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            toolbarHeight: 20,
-            bottom: TabBar(
-              labelColor: Colors.yellow,
-              labelStyle: buttonWhite,
-              unselectedLabelColor: white,
+    return enablePdfLoading
+        ? LoadingPage()
+        : DefaultTabController(
+            length: 12,
+            child: Scaffold(
+              appBar: AppBar(
+                automaticallyImplyLeading: false,
+                toolbarHeight: 20,
+                bottom: TabBar(
+                  labelColor: Colors.yellow,
+                  labelStyle: buttonWhite,
+                  unselectedLabelColor: white,
 
-              //indicatorSize: TabBarIndicatorSize.label,
+                  //indicatorSize: TabBarIndicatorSize.label,
 
-              indicator: MaterialIndicator(
-                horizontalPadding: 24,
-                bottomLeftRadius: 8,
-                bottomRightRadius: 8,
-                color: almostblack,
-                paintingStyle: PaintingStyle.fill,
+                  indicator: MaterialIndicator(
+                    horizontalPadding: 24,
+                    bottomLeftRadius: 8,
+                    bottomRightRadius: 8,
+                    color: almostblack,
+                    paintingStyle: PaintingStyle.fill,
+                  ),
+                  onTap: (value) {
+                    _selectedIndex = value;
+                    setState(() {});
+                  },
+                  tabs: const [
+                    Tab(text: "Exc"),
+                    Tab(text: "B.F"),
+                    Tab(text: "Mass"),
+                    Tab(text: "D.W.G"),
+                    Tab(text: "F.C"),
+                    Tab(text: "F&T"),
+                    Tab(text: "G.I"),
+                    Tab(text: "I.F"),
+                    Tab(text: "Painting"),
+                    Tab(text: "Paving"),
+                    Tab(text: "WC&R"),
+                    Tab(text: "Proofing"),
+                  ],
+                ),
               ),
-              onTap: (value) {
-                _selectedIndex = value;
-                setState(() {});
-              },
-              tabs: const [
-                Tab(text: "Exc"),
-                Tab(text: "B.F"),
-                Tab(text: "Mass"),
-                Tab(text: "D.W.G"),
-                Tab(text: "F.C"),
-                Tab(text: "F&T"),
-                Tab(text: "G.I"),
-                Tab(text: "I.F"),
-                Tab(text: "Painting"),
-                Tab(text: "Paving"),
-                Tab(text: "WC&R"),
-                Tab(text: "Proofing"),
-              ],
+              body: _isloading
+                  ? LoadingPage()
+                  : TabBarView(
+                      children: [
+                        civilUpperScreen(0),
+                        civilUpperScreen(1),
+                        civilUpperScreen(2),
+                        civilUpperScreen(3),
+                        civilUpperScreen(4),
+                        civilUpperScreen(5),
+                        civilUpperScreen(6),
+                        civilUpperScreen(7),
+                        civilUpperScreen(8),
+                        civilUpperScreen(9),
+                        civilUpperScreen(10),
+                        civilUpperScreen(11),
+                      ],
+                    ),
             ),
-          ),
-          body: _isloading
-              ? LoadingPage()
-              : TabBarView(children: [
-                  civilupperScreen(0),
-                  civilupperScreen(1),
-                  civilupperScreen(2),
-                  civilupperScreen(3),
-                  civilupperScreen(4),
-                  civilupperScreen(5),
-                  civilupperScreen(6),
-                  civilupperScreen(7),
-                  civilupperScreen(8),
-                  civilupperScreen(9),
-                  civilupperScreen(10),
-                  civilupperScreen(11),
-                ]),
-        ));
+          );
   }
 
-  civilupperScreen(int selectedIndex) {
+  civilUpperScreen(int selectedIndex) {
     rowList.clear();
     return _isloading
         ? LoadingPage()
@@ -244,20 +267,13 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
                                                             selectedIndex),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return LoadingPage();
-                // Center(
-                //     child: Column(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     LoadingPage(),
-                //     // Text(
-                //     //   'Collecting Data...',
-                //     //   style: TextStyle(
-                //     //     fontSize: 16,
-                //     //   ),
-                //     // ),
-                //   ],
-                // ));
+                return Center(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    LoadingPage(),
+                  ],
+                ));
               } else if (snapshot.hasError) {
                 return const Center(
                   child: Text('Error fetching data'),
@@ -265,17 +281,16 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
               } else if (snapshot.hasData) {
                 final data = snapshot.data!;
 
-                if (!snapshot.hasData) {
-                  return NodataAvailable();
-                  // const Center(
-                  //   child: Text(
-                  //     'No Data Available for Selected Depo',
-                  //     style: TextStyle(
-                  //       fontWeight: FontWeight.bold,
-                  //       fontSize: 20,
-                  //     ),
-                  //   ),
-                  // );
+                if (data.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'No Data Available for Selected Depo',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                  );
                 }
 
                 return Center(
@@ -336,16 +351,18 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
                                     cells: [
                                       DataCell(Text(rowData[0])),
                                       DataCell(Text(rowData[2])),
+                                      DataCell(
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            await _generatePDF(
+                                                rowData[0], rowData[2], 1);
+                                          },
+                                          child: const Text('View Report'),
+                                        ),
+                                      ),
                                       DataCell(ElevatedButton(
-                                        onPressed: () {
-                                          _generatePDF(
-                                              rowData[0], rowData[2], 1);
-                                        },
-                                        child: const Text('View Report'),
-                                      )),
-                                      DataCell(ElevatedButton(
-                                        onPressed: () {
-                                          _generatePDF(
+                                        onPressed: () async {
+                                          await _generatePDF(
                                               rowData[0], rowData[2], 2);
                                         },
                                         child: const Text('Download'),
@@ -374,7 +391,6 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
   Future<List<List<dynamic>>> fetchData(
       CollectionReference colRef, int selectedIndex) async {
     if (selectedIndex == _selectedIndex) {
-      rowList.clear();
       if (_selectedIndex == 0) {
         setState(() {});
       }
@@ -405,6 +421,10 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
   }
 
   Future<void> _generatePDF(String user_id, String date, int decision) async {
+    setState(() {
+      enablePdfLoading = true;
+    });
+
     final headerStyle =
         pw.TextStyle(fontSize: 15, fontWeight: pw.FontWeight.bold);
 
@@ -421,7 +441,7 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
     );
 
     final white_background = pw.MemoryImage(
-      (await rootBundle.load('assets/white_background2.png'))
+      (await rootBundle.load('assets/white_background2.jpeg'))
           .buffer
           .asUint8List(),
     );
@@ -432,7 +452,7 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
 
     //Getting safety Field Data from firestore
 
-    DocumentSnapshot elecFieldDocSanpshot = await FirebaseFirestore.instance
+    DocumentSnapshot civilFieldDocSnapshot = await FirebaseFirestore.instance
         .collection('CivilChecklistField')
         .doc('${widget.depoName}')
         .collection('userId')
@@ -441,18 +461,18 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
         .doc(date)
         .get();
 
-    Map<String, dynamic> electricalMapData =
-        elecFieldDocSanpshot.data() as Map<String, dynamic>;
+    Map<String, dynamic> civilMapData =
+        civilFieldDocSnapshot.data() as Map<String, dynamic>;
 
     List<List<dynamic>> fieldData = [
-      ['PROJECT :', '${electricalMapData['Project']}'],
-      ['P.O.No. :', '${electricalMapData['PO No']}'],
-      ['CONTRACTOR :', '${electricalMapData['Contractor']}'],
-      ['DESCRIPTION : ', '${electricalMapData['Description']}'],
-      ['SYSTEM / BLDG. :', '${electricalMapData['System']}'],
-      ['REF DOCUMENT1 :', '${electricalMapData['Ref Document1']}'],
-      ['REF DOCUMENT2 :', '${electricalMapData['Ref Document2']}'],
-      ['REF DOCUMENT3 :', '${electricalMapData['Ref Document3']}'],
+      ['PROJECT :', '${civilMapData['Project']}'],
+      ['P.O.No. :', '${civilMapData['PO No']}'],
+      ['CONTRACTOR :', '${civilMapData['Contractor']}'],
+      ['DESCRIPTION : ', '${civilMapData['Description']}'],
+      ['SYSTEM / BLDG. :', '${civilMapData['System']}'],
+      ['REF DOCUMENT1 :', '${civilMapData['Ref Document1']}'],
+      ['REF DOCUMENT2 :', '${civilMapData['Ref Document2']}'],
+      ['REF DOCUMENT3 :', '${civilMapData['Ref Document3']}'],
     ];
 
     List<pw.TableRow> rows = [];
@@ -516,31 +536,51 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
         documentSnapshot.data() as Map<String, dynamic>;
     if (docData.isNotEmpty) {
       userData.addAll(docData['data']);
-
-      List<dynamic> imageUrls = [];
+      List<pw.Widget> imageUrls = [];
 
       for (Map<String, dynamic> mapData in userData) {
-        String images_Path =
-            'gs://tp-zap-solz.appspot.com/QualityChecklist/Civil_Engineer/'
-            '${widget.cityName}/${widget.depoName}/$user_id/${tabForCivil[_selectedIndex!]} TABLE/$date/${mapData['srNo']}';
+        String imagesPath =
+            'QualityChecklist/civil_Engineer/${widget.cityName}/${widget.depoName}/$user_id/${tabForCivil[_selectedIndex!]} Table/$date/${mapData['srNo']}';
 
         ListResult result =
-            await FirebaseStorage.instance.ref().child(images_Path).listAll();
+            await FirebaseStorage.instance.ref().child(imagesPath).listAll();
 
         if (result.items.isNotEmpty) {
           for (var image in result.items) {
+            String downloadUrl = await image.getDownloadURL();
             if (image.name.endsWith('.pdf')) {
-              imageUrls.add(pdfLogo);
+              imageUrls.add(
+                pw.Container(
+                    alignment: pw.Alignment.center,
+                    padding: const pw.EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    child: pw.UrlLink(
+                        child: pw.Text(image.name,
+                            style: const pw.TextStyle(color: PdfColors.blue)),
+                        destination: downloadUrl)),
+              );
             } else {
-              String downloadUrl = await image.getDownloadURL();
               final myImage = await networkImage(downloadUrl);
-              imageUrls.add(myImage);
+              imageUrls.add(
+                pw.Container(
+                    padding: const pw.EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    width: 60,
+                    height: 100,
+                    child: pw.Center(
+                      child: pw.Image(myImage),
+                    )),
+              );
             }
           }
           if (imageUrls.length < 8) {
             int imageLoop = 8 - imageUrls.length;
             for (int i = 0; i < imageLoop; i++) {
-              imageUrls.add(white_background);
+              imageUrls.add(
+                pw.Container(
+                    padding: const pw.EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    width: 60,
+                    height: 100,
+                    child: pw.Text('')),
+              );
             }
           }
         }
@@ -552,27 +592,27 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
               padding: const pw.EdgeInsets.all(3.0),
               child: pw.Center(
                   child: pw.Text(mapData['srNo'].toString(),
-                      style: const pw.TextStyle(fontSize: 13)))),
+                      style: const pw.TextStyle(fontSize: 14)))),
           pw.Container(
               padding: const pw.EdgeInsets.all(2.0),
               child: pw.Center(
                   child: pw.Text(mapData['checklist'],
-                      style: const pw.TextStyle(fontSize: 11)))),
+                      style: const pw.TextStyle(fontSize: 14)))),
           pw.Container(
               padding: const pw.EdgeInsets.all(2.0),
               child: pw.Center(
                   child: pw.Text(mapData['responsibility'],
-                      style: const pw.TextStyle(fontSize: 11)))),
+                      style: const pw.TextStyle(fontSize: 14)))),
           pw.Container(
               padding: const pw.EdgeInsets.all(2.0),
               child: pw.Center(
                   child: pw.Text(mapData['reference'].toString(),
-                      style: const pw.TextStyle(fontSize: 11)))),
+                      style: const pw.TextStyle(fontSize: 14)))),
           pw.Container(
               padding: const pw.EdgeInsets.all(2.0),
               child: pw.Center(
                   child: pw.Text(mapData['observation'].toString(),
-                      style: const pw.TextStyle(fontSize: 11)))),
+                      style: const pw.TextStyle(fontSize: 14)))),
         ]));
 
         if (imageUrls.isNotEmpty) {
@@ -588,51 +628,15 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
                 child: pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
                     children: [
-                      pw.Image(imageUrls[0]),
-                      pw.Image(imageUrls[1]),
+                      imageUrls[0],
+                      imageUrls[1],
                     ])),
-            pw.Container(
-                padding: const pw.EdgeInsets.only(top: 8.0, bottom: 8.0),
-                width: 60,
-                height: 100,
-                child: pw.Center(
-                  child: pw.Image(imageUrls[2]),
-                )),
-            pw.Container(
-                padding: const pw.EdgeInsets.only(top: 8.0, bottom: 8.0),
-                width: 60,
-                height: 100,
-                child: pw.Center(
-                  child: pw.Image(imageUrls[3]),
-                )),
-            pw.Container(
-                padding: const pw.EdgeInsets.only(top: 8.0, bottom: 8.0),
-                width: 60,
-                height: 100,
-                child: pw.Center(
-                  child: pw.Image(imageUrls[4]),
-                )),
-            pw.Container(
-                padding: const pw.EdgeInsets.only(top: 8.0, bottom: 8.0),
-                width: 60,
-                height: 100,
-                child: pw.Center(
-                  child: pw.Image(imageUrls[5]),
-                )),
-            pw.Container(
-                padding: const pw.EdgeInsets.only(top: 8.0, bottom: 8.0),
-                width: 60,
-                height: 100,
-                child: pw.Center(
-                  child: pw.Image(imageUrls[6]),
-                )),
-            pw.Container(
-                padding: const pw.EdgeInsets.only(top: 8.0, bottom: 8.0),
-                width: 60,
-                height: 100,
-                child: pw.Center(
-                  child: pw.Image(imageUrls[7]),
-                ))
+            imageUrls[2],
+            imageUrls[3],
+            imageUrls[4],
+            imageUrls[5],
+            imageUrls[6],
+            imageUrls[7]
           ]));
         }
         imageUrls.clear();
@@ -664,7 +668,8 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
                 pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      pw.Text('Civil Quality Report',
+                      pw.Text(
+                          'Civil Quality Report / ${completeTabForCivil[_selectedIndex!]} Table',
                           textScaleFactor: 2,
                           style: const pw.TextStyle(color: PdfColors.blue700)),
                       pw.Container(
@@ -692,11 +697,11 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
                 children: [
                   pw.Text(
                     'Place:  ${widget.cityName}/${widget.depoName}',
-                    textScaleFactor: 1.1,
+                    textScaleFactor: 1.6,
                   ),
                   pw.Text(
                     'Date:  $date ',
-                    textScaleFactor: 1.1,
+                    textScaleFactor: 1.6,
                   )
                 ]),
             pw.SizedBox(height: 20)
@@ -741,7 +746,8 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
                 pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      pw.Text('Civil Quality Report',
+                      pw.Text(
+                          'Civil Quality Report / ${completeTabForCivil[_selectedIndex!]} Table',
                           textScaleFactor: 2,
                           style: const pw.TextStyle(color: PdfColors.blue700)),
                       pw.Container(
@@ -769,11 +775,11 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
                 children: [
                   pw.Text(
                     'Place:  ${widget.cityName}/${widget.depoName}',
-                    textScaleFactor: 1.1,
+                    textScaleFactor: 1.6,
                   ),
                   pw.Text(
                     'Date:  $date ',
-                    textScaleFactor: 1.1,
+                    textScaleFactor: 1.6,
                   )
                 ]),
             pw.SizedBox(height: 20)
@@ -799,7 +805,8 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
     );
 
     final List<int> pdfData = await pdf.save();
-    final String pdfPath = 'CivilQualityReport($user_id/$date).pdf';
+    final String pdfPath =
+        'CivilQualityReport_${completeTabForCivil[_selectedIndex!]}($user_id/$date).pdf';
 
     // Save the PDF file to device storage
     if (kIsWeb) {
@@ -809,11 +816,6 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
         html.window.open(url, '_blank');
         final encodedUrl = Uri.encodeFull(url);
         html.Url.revokeObjectUrl(encodedUrl);
-        Future.delayed(const Duration(seconds: 1), () {
-          html.Url.revokeObjectUrl(url);
-        }).catchError((error) {
-          print('Error revoking object URL: $error');
-        });
       } else if (decision == 2) {
         html.AnchorElement(
             href:
@@ -824,13 +826,13 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
     } else {
       const Text('Sorry it is not ready for mobile platform');
     }
-    // // For mobile platforms
-    // final String dir = (await getApplicationDocumentsDirectory()).path;
-    // final String path = '$dir/$pdfPath';
-    // final File file = File(path);
-    // await file.writeAsBytes(pdfData);
-    //
-    // // Open the PDF file for preview or download
-    // OpenFile.open(file.path);
+
+    setState(() {
+      enablePdfLoading = false;
+    });
+  }
+
+  openPdf(var url) {
+    js.JsObject(openPdf(url));
   }
 }
