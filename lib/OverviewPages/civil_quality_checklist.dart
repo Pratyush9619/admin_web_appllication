@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -14,7 +13,7 @@ import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 import '../Authentication/auth_service.dart';
 import '../components/loading_page.dart';
 import 'package:web_appllication/style.dart';
-import 'dart:js' as js;
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 int? _selectedIndex = 0;
 
@@ -154,7 +153,6 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
     getUserId().whenComplete(() {
       initializeStream();
       _isloading = false;
-
       setState(() {});
     });
   }
@@ -391,9 +389,6 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
   Future<List<List<dynamic>>> fetchData(
       CollectionReference colRef, int selectedIndex) async {
     if (selectedIndex == _selectedIndex) {
-      if (_selectedIndex == 0) {
-        setState(() {});
-      }
       await getRowsForFutureBuilder(colRef);
     }
     return rowList;
@@ -420,7 +415,8 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
     userIdList.clear();
   }
 
-  Future<void> _generatePDF(String user_id, String date, int decision) async {
+  Future<List<int>> _generatePDF(
+      String user_id, String date, int decision) async {
     setState(() {
       enablePdfLoading = true;
     });
@@ -438,16 +434,6 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
 
     final profileImage = pw.MemoryImage(
       (await rootBundle.load('assets/Tata-Power.jpeg')).buffer.asUint8List(),
-    );
-
-    final white_background = pw.MemoryImage(
-      (await rootBundle.load('assets/white_background2.jpeg'))
-          .buffer
-          .asUint8List(),
-    );
-
-    final pdfLogo = pw.MemoryImage(
-      (await rootBundle.load('assets/pdf_logo.png')).buffer.asUint8List(),
     );
 
     //Getting safety Field Data from firestore
@@ -551,6 +537,7 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
             if (image.name.endsWith('.pdf')) {
               imageUrls.add(
                 pw.Container(
+                    width: 60,
                     alignment: pw.Alignment.center,
                     padding: const pw.EdgeInsets.only(top: 8.0, bottom: 8.0),
                     child: pw.UrlLink(
@@ -813,9 +800,8 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
       if (decision == 1) {
         final blob = html.Blob([pdfData], 'application/pdf');
         final url = html.Url.createObjectUrlFromBlob(blob);
-        html.window.open(url, '_blank');
         final encodedUrl = Uri.encodeFull(url);
-        html.Url.revokeObjectUrl(encodedUrl);
+        html.window.open(encodedUrl, '_blank');
       } else if (decision == 2) {
         html.AnchorElement(
             href:
@@ -830,9 +816,32 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
     setState(() {
       enablePdfLoading = false;
     });
+    return pdfData;
   }
 
-  openPdf(var url) {
-    js.JsObject(openPdf(url));
+  void displayPdf(pdfBytes) {
+    final blob = html.Blob([pdfBytes], 'application/pdf');
+    final url = html.Url.createObjectUrlFromBlob(blob);
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        content: Container(
+          width: double.maxFinite,
+          height: MediaQuery.of(context).size.height,
+          child: HtmlWidget(
+              '<iframe src="$url" width="100%" height="100%"></iframe>'),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              html.Url.revokeObjectUrl(url);
+            },
+            child: Text('Close'),
+          ),
+        ],
+      ),
+    );
   }
 }

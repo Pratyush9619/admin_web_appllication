@@ -14,7 +14,7 @@ import '../OverviewPages/closure_summary_table.dart';
 import '../OverviewPages/detailed_Eng.dart';
 import '../KeyEvents/key_events.dart';
 import '../OverviewPages/easy_monitoring.dart';
-import '../OverviewPages/jmr.dart';
+import '../OverviewPages/Jmr_screen/jmr.dart';
 import '../OverviewPages/material_vendor.dart';
 import '../OverviewPages/monthly_summary.dart';
 import '../OverviewPages/testing_report.dart';

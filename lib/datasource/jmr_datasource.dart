@@ -445,24 +445,24 @@ class JmrDataSource extends DataGridSource {
     } else if (column.columnName == 'Description') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
           DataGridCell<String>(columnName: 'Description', value: newCellValue);
-      _JMRModels[dataRowIndex].description = newCellValue.toString();
+      _JMRModels[dataRowIndex].Description = newCellValue.toString();
     } else if (column.columnName == 'Activity') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
           DataGridCell<String>(columnName: 'Activity', value: newCellValue);
-      _JMRModels[dataRowIndex].activity = newCellValue.toString();
+      _JMRModels[dataRowIndex].Activity = newCellValue.toString();
     } else if (column.columnName == 'RefNo') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
           DataGridCell<dynamic>(
               columnName: 'RefNo', value: newCellValue as int);
-      _JMRModels[dataRowIndex].refNo = newCellValue as dynamic;
+      _JMRModels[dataRowIndex].RefNo = newCellValue as dynamic;
     } else if (column.columnName == 'Abstract') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
           DataGridCell<String>(columnName: 'Abstract', value: newCellValue);
-      _JMRModels[dataRowIndex].jmrAbstract = newCellValue;
+      _JMRModels[dataRowIndex].JmrAbstract = newCellValue;
     } else if (column.columnName == 'UOM') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
           DataGridCell<String>(columnName: 'UOM', value: newCellValue);
-      _JMRModels[dataRowIndex].uom = newCellValue;
+      _JMRModels[dataRowIndex].Uom = newCellValue;
     } else if (column.columnName == 'Rate') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
           DataGridCell<double>(columnName: 'Rate', value: newCellValue);
@@ -470,11 +470,11 @@ class JmrDataSource extends DataGridSource {
     } else if (column.columnName == 'TotalQty') {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
           DataGridCell<int>(columnName: 'TotalQty', value: newCellValue);
-      _JMRModels[dataRowIndex].totalQty = newCellValue;
+      _JMRModels[dataRowIndex].TotalQty = newCellValue;
     } else {
       dataGridRows[dataRowIndex].getCells()[rowColumnIndex.columnIndex] =
           DataGridCell<double>(columnName: 'TotalAmount', value: newCellValue);
-      _JMRModels[dataRowIndex].totalAmount = newCellValue;
+      _JMRModels[dataRowIndex].TotalAmount = newCellValue;
     }
   }
 

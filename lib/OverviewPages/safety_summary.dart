@@ -35,7 +35,7 @@ class _SafetySummaryState extends State<SafetySummary> {
   }
 
   Future<List<List<dynamic>>> fetchData() async {
-
+    rowList.clear();
     await getRowsForFutureBuilder();
     return rowList;
   }
@@ -50,125 +50,133 @@ class _SafetySummaryState extends State<SafetySummary> {
             userid: widget.userId,
           ),
           preferredSize: const Size.fromHeight(50)),
-      body: enableLoading ?
-        LoadingPage()
-    : FutureBuilder<List<List<dynamic>>>(
-        future: fetchData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return LoadingPage();
-            //  Center(
-            //     child: Column(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: const [
-            //     CircularProgressIndicator(),
-            //     Text(
-            //       'Collecting Data...',
-            //       style: TextStyle(
-            //         fontSize: 16,
-            //       ),
-            //     ),
-            //   ],
-            // ));
-          } else if (snapshot.hasError) {
-            return const Center(
-              child: Text('Error fetching data'),
-            );
-          } else if (snapshot.hasData) {
-            final data = snapshot.data!;
+      body: enableLoading
+          ? LoadingPage()
+          : FutureBuilder<List<List<dynamic>>>(
+              future: fetchData(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return LoadingPage();
+                  //  Center(
+                  //     child: Column(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: const [
+                  //     CircularProgressIndicator(),
+                  //     Text(
+                  //       'Collecting Data...',
+                  //       style: TextStyle(
+                  //         fontSize: 16,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ));
+                } else if (snapshot.hasError) {
+                  return const Center(
+                    child: Text('Error fetching data'),
+                  );
+                } else if (snapshot.hasData) {
+                  final data = snapshot.data!;
 
-            if (data.isEmpty) {
-              return NodataAvailable();
+                  if (data.isEmpty) {
+                    return const NodataAvailable();
+                    // const Center(
+                    //   child: Text(
+                    //     'No Data Available for Selected Depo',
+                    //     style: TextStyle(
+                    //       fontWeight: FontWeight.bold,
+                    //       fontSize: 20,
+                    //     ),
+                    //   ),
+                    // );
+                  }
 
-            }
-
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SingleChildScrollView(
-                  padding:
-                      const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 5.0),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: DataTable(
-                      showBottomBorder: true,
-                      sortAscending: true,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey[600]!,
-                          width: 1.0,
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SingleChildScrollView(
+                        padding: const EdgeInsets.only(
+                            left: 5.0, right: 5.0, bottom: 5.0),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: DataTable(
+                            showBottomBorder: true,
+                            sortAscending: true,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey[600]!,
+                                width: 1.0,
+                              ),
+                            ),
+                            columnSpacing: 150.0,
+                            headingRowColor: MaterialStateColor.resolveWith(
+                                (states) => Colors.blue[800]!),
+                            headingTextStyle:
+                                const TextStyle(color: Colors.white),
+                            columns: const [
+                              DataColumn(
+                                  label: Text(
+                                'User_ID',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
+                              )),
+                              DataColumn(
+                                  label: Text('Date',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                      ))),
+                              DataColumn(
+                                  label: Text('Monthly Report Data',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                      ))),
+                              DataColumn(
+                                  label: Text('PDF Download',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                      ))),
+                            ],
+                            rows: data.map(
+                              (rowData) {
+                                return DataRow(
+                                  cells: [
+                                    DataCell(Text(rowData[0])),
+                                    DataCell(Text(rowData[2])),
+                                    DataCell(ElevatedButton(
+                                      onPressed: () {
+                                        _generatePDF(rowData[0], rowData[2], 1);
+                                      },
+                                      child: const Text('View Report'),
+                                    )),
+                                    DataCell(ElevatedButton(
+                                      onPressed: () {
+                                        _generatePDF(rowData[0], rowData[2], 2);
+                                      },
+                                      child: const Text('Download'),
+                                    )),
+                                  ],
+                                );
+                              },
+                            ).toList(),
+                          ),
                         ),
                       ),
-                      columnSpacing: 150.0,
-                      headingRowColor: MaterialStateColor.resolveWith(
-                          (states) => Colors.blue[800]!),
-                      headingTextStyle: const TextStyle(color: Colors.white),
-                      columns: const [
-                        DataColumn(
-                            label: Text(
-                          'User_ID',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),
-                        )),
-                        DataColumn(
-                            label: Text('Date',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ))),
-                        DataColumn(
-                            label: Text('Monthly Report Data',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ))),
-                        DataColumn(
-                            label: Text('PDF Download',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ))),
-                      ],
-                      rows: data.map(
-                        (rowData) {
-                          return DataRow(
-                            cells: [
-                              DataCell(Text(rowData[0])),
-                              DataCell(Text(rowData[2])),
-                              DataCell(ElevatedButton(
-                                onPressed: () {
-                                  _generatePDF(rowData[0], rowData[2], 1);
-                                },
-                                child: const Text('View Report'),
-                              )),
-                              DataCell(ElevatedButton(
-                                onPressed: () {
-                                  _generatePDF(rowData[0], rowData[2], 2);
-                                },
-                                child: const Text('Download'),
-                              )),
-                            ],
-                          );
-                        },
-                      ).toList(),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          }
+                    ],
+                  );
+                }
 
-          return Container();
-        },
-      ),
+                return Container();
+              },
+            ),
     );
   }
 
   Future<void> getRowsForFutureBuilder() async {
-    rowList.clear();
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('SafetyChecklistTable2')
         .doc('${widget.depoName}')
@@ -194,12 +202,10 @@ class _SafetySummaryState extends State<SafetySummary> {
     }
   }
 
-  Future<void> _generatePDF(String userId, String date, int decision) async {
-
+  Future<void> _generatePDF(String user_id, String date, int decision) async {
     setState(() {
-  enableLoading = true;
+      enableLoading = true;
     });
-
     final headerStyle =
         pw.TextStyle(fontSize: 15, fontWeight: pw.FontWeight.bold);
 
@@ -215,7 +221,7 @@ class _SafetySummaryState extends State<SafetySummary> {
       (await rootBundle.load('assets/Tata-Power.jpeg')).buffer.asUint8List(),
     );
 
-    final whiteBackground = pw.MemoryImage(
+    final white_background = pw.MemoryImage(
       (await rootBundle.load('assets/white_background2.jpeg'))
           .buffer
           .asUint8List(),
@@ -227,7 +233,7 @@ class _SafetySummaryState extends State<SafetySummary> {
         .collection('SafetyFieldData2')
         .doc('${widget.depoName}')
         .collection('userId')
-        .doc(userId)
+        .doc(user_id)
         .collection('date')
         .doc(date)
         .get();
@@ -313,7 +319,7 @@ class _SafetySummaryState extends State<SafetySummary> {
         .collection('SafetyChecklistTable2')
         .doc('${widget.depoName}')
         .collection('userId')
-        .doc(userId)
+        .doc(user_id)
         .collection('date')
         .doc(date)
         .get();
@@ -322,24 +328,50 @@ class _SafetySummaryState extends State<SafetySummary> {
         documentSnapshot.data() as Map<String, dynamic>;
     if (docData.isNotEmpty) {
       userData.addAll(docData['data']);
-      List<dynamic> imageUrls = [];
+      List<pw.Widget> imageUrls = [];
 
       for (Map<String, dynamic> mapData in userData) {
-        String imagesPath =
-            'gs://tp-zap-solz.appspot.com/SafetyChecklist/Bengaluru/${widget.depoName}/$userId/${mapData['srNo']}';
+        String images_Path =
+            'gs://tp-zap-solz.appspot.com/SafetyChecklist/Bengaluru/${widget.depoName}/$user_id/${mapData['srNo']}';
         ListResult result =
-            await FirebaseStorage.instance.ref().child(imagesPath).listAll();
+            await FirebaseStorage.instance.ref().child(images_Path).listAll();
 
         if (result.items.isNotEmpty) {
           for (var image in result.items) {
             String downloadUrl = await image.getDownloadURL();
-            final myImage = await networkImage(downloadUrl);
-            imageUrls.add(myImage);
+            if (image.name.endsWith('.pdf')) {
+              imageUrls.add(
+                pw.Container(
+                    alignment: pw.Alignment.center,
+                    padding: const pw.EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    width: 60,
+                    height: 100,
+                    child: pw.UrlLink(
+                        child: pw.Text(image.name), destination: downloadUrl)),
+              );
+            } else {
+              final myImage = await networkImage(downloadUrl);
+              imageUrls.add(
+                pw.Container(
+                    padding: const pw.EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    width: 60,
+                    height: 100,
+                    child: pw.Center(
+                      child: pw.Image(myImage),
+                    )),
+              );
+            }
           }
           if (imageUrls.length < 8) {
             int imageLoop = 8 - imageUrls.length;
             for (int i = 0; i < imageLoop; i++) {
-              imageUrls.add(whiteBackground);
+              imageUrls.add(
+                pw.Container(
+                    padding: const pw.EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    width: 60,
+                    height: 100,
+                    child: pw.Text('')),
+              );
             }
           }
         }
@@ -375,68 +407,24 @@ class _SafetySummaryState extends State<SafetySummary> {
           //Image Rows of PDF Table
           rows.add(pw.TableRow(children: [
             pw.Container(
-                padding: const pw.EdgeInsets.only(
-                    top: 8.0, bottom: 8.0, left: 3, right: 3),
+                padding: const pw.EdgeInsets.only(top: 8.0, bottom: 8.0),
                 child: pw.Text('')),
             pw.Container(
-                padding: const pw.EdgeInsets.only(
-                    top: 8.0, bottom: 8.0, left: 3, right: 3),
-                width: 100,
-                height: 80,
+                padding: const pw.EdgeInsets.only(top: 8.0, bottom: 8.0),
+                width: 60,
+                height: 100,
                 child: pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
                     children: [
-                      pw.Image(imageUrls[0]),
-                      pw.Image(imageUrls[1]),
+                      imageUrls[0],
+                      imageUrls[1],
                     ])),
-            pw.Container(
-                padding: const pw.EdgeInsets.only(
-                    top: 8.0, bottom: 8.0, left: 3, right: 3),
-                width: 100,
-                height: 80,
-                child: pw.Center(
-                  child: pw.Image(imageUrls[2]),
-                )),
-            pw.Container(
-                padding: const pw.EdgeInsets.only(
-                    top: 8.0, bottom: 8.0, left: 3, right: 3),
-                width: 100,
-                height: 80,
-                child: pw.Center(
-                  child: pw.Image(imageUrls[3]),
-                )),
-            pw.Container(
-                padding: const pw.EdgeInsets.only(
-                    top: 8.0, bottom: 8.0, left: 3, right: 3),
-                width: 100,
-                height: 80,
-                child: pw.Center(
-                  child: pw.Image(imageUrls[4]),
-                )),
-            pw.Container(
-                padding: const pw.EdgeInsets.only(
-                    top: 8.0, bottom: 8.0, left: 3, right: 3),
-                width: 100,
-                height: 80,
-                child: pw.Center(
-                  child: pw.Image(imageUrls[5]),
-                )),
-            pw.Container(
-                padding: const pw.EdgeInsets.only(
-                    top: 8.0, bottom: 8.0, left: 3, right: 3),
-                width: 100,
-                height: 80,
-                child: pw.Center(
-                  child: pw.Image(imageUrls[6]),
-                )),
-            pw.Container(
-                padding: const pw.EdgeInsets.only(
-                    top: 8.0, bottom: 8.0, left: 3, right: 3),
-                width: 100,
-                height: 80,
-                child: pw.Center(
-                  child: pw.Image(imageUrls[7]),
-                ))
+            imageUrls[2],
+            imageUrls[3],
+            imageUrls[4],
+            imageUrls[5],
+            imageUrls[6],
+            imageUrls[7]
           ]));
         }
         imageUrls.clear();
@@ -483,7 +471,7 @@ class _SafetySummaryState extends State<SafetySummary> {
           return pw.Container(
               alignment: pw.Alignment.centerRight,
               margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
-              child: pw.Text('User ID - $userId',
+              child: pw.Text('User ID - $user_id',
                   // 'Page ${context.pageNumber} of ${context.pagesCount}',
                   style: pw.Theme.of(context)
                       .defaultTextStyle
@@ -560,7 +548,7 @@ class _SafetySummaryState extends State<SafetySummary> {
           return pw.Container(
               alignment: pw.Alignment.centerRight,
               margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
-              child: pw.Text('User ID - $userId',
+              child: pw.Text('User ID - $user_id',
                   // 'Page ${context.pageNumber} of ${context.pagesCount}',
                   style: pw.Theme.of(context)
                       .defaultTextStyle
@@ -610,14 +598,8 @@ class _SafetySummaryState extends State<SafetySummary> {
       if (decision == 1) {
         final blob = html.Blob([pdfData], 'application/pdf');
         final url = html.Url.createObjectUrlFromBlob(blob);
-        html.window.open(url, '_blank');
         final encodedUrl = Uri.encodeFull(url);
-        html.Url.revokeObjectUrl(encodedUrl);
-        Future.delayed(const Duration(seconds: 1), () {
-          html.Url.revokeObjectUrl(url);
-        }).catchError((error) {
-          print('Error revoking object URL: $error');
-        });
+        html.window.open(encodedUrl, '_blank');
       } else if (decision == 2) {
         html.AnchorElement(
             href:
@@ -628,10 +610,16 @@ class _SafetySummaryState extends State<SafetySummary> {
     } else {
       const Text('Sorry it is not ready for mobile platform');
     }
-
     setState(() {
       enableLoading = false;
     });
-
+    // // For mobile platforms
+    // final String dir = (await getApplicationDocumentsDirectory()).path;
+    // final String path = '$dir/$pdfPath';
+    // final File file = File(path);
+    // await file.writeAsBytes(pdfData);
+    //
+    // // Open the PDF file for preview or download
+    // OpenFile.open(file.path);
   }
 }

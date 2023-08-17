@@ -4,11 +4,11 @@ import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import '../../components/Loading_page.dart';
-import '../../datasource/jmr_datasource.dart';
-import '../../model/jmr.dart';
-import '../../widgets/custom_appbar.dart';
-import '../../widgets/nodata_available.dart';
+import '../../../components/Loading_page.dart';
+import '../../../datasource/jmr_datasource.dart';
+import '../../../model/jmr.dart';
+import '../../../widgets/custom_appbar.dart';
+import '../../../widgets/nodata_available.dart';
 import 'package:intl/intl.dart';
 
 class JMRPage extends StatefulWidget {
@@ -719,14 +719,14 @@ class _JMRPageState extends State<JMRPage> {
     return data.map((list) {
       return JMRModel(
           srNo: list[0],
-          description: list[1],
-          activity: list[2],
-          refNo: list[3],
-          jmrAbstract: list[4],
-          uom: list[5],
+          Description: list[1],
+          Activity: list[2],
+          RefNo: list[3],
+          JmrAbstract: list[4],
+          Uom: list[5],
           rate: list[6],
-          totalQty: list[7],
-          totalAmount: list[8]);
+          TotalQty: list[7],
+          TotalAmount: list[8]);
     }).toList();
   }
 
@@ -883,7 +883,7 @@ class _JMRPageState extends State<JMRPage> {
   Future<List<dynamic>> _fetchDataFromFirestore() async {
     data.clear();
     getFieldData();
-    print('Error Occured1');
+
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('JMRCollection')
         .doc(widget.depoName)
@@ -898,7 +898,6 @@ class _JMRPageState extends State<JMRPage> {
         .collection('date')
         .get();
 
-    print('Error Occured2');
     List<dynamic> tempList = querySnapshot.docs.map((date) => date.id).toList();
 
     for (int i = 0; i < tempList.length; i++) {
@@ -981,15 +980,15 @@ class _JMRPageState extends State<JMRPage> {
 List<JMRModel> getData() {
   return [
     JMRModel(
-      activity: 'Software',
-      description: 'Supply and Laying',
-      jmrAbstract: 'Dumble Door',
-      refNo: '8.31 (Additional)',
-      uom: 'Mtr',
+      Activity: 'Software',
+      Description: 'Supply and Laying',
+      JmrAbstract: 'Dumble Door',
+      RefNo: '8.31 (Additional)',
+      Uom: 'Mtr',
       srNo: 1,
       rate: 500.00,
-      totalQty: null,
-      totalAmount: null,
+      TotalQty: null,
+      TotalAmount: null,
     ),
   ];
 }

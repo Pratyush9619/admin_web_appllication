@@ -13,6 +13,12 @@ TextStyle formtext = const TextStyle(
   fontSize: 13,
   fontWeight: FontWeight.bold,
 );
+
+TextStyle tableheaderwhitecolor = TextStyle(
+  fontWeight: FontWeight.bold,
+  fontSize: 14,
+  color: white,
+);
 TextStyle tableheader = const TextStyle(
   fontWeight: FontWeight.bold,
   fontSize: 14,

@@ -89,8 +89,8 @@ class _MyHomePageState extends State<MyHomePage> {
         // ResourceAllocation();
         //  EventsPage();
         // KeyEvents();
-        // const CitiesPage();
-        const LoginRegister();
+        const CitiesPage();
+    // const LoginRegister();
     // const PdfSummary();
   }
 }

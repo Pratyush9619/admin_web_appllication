@@ -139,7 +139,9 @@ class _ViewAllPdfState extends State<ViewAllPdf> {
                       file.url,
                       fit: BoxFit.fill,
                     )
-                  : Image.asset('assets/pdf_logo.jpeg')),
+                  : isPdf
+                      ? Image.asset('assets/pdf_logo.jpeg')
+                      : Image.asset('assets/excel.png')),
           //PdfThumbnail.fromFile(file.ref.fullPath, currentPage: 2)),
           onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => ImagePage(file: file))),
@@ -174,7 +176,7 @@ class _ViewAllPdfState extends State<ViewAllPdf> {
         .ref()
         .child('${widget.title}/${widget.cityName}/${widget.depoName}');
     final listResult = await storageRef.listAll();
-    print(listResult.prefixes[1]);
+    print(listResult.prefixes[0]);
     for (var prefix in listResult.prefixes) {
       drawingRef.add(prefix.name);
       // print(drawingRef);
