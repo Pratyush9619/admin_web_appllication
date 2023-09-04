@@ -270,59 +270,50 @@ class _DepotOverviewState extends State<DepotOverview> {
                                     GridLinesVisibility.both,
                                 selectionMode: SelectionMode.single,
                                 navigationMode: GridNavigationMode.cell,
-                                columnWidthMode: ColumnWidthMode.auto,
+                                columnWidthMode: ColumnWidthMode.fill,
                                 editingGestureType: EditingGestureType.tap,
                                 controller: _dataGridController,
-
-                                // onQueryRowHeight: (details) {
-                                //   return details.rowIndex == 0 ? 60.0 : 49.0;
-                                // },
+                                onQueryRowHeight: (details) {
+                                  return details.getIntrinsicRowHeight(
+                                      details.rowIndex,
+                                      canIncludeHiddenColumns: true);
+                                },
                                 columns: [
                                   GridColumn(
-                                    columnName: 'srNo',
-                                    autoFitPadding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    allowEditing: true,
                                     visible: false,
+                                    width: 100,
+                                    columnName: 'srNo',
+                                    allowEditing: true,
                                     label: Container(
-                                      alignment: Alignment.center,
                                       child: Text(
                                         'Sr No',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                        //    textAlign: TextAlign.center,
+                                        style: tableheader,
+                                        softWrap: true, // Allow text to wrap
+                                        overflow: TextOverflow.clip,
                                       ),
                                     ),
                                   ),
                                   GridColumn(
                                     columnName: 'Date',
-                                    width: 180,
+                                    width: 160,
                                     allowEditing: false,
                                     label: Container(
                                       alignment: Alignment.center,
-                                      child: Text(
-                                        'Risk On Date',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
+                                      child: Text('Risk On Date',
+                                          softWrap: true, // Allow text to wrap
+                                          overflow: TextOverflow.clip,
+                                          style: tableheader),
                                     ),
                                   ),
                                   GridColumn(
                                     columnName: 'RiskDescription',
-                                    width: 130,
+                                    width: 200,
                                     allowEditing: true,
                                     label: Container(
-                                      padding: const EdgeInsets.all(8.0),
                                       alignment: Alignment.center,
-                                      child: const Text('Risk Description',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16)),
+                                      child: Text('Risk Description',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: tableheader),
                                     ),
                                   ),
                                   GridColumn(
@@ -330,12 +321,11 @@ class _DepotOverviewState extends State<DepotOverview> {
                                     width: 180,
                                     allowEditing: false,
                                     label: Container(
-                                      padding: const EdgeInsets.all(8.0),
                                       alignment: Alignment.center,
-                                      child: const Text('Type',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16)),
+                                      child: Text('Type',
+                                          softWrap: true, // Allow text to wrap
+                                          overflow: TextOverflow.clip,
+                                          style: tableheader),
                                     ),
                                   ),
                                   GridColumn(
@@ -345,11 +335,9 @@ class _DepotOverviewState extends State<DepotOverview> {
                                     label: Container(
                                       alignment: Alignment.center,
                                       child: Text('Impact Risk',
-                                          textAlign: TextAlign.center,
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16)),
+                                          softWrap: true, // Allow text to wrap
+                                          overflow: TextOverflow.clip,
+                                          style: tableheader),
                                     ),
                                   ),
                                   GridColumn(
@@ -360,17 +348,20 @@ class _DepotOverviewState extends State<DepotOverview> {
                                       children: [
                                         Container(
                                           alignment: Alignment.center,
-                                          child: Text('Owner',
-                                              overflow:
-                                                  TextOverflow.values.first,
-                                              style: const TextStyle(
+                                          child: const Text('Owner',
+                                              softWrap:
+                                                  true, // Allow text to wrap
+                                              overflow: TextOverflow.clip,
+                                              style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16)),
                                         ),
-                                        Text('Person Who will manage the risk',
-                                            overflow: TextOverflow.values.first,
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(
+                                        const Text(
+                                            'Person Who will manage the risk',
+                                            softWrap:
+                                                true, // Allow text to wrap
+                                            overflow: TextOverflow.clip,
+                                            style: TextStyle(
                                                 color: Colors.red,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 12))
@@ -385,18 +376,20 @@ class _DepotOverviewState extends State<DepotOverview> {
                                       children: [
                                         Container(
                                           alignment: Alignment.center,
-                                          child: Text('Mitigation Action',
-                                              overflow:
-                                                  TextOverflow.values.first,
-                                              style: const TextStyle(
+                                          child: const Text('Mitigation Action',
+                                              softWrap:
+                                                  true, // Allow text to wrap
+                                              overflow: TextOverflow.clip,
+                                              style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16)),
                                         ),
-                                        Text(
+                                        const Text(
                                             'Action to Mitigate the risk e.g reduce the likelihood',
-                                            overflow: TextOverflow.values.first,
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(
+                                            softWrap:
+                                                true, // Allow text to wrap
+                                            overflow: TextOverflow.clip,
+                                            style: TextStyle(
                                                 color: Colors.red,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 12))
@@ -410,21 +403,23 @@ class _DepotOverviewState extends State<DepotOverview> {
                                     label: Column(
                                       children: [
                                         Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16.0),
                                           alignment: Alignment.center,
-                                          child: Text('Contigent Action',
-                                              overflow:
-                                                  TextOverflow.values.first,
-                                              style: const TextStyle(
+                                          child: const Text('Contigent Action',
+                                              softWrap:
+                                                  true, // Allow text to wrap
+                                              overflow: TextOverflow.clip,
+                                              style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16)),
                                         ),
-                                        Text(
+                                        const Text(
                                             'Action to be taken if the risk happens',
-                                            overflow: TextOverflow.values.first,
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(
+                                            softWrap:
+                                                true, // Allow text to wrap
+                                            overflow: TextOverflow.clip,
+
+                                            //  textAlign: TextAlign.center,
+                                            style: TextStyle(
                                                 color: Colors.red,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 12))
@@ -436,14 +431,12 @@ class _DepotOverviewState extends State<DepotOverview> {
                                     allowEditing: true,
                                     width: 180,
                                     label: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0),
                                       alignment: Alignment.center,
                                       child: Text('Progression Action',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16)),
+                                          softWrap: true, // Allow text to wrap
+                                          overflow: TextOverflow.clip,
+                                          // overflow: TextOverflow.values.first,
+                                          style: tableheader),
                                     ),
                                   ),
                                   GridColumn(
@@ -451,30 +444,25 @@ class _DepotOverviewState extends State<DepotOverview> {
                                     allowEditing: true,
                                     width: 150,
                                     label: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0),
                                       alignment: Alignment.center,
-                                      child: Text('Reason',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16)),
+                                      child: Text('Remark',
+                                          softWrap: true, // Allow text to wrap
+                                          overflow: TextOverflow.clip,
+                                          // overflow: TextOverflow.values.first,
+                                          style: tableheader),
                                     ),
                                   ),
                                   GridColumn(
                                     columnName: 'TargetDate',
                                     allowEditing: false,
-                                    width: 180,
+                                    width: 160,
                                     label: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0),
                                       alignment: Alignment.center,
                                       child: Text(
                                           'Target Completion Date Of Risk',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16)),
+                                          softWrap: true, // Allow text to wrap
+                                          overflow: TextOverflow.clip,
+                                          style: tableheader),
                                     ),
                                   ),
                                   GridColumn(
@@ -482,14 +470,11 @@ class _DepotOverviewState extends State<DepotOverview> {
                                     allowEditing: false,
                                     width: 150,
                                     label: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0),
                                       alignment: Alignment.center,
-                                      child: Text('Risk Status',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16)),
+                                      child: Text('Status',
+                                          softWrap: true, // Allow text to wrap
+                                          overflow: TextOverflow.clip,
+                                          style: tableheader),
                                     ),
                                   ),
                                 ],
@@ -513,58 +498,50 @@ class _DepotOverviewState extends State<DepotOverview> {
                                     GridLinesVisibility.both,
                                 selectionMode: SelectionMode.single,
                                 navigationMode: GridNavigationMode.cell,
-                                columnWidthMode: ColumnWidthMode.auto,
+                                columnWidthMode: ColumnWidthMode.fill,
                                 editingGestureType: EditingGestureType.tap,
                                 controller: _dataGridController,
-
-                                // onQueryRowHeight: (details) {
-                                //   return details.rowIndex == 0 ? 60.0 : 49.0;
-                                // },
+                                onQueryRowHeight: (details) {
+                                  return details.getIntrinsicRowHeight(
+                                      details.rowIndex,
+                                      canIncludeHiddenColumns: true);
+                                },
                                 columns: [
                                   GridColumn(
+                                    visible: false,
+                                    width: 100,
                                     columnName: 'srNo',
-                                    autoFitPadding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
                                     allowEditing: true,
                                     label: Container(
-                                      alignment: Alignment.center,
                                       child: Text(
                                         'Sr No',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                        //    textAlign: TextAlign.center,
+                                        style: tableheader,
+                                        softWrap: true, // Allow text to wrap
+                                        overflow: TextOverflow.clip,
                                       ),
                                     ),
                                   ),
                                   GridColumn(
                                     columnName: 'Date',
-                                    width: 180,
+                                    width: 160,
                                     allowEditing: false,
                                     label: Container(
                                       alignment: Alignment.center,
-                                      child: Text(
-                                        'Risk On Date',
-                                        overflow: TextOverflow.values.first,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16),
-                                      ),
+                                      child: Text('Risk On Date',
+                                          softWrap: true, // Allow text to wrap
+                                          overflow: TextOverflow.clip,
+                                          style: tableheader),
                                     ),
                                   ),
                                   GridColumn(
                                     columnName: 'RiskDescription',
-                                    width: 130,
+                                    width: 200,
                                     allowEditing: true,
                                     label: Container(
-                                      padding: const EdgeInsets.all(8.0),
                                       alignment: Alignment.center,
-                                      child: const Text('Risk Description',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16)),
+                                      child: Text('Risk Description',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: tableheader),
                                     ),
                                   ),
                                   GridColumn(
@@ -572,12 +549,11 @@ class _DepotOverviewState extends State<DepotOverview> {
                                     width: 180,
                                     allowEditing: false,
                                     label: Container(
-                                      padding: const EdgeInsets.all(8.0),
                                       alignment: Alignment.center,
-                                      child: const Text('Type',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16)),
+                                      child: Text('Type',
+                                          softWrap: true, // Allow text to wrap
+                                          overflow: TextOverflow.clip,
+                                          style: tableheader),
                                     ),
                                   ),
                                   GridColumn(
@@ -587,11 +563,9 @@ class _DepotOverviewState extends State<DepotOverview> {
                                     label: Container(
                                       alignment: Alignment.center,
                                       child: Text('Impact Risk',
-                                          textAlign: TextAlign.center,
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16)),
+                                          softWrap: true, // Allow text to wrap
+                                          overflow: TextOverflow.clip,
+                                          style: tableheader),
                                     ),
                                   ),
                                   GridColumn(
@@ -602,17 +576,20 @@ class _DepotOverviewState extends State<DepotOverview> {
                                       children: [
                                         Container(
                                           alignment: Alignment.center,
-                                          child: Text('Owner',
-                                              overflow:
-                                                  TextOverflow.values.first,
-                                              style: const TextStyle(
+                                          child: const Text('Owner',
+                                              softWrap:
+                                                  true, // Allow text to wrap
+                                              overflow: TextOverflow.clip,
+                                              style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16)),
                                         ),
-                                        Text('Person Who will manage the risk',
-                                            overflow: TextOverflow.values.first,
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(
+                                        const Text(
+                                            'Person Who will manage the risk',
+                                            softWrap:
+                                                true, // Allow text to wrap
+                                            overflow: TextOverflow.clip,
+                                            style: TextStyle(
                                                 color: Colors.red,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 12))
@@ -627,18 +604,20 @@ class _DepotOverviewState extends State<DepotOverview> {
                                       children: [
                                         Container(
                                           alignment: Alignment.center,
-                                          child: Text('Mitigation Action',
-                                              overflow:
-                                                  TextOverflow.values.first,
-                                              style: const TextStyle(
+                                          child: const Text('Mitigation Action',
+                                              softWrap:
+                                                  true, // Allow text to wrap
+                                              overflow: TextOverflow.clip,
+                                              style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16)),
                                         ),
-                                        Text(
+                                        const Text(
                                             'Action to Mitigate the risk e.g reduce the likelihood',
-                                            overflow: TextOverflow.values.first,
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(
+                                            softWrap:
+                                                true, // Allow text to wrap
+                                            overflow: TextOverflow.clip,
+                                            style: TextStyle(
                                                 color: Colors.red,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 12))
@@ -652,21 +631,23 @@ class _DepotOverviewState extends State<DepotOverview> {
                                     label: Column(
                                       children: [
                                         Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16.0),
                                           alignment: Alignment.center,
-                                          child: Text('Contigent Action',
-                                              overflow:
-                                                  TextOverflow.values.first,
-                                              style: const TextStyle(
+                                          child: const Text('Contigent Action',
+                                              softWrap:
+                                                  true, // Allow text to wrap
+                                              overflow: TextOverflow.clip,
+                                              style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16)),
                                         ),
-                                        Text(
+                                        const Text(
                                             'Action to be taken if the risk happens',
-                                            overflow: TextOverflow.values.first,
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(
+                                            softWrap:
+                                                true, // Allow text to wrap
+                                            overflow: TextOverflow.clip,
+
+                                            //  textAlign: TextAlign.center,
+                                            style: TextStyle(
                                                 color: Colors.red,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 12))
@@ -678,14 +659,12 @@ class _DepotOverviewState extends State<DepotOverview> {
                                     allowEditing: true,
                                     width: 180,
                                     label: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0),
                                       alignment: Alignment.center,
                                       child: Text('Progression Action',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16)),
+                                          softWrap: true, // Allow text to wrap
+                                          overflow: TextOverflow.clip,
+                                          // overflow: TextOverflow.values.first,
+                                          style: tableheader),
                                     ),
                                   ),
                                   GridColumn(
@@ -693,30 +672,25 @@ class _DepotOverviewState extends State<DepotOverview> {
                                     allowEditing: true,
                                     width: 150,
                                     label: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0),
                                       alignment: Alignment.center,
                                       child: Text('Remark',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16)),
+                                          softWrap: true, // Allow text to wrap
+                                          overflow: TextOverflow.clip,
+                                          // overflow: TextOverflow.values.first,
+                                          style: tableheader),
                                     ),
                                   ),
                                   GridColumn(
                                     columnName: 'TargetDate',
                                     allowEditing: false,
-                                    width: 180,
+                                    width: 160,
                                     label: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0),
                                       alignment: Alignment.center,
                                       child: Text(
                                           'Target Completion Date Of Risk',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16)),
+                                          softWrap: true, // Allow text to wrap
+                                          overflow: TextOverflow.clip,
+                                          style: tableheader),
                                     ),
                                   ),
                                   GridColumn(
@@ -724,14 +698,11 @@ class _DepotOverviewState extends State<DepotOverview> {
                                     allowEditing: false,
                                     width: 150,
                                     label: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0),
                                       alignment: Alignment.center,
-                                      child: Text('Risk Status',
-                                          overflow: TextOverflow.values.first,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16)),
+                                      child: Text('Status',
+                                          softWrap: true, // Allow text to wrap
+                                          overflow: TextOverflow.clip,
+                                          style: tableheader),
                                     ),
                                   ),
                                 ],

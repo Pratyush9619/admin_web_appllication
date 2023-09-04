@@ -5,7 +5,9 @@ import 'package:web_appllication/MenuPage/admin.dart';
 import 'package:web_appllication/MenuPage/home.dart';
 import 'package:web_appllication/MenuPage/project_planning.dart';
 import 'package:web_appllication/MenuPage/user.dart';
+import 'package:web_appllication/provider/assigned_user_provider.dart';
 import 'package:web_appllication/provider/key_provider.dart';
+import 'package:web_appllication/provider/menuUserPageProvider.dart';
 import 'package:web_appllication/provider/text_provider.dart';
 import 'package:web_appllication/small_screen.dart';
 import 'package:web_appllication/style.dart';
@@ -32,6 +34,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
+          ChangeNotifierProvider(create: (_) => MenuUserPageProvider()),
+          ChangeNotifierProvider<AssignedUserProvider>(
+              create: (_) => AssignedUserProvider()),
           ChangeNotifierProvider<textprovider>(
             create: (context) => textprovider(),
           ),
@@ -89,8 +94,8 @@ class _MyHomePageState extends State<MyHomePage> {
         // ResourceAllocation();
         //  EventsPage();
         // KeyEvents();
-        const CitiesPage();
-    // const LoginRegister();
+        // const CitiesPage();
+        const LoginRegister();
     // const PdfSummary();
   }
 }

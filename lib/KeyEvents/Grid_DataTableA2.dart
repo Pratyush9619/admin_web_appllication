@@ -76,9 +76,9 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
     _keyProvider!
         .getFirestoreData(widget.userid, widget.events, '${widget.depoName}')
         .whenComplete(() {
-      print(_keyProvider!.startdate.length);
+      print(_keyProvider!.startdate!.length);
       ganttdata = [];
-      for (int i = 0; i < _keyProvider!.startdate.length; i++) {
+      for (int i = 0; i < _keyProvider!.startdate!.length; i++) {
         ganttdata.add(GanttAbsoluteEvent(
           suggestedColor: Colors.yellow,
           displayNameBuilder: (context) {

@@ -342,7 +342,7 @@ class DepotOverviewDatasource extends DataGridSource {
                                   }).toList())
                               : Text(
                                   dataGridCell.value.toString(),
-                                  overflow: TextOverflow.ellipsis,
+                                  // overflow: TextOverflow.ellipsis,
                                 ));
     }).toList());
   }

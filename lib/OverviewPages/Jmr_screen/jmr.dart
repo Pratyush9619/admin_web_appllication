@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 import 'package:web_appllication/OverviewPages/Jmr_screen/jmr_home.dart';
-import '../../../components/Loading_page.dart';
-import '../../../style.dart';
+import '../../components/Loading_page.dart';
+import '../../style.dart';
 
 class Jmr extends StatefulWidget {
   String? cityName;
@@ -37,7 +37,6 @@ class _JmrState extends State<Jmr> {
             backgroundColor: blue,
             bottom: TabBar(
               onTap: (value) {
-                jmrTabLen.clear();
                 _selectedIndex = value;
                 generateAllJmrList();
               },
@@ -201,8 +200,6 @@ class _JmrState extends State<Jmr> {
   // Function to calculate Length of JMR all components with ID
 
   Future<List<dynamic>> generateAllJmrList() async {
-    List<int> tempJmrList = [];
-
     if (isLoading == false) {
       setState(() {
         isLoading = true;
@@ -219,6 +216,8 @@ class _JmrState extends State<Jmr> {
 
     List<dynamic> userListId =
         querySnapshot.docs.map((data) => data.id).toList();
+
+    List<int> tempList = [];
 
     for (int i = 0; i < userListId.length; i++) {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
@@ -249,22 +248,23 @@ class _JmrState extends State<Jmr> {
 
         int jmrLength = jmrLen.docs.length;
 
-        tempJmrList.add(jmrLength);
+        tempList.add(jmrLength);
       }
+      jmrTabLen = tempList;
     }
 
-    if (tempJmrList.length < 5) {
-      int tempJmrLen = tempJmrList.length;
+    if (jmrTabLen.length < 5) {
+      int tempJmrLen = jmrTabLen.length;
       int loop = 5 - tempJmrLen;
       for (int k = 0; k < loop; k++) {
-        tempJmrList.add(0);
+        tempList.add(0);
       }
+      jmrTabLen = tempList;
     }
     setState(() {
       isLoading = false;
-      jmrTabLen = tempJmrList;
     });
 
-    return tempJmrList;
+    return jmrTabLen;
   }
 }

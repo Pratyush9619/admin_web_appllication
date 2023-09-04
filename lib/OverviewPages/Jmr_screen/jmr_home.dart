@@ -4,11 +4,11 @@ import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import '../../../components/Loading_page.dart';
-import '../../../datasource/jmr_datasource.dart';
-import '../../../model/jmr.dart';
-import '../../../widgets/custom_appbar.dart';
-import '../../../widgets/nodata_available.dart';
+import '../../components/Loading_page.dart';
+import '../../datasource/jmr_datasource.dart';
+import '../../model/jmr.dart';
+import '../../widgets/custom_appbar.dart';
+import '../../widgets/nodata_available.dart';
 import 'package:intl/intl.dart';
 
 class JMRPage extends StatefulWidget {
@@ -883,7 +883,7 @@ class _JMRPageState extends State<JMRPage> {
   Future<List<dynamic>> _fetchDataFromFirestore() async {
     data.clear();
     getFieldData();
-
+    print('Error Occured1');
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('JMRCollection')
         .doc(widget.depoName)
@@ -898,6 +898,7 @@ class _JMRPageState extends State<JMRPage> {
         .collection('date')
         .get();
 
+    print('Error Occured2');
     List<dynamic> tempList = querySnapshot.docs.map((date) => date.id).toList();
 
     for (int i = 0; i < tempList.length; i++) {
