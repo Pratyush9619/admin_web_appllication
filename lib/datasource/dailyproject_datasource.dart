@@ -4,14 +4,17 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import '../KeyEvents/view_AllFiles.dart';
 import '../model/daily_projectModel.dart';
 
 class DailyDataSource extends DataGridSource {
+  String cityName;
   String depoName;
   BuildContext mainContext;
   DailyDataSource(
     this._montlyproject,
     this.mainContext,
+    this.cityName,
     this.depoName,
   ) {
     buildDataGridRows();
@@ -39,6 +42,7 @@ class DailyDataSource extends DataGridSource {
   List<DataGridRow> get rows => dataGridRows;
 
   @override
+  String Pagetitle = 'Daily Report';
   DataGridRowAdapter? buildRow(DataGridRow row) {
     DateTime? rangeStartDate = DateTime.now();
     DateTime? rangeEndDate = DateTime.now();
@@ -52,8 +56,25 @@ class DailyDataSource extends DataGridSource {
         cells: row.getCells().map<Widget>((dataGridCell) {
       return Container(
           alignment: Alignment.center,
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
-          child:
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: (dataGridCell.columnName == 'View')
+              ? ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        mainContext,
+                        MaterialPageRoute(
+                          builder: (context) => ViewAllPdf(
+                            title: Pagetitle,
+                            cityName: cityName,
+                            depoName: depoName,
+                            // userId: userId,
+                            // date: row.getCells()[0].value.toString(),
+                            docId:
+                                '${row.getCells()[0].value}/${row.getCells()[1].value}',
+                          ),
+                        ));
+                  },
+                  child: const Text('View'))
               //  (dataGridCell.columnName == 'Date')
               //     ? Row(
               //         children: [
@@ -117,11 +138,10 @@ class DailyDataSource extends DataGridSource {
               //         ],
               //       )
 
-              //     :
-              Text(
-            dataGridCell.value.toString(),
-            textAlign: TextAlign.center,
-          ));
+              : Text(
+                  dataGridCell.value.toString(),
+                  textAlign: TextAlign.center,
+                ));
     }).toList());
   }
 

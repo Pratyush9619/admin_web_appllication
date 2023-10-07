@@ -35,11 +35,14 @@ class _UploadDocumentState extends State<UploadDocument> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: PreferredSize(
+            preferredSize: Size.fromHeight(50),
             child: CustomAppBar(
+              userId: widget.userId,
+              depoName: widget.depoName,
+              cityName: widget.cityName,
               text: 'Upload Checklist',
               haveSynced: false,
-            ),
-            preferredSize: Size.fromHeight(50)),
+            )),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

@@ -78,8 +78,12 @@ class _ClosureSummaryState extends State<ClosureSummary> {
       appBar: PreferredSize(
           // ignore: sort_child_properties_last
           child: CustomAppBar(
+            toClosure: true,
+            showDepoBar: true,
+            cityName: widget.cityName,
+            depoName: widget.depoName,
             text: ' ${widget.cityName}/ ${widget.depoName} / ${widget.id}',
-            userid: widget.userId,
+            userId: widget.userId,
           ),
           preferredSize: const Size.fromHeight(50)),
       body: FutureBuilder<List<TableRow>>(

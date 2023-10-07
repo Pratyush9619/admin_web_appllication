@@ -35,11 +35,11 @@ class _UnAssingedUsersState extends State<UnAssingedUsers> {
     final provider = Provider.of<FilterProvider>(context, listen: true);
     return Scaffold(
         appBar: PreferredSize(
-          preferredSize: Size(MediaQuery.of(context).size.width, 50),
-          child: CustomAppBar(
-            text: 'UnAssigned Users',
-          ),
-        ),
+            preferredSize: Size(MediaQuery.of(context).size.width, 50),
+            child: AppBar(
+              title: const Text('UnAssigned Users'),
+            )
+            ),
         body: Column(
           children: [
             Consumer<FilterProvider>(

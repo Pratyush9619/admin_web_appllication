@@ -39,11 +39,10 @@ class _AssignedUserState extends State<AssignedUser> {
         ? LoadingPage()
         : Scaffold(
             appBar: PreferredSize(
-              preferredSize: Size(MediaQuery.of(context).size.width, 50),
-              child: CustomAppBar(
-                text: 'Menu User Panel / Assigned User',
-              ),
-            ),
+                preferredSize: Size(MediaQuery.of(context).size.width, 50),
+                child: AppBar(
+                  title: const Text('UnAssigned Users'),
+                )),
             body: Column(
               children: [
                 Consumer<FilterProvider>(

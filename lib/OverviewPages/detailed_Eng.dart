@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:web_appllication/widgets/nodata_available.dart';
 import '../Authentication/auth_service.dart';
+import '../KeyEvents/Grid_DataTable.dart';
 import '../datasource/detailedengEV_datasource.dart';
 import '../datasource/detailedengShed_datasource.dart';
 import '../datasource/detailedeng_datasource.dart';
@@ -25,6 +27,8 @@ class DetailedEng extends StatefulWidget {
 
 class _DetailedEngtState extends State<DetailedEng>
     with TickerProviderStateMixin {
+  TextEditingController selectedDepoController = TextEditingController();
+
   List<DetailedEngModel> detailedProject = <DetailedEngModel>[];
   List<DetailedEngModel> DetailedProjectev = <DetailedEngModel>[];
   List<DetailedEngModel> DetailedProjectshed = <DetailedEngModel>[];
@@ -156,45 +160,70 @@ class _DetailedEngtState extends State<DetailedEng>
               '${widget.cityName} / ${widget.depoName} / Detailed Engineering',
             ),
             actions: [
-              // Padding(
-              //   padding: const EdgeInsets.only(right: 20, top: 10, bottom: 10),
-              //   child: Container(
-              //     height: 15,
-              //     decoration: BoxDecoration(
-              //         borderRadius: BorderRadius.circular(10),
-              //         color: Colors.blue),
-              //     child: TextButton(
-              //         onPressed: () {
-              //           StoreData();
-              //         },
-              //         child: Text(
-              //           'Sync Data',
-              //           style: TextStyle(color: white, fontSize: 20),
-              //         )),
-              //   ),
-              // ),
+              Container(
+                padding: const EdgeInsets.all(5.0),
+                width: 200,
+                height: 30,
+                child: TypeAheadField(
+                    animationStart: BorderSide.strokeAlignCenter,
+                    suggestionsCallback: (pattern) async {
+                      return await getDepoList(pattern);
+                    },
+                    itemBuilder: (context, suggestion) {
+                      return ListTile(
+                        title: Text(
+                          suggestion.toString(),
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      );
+                    },
+                    onSuggestionSelected: (suggestion) {
+                      selectedDepoController.text = suggestion.toString();
+
+                      if (widget.cityName.toString().isNotEmpty) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailedEng(
+                                depoName: suggestion.toString(),
+                                cityName: widget.cityName,
+                              ),
+                            ));
+                      }
+                    },
+                    textFieldConfiguration: TextFieldConfiguration(
+                      decoration: const InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        contentPadding: EdgeInsets.all(5.0),
+                        hintText: 'Go To Depot',
+                      ),
+                      style: const TextStyle(
+                        fontSize: 14,
+                      ),
+                      controller: selectedDepoController,
+                    )),
+              ),
               Padding(
-                  padding: const EdgeInsets.only(right: 150),
+                  padding: const EdgeInsets.only(right: 15, left: 15),
                   child: GestureDetector(
                       onTap: () {
-                        // onWillPop(context);
+                        onWillPop(context);
                       },
-                      child: Image.asset(
-                        'assets/logout.png',
-                        height: 20,
-                        width: 20,
-                      ))
-                  //  IconButton(
-                  //   icon: Icon(
-                  //     Icons.logout_rounded,
-                  //     size: 25,
-                  //     color: white,
-                  //   ),
-                  //   onPressed: () {
-                  //     onWillPop(context);
-                  //   },
-                  // )
-                  )
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            'assets/logout.png',
+                            height: 20,
+                            width: 20,
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            widget.userId ?? '',
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                        ],
+                      ))),
             ],
             bottom: TabBar(
               onTap: (value) {
@@ -1890,5 +1919,32 @@ class _DetailedEngtState extends State<DetailedEng>
       });
     });
     setState(() {});
+  }
+
+  Future<List<dynamic>> getDepoList(String pattern) async {
+    List<dynamic> depoList = [];
+
+    if (widget.cityName.toString().isNotEmpty) {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('DepoName')
+          .doc(widget.cityName)
+          .collection('AllDepots')
+          .get();
+
+      depoList = querySnapshot.docs.map((deponame) => deponame.id).toList();
+
+      if (pattern.isNotEmpty) {
+        depoList = depoList
+            .where((element) => element
+                .toString()
+                .toUpperCase()
+                .startsWith(pattern.toUpperCase()))
+            .toList();
+      }
+    } else {
+      depoList.add('Please Select a City');
+    }
+
+    return depoList;
   }
 }

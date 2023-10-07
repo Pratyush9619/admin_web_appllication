@@ -1,14 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 import 'package:web_appllication/OverviewPages/Jmr_screen/jmr_home.dart';
+import '../../KeyEvents/Grid_DataTable.dart';
 import '../../components/Loading_page.dart';
 import '../../style.dart';
 
 class Jmr extends StatefulWidget {
   String? cityName;
   String? depoName;
-  Jmr({super.key, this.cityName, this.depoName});
+  String? userId;
+  Jmr({super.key, this.cityName, this.depoName, this.userId});
 
   @override
   State<Jmr> createState() => _JmrState();
@@ -16,6 +19,8 @@ class Jmr extends StatefulWidget {
 
 class _JmrState extends State<Jmr> {
   List<int> jmrTabLen = [];
+  TextEditingController selectedDepoController = TextEditingController();
+
   int _selectedIndex = 0;
   bool isLoading = true;
   List<String> title = ['R1', 'R2', 'R3', 'R4', 'R5'];
@@ -35,6 +40,72 @@ class _JmrState extends State<Jmr> {
           appBar: AppBar(
             title: Text('${widget.cityName} / ${widget.depoName} / JMR'),
             backgroundColor: blue,
+            actions: [
+              Container(
+                padding: const EdgeInsets.all(5.0),
+                width: 200,
+                height: 30,
+                child: TypeAheadField(
+                    animationStart: BorderSide.strokeAlignCenter,
+                    suggestionsCallback: (pattern) async {
+                      return await getDepoList(pattern);
+                    },
+                    itemBuilder: (context, suggestion) {
+                      return ListTile(
+                        title: Text(
+                          suggestion.toString(),
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      );
+                    },
+                    onSuggestionSelected: (suggestion) {
+                      selectedDepoController.text = suggestion.toString();
+
+                      if (widget.cityName.toString().isNotEmpty) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Jmr(
+                                depoName: suggestion.toString(),
+                                cityName: widget.cityName,
+                              ),
+                            ));
+                      }
+                    },
+                    textFieldConfiguration: TextFieldConfiguration(
+                      decoration: const InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        contentPadding: EdgeInsets.all(5.0),
+                        hintText: 'Go To Depot',
+                      ),
+                      style: const TextStyle(
+                        fontSize: 14,
+                      ),
+                      controller: selectedDepoController,
+                    )),
+              ),
+              Padding(
+                  padding: const EdgeInsets.only(right: 15, left: 15),
+                  child: GestureDetector(
+                      onTap: () {
+                        onWillPop(context);
+                      },
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            'assets/logout.png',
+                            height: 20,
+                            width: 20,
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            widget.userId ?? '',
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                        ],
+                      ))),
+            ],
             bottom: TabBar(
               onTap: (value) {
                 _selectedIndex = value;
@@ -266,5 +337,32 @@ class _JmrState extends State<Jmr> {
     });
 
     return jmrTabLen;
+  }
+
+  Future<List<dynamic>> getDepoList(String pattern) async {
+    List<dynamic> depoList = [];
+
+    if (widget.cityName.toString().isNotEmpty) {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('DepoName')
+          .doc(widget.cityName)
+          .collection('AllDepots')
+          .get();
+
+      depoList = querySnapshot.docs.map((deponame) => deponame.id).toList();
+
+      if (pattern.isNotEmpty) {
+        depoList = depoList
+            .where((element) => element
+                .toString()
+                .toUpperCase()
+                .startsWith(pattern.toUpperCase()))
+            .toList();
+      }
+    } else {
+      depoList.add('Please Select a City');
+    }
+
+    return depoList;
   }
 }

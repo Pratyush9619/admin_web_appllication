@@ -3,10 +3,8 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/provider/menuUserPageProvider.dart';
-import 'package:web_appllication/widgets/custom_appbar.dart';
 import '../provider/filteration_provider.dart';
 import '../style.dart';
 import 'menu_screen/assigned_user.dart';
@@ -25,9 +23,11 @@ class _MenuUserPageState extends State<MenuUserPage> {
   final TextEditingController _controllerForReportingManager =
       TextEditingController();
   final TextEditingController _controllerForUser = TextEditingController();
-  List<dynamic> cardFunction = [const AssignedUser()];
   String selectedUserId = '';
   List<String> searchedList = [];
+
+  // Boolean value fro updating and setting user role in database
+  bool userExist = false;
   List<String> assignedUserList = [];
   int assignedUsers = 0;
   int totalUsers = 0;
@@ -36,10 +36,10 @@ class _MenuUserPageState extends State<MenuUserPage> {
   String selectedUserName = '';
   String selectedReportingManager = '';
   List<bool> changeColorForDepo = [];
-  List<String> selectedDepo = [];
-  List<String> selecteddesignation = [];
-  List<String> selectedCity = [];
-  List<String> role = [];
+  List<dynamic> selectedDepo = [];
+  List<dynamic> selecteddesignation = [];
+  List<dynamic> selectedCity = [];
+  List<dynamic> role = [];
   List<bool> changeColorForRole = [];
   List<bool> changeColorForCity = [];
   List<bool> isRemoveDepo = [];
@@ -49,6 +49,7 @@ class _MenuUserPageState extends State<MenuUserPage> {
   String errorMessage = '';
   bool isLoading = true;
   bool getDepooData = false;
+  TextEditingController unAssignedUserController = TextEditingController();
 
   List<String> designation = [
     'Civil Engineer',
@@ -78,14 +79,18 @@ class _MenuUserPageState extends State<MenuUserPage> {
   ];
 
   List<dynamic> depodata = [];
+  bool isProjectManager = false;
 
   List<String> _testList = [];
   TextEditingController myController = TextEditingController();
 
   @override
   void initState() {
-    getCityName()
-        .whenComplete(() => {isLoading = false, getCityLen(), setState(() {})});
+    getCityName().whenComplete(() => {
+          isLoading = false,
+          getCityLen(),
+          if (mounted) {setState(() {})}
+        });
     getDesigationLen();
     getTotalUsers();
 
@@ -99,43 +104,35 @@ class _MenuUserPageState extends State<MenuUserPage> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<MenuUserPageProvider>(context, listen: false);
+    final provider = Provider.of<MenuUserPageProvider>(context, listen: true);
     return Scaffold(
       body: isLoading
           ? LoadingPage()
-          : Padding(
-              padding: const EdgeInsets.all(12.0),
+          : Container(
+              padding: const EdgeInsets.all(5.0),
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: MediaQuery.of(context).size.height * 0.9,
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 120,
-                    child: Consumer<MenuUserPageProvider>(
-                      builder: (context, providerValue, child) {
-                        return SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              UserCard(context, totalUsers, cardTitle[0],
-                                  cardColor[0], const TotalUsers()),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              UserCard(context, assignedUsers, cardTitle[1],
-                                  cardColor[1], const AssignedUser()),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              UserCard(context, unAssignedUser, cardTitle[2],
-                                  cardColor[2], const UnAssingedUsers()),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                  Consumer<MenuUserPageProvider>(
+                    builder: (context, providerValue, child) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          UserCard(context, totalUsers, cardTitle[0],
+                              cardColor[0], const TotalUsers()),
+                          UserCard(context, assignedUsers, cardTitle[1],
+                              cardColor[1], const AssignedUser()),
+                          UserCard(context, unAssignedUser, cardTitle[2],
+                              cardColor[2], const UnAssingedUsers()),
+                        ],
+                      );
+                    },
                   ),
                   const SizedBox(height: 10),
-                  Flexible(
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    height: MediaQuery.of(context).size.height * 0.7,
                     child: StreamBuilder(
                       stream: _stream,
                       builder: (context, snapshot) {
@@ -145,7 +142,6 @@ class _MenuUserPageState extends State<MenuUserPage> {
                               decoration: BoxDecoration(
                                 color: Colors.blue[50],
                               ),
-                              width: MediaQuery.of(context).size.width,
                               padding: const EdgeInsets.only(left: 10.0),
                               child: getDepooData
                                   ? LoadingPage()
@@ -168,63 +164,60 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                                   child: const Text(
                                                     'Reporting Manager :',
                                                     style: TextStyle(
-                                                        fontSize: 12,
+                                                        fontSize: 10,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color: Colors.white),
                                                   ),
                                                 ),
                                               ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              SingleChildScrollView(
                                                 child: Container(
-                                                  color: Colors.white70,
-                                                  width: 200,
-                                                  child: SingleChildScrollView(
-                                                    child: TypeAheadField(
-                                                      hideOnLoading: true,
-                                                      textFieldConfiguration:
-                                                          TextFieldConfiguration(
-                                                        style: const TextStyle(
-                                                            fontSize: 13),
-                                                        controller:
-                                                            _controllerForReportingManager,
-                                                        decoration: const InputDecoration(
-                                                            labelText:
-                                                                'Select Reporting Manager',
-                                                            labelStyle: TextStyle(
-                                                                fontStyle:
-                                                                    FontStyle
-                                                                        .normal,
-                                                                color: Colors
-                                                                    .black),
-                                                            border:
-                                                                OutlineInputBorder()),
-                                                      ),
-                                                      itemBuilder: (context,
-                                                          suggestion) {
-                                                        return ListTile(
-                                                            title: Text(suggestion
-                                                                .toString()));
-                                                      },
-                                                      onSuggestionSelected:
-                                                          (suggestion) {
-                                                        _controllerForReportingManager
-                                                                .text =
-                                                            suggestion
-                                                                .toString();
-                                                        selectedReportingManager =
-                                                            suggestion
-                                                                .toString();
-                                                      },
-                                                      suggestionsCallback:
-                                                          (String
-                                                              pattern) async {
-                                                        return await getUserdata(
-                                                            pattern);
-                                                      },
+                                                  color: Colors.white,
+                                                  height: 30,
+                                                  width: 170,
+                                                  child: TypeAheadField(
+                                                    hideOnLoading: true,
+                                                    textFieldConfiguration:
+                                                        TextFieldConfiguration(
+                                                      style: const TextStyle(
+                                                          fontSize: 10),
+                                                      controller:
+                                                          _controllerForReportingManager,
+                                                      decoration: const InputDecoration(
+                                                          labelText:
+                                                              'Select Reporting Manager',
+                                                          labelStyle: TextStyle(
+                                                              fontStyle:
+                                                                  FontStyle
+                                                                      .normal,
+                                                              color:
+                                                                  Colors.black),
+                                                          border:
+                                                              OutlineInputBorder()),
                                                     ),
+                                                    itemBuilder:
+                                                        (context, suggestion) {
+                                                      return ListTile(
+                                                          title: Text(suggestion
+                                                              .toString()));
+                                                    },
+                                                    onSuggestionSelected:
+                                                        (suggestion) {
+                                                      _controllerForReportingManager
+                                                              .text =
+                                                          suggestion.toString();
+                                                      selectedReportingManager =
+                                                          suggestion.toString();
+                                                    },
+                                                    suggestionsCallback:
+                                                        (String pattern) async {
+                                                      return await getUserdata(
+                                                          pattern);
+                                                    },
                                                   ),
                                                 ),
                                               ),
@@ -240,94 +233,87 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                                 child: const Text(
                                                   'Select User : ',
                                                   style: TextStyle(
+                                                      fontSize: 10,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.white),
                                                 ),
                                               ),
-                                              SizedBox(
-                                                width: 150,
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Container(
-                                                    color: Colors.white70,
-                                                    width: 200,
-                                                    child: Consumer<
-                                                        MenuUserPageProvider>(
-                                                      builder: (context,
-                                                          providerValue,
-                                                          child) {
-                                                        return TypeAheadField(
-                                                          hideOnLoading: true,
-                                                          textFieldConfiguration:
-                                                              TextFieldConfiguration(
-                                                            style:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        13),
-                                                            controller:
-                                                                _controllerForUser,
-                                                            decoration: const InputDecoration(
-                                                                labelText:
-                                                                    'Select a User',
-                                                                labelStyle: TextStyle(
-                                                                    fontStyle:
-                                                                        FontStyle
-                                                                            .normal,
-                                                                    color: Colors
-                                                                        .black),
-                                                                border:
-                                                                    OutlineInputBorder()),
+                                              const SizedBox(
+                                                width: 10,
+                                              ),
+                                              Consumer<MenuUserPageProvider>(
+                                                builder: (context,
+                                                    providerValue, child) {
+                                                  return Container(
+                                                    color: Colors.white,
+                                                    height: 30,
+                                                    width: 170,
+                                                    child: TypeAheadField(
+                                                      hideOnLoading: true,
+                                                      textFieldConfiguration:
+                                                          TextFieldConfiguration(
+                                                        style: const TextStyle(
+                                                            fontSize: 10),
+                                                        controller:
+                                                            _controllerForUser,
+                                                        decoration: const InputDecoration(
+                                                            labelText:
+                                                                'Select a User',
+                                                            labelStyle: TextStyle(
+                                                                fontStyle:
+                                                                    FontStyle
+                                                                        .normal,
+                                                                color: Colors
+                                                                    .black),
+                                                            border:
+                                                                OutlineInputBorder()),
+                                                      ),
+                                                      itemBuilder: (context,
+                                                          suggestion) {
+                                                        return ListTile(
+                                                          title: Text(
+                                                            suggestion
+                                                                .toString(),
                                                           ),
-                                                          itemBuilder: (context,
-                                                              suggestion) {
-                                                            return ListTile(
-                                                              title: Text(
-                                                                  suggestion
-                                                                      .toString()),
-                                                            );
-                                                          },
-                                                          onSuggestionSelected:
-                                                              (suggestion) async {
-                                                            await getDataId(
-                                                                    suggestion
-                                                                        .toString())
-                                                                .whenComplete(
-                                                                    () {
-                                                              print(
-                                                                  selectedUserId);
-                                                            });
-
-                                                            _controllerForUser
-                                                                    .text =
-                                                                suggestion
-                                                                    .toString();
-                                                            selectedUserName =
-                                                                suggestion
-                                                                    .toString();
-                                                            checkUserAlreadyExist(
-                                                                    selectedUserName)
-                                                                .then((value) {
-                                                              providerValue
-                                                                  .setLoadWidget(
-                                                                      true);
-                                                            });
-                                                          },
-                                                          suggestionsCallback:
-                                                              (String
-                                                                  pattern) async {
-                                                            return await getUserdata(
-                                                                pattern);
-                                                          },
                                                         );
                                                       },
+                                                      onSuggestionSelected:
+                                                          (suggestion) async {
+                                                        _controllerForUser
+                                                                .text =
+                                                            suggestion
+                                                                .toString();
+
+                                                        await getDataId(
+                                                                suggestion
+                                                                    .toString())
+                                                            .whenComplete(
+                                                                () {});
+
+                                                        selectedUserName =
+                                                            suggestion
+                                                                .toString();
+                                                        checkUserAlreadyExist(
+                                                                selectedUserName)
+                                                            .then((value) {
+                                                          providerValue
+                                                              .setLoadWidget(
+                                                                  true);
+                                                        });
+                                                      },
+                                                      suggestionsCallback:
+                                                          (String
+                                                              pattern) async {
+                                                        return await getUserdata(
+                                                            pattern);
+                                                      },
                                                     ),
-                                                  ),
-                                                ),
+                                                  );
+                                                },
                                               ),
                                               const SizedBox(
-                                                width: 230,
+                                                width: 150,
                                               ),
                                               SizedBox(
                                                 height: 30,
@@ -346,71 +332,55 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                                         if (assignedUserList[
                                                                 i] ==
                                                             selectedUserName) {
-                                                          isDefined = true;
+                                                          // isDefined = true;
                                                         }
                                                       }
 
                                                       if (selectedUserName !=
                                                           selectedReportingManager) {
-                                                        if (isDefined ==
-                                                            false) {
-                                                          role.isEmpty
-                                                              ? customAlertBox(
-                                                                  'Please Select Designation')
-                                                              : selectedUserName
-                                                                      .isEmpty
-                                                                  ? customAlertBox(
-                                                                      'Please Select a User')
-                                                                  : depodata
-                                                                          .isEmpty
-                                                                      ? customAlertBox(
-                                                                          'Please Select City')
-                                                                      : selectedDepo
-                                                                              .isEmpty
-                                                                          ? customAlertBox(
-                                                                              'Please Select Depot')
-                                                                          : selectedReportingManager.isEmpty
-                                                                              ? customAlertBox('Please Select Reporting Manager')
-                                                                              : storeAssignData();
-                                                          getTotalUsers()
-                                                              .whenComplete(() {
-                                                            DocumentReference
-                                                                documentReference =
-                                                                FirebaseFirestore
-                                                                    .instance
-                                                                    .collection(
-                                                                        'unAssignedRole')
-                                                                    .doc(
-                                                                        selectedUserName);
-                                                            documentReference
-                                                                .delete();
+                                                        // if (isDefined ==
+                                                        //     false) {
+                                                        role.isEmpty
+                                                            ? customAlertBox(
+                                                                'Please Select Designation')
+                                                            : selectedUserName
+                                                                    .isEmpty
+                                                                ? customAlertBox(
+                                                                    'Please Select a User')
+                                                                : depodata
+                                                                        .isEmpty
+                                                                    ? customAlertBox(
+                                                                        'Please Select City')
+                                                                    : selectedDepo
+                                                                            .isEmpty
+                                                                        ? customAlertBox(
+                                                                            'Please Select Depot')
+                                                                        : selectedReportingManager.isEmpty
+                                                                            ? customAlertBox('Please Select Reporting Manager')
+                                                                            : storeAssignData();
+                                                        getTotalUsers()
+                                                            .whenComplete(
+                                                                () async {
+                                                          DocumentReference
+                                                              documentReference =
+                                                              FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'unAssignedRole')
+                                                                  .doc(
+                                                                      selectedUserName);
 
-                                                            _controllerForReportingManager
-                                                                .text = '';
-                                                            _controllerForUser
-                                                                .text = '';
-                                                            selectedDepo
-                                                                .clear();
-                                                            selectedCity
-                                                                .clear();
-                                                            role.clear();
-                                                            depodata.clear();
-                                                            getDesigationLen();
-                                                            getCityLen();
-                                                            getDepoLen();
-                                                            getCityName();
-                                                            selectedReportingManager =
-                                                                '';
-                                                            selectedUserName =
-                                                                '';
-                                                            provider
-                                                                .setLoadWidget(
-                                                                    true);
-                                                          });
-                                                        } else {
-                                                          customAlertBox(
-                                                              '$selectedUserName is Already Assigned a Role');
-                                                        }
+                                                          await documentReference
+                                                              .delete();
+
+                                                          provider
+                                                              .setLoadWidget(
+                                                                  true);
+                                                        });
+                                                        // } else {
+                                                        //   customAlertBox(
+                                                        //       '$selectedUserName is Already Assigned a Role');
+                                                        // }
                                                       } else if (selectedUserName
                                                               .isEmpty &&
                                                           selectedReportingManager
@@ -435,7 +405,7 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                                 Padding(
                                                   padding:
                                                       const EdgeInsets.only(
-                                                          left: 560),
+                                                          left: 500),
                                                   child: showError
                                                       ? Text(
                                                           errorMessage,
@@ -471,7 +441,7 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                                     child: const Text(
                                                       'Designation :',
                                                       style: TextStyle(
-                                                          fontSize: 12,
+                                                          fontSize: 10,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           color: Colors.white),
@@ -497,20 +467,17 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                                         itemCount:
                                                             designation.length,
                                                         gridDelegate:
-                                                            SliverGridDelegateWithFixedCrossAxisCount(
+                                                            const SliverGridDelegateWithFixedCrossAxisCount(
                                                                 crossAxisCount:
-                                                                    7,
+                                                                    6,
                                                                 crossAxisSpacing:
-                                                                    12.0,
-                                                                mainAxisSpacing:
                                                                     10.0,
+                                                                mainAxisSpacing:
+                                                                    5.0,
                                                                 mainAxisExtent:
-                                                                    32,
+                                                                    30,
                                                                 childAspectRatio:
-                                                                    MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width),
+                                                                    9.0),
                                                         itemBuilder:
                                                             (context, index) {
                                                           return ElevatedButton(
@@ -527,6 +494,16 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                                                       index] ==
                                                                   'Others') {
                                                               } else {
+                                                                if (designation[
+                                                                        index] ==
+                                                                    'Project Manager') {
+                                                                  isProjectManager =
+                                                                      true;
+                                                                } else {
+                                                                  isProjectManager =
+                                                                      false;
+                                                                }
+
                                                                 changeColorForRole[
                                                                         index] =
                                                                     !changeColorForRole[
@@ -548,7 +525,7 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                                                           .black
                                                                       : Colors
                                                                           .white,
-                                                                  fontSize: 11),
+                                                                  fontSize: 9),
                                                             ),
                                                           );
                                                         }),
@@ -580,6 +557,7 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                                     child: const Text(
                                                       'Cities :',
                                                       style: TextStyle(
+                                                          fontSize: 10,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           color: Colors.white),
@@ -597,7 +575,7 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
-                                                            0.6,
+                                                            0.65,
                                                     child: ListView.builder(
                                                       scrollDirection:
                                                           Axis.horizontal,
@@ -664,6 +642,7 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                                             child: Text(
                                                               cityData[index],
                                                               style: TextStyle(
+                                                                  fontSize: 10,
                                                                   color: changeColorForCity[
                                                                           index]
                                                                       ? Colors
@@ -682,7 +661,7 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                           ),
                                         ),
                                         const SizedBox(height: 10),
-                                        Consumer(
+                                        Consumer<MenuUserPageProvider>(
                                           builder: (BuildContext context,
                                               providerValue, Widget? child) {
                                             return Container(
@@ -707,6 +686,7 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                                         child: const Text(
                                                           'Depots :',
                                                           style: TextStyle(
+                                                              fontSize: 10,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
@@ -752,22 +732,28 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                                                   itemCount:
                                                                       depodata
                                                                           .length,
-                                                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                                                       crossAxisCount:
-                                                                          7,
+                                                                          6,
                                                                       crossAxisSpacing:
-                                                                          12.0,
+                                                                          10.0,
                                                                       mainAxisSpacing:
                                                                           10.0,
                                                                       mainAxisExtent:
-                                                                          34,
-                                                                      childAspectRatio: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width),
+                                                                          30,
+                                                                      childAspectRatio:
+                                                                          9.0),
                                                                   itemBuilder:
                                                                       (context,
                                                                           index) {
+                                                                    if (isProjectManager) {
+                                                                      changeColorForDepo[
+                                                                              index] =
+                                                                          false;
+                                                                      insertSelectedDepo(
+                                                                          index);
+                                                                    }
+
                                                                     return ElevatedButton(
                                                                         style:
                                                                             ButtonStyle(
@@ -779,6 +765,8 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                                                         )),
                                                                         onPressed:
                                                                             () {
+                                                                          isProjectManager =
+                                                                              false;
                                                                           changeColorForDepo[index] =
                                                                               !changeColorForDepo[index];
                                                                           insertSelectedDepo(
@@ -792,7 +780,7 @@ class _MenuUserPageState extends State<MenuUserPage> {
                                                                               index],
                                                                           style: TextStyle(
                                                                               color: changeColorForDepo[index] ? Colors.black : Colors.white,
-                                                                              fontSize: 12),
+                                                                              fontSize: 10),
                                                                         ));
                                                                   }),
                                                         ),
@@ -818,20 +806,20 @@ class _MenuUserPageState extends State<MenuUserPage> {
                     ),
                   ),
                 ],
-              )),
+              ),
+            ),
     );
   }
 
   //Calculating Total users for additional screen
   Future<void> getTotalUsers() async {
     await getAssignedUsers();
+    await getUnAssignedUser();
     List<dynamic> tempList1 = [];
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('User').get();
     tempList1 = querySnapshot.docs.map((doc) => doc.id).toList();
     totalUsers = querySnapshot.docs.length;
-
-    await getUnAssignedUser();
   }
 
 //Function for changing designation roles button color on tap
@@ -863,30 +851,24 @@ class _MenuUserPageState extends State<MenuUserPage> {
   void insertSelectedRole(int currentIndex) {
     if (changeColorForRole[currentIndex] == false) {
       role.add(designation[currentIndex]);
-      print('Role Added - $role');
     } else if (changeColorForRole[currentIndex] == true) {
       role.remove(designation[currentIndex]);
-      print('Role Removed - $role');
     }
   }
 
   void insertSelectedDepo(int currentIndex) {
     if (changeColorForDepo[currentIndex] == false) {
       selectedDepo.add(depodata[currentIndex]);
-      print('Depo Added - $selectedDepo');
     } else if (changeColorForDepo[currentIndex] == true) {
       selectedDepo.remove(depodata[currentIndex]);
-      print('Depo Removed - $selectedDepo');
     }
   }
 
   void insertSelectedCity(int currentIndex) {
     if (changeColorForCity[currentIndex] == false) {
       selectedCity.add(cityData[currentIndex]);
-      print('City Added - $selectedCity');
     } else if (changeColorForCity[currentIndex] == true) {
       selectedCity.remove(cityData[currentIndex]);
-      print('City Removed - $selectedCity');
     }
   }
 
@@ -919,6 +901,21 @@ class _MenuUserPageState extends State<MenuUserPage> {
     }
   }
 
+  Future<void> removeCityDepo(List<dynamic> cityList) async {
+    for (int i = 0; i < cityList.length; i++) {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('DepoName')
+          .doc(cityList[i])
+          .collection('AllDepots')
+          .get();
+
+      List<dynamic> temp = querySnapshot.docs.map((e) => e.id).toList();
+      for (int i = 0; i < temp.length; i++) {
+        depodata.remove(temp[i]);
+      }
+    }
+  }
+
   getUserdata(String input) async {
     searchedList.clear();
     FirebaseFirestore.instance.collection('User').get().then((value) {
@@ -939,47 +936,68 @@ class _MenuUserPageState extends State<MenuUserPage> {
     return searchedList;
   }
 
+  // Future<void> setTotalUsers() async {
+  //   FirebaseFirestore.instance.collection('User').get().then((value) {
+  //     String tempData = '';
+  //     value.docs.forEach((element) {
+  //       var data = element['FirstName'];
+  //       var data1 = element['LastName'];
+
+  //       tempData = '${data.toString().trim()} $data1}';
+  //       FirebaseFirestore.instance.collection('TotalUsers').doc(tempData).set(
+
+  //           {'alphabet': tempData[0].toUpperCase(), 'position': 'unAssigned'}
+  //           );
+  //     });
+  //   });
+  // }
+
   Future<void> getUnAssignedUser() async {
     QuerySnapshot querySnapshot =
         await FirebaseFirestore.instance.collection('unAssignedRole').get();
 
     unAssignedUserList = querySnapshot.docs.map((e) => e.id).toList();
     unAssignedUser = querySnapshot.docs.length;
+    unAssignedUserController.text = unAssignedUser.toString();
   }
 
   //Storing data in firebase
   Future<void> storeAssignData() async {
-    await FirebaseFirestore.instance
-        .collection('AssignedRole')
-        .doc(selectedUserName)
-        .set({
-      'username': selectedUserName.trim(),
-      'userId': selectedUserId,
-      'alphabet': selectedUserName[0][0].toUpperCase(),
-      'position': 'Assigned',
-      'roles': role,
-      'depots': selectedDepo,
-      'reportingManager': selectedReportingManager,
-      'cities': selectedCity,
-    }).whenComplete(() {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        backgroundColor: Colors.blue,
-        content: Text('Role Assigned Successfully'),
-      ));
-    });
+    if (userExist) {
+      updateUserData(selectedUserName);
+    } else {
+      await FirebaseFirestore.instance
+          .collection('AssignedRole')
+          .doc(selectedUserName)
+          .set({
+        'username': selectedUserName.trim(),
+        'userId': selectedUserId,
+        'alphabet': selectedUserName[0][0].toUpperCase(),
+        'position': 'Assigned',
+        'roles': role,
+        'depots': selectedDepo,
+        'reportingManager': selectedReportingManager,
+        'cities': selectedCity,
+      }).whenComplete(() {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          backgroundColor: Colors.blue,
+          content: Text('Role Assigned Successfully'),
+        ));
+      });
 
-    await FirebaseFirestore.instance
-        .collection('TotalUsers')
-        .doc(selectedUserName)
-        .set({
-      'userId': selectedUserId,
-      'alphabet': selectedUserName[0][0].toUpperCase(),
-      'position': 'Assigned',
-      'roles': role,
-      'depots': selectedDepo,
-      'reportingManager': selectedReportingManager,
-      'cities': selectedCity,
-    });
+      await FirebaseFirestore.instance
+          .collection('TotalUsers')
+          .doc(selectedUserName)
+          .set({
+        'userId': selectedUserId,
+        'alphabet': selectedUserName[0][0].toUpperCase(),
+        'position': 'Assigned',
+        'roles': role,
+        'depots': selectedDepo,
+        'reportingManager': selectedReportingManager,
+        'cities': selectedCity,
+      });
+    }
   }
 
   Future<List<dynamic>> getAssignedUsers() async {
@@ -997,8 +1015,8 @@ class _MenuUserPageState extends State<MenuUserPage> {
     final menuProvider =
         Provider.of<MenuUserPageProvider>(context, listen: true);
     return Container(
-      width: 350,
-      height: 200,
+      width: 300,
+      height: 100,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
           color: color,
@@ -1012,7 +1030,7 @@ class _MenuUserPageState extends State<MenuUserPage> {
               '$number',
               style: TextStyle(fontSize: 18, color: white),
             ),
-            Text(title, style: TextStyle(fontSize: 18, color: white)),
+            Text(title, style: TextStyle(fontSize: 13, color: white)),
           ]),
           Row(
             children: [
@@ -1027,20 +1045,22 @@ class _MenuUserPageState extends State<MenuUserPage> {
                       )
                     ], child: name);
                   })).then((value) {
-                    getTotalUsers().whenComplete(() {
+                    getTotalUsers().whenComplete(() async {
+                      isRemoveDepo =
+                          List.generate(cityData.length, (index) => true);
+                      errorMessage = '';
                       _controllerForReportingManager.text = '';
                       _controllerForUser.text = '';
-                      selectedDepo.clear();
-                      selectedCity.clear();
-                      role.clear();
-                      depodata.clear();
-                      getDesigationLen();
-                      getCityLen();
+                      isProjectManager = false;
                       getDepoLen();
-                      getCityName();
-                      selectedReportingManager = '';
-                      selectedUserName = '';
-                      menuProvider.setLoadWidget(true);
+                      getCityLen();
+                      getDesigationLen();
+                      selectedDepo.clear();
+                      role.clear();
+                      removeCityDepo(selectedCity).then((_) {
+                        selectedCity.clear();
+                        menuProvider.setLoadWidget(true);
+                      });
                     });
                   });
                 },
@@ -1067,9 +1087,72 @@ class _MenuUserPageState extends State<MenuUserPage> {
       if (assignedUsers[i].toString().toUpperCase().trim() ==
           username.toUpperCase().trim()) {
         showError = true;
-        errorMessage = 'Selected User Already Assigned role';
+        errorMessage = 'Warning! User Already Assigned A Role';
+        userExist = true;
       }
     }
+  }
+
+  Future<void> updateUserData(String username) async {
+    DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
+        .collection('AssignedRole')
+        .doc(username)
+        .get();
+
+    List<dynamic> updatedRole = [];
+    List<dynamic> updatedDepo = [];
+    List<dynamic> updatedCity = [];
+
+    Map<String, dynamic> tempData =
+        documentSnapshot.data() as Map<String, dynamic>;
+    List<dynamic> presentRoles = tempData['roles'];
+    List<dynamic> presentDepots = tempData['depots'];
+    List<dynamic> presentCities = tempData['cities'];
+
+    updatedRole = presentRoles + role;
+    updatedDepo = presentDepots + selectedDepo;
+    updatedCity = presentCities + selectedCity;
+
+    updatedRole = updatedRole.toSet().toList();
+    updatedDepo = updatedDepo.toSet().toList();
+    updatedCity = updatedCity.toSet().toList();
+
+    await FirebaseFirestore.instance
+        .collection('AssignedRole')
+        .doc(selectedUserName)
+        .update({
+      'username': selectedUserName.trim(),
+      'userId': selectedUserId,
+      'alphabet': selectedUserName[0][0].toUpperCase(),
+      'position': 'Assigned',
+      'roles': updatedRole,
+      'depots': updatedDepo,
+      'reportingManager': selectedReportingManager,
+      'cities': updatedCity,
+    }).whenComplete(() {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        backgroundColor: Colors.blue,
+        content: Text('Role Assigned Successfully'),
+      ));
+    });
+
+    await FirebaseFirestore.instance
+        .collection('TotalUsers')
+        .doc(selectedUserName)
+        .update({
+      'userId': selectedUserId,
+      'alphabet': selectedUserName[0][0].toUpperCase(),
+      'position': 'Assigned',
+      'roles': updatedRole,
+      'depots': updatedDepo,
+      'reportingManager': selectedReportingManager,
+      'cities': updatedCity,
+    }).whenComplete(() {
+      updatedCity.clear();
+      updatedDepo.clear();
+      updatedRole.clear();
+    });
+    print('Updated');
   }
 
   Future<void> getCityName() async {
@@ -1092,6 +1175,7 @@ class _MenuUserPageState extends State<MenuUserPage> {
       tempCityName.add(data['CityName']);
       tempBool.add(true);
     }
+
     cityData = tempCityName;
     isRemoveDepo = tempBool;
   }
@@ -1118,14 +1202,6 @@ class _MenuUserPageState extends State<MenuUserPage> {
   }
 
   Future<String> getSelectedUserId(String username) async {
-    // DocumentSnapshot documentSnapshot =
-    //     await FirebaseFirestore.instance.collection('User').doc(username).get();
-    // if (documentSnapshot.exists) {
-    //   Map<String, dynamic> userDataMap =
-    //       documentSnapshot.data() as Map<String, dynamic>;
-    //   selectedUserId = userDataMap['Employee Id'];
-    // }
-
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('User')
         .where('FirstName', isEqualTo: username)
@@ -1135,7 +1211,6 @@ class _MenuUserPageState extends State<MenuUserPage> {
     Map<String, dynamic> data = tempData[0];
 
     selectedUserId = data['Employee Id'];
-    print(selectedUserId);
 
     return selectedUserId;
   }
@@ -1159,7 +1234,6 @@ class _MenuUserPageState extends State<MenuUserPage> {
         Map<String, dynamic> data =
             documentSnapshot.data() as Map<String, dynamic>;
         selectedUserId = data['Employee Id'];
-        print('userId - ${data['FirstName']}');
       }
     }
   }

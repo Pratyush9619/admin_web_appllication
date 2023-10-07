@@ -134,7 +134,7 @@ class _ElectricalQualityChecklistState
 
   @override
   void initState() {
-    storeImages();
+    // storeImages();
     super.initState();
     getUserId().whenComplete(() {
       initializeStream();
@@ -169,7 +169,9 @@ class _ElectricalQualityChecklistState
                   ),
                   onTap: (value) {
                     _selectedIndex = value;
-                    setState(() {});
+                    setState(() {
+                      rowList;
+                    });
                   },
                   tabs: const [
                     Tab(text: "PSS"),
@@ -341,19 +343,19 @@ class _ElectricalQualityChecklistState
           );
   }
 
-  Future<void> storeImages() async {
-    final sourcePath = 'SafetyChecklist/Bengaluru/BMTC KR Puram-29/JT4610/1';
+  // Future<void> storeImages() async {
+  //   final sourcePath = 'SafetyChecklist/Bengaluru/BMTC KR Puram-29/JT4610/1';
 
-    final path =
-        'QualityChecklist/Electrical_Engineer/${widget.cityName}/${widget.depoName}/ZW3210'
-        '/${tabForElec[_selectedIndex!]} TABLE/April 11, 2023';
+  //   final path =
+  //       'QualityChecklist/Electrical_Engineer/${widget.cityName}/${widget.depoName}/ZW3210'
+  //       '/${tabForElec[_selectedIndex!]} TABLE/April 11, 2023';
 
-    Reference pathRef = FirebaseStorage.instance.ref().child(path);
-    Reference sourceRef = FirebaseStorage.instance.ref().child(sourcePath);
-    ListResult result = await sourceRef.listAll();
-    final downloadUrl = await result.items.first.getDownloadURL();
-    await pathRef.putString(downloadUrl);
-  }
+  //   Reference pathRef = FirebaseStorage.instance.ref().child(path);
+  //   Reference sourceRef = FirebaseStorage.instance.ref().child(sourcePath);
+  //   ListResult result = await sourceRef.listAll();
+  //   final downloadUrl = await result.items.first.getDownloadURL();
+  //   await pathRef.putString(downloadUrl);
+  // }
 
   Future<void> getUserId() async {
     await AuthService().getCurrentUserId().then((value) {
@@ -364,10 +366,10 @@ class _ElectricalQualityChecklistState
   Future<List<List<dynamic>>> fetchData(
       CollectionReference colRef, int selectedIndex) async {
     if (selectedIndex == _selectedIndex) {
+      if (_selectedIndex == 0) {
+        setState(() {});
+      }
       await getRowsForFutureBuilder(colRef);
-    }
-    if (_selectedIndex == 0) {
-      setState(() {});
     }
     return rowList;
   }
@@ -379,18 +381,20 @@ class _ElectricalQualityChecklistState
     QuerySnapshot querySnapshot = await currentColReference.get();
 
     List<dynamic> userIdList = querySnapshot.docs.map((e) => e.id).toList();
+    List<List<dynamic>> tempList = [];
 
     for (int i = 0; i < userIdList.length; i++) {
       QuerySnapshot userEntryDate = await currentColReference
           .doc(userIdList[i])
-          .collection('${tabForElec[_selectedIndex!]} TABLE')
+          .collection('${tabForElec[_selectedIndex!]}')
           .get();
 
       List<dynamic> withDateData = userEntryDate.docs.map((e) => e.id).toList();
 
       for (int j = 0; j < withDateData.length; j++) {
-        rowList.add([userIdList[i], 'PDF', withDateData[j]]);
+        tempList.add([userIdList[i], 'PDF', withDateData[j]]);
       }
+      rowList = tempList;
     }
     userIdList.clear();
   }
@@ -428,7 +432,7 @@ class _ElectricalQualityChecklistState
         .doc('${widget.depoName}')
         .collection('userId')
         .doc(user_id)
-        .collection('${tabForElec[_selectedIndex!]} TABLE')
+        .collection('${tabForElec[_selectedIndex!]}')
         .doc(date)
         .get();
 
@@ -436,14 +440,14 @@ class _ElectricalQualityChecklistState
         elecFieldDocSanpshot.data() as Map<String, dynamic>;
 
     List<List<dynamic>> fieldData = [
-      ['EMPLOYEE NAME :', '${electricalMapData['EmployeeName']}'],
-      ['DIST EV :', '${electricalMapData['Dist EV']}'],
-      ['VENDOR NAME :', '${electricalMapData['VendorName']}'],
-      ['DATE : ', '${electricalMapData['Date']}'],
-      ['OLA NUMBER :', '${electricalMapData['OlaNo']}'],
-      ['PANEL SR NO :', '${electricalMapData['PanelNo']}'],
-      ['DEPOT NAME :', '${electricalMapData['DepotName']}'],
-      ['CUSTOMER NAME :', '${electricalMapData['CustomerName']}'],
+      ['Employee Name :', '${electricalMapData['employeeName']}'],
+      ['Doc No. : TPCL/DIST-EV :', '${electricalMapData['docNo']}'],
+      ['Vendor Name :', '${electricalMapData['vendor']}'],
+      ['Date : ', '${electricalMapData['date']}'],
+      ['OLA Number :', '${electricalMapData['olaNumber']}'],
+      ['PANEL SR NO :', '${electricalMapData['panelNumber']}'],
+      ['Depot Name :', '${electricalMapData['depotName']}'],
+      ['Customer Name :', '${electricalMapData['customerName']}'],
     ];
 
     List<pw.TableRow> rows = [];
@@ -499,7 +503,7 @@ class _ElectricalQualityChecklistState
         .doc('${widget.depoName}')
         .collection('userId')
         .doc(user_id)
-        .collection('${tabForElec[_selectedIndex!]} TABLE')
+        .collection('${tabForElec[_selectedIndex!]}')
         .doc(date)
         .get();
 

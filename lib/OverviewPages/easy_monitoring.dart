@@ -3,8 +3,10 @@ import '../style.dart';
 
 class EasyMonitoring extends StatefulWidget {
   String? cityName;
+  String? userId;
   String? depoName;
-  EasyMonitoring({super.key, required this.cityName, required this.depoName});
+  EasyMonitoring(
+      {super.key, required this.cityName, required this.depoName, this.userId});
 
   @override
   State<EasyMonitoring> createState() => _EasyMonitoringState();

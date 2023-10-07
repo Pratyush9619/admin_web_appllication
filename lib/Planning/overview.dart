@@ -3,7 +3,6 @@ import 'package:web_appllication/KeyEvents/Grid_DataTableA2.dart';
 import 'package:web_appllication/OverviewPages/closure_report.dart';
 import 'package:web_appllication/OverviewPages/daily_project.dart';
 import 'package:web_appllication/OverviewPages/depot_overview.dart';
-import 'package:web_appllication/OverviewPages/monthly_project.dart';
 import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 import 'package:web_appllication/OverviewPages/resource_allocation.dart';
 import 'package:web_appllication/OverviewPages/safety_summary.dart';
@@ -20,9 +19,11 @@ import '../OverviewPages/monthly_summary.dart';
 import '../OverviewPages/testing_report.dart';
 
 class MyOverview extends StatefulWidget {
+  String? userId;
   String depoName;
   String cityName;
-  MyOverview({super.key, required this.depoName, required this.cityName});
+  MyOverview(
+      {super.key, required this.depoName, required this.cityName, this.userId});
 
   @override
   State<MyOverview> createState() => _MyOverviewState();
@@ -91,6 +92,7 @@ class _MyOverviewState extends State<MyOverview> {
     ];
     pages = [
       DepotOverview(
+        userid: widget.userId,
         // userid: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
@@ -100,6 +102,7 @@ class _MyOverviewState extends State<MyOverview> {
       //   cityName: widget.cityName,
       // ),
       KeyEventsUser(
+        userId: widget.userId,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
@@ -108,6 +111,7 @@ class _MyOverviewState extends State<MyOverview> {
       //   cityName: widget.cityName,
       // ),
       MaterialProcurement(
+        userId: widget.userId,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
@@ -116,10 +120,12 @@ class _MyOverviewState extends State<MyOverview> {
       //   cityName: widget.cityName,
       // ),
       DailyProject(
+        userId: widget.userId,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
       MonthlySummary(
+        userId: widget.userId,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
@@ -128,15 +134,19 @@ class _MyOverviewState extends State<MyOverview> {
       //   depoName: widget.depoName,
       // ),
       DetailedEng(
+        userId: widget.userId,
+
         // userId: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
       Jmr(
+        userId: widget.userId,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
       SafetySummary(
+        userId: widget.userId,
         depoName: widget.depoName,
         cityName: widget.cityName,
         id: 'Safety Report',
@@ -147,15 +157,20 @@ class _MyOverviewState extends State<MyOverview> {
       //   depoName: widget.depoName,
       // ),
       QualityChecklist(
+        userId: widget.userId,
+
         // userId: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
       TestingReport(
+        userId: widget.userId,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
       ClosureSummaryTable(
+        userId: widget.userId,
+
         // userId: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
@@ -163,6 +178,7 @@ class _MyOverviewState extends State<MyOverview> {
       ),
 
       EasyMonitoring(
+        userId: widget.userId,
         cityName: widget.cityName,
         depoName: widget.depoName,
       )
@@ -177,7 +193,12 @@ class _MyOverviewState extends State<MyOverview> {
       appBar: PreferredSize(
           // ignore: sort_child_properties_last
           child: CustomAppBar(
+            showDepoBar: true,
+            toMainOverview: true,
+            cityName: widget.cityName,
+            userId: widget.userId,
             text: 'Overview - ${widget.cityName} - ${widget.depoName}',
+            depoName: widget.depoName,
             // userid: widget.userid,
           ),
           preferredSize: const Size.fromHeight(50)),

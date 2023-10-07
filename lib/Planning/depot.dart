@@ -5,20 +5,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 import 'package:web_appllication/Planning/overview.dart';
-import 'package:web_appllication/Planning/userId.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/style.dart';
-
 import '../Authentication/auth_service.dart';
-import '../OverviewPages/daily_project.dart';
 import '../widgets/custom_appbar.dart';
 
 class Mydepots extends StatefulWidget {
   String? cityName;
-  String? depoName;
+  String? userId;
 
-  Mydepots({super.key, required this.cityName, this.depoName});
+  Mydepots({super.key, required this.cityName, this.userId});
 
   @override
   State<Mydepots> createState() => _MydepotsState();
@@ -53,6 +51,8 @@ class _MydepotsState extends State<Mydepots> {
           // ignore: sort_child_properties_last
           child: CustomAppBar(
             text: 'Depots - ${widget.cityName}',
+            cityName: widget.cityName,
+            userId: widget.userId,
             // userid: widget.userid,
           ),
           preferredSize: const Size.fromHeight(50)),
@@ -302,6 +302,7 @@ class _MydepotsState extends State<Mydepots> {
                                                   //           ['DepoName'],
                                                   //     )
                                                   MyOverview(
+                                                    userId: widget.userId,
                                                     cityName: widget.cityName!,
                                                     depoName: snapshot
                                                             .data!.docs[index]

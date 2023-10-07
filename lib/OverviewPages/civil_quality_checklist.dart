@@ -153,6 +153,7 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
     getUserId().whenComplete(() {
       initializeStream();
       _isloading = false;
+
       setState(() {});
     });
   }
@@ -183,7 +184,9 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
                   ),
                   onTap: (value) {
                     _selectedIndex = value;
-                    setState(() {});
+                    setState(() {
+                      rowList;
+                    });
                   },
                   tabs: const [
                     Tab(text: "Exc"),
@@ -224,7 +227,6 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
   }
 
   civilUpperScreen(int selectedIndex) {
-    rowList.clear();
     return _isloading
         ? LoadingPage()
         : FutureBuilder<List<List<dynamic>>>(
@@ -389,6 +391,9 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
   Future<List<List<dynamic>>> fetchData(
       CollectionReference colRef, int selectedIndex) async {
     if (selectedIndex == _selectedIndex) {
+      if (_selectedIndex == 0) {
+        setState(() {});
+      }
       await getRowsForFutureBuilder(colRef);
     }
     return rowList;
@@ -399,20 +404,22 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
     QuerySnapshot querySnapshot = await currentColReference.get();
 
     List<dynamic> userIdList = querySnapshot.docs.map((e) => e.id).toList();
+    print(userIdList);
 
     for (int i = 0; i < userIdList.length; i++) {
+      List<List<dynamic>> temp = [];
       QuerySnapshot userEntryDate = await currentColReference
           .doc(userIdList[i])
-          .collection('${tabForCivil[_selectedIndex!]} TABLE')
+          .collection(tabForCivil[_selectedIndex!])
           .get();
 
       List<dynamic> withDateData = userEntryDate.docs.map((e) => e.id).toList();
 
       for (int j = 0; j < withDateData.length; j++) {
-        rowList.add([userIdList[i], 'PDF', withDateData[j]]);
+        temp.add([userIdList[i], 'PDF', withDateData[j]]);
       }
+      rowList = temp;
     }
-    userIdList.clear();
   }
 
   Future<List<int>> _generatePDF(
@@ -443,7 +450,7 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
         .doc('${widget.depoName}')
         .collection('userId')
         .doc(user_id)
-        .collection('${tabForCivil[_selectedIndex!]} TABLE')
+        .collection(tabForCivil[_selectedIndex!])
         .doc(date)
         .get();
 
@@ -451,14 +458,14 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
         civilFieldDocSnapshot.data() as Map<String, dynamic>;
 
     List<List<dynamic>> fieldData = [
-      ['PROJECT :', '${civilMapData['Project']}'],
-      ['P.O.No. :', '${civilMapData['PO No']}'],
-      ['CONTRACTOR :', '${civilMapData['Contractor']}'],
-      ['DESCRIPTION : ', '${civilMapData['Description']}'],
-      ['SYSTEM / BLDG. :', '${civilMapData['System']}'],
-      ['REF DOCUMENT1 :', '${civilMapData['Ref Document1']}'],
-      ['REF DOCUMENT2 :', '${civilMapData['Ref Document2']}'],
-      ['REF DOCUMENT3 :', '${civilMapData['Ref Document3']}'],
+      ['PROJECT :', '${civilMapData['projectName']}'],
+      ['Date :', '${civilMapData['date']}'],
+      ['Location :', '${civilMapData['location']}'],
+      ['Component of structure : ', '${civilMapData['componentName']}'],
+      ['Vendor / Sub Vendor :', '${civilMapData['vendor']}'],
+      ['Grid / Axis & Level :', '${civilMapData['grid']}'],
+      ['Drawing Number :', '${civilMapData['drawing']}'],
+      ['Type of Filling :', '${civilMapData['filling']}'],
     ];
 
     List<pw.TableRow> rows = [];
@@ -514,7 +521,7 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
         .doc('${widget.depoName}')
         .collection('userId')
         .doc(user_id)
-        .collection('${tabForCivil[_selectedIndex!]} TABLE')
+        .collection(tabForCivil[_selectedIndex!])
         .doc(date)
         .get();
 

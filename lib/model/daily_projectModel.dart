@@ -37,11 +37,12 @@ class DailyProjectModel {
       DataGridCell(columnName: 'Date', value: date),
       DataGridCell(columnName: 'SiNo', value: siNo),
       // DataGridCell(columnName: 'State', value: state),
-      // DataGridCell(columnName: 'DepotName', value: depotName),
+
       DataGridCell(columnName: 'TypeOfActivity', value: typeOfActivity),
       DataGridCell(columnName: 'ActivityDetails', value: activityDetails),
       DataGridCell(columnName: 'Progress', value: progress),
-      DataGridCell(columnName: 'Status', value: status)
+      DataGridCell(columnName: 'Status', value: status),
+      DataGridCell(columnName: 'View', value: null),
     ]);
   }
 }

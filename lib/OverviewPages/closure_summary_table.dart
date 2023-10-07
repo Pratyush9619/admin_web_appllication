@@ -33,126 +33,125 @@ class _ClosureSummaryTableState extends State<ClosureSummaryTable> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: PreferredSize(
-            // ignore: sort_child_properties_last
-            child: CustomAppBar(
-              text: ' ${widget.cityName}/ ${widget.depoName} / ${widget.id}',
-              userid: widget.userId,
-            ),
-            preferredSize: const Size.fromHeight(50)),
-        body: FutureBuilder<List<List<dynamic>>>(
-          future: fetchData(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                  child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  LoadingPage()
-                ],
-              ));
-            } else if (snapshot.hasError) {
+      appBar: PreferredSize(
+          // ignore: sort_child_properties_last
+          child: CustomAppBar(
+            depoName: widget.depoName,
+            cityName: widget.cityName,
+            text: ' ${widget.cityName}/ ${widget.depoName} / ${widget.id}',
+            userId: widget.userId,
+          ),
+          preferredSize: const Size.fromHeight(50)),
+      body: FutureBuilder<List<List<dynamic>>>(
+        future: fetchData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [LoadingPage()],
+            ));
+          } else if (snapshot.hasError) {
+            return const Center(
+              child: Text('Error fetching data'),
+            );
+          } else if (snapshot.hasData) {
+            final data = snapshot.data!;
+
+            if (data.isEmpty) {
               return const Center(
-                child: Text('Error fetching data'),
-              );
-            } else if (snapshot.hasData) {
-              final data = snapshot.data!;
-
-              if (data.isEmpty) {
-                return const Center(
-                  child: Text(
-                    'No Data Available for Selected Depo',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
+                child: Text(
+                  'No Data Available for Selected Depo',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
                   ),
-                );
-              }
-
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SingleChildScrollView(
-                    padding: const EdgeInsets.only(
-                        left: 5.0, right: 5.0, bottom: 5.0),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: DataTable(
-                        showBottomBorder: true,
-                        sortAscending: true,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey[600]!,
-                            width: 1.0,
-                          ),
-                        ),
-                        columnSpacing: 150.0,
-                        headingRowColor: MaterialStateColor.resolveWith(
-                            (states) => Colors.blue[800]!),
-                        headingTextStyle: const TextStyle(color: Colors.white),
-                        columns: const [
-                          DataColumn(
-                              label: Text(
-                            'User_ID',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                            ),
-                          )),
-                          DataColumn(
-                              label: Text('Date',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ))),
-                          DataColumn(
-                              label: Text('Closure Report',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ))),
-                        ],
-                        rows: data.map(
-                          (rowData) {
-                            return DataRow(
-                              cells: [
-                                DataCell(Text(rowData[0])),
-                                DataCell(Text(rowData[2])),
-                                DataCell(ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                ClosureSummary(
-                                                  depoName: widget.depoName,
-                                                  cityName: widget.cityName,
-                                                  id: 'Closure Summary',
-                                                  date: rowData[2],
-                                                  user_id: rowData[0],
-                                                ),
-                                        ),
-                                    );
-                                  },
-                                  child: const Text('View Report'),
-                                )),
-                              ],
-                            );
-                          },
-                        ).toList(),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               );
             }
 
-            return Container();
-          },
-        ),
-      );
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SingleChildScrollView(
+                  padding:
+                      const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 5.0),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: DataTable(
+                      showBottomBorder: true,
+                      sortAscending: true,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey[600]!,
+                          width: 1.0,
+                        ),
+                      ),
+                      columnSpacing: 150.0,
+                      headingRowColor: MaterialStateColor.resolveWith(
+                          (states) => Colors.blue[800]!),
+                      headingTextStyle: const TextStyle(color: Colors.white),
+                      columns: const [
+                        DataColumn(
+                            label: Text(
+                          'User_ID',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        )),
+                        DataColumn(
+                            label: Text('Date',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ))),
+                        DataColumn(
+                            label: Text('Closure Report',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ))),
+                      ],
+                      rows: data.map(
+                        (rowData) {
+                          return DataRow(
+                            cells: [
+                              DataCell(Text(rowData[0])),
+                              DataCell(Text(rowData[2])),
+                              DataCell(ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ClosureSummary(
+                                        depoName: widget.depoName,
+                                        cityName: widget.cityName,
+                                        id: 'Closure Summary',
+                                        date: rowData[2],
+                                        user_id: rowData[0],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: const Text('View Report'),
+                              )),
+                            ],
+                          );
+                        },
+                      ).toList(),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
+
+          return Container();
+        },
+      ),
+    );
   }
 
   Future<void> getRowsForFutureBuilder() async {
@@ -181,7 +180,4 @@ class _ClosureSummaryTableState extends State<ClosureSummaryTable> {
       }
     }
   }
-
-
-
 }

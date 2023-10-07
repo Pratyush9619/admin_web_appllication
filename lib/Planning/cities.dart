@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:web_appllication/OverviewPages/safety_checklist.dart';
 import 'package:web_appllication/Planning/depot.dart';
 import 'package:web_appllication/Service/database_service.dart';
 import 'package:web_appllication/components/loading_page.dart';
@@ -254,6 +253,7 @@ class _CitiesPageState extends State<CitiesPage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => Mydepots(
+                                                userId: userId,
                                                 cityName: snapshot.data!
                                                     .docs[index]['CityName'],
                                               )));
@@ -275,6 +275,7 @@ class _CitiesPageState extends State<CitiesPage> {
   Future<void> getUserId() async {
     await AuthService().getCurrentUserId().then((value) {
       userId = value;
+      setState(() {});
     });
   }
 

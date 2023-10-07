@@ -171,12 +171,15 @@ class DetailedEngSource extends DataGridSource {
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => ViewAllPdf(
-                                      title: 'DetailedEngRFC',
-                                      cityName: cityName,
-                                      depoName: depoName,
-                                      // userId: userId,
-                                      docId:
-                                          '${row.getCells()[4].value.toString()}')
+                                        title: 'DetailedEngRFC',
+                                        cityName: cityName,
+                                        depoName: depoName,
+                                        // userId: '',
+                                        // date:
+                                        //     row.getCells()[4].value.toString(),
+                                        docId:
+                                            '${row.getCells()[4].value}/${row.getCells()[0].value}',
+                                      )
                                   // ViewFile()
                                   // UploadDocument(
                                   //     title: 'DetailedEngRFC',

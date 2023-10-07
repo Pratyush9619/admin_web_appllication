@@ -178,8 +178,12 @@ class _DepotOverviewState extends State<DepotOverview> {
         appBar: PreferredSize(
           // ignore: sort_child_properties_last
           child: CustomAppBar(
+            toOverview: true,
+            showDepoBar: true,
+              depoName: widget.depoName,
+              cityName: widget.cityName,
               text: '${widget.cityName}/ ${widget.depoName} /Depot Overview',
-              userid: widget.userid,
+              userId: widget.userid,
               // icon: Icons.logout,
               haveSynced: false,
               // specificUser ? true : false,

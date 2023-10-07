@@ -1,5 +1,7 @@
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+
+import '../KeyEvents/Grid_DataTable.dart';
 import 'electrical_quality_checklist.dart';
-import 'summary.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -41,6 +43,7 @@ dynamic empName,
 dynamic alldata;
 int? _selectedIndex = 0;
 dynamic userId;
+TextEditingController selectedDepoController = TextEditingController();
 List<String> title = [
   'CHECKLIST FOR INSTALLATION OF PSS',
   'CHECKLIST FOR INSTALLATION OF RMU',
@@ -82,136 +85,6 @@ class _QualityChecklistState extends State<QualityChecklist> {
     widget.currentDate =
         widget.currentDate ?? DateFormat.yMMMMd().format(DateTime.now());
 
-    // _isloading = false;
-    // _stream = FirebaseFirestore.instance
-    //     .collection('QualityChecklist')
-    //     .doc('${widget.depoName}')
-    //     .collection('PSS TABLE DATA')
-    //     .doc('PSS')
-    //     .collection(userId)
-    //     .doc(widget.currentDate)
-    //     .snapshots();
-
-    // _stream1 = FirebaseFirestore.instance
-    //     .collection('QualityChecklist')
-    //     .doc('${widget.depoName}')
-    //     .collection('RMU TABLE DATA')
-    //     .doc('RMU')
-    //     .collection(userId)
-    //     .doc(widget.currentDate)
-    //     .snapshots();
-
-    // _stream2 = FirebaseFirestore.instance
-    //     .collection('QualityChecklist')
-    //     .doc('${widget.depoName}')
-    //     .collection('CONVENTIONAL TRANSFORMER TABLE DATA')
-    //     .doc('CONVENTIONAL TRANSFORMER')
-    //     .collection(userId)
-    //     .doc(widget.currentDate)
-    //     .snapshots();
-
-    // _stream3 = FirebaseFirestore.instance
-    //     .collection('QualityChecklist')
-    //     .doc('${widget.depoName}')
-    //     .collection('CTPT METERING UNIT TABLE DATA')
-    //     .doc('CTPT METERING UNIT')
-    //     .collection(userId)
-    //     .doc(widget.currentDate)
-    //     .snapshots();
-
-    // _stream4 = FirebaseFirestore.instance
-    //     .collection('QualityChecklist')
-    //     .doc('${widget.depoName}')
-    //     .collection('ACDB TABLE DATA')
-    //     .doc('ACDB DATA')
-    //     .collection(userId)
-    //     .doc(widget.currentDate)
-    //     .snapshots();
-
-    // _stream5 = FirebaseFirestore.instance
-    //     .collection('QualityChecklist')
-    //     .doc('${widget.depoName}')
-    //     .collection('CABLE INSTALLATION TABLE DATA')
-    //     .doc('CABLE INSTALLATION')
-    //     .collection(userId)
-    //     .doc(widget.currentDate)
-    //     .snapshots();
-
-    // _stream6 = FirebaseFirestore.instance
-    //     .collection('QualityChecklist')
-    //     .doc('${widget.depoName}')
-    //     .collection('CDI TABLE DATA')
-    //     .doc('CDI DATA')
-    //     .collection(userId)
-    //     .doc(widget.currentDate)
-    //     .snapshots();
-
-    // _stream7 = FirebaseFirestore.instance
-    //     .collection('QualityChecklist')
-    //     .doc('${widget.depoName}')
-    //     .collection('MSP TABLE DATA')
-    //     .doc('MSP DATA')
-    //     .collection(userId)
-    //     .doc(widget.currentDate)
-    //     .snapshots();
-
-    // _stream8 = FirebaseFirestore.instance
-    //     .collection('QualityChecklist')
-    //     .doc('${widget.depoName}')
-    //     .collection('CHARGER TABLE DATA')
-    //     .doc('CHARGER DATA')
-    //     .collection(userId)
-    //     .doc(widget.currentDate)
-    //     .snapshots();
-
-    // _stream9 = FirebaseFirestore.instance
-    //     .collection('QualityChecklist')
-    //     .doc('${widget.depoName}')
-    //     .collection('EARTH TABLE DATA')
-    //     .doc('EARTH DATA')
-    //     .collection(userId)
-    //     .doc(widget.currentDate)
-    //     .snapshots();
-
-    // qualitylisttable1 = getData();
-    // _qualityExcavationDataSource =QualityExcavationDataSource(qualitylisttable1);
-    // _dataGridController = DataGridController();
-
-    // qualitylisttable2 = getData();
-    // _qualityBackFillingDataSource = QualityBackFillingDataSource(qualitylisttable2);
-    // _dataGridController = DataGridController();
-
-    // qualitylisttable3 = getData();
-    // _qualityMassonaryDataSource = QualityMassonaryDataSource(qualitylisttable2);
-    // _dataGridController = DataGridController();
-
-    // qualitylisttable4 = getData();
-    // _qualityGlazzingDataSource = QualityGlazzingDataSource(qualitylisttable4);
-    // _dataGridController = DataGridController();
-
-    // qualitylisttable5 = getData();
-    // _qualityCeillingDataSource= = QualityCeillingDataSource(qualitylisttable5);
-    // _dataGridController = DataGridController();
-
-    // qualitylisttable6 = getData();
-    // _QualityflooringDataSource = QualityflooringDataSource(qualitylisttable6);
-    // _dataGridController = DataGridController();
-
-    // qualitylisttable7 = getData();
-    // _qualityInspectionDataSource = QualityInspectionDataSource(qualitylisttable7);
-    // _dataGridController = DataGridController();
-
-    // qualitylisttable8 = getData();
-    // _qualityIroniteflooringDataSource = QualityIroniteflooringDataSource(qualitylisttable8);
-    // _dataGridController = DataGridController();
-
-    // qualitylisttable9 = getData();
-    // _qualityPaintingDataSource = QualityPaintingDataSource(qualitylisttable9);
-    // _dataGridController = DataGridController();
-
-    // qualitylisttable10 = getData();
-    //_qualityPavingDataSource = QualityPavingDataSource(qualitylisttable10);
-    // _dataGridController = DataGridController();
     final scaffoldKey = GlobalKey<ScaffoldState>();
     return SafeArea(
       child: DefaultTabController(
@@ -222,6 +95,71 @@ class _QualityChecklistState extends State<QualityChecklist> {
               automaticallyImplyLeading:
                   widget.isHeader! ? widget.isHeader! : false,
               backgroundColor: blue,
+              actions: [
+                Container(
+                  padding: const EdgeInsets.all(5.0),
+                  width: 200,
+                  height: 30,
+                  child: TypeAheadField(
+                      animationStart: BorderSide.strokeAlignCenter,
+                      suggestionsCallback: (pattern) async {
+                        return await getDepoList(pattern);
+                      },
+                      itemBuilder: (context, suggestion) {
+                        return ListTile(
+                          title: Text(
+                            suggestion.toString(),
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        );
+                      },
+                      onSuggestionSelected: (suggestion) {
+                        selectedDepoController.text = suggestion.toString();
+
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => QualityChecklist(
+                                depoName: suggestion.toString(),
+                                cityName: widget.cityName,
+                                userId: widget.userId,
+                              ),
+                            ));
+                      },
+                      textFieldConfiguration: TextFieldConfiguration(
+                        decoration: const InputDecoration(
+                          fillColor: Colors.white,
+                          filled: true,
+                          contentPadding: EdgeInsets.all(5.0),
+                          hintText: 'Go To Depot',
+                        ),
+                        style: const TextStyle(
+                          fontSize: 15,
+                        ),
+                        controller: selectedDepoController,
+                      )),
+                ),
+                Padding(
+                    padding: const EdgeInsets.only(right: 15, left: 15),
+                    child: GestureDetector(
+                        onTap: () {
+                          onWillPop(context);
+                        },
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              'assets/logout.png',
+                              height: 20,
+                              width: 20,
+                            ),
+                            const SizedBox(width: 5),
+                            Text(
+                              widget.userId ?? '',
+                              style: const TextStyle(fontSize: 18),
+                            )
+                          ],
+                        ))),
+              ],
               title: Text(
                   '${widget.cityName} / ${widget.depoName} / Quality Checklist'),
               // leading:
@@ -272,5 +210,27 @@ class _QualityChecklistState extends State<QualityChecklist> {
     await AuthService().getCurrentUserId().then((value) {
       userId = value;
     });
+  }
+
+  Future<List<dynamic>> getDepoList(String pattern) async {
+    List<dynamic> depoList = [];
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('DepoName')
+        .doc(widget.cityName)
+        .collection('AllDepots')
+        .get();
+
+    depoList = querySnapshot.docs.map((deponame) => deponame.id).toList();
+
+    if (pattern.isNotEmpty) {
+      depoList = depoList
+          .where((element) => element
+              .toString()
+              .toUpperCase()
+              .startsWith(pattern.toUpperCase()))
+          .toList();
+    }
+
+    return depoList;
   }
 }

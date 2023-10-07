@@ -29,11 +29,6 @@ class _SafetySummaryState extends State<SafetySummary> {
   List<List<dynamic>> rowList = [];
   bool enableLoading = false;
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
   Future<List<List<dynamic>>> fetchData() async {
     rowList.clear();
     await getRowsForFutureBuilder();
@@ -46,8 +41,12 @@ class _SafetySummaryState extends State<SafetySummary> {
       appBar: PreferredSize(
           // ignore: sort_child_properties_last
           child: CustomAppBar(
-            text: ' ${widget.cityName}/ ${widget.depoName} / ${widget.id}',
-            userid: widget.userId,
+            depoName: widget.depoName,
+            toSafety: true,
+            showDepoBar: true,
+            cityName: widget.cityName,
+            text: ' ${widget.cityName}/ ${widget.depoName} / Safety Summary',
+            userId: widget.userId,
           ),
           preferredSize: const Size.fromHeight(50)),
       body: enableLoading
@@ -90,83 +89,86 @@ class _SafetySummaryState extends State<SafetySummary> {
                     // );
                   }
 
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SingleChildScrollView(
-                        padding: const EdgeInsets.only(
-                            left: 5.0, right: 5.0, bottom: 5.0),
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: DataTable(
-                            showBottomBorder: true,
-                            sortAscending: true,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.grey[600]!,
-                                width: 1.0,
-                              ),
-                            ),
-                            columnSpacing: 150.0,
-                            headingRowColor: MaterialStateColor.resolveWith(
-                                (states) => Colors.blue[800]!),
-                            headingTextStyle:
-                                const TextStyle(color: Colors.white),
-                            columns: const [
-                              DataColumn(
-                                  label: Text(
-                                'User_ID',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
+                  return SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: DataTable(
+                              showBottomBorder: true,
+                              sortAscending: true,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.grey[600]!,
+                                  width: 1.0,
                                 ),
-                              )),
-                              DataColumn(
-                                  label: Text('Date',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                      ))),
-                              DataColumn(
-                                  label: Text('Monthly Report Data',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                      ))),
-                              DataColumn(
-                                  label: Text('PDF Download',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                      ))),
-                            ],
-                            rows: data.map(
-                              (rowData) {
-                                return DataRow(
-                                  cells: [
-                                    DataCell(Text(rowData[0])),
-                                    DataCell(Text(rowData[2])),
-                                    DataCell(ElevatedButton(
-                                      onPressed: () {
-                                        _generatePDF(rowData[0], rowData[2], 1);
-                                      },
-                                      child: const Text('View Report'),
-                                    )),
-                                    DataCell(ElevatedButton(
-                                      onPressed: () {
-                                        _generatePDF(rowData[0], rowData[2], 2);
-                                      },
-                                      child: const Text('Download'),
-                                    )),
-                                  ],
-                                );
-                              },
-                            ).toList(),
+                              ),
+                              columnSpacing: 150.0,
+                              headingRowColor: MaterialStateColor.resolveWith(
+                                  (states) => Colors.blue[800]!),
+                              headingTextStyle:
+                                  const TextStyle(color: Colors.white),
+                              columns: const [
+                                DataColumn(
+                                    label: Text(
+                                  'User_ID',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                )),
+                                DataColumn(
+                                    label: Text('Date',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                        ))),
+                                DataColumn(
+                                    label: Text('Monthly Report Data',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                        ))),
+                                DataColumn(
+                                    label: Text('PDF Download',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                        ))),
+                              ],
+                              rows: data.map(
+                                (rowData) {
+                                  return DataRow(
+                                    cells: [
+                                      DataCell(Text(rowData[0])),
+                                      DataCell(Text(rowData[2])),
+                                      DataCell(ElevatedButton(
+                                        onPressed: () {
+                                          _generatePDF(
+                                              rowData[0], rowData[2], 1);
+                                        },
+                                        child: const Text('View Report'),
+                                      )),
+                                      DataCell(ElevatedButton(
+                                        onPressed: () {
+                                          _generatePDF(
+                                              rowData[0], rowData[2], 2);
+                                        },
+                                        child: const Text('Download'),
+                                      )),
+                                    ],
+                                  );
+                                },
+                              ).toList(),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   );
                 }
 
@@ -184,6 +186,7 @@ class _SafetySummaryState extends State<SafetySummary> {
         .get();
 
     List<dynamic> userIdList = querySnapshot.docs.map((e) => e.id).toList();
+    print(userIdList.length);
 
     for (int i = 0; i < userIdList.length; i++) {
       QuerySnapshot userEntryDate = await FirebaseFirestore.instance
@@ -212,7 +215,7 @@ class _SafetySummaryState extends State<SafetySummary> {
     final fontData1 = await rootBundle.load('fonts/IBMPlexSans-Medium.ttf');
     final fontData2 = await rootBundle.load('fonts/IBMPlexSans-Bold.ttf');
 
-    final cellStyle = pw.TextStyle(
+    const cellStyle = pw.TextStyle(
       color: PdfColors.black,
       fontSize: 14,
     );
@@ -332,7 +335,7 @@ class _SafetySummaryState extends State<SafetySummary> {
 
       for (Map<String, dynamic> mapData in userData) {
         String images_Path =
-            'gs://tp-zap-solz.appspot.com/SafetyChecklist/Bengaluru/${widget.depoName}/$user_id/${mapData['srNo']}';
+            'gs://tp-zap-solz.appspot.com/SafetyChecklist/Bengaluru/${widget.depoName}/$user_id/$date/${mapData['srNo']}';
         ListResult result =
             await FirebaseStorage.instance.ref().child(images_Path).listAll();
 
@@ -472,6 +475,7 @@ class _SafetySummaryState extends State<SafetySummary> {
               alignment: pw.Alignment.centerRight,
               margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
               child: pw.Text('User ID - $user_id',
+                  textScaleFactor: 1.3,
                   // 'Page ${context.pageNumber} of ${context.pagesCount}',
                   style: pw.Theme.of(context)
                       .defaultTextStyle
@@ -482,14 +486,28 @@ class _SafetySummaryState extends State<SafetySummary> {
             pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text(
-                    'Place:  ${widget.cityName}/${widget.depoName}',
-                    textScaleFactor: 1.1,
-                  ),
-                  pw.Text(
-                    'Date:  $date ',
-                    textScaleFactor: 1.1,
-                  )
+                  pw.RichText(
+                      text: pw.TextSpan(children: [
+                    const pw.TextSpan(
+                        text: 'Place : ',
+                        style:
+                            pw.TextStyle(color: PdfColors.black, fontSize: 17)),
+                    pw.TextSpan(
+                        text: '${widget.cityName} / ${widget.depoName}',
+                        style: const pw.TextStyle(
+                            color: PdfColors.blue700, fontSize: 15))
+                  ])),
+                  pw.RichText(
+                      text: pw.TextSpan(children: [
+                    const pw.TextSpan(
+                        text: 'Date : ',
+                        style:
+                            pw.TextStyle(color: PdfColors.black, fontSize: 17)),
+                    pw.TextSpan(
+                        text: '$date',
+                        style: const pw.TextStyle(
+                            color: PdfColors.blue700, fontSize: 15))
+                  ])),
                 ]),
             pw.SizedBox(height: 20)
           ]),

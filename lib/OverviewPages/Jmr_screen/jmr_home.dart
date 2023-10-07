@@ -139,13 +139,17 @@ class _JMRPageState extends State<JMRPage> {
               appBar: PreferredSize(
                 // ignore: sort_child_properties_last
                 child: CustomAppBar(
-                    text:
-                        '${widget.cityName} / ${widget.depoName} / ${widget.title.toString()}',
-                    // icon: Icons.logout,
-                    haveSynced: widget.showTable ? false : true,
-                    store: () {
-                      nextIndex().then((value) => StoreData());
-                    }),
+                  userId: widget.userId,
+                  cityName: widget.cityName,
+                  text:
+                      '${widget.cityName} / ${widget.depoName} / ${widget.title.toString()}',
+                  // icon: Icons.logout,
+                  haveSynced: widget.showTable ? false : true,
+                  store: () {
+                    nextIndex().then((value) => StoreData());
+                  },
+                  depoName: widget.depoName,
+                ),
                 preferredSize: const Size.fromHeight(50),
               ),
               body: Column(

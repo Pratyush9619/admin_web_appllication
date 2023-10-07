@@ -4,7 +4,9 @@ import '../style.dart';
 class TestingReport extends StatefulWidget {
   String? cityName;
   String? depoName;
-  TestingReport({super.key, required this.cityName, required this.depoName});
+  String? userId;
+  TestingReport(
+      {super.key, required this.cityName, required this.depoName, this.userId});
 
   @override
   State<TestingReport> createState() => _TestingReportState();

@@ -25,7 +25,7 @@ class ImagePage extends StatelessWidget {
           centerTitle: true,
           actions: [
             IconButton(
-              icon: Icon(Icons.file_download),
+              icon: const Icon(Icons.file_download),
               onPressed: () async {
                 await FirebaseApi.downloadFile(file.ref);
 
@@ -39,10 +39,12 @@ class ImagePage extends StatelessWidget {
           ],
         ),
         body: isImage
-            ? Image.network(
-                file.url,
-                height: double.infinity,
-                fit: BoxFit.cover,
+            ? Center(
+                child: Image.network(
+                  file.url,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                ),
               )
             : isPdf
                 ? ViewFile(path: file.url)

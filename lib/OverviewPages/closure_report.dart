@@ -66,8 +66,10 @@ class _ClosureReportState extends State<ClosureReport> {
         appBar: PreferredSize(
             // ignore: sort_child_properties_last
             child: CustomAppBar(
+              cityName: widget.cityName,
+              depoName: widget.depoName,
               text: ' ${widget.cityName}/ ${widget.depoName} / Close Report',
-              userid: widget.userId,
+              userId: widget.userId,
               haveSynced: specificUser ? true : false,
               store: () {
                 FirebaseFirestore.instance

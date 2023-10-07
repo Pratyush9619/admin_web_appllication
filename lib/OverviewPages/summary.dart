@@ -397,8 +397,8 @@ class _ViewSummaryState extends State<ViewSummary> {
                             alldata.forEach((element) {
                               dailyproject
                                   .add(DailyProjectModel.fromjson(element));
-                              _dailyDataSource = DailyDataSource(
-                                  dailyproject, context, widget.depoName!);
+                              _dailyDataSource = DailyDataSource(dailyproject,
+                                  context, widget.cityName!, widget.depoName!);
                               _dataGridController = DataGridController();
                             });
                             return SfDataGridTheme(
@@ -574,6 +574,27 @@ class _ViewSummaryState extends State<ViewSummary> {
                                             horizontal: 8.0),
                                         alignment: Alignment.center,
                                         child: Text('Remark / Status',
+                                            overflow: TextOverflow.values.first,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                color: white)
+                                            //    textAlign: TextAlign.center,
+                                            ),
+                                      ),
+                                    ),
+                                    GridColumn(
+                                      columnName: 'view',
+                                      autoFitPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                      allowEditing: true,
+                                      width: 150,
+                                      label: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        alignment: Alignment.center,
+                                        child: Text('View Image',
                                             overflow: TextOverflow.values.first,
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,

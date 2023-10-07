@@ -15,13 +15,16 @@ class ViewAllPdf extends StatefulWidget {
   String cityName;
   String depoName;
   String? userId;
+  String? date;
   String docId;
+
   ViewAllPdf(
       {super.key,
       required this.title,
       required this.cityName,
       required this.depoName,
       this.userId,
+      this.date,
       required this.docId});
 
   @override
@@ -32,6 +35,7 @@ class _ViewAllPdfState extends State<ViewAllPdf> {
   late Future<List<FirebaseFile>> futureFiles;
   List<dynamic> drawingId = [];
   List<dynamic> drawingRef = [];
+  List<dynamic> drawingfullpath = [];
   bool _isload = true;
 
   @override
@@ -41,16 +45,16 @@ class _ViewAllPdfState extends State<ViewAllPdf> {
 
     getrefdata().whenComplete(() {
       for (int i = 0; i < drawingRef.length; i++) {
-        for (int j = 0; j < drawingId.length; j++) {
-          print('before ' + drawingId[j]);
+        for (int j = 0; j < drawingfullpath.length; j++) {
+          print('before ' + drawingfullpath[j]);
           print(
               'after  ${widget.title}/${widget.cityName}/${widget.depoName}/${drawingRef[i]}/${widget.docId}');
 
-          if (drawingId[j] ==
+          if (drawingfullpath[j] ==
               '${widget.title}/${widget.cityName}/${widget.depoName}/${drawingRef[i]}/${widget.docId}') {
             // futureFiles = FirebaseApi.listAll(
             //     '${widget.title}/${widget.cityName}/${widget.depoName}/RM7292/${widget.docId}');
-            futureFiles = FirebaseApi.listAll(drawingId[j]);
+            futureFiles = FirebaseApi.listAll(drawingfullpath[j]);
           }
         }
       }
@@ -184,9 +188,18 @@ class _ViewAllPdfState extends State<ViewAllPdf> {
       final storageRef1 = FirebaseStorage.instance.ref().child(
           '${widget.title}/${widget.cityName}/${widget.depoName}/${prefix.name}');
       final listResult1 = await storageRef1.listAll();
+
       for (var prefix in listResult1.prefixes) {
         drawingId.add(prefix.fullPath);
-        print(drawingRef);
+
+        final storageRef2 =
+            FirebaseStorage.instance.ref().child('${prefix.fullPath}');
+        final listResult2 = await storageRef2.listAll();
+        for (var prefix in listResult2.prefixes) {
+          drawingfullpath.add('${storageRef2.fullPath}/${prefix.name}');
+
+          print(drawingfullpath[0]);
+        }
       }
     }
   }

@@ -51,8 +51,10 @@ class _KeyEventsUserState extends State<KeyEventsUser> {
       appBar: PreferredSize(
           // ignore: sort_child_properties_last
           child: CustomAppBar(
+            cityName: widget.cityName,
+            depoName: widget.depoName,
             text: ' ${widget.cityName} / ${widget.depoName}',
-            userid: widget.userId,
+            userId: widget.userId,
           ),
           preferredSize: const Size.fromHeight(50)),
       body: enableLoading

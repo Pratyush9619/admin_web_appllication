@@ -5,10 +5,12 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:web_appllication/KeyEvents/viewFIle.dart';
 import 'package:web_appllication/OverviewPages/summary.dart';
 import 'package:web_appllication/widgets/date_range.dart';
 import 'package:web_appllication/widgets/nodata_available.dart';
 import '../Authentication/auth_service.dart';
+import '../KeyEvents/view_AllFiles.dart';
 import '../datasource/dailyproject_datasource.dart';
 import '../model/daily_projectModel.dart';
 import '../components/loading_page.dart';
@@ -53,7 +55,8 @@ class _DailyProjectState extends State<DailyProject> {
     identifyUser();
     // getmonthlyReport();
     // DailyProject = getmonthlyReport();
-    _dailyDataSource = DailyDataSource(DailyProject, context, widget.depoName!);
+    _dailyDataSource = DailyDataSource(
+        DailyProject, context, widget.cityName!, widget.depoName!);
     _dataGridController = DataGridController();
 
     // _stream = FirebaseFirestore.instance
@@ -72,8 +75,8 @@ class _DailyProjectState extends State<DailyProject> {
     id.clear();
     getTableData().whenComplete(() {
       nestedTableData(id).whenComplete(() {
-        _dailyDataSource =
-            DailyDataSource(DailyProject, context, widget.depoName!);
+        _dailyDataSource = DailyDataSource(
+            DailyProject, context, widget.cityName!, widget.depoName!);
         _dataGridController = DataGridController();
         _isLoading = false;
         setState(() {});
@@ -87,8 +90,12 @@ class _DailyProjectState extends State<DailyProject> {
       appBar: PreferredSize(
           // ignore: sort_child_properties_last
           child: CustomAppBar(
+            showDepoBar: true,
+            toDaily: true,
+            depoName: widget.depoName,
+            cityName: widget.cityName,
             text: ' ${widget.cityName}/ ${widget.depoName} / Daily Report',
-            userid: widget.userId,
+            userId: widget.userId,
             haveSynced: false,
             //specificUser ? true : false,
             isdownload: true,
@@ -187,7 +194,7 @@ class _DailyProjectState extends State<DailyProject> {
                         ),
                       ],
                     ),
-                    SizedBox(width: 20),
+                    const SizedBox(width: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -211,7 +218,7 @@ class _DailyProjectState extends State<DailyProject> {
                           ),
                         ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -426,6 +433,27 @@ class _DailyProjectState extends State<DailyProject> {
                                             horizontal: 8.0),
                                         alignment: Alignment.center,
                                         child: Text('Remark / Status',
+                                            overflow: TextOverflow.values.first,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                color: white)
+                                            //    textAlign: TextAlign.center,
+                                            ),
+                                      ),
+                                    ),
+                                    GridColumn(
+                                      columnName: 'View',
+                                      autoFitPadding:
+                                          const EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                      allowEditing: false,
+                                      width: 140,
+                                      label: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0),
+                                        alignment: Alignment.center,
+                                        child: Text('View Image',
                                             overflow: TextOverflow.values.first,
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,

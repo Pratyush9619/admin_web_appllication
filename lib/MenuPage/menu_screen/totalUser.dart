@@ -38,9 +38,9 @@ class _TotalUsersState extends State<TotalUsers> {
         : Scaffold(
             appBar: PreferredSize(
               preferredSize: Size(MediaQuery.of(context).size.width, 50),
-              child: CustomAppBar(
-                text: 'Menu User Panel / Total Users',
-              ),
+              child: AppBar(
+              title: const Text('UnAssigned Users'),
+            )
             ),
             body: Column(
               children: [
