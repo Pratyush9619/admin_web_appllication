@@ -674,14 +674,39 @@ class _ElectricalQualityChecklistState
             pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text(
-                    'Place:  ${widget.cityName}/${widget.depoName}',
-                    textScaleFactor: 1.6,
-                  ),
-                  pw.Text(
-                    'Date:  $date ',
-                    textScaleFactor: 1.6,
-                  )
+                  pw.RichText(
+                      text: pw.TextSpan(children: [
+                    const pw.TextSpan(
+                        text: 'Place : ',
+                        style:
+                            pw.TextStyle(color: PdfColors.black, fontSize: 17)),
+                    pw.TextSpan(
+                        text: '${widget.cityName} / ${widget.depoName}',
+                        style: const pw.TextStyle(
+                            color: PdfColors.blue700, fontSize: 15))
+                  ])),
+                  pw.RichText(
+                      text: pw.TextSpan(children: [
+                    const pw.TextSpan(
+                        text: 'Date : ',
+                        style:
+                            pw.TextStyle(color: PdfColors.black, fontSize: 17)),
+                    pw.TextSpan(
+                        text: '$date',
+                        style: const pw.TextStyle(
+                            color: PdfColors.blue700, fontSize: 15))
+                  ])),
+                  pw.RichText(
+                      text: pw.TextSpan(children: [
+                    const pw.TextSpan(
+                        text: 'UserID : ',
+                        style: const pw.TextStyle(
+                            color: PdfColors.black, fontSize: 15)),
+                    pw.TextSpan(
+                        text: '$user_id',
+                        style: const pw.TextStyle(
+                            color: PdfColors.blue700, fontSize: 15))
+                  ])),
                 ]),
             pw.SizedBox(height: 20)
           ]),

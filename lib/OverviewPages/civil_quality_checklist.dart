@@ -405,9 +405,8 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
 
     List<dynamic> userIdList = querySnapshot.docs.map((e) => e.id).toList();
     print(userIdList);
-
+    List<List<dynamic>> temp = [];
     for (int i = 0; i < userIdList.length; i++) {
-      List<List<dynamic>> temp = [];
       QuerySnapshot userEntryDate = await currentColReference
           .doc(userIdList[i])
           .collection(tabForCivil[_selectedIndex!])
@@ -666,6 +665,7 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
                           'Civil Quality Report / ${completeTabForCivil[_selectedIndex!]} Table',
                           textScaleFactor: 2,
                           style: const pw.TextStyle(color: PdfColors.blue700)),
+                      pw.SizedBox(width: 20),
                       pw.Container(
                         width: 120,
                         height: 120,
@@ -689,14 +689,35 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
             pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text(
-                    'Place:  ${widget.cityName}/${widget.depoName}',
-                    textScaleFactor: 1.6,
-                  ),
-                  pw.Text(
-                    'Date:  $date ',
-                    textScaleFactor: 1.6,
-                  )
+                  pw.RichText(
+                      text: pw.TextSpan(children: [
+                    const pw.TextSpan(
+                        text: 'Place : ',
+                        style:
+                            pw.TextStyle(color: PdfColors.black, fontSize: 17)),
+                    pw.TextSpan(
+                        text: '${widget.cityName} / ${widget.depoName}',
+                        style: const pw.TextStyle(
+                            color: PdfColors.blue700, fontSize: 15))
+                  ])),
+                  pw.RichText(
+                      text: pw.TextSpan(children: [
+                    const pw.TextSpan(
+                        text: 'Date : ',
+                        style:
+                            pw.TextStyle(color: PdfColors.black, fontSize: 17)),
+                    pw.TextSpan(
+                        text: '$date',
+                        style: const pw.TextStyle(
+                            color: PdfColors.blue700, fontSize: 15))
+                  ])),
+                  pw.RichText(
+                      text: pw.TextSpan(children: [
+                    pw.TextSpan(
+                        text: 'UserID : $user_id',
+                        style: const pw.TextStyle(
+                            color: PdfColors.blue700, fontSize: 15)),
+                  ])),
                 ]),
             pw.SizedBox(height: 20)
           ]),

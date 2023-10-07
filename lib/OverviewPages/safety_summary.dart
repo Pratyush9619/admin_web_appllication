@@ -335,7 +335,7 @@ class _SafetySummaryState extends State<SafetySummary> {
 
       for (Map<String, dynamic> mapData in userData) {
         String images_Path =
-            'gs://tp-zap-solz.appspot.com/SafetyChecklist/Bengaluru/${widget.depoName}/$user_id/$date/${mapData['srNo']}';
+            'gs://tp-zap-solz.appspot.com/SafetyChecklist/${widget.cityName}/${widget.depoName}/$user_id/$date/${mapData['srNo']}';
         ListResult result =
             await FirebaseStorage.instance.ref().child(images_Path).listAll();
 
@@ -474,8 +474,8 @@ class _SafetySummaryState extends State<SafetySummary> {
           return pw.Container(
               alignment: pw.Alignment.centerRight,
               margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
-              child: pw.Text('User ID - $user_id',
-                  textScaleFactor: 1.3,
+              child: pw.Text('UserID - $user_id',
+                  textScaleFactor: 1.5,
                   // 'Page ${context.pageNumber} of ${context.pagesCount}',
                   style: pw.Theme.of(context)
                       .defaultTextStyle
@@ -505,6 +505,17 @@ class _SafetySummaryState extends State<SafetySummary> {
                             pw.TextStyle(color: PdfColors.black, fontSize: 17)),
                     pw.TextSpan(
                         text: '$date',
+                        style: const pw.TextStyle(
+                            color: PdfColors.blue700, fontSize: 15))
+                  ])),
+                  pw.RichText(
+                      text: pw.TextSpan(children: [
+                    const pw.TextSpan(
+                        text: 'UserID : ',
+                        style: const pw.TextStyle(
+                            color: PdfColors.black, fontSize: 15)),
+                    pw.TextSpan(
+                        text: '$user_id',
                         style: const pw.TextStyle(
                             color: PdfColors.blue700, fontSize: 15))
                   ])),

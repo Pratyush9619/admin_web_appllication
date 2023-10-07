@@ -156,7 +156,7 @@ class _ClosureSummaryState extends State<ClosureSummary> {
       rowOfWidget.add(customTableTextRow(tableRows[i][0], tableRows[i][1]));
 
       final path =
-          'ClosureReport/${widget.cityName}/${widget.depoName}/$user_id/$date/${tableRows[i][0]}';
+          'ClosureReport/${widget.cityName}/${widget.depoName}/$user_id/${tableRows[i][0]}';
 
       ListResult result =
           await FirebaseStorage.instance.ref().child(path).listAll();

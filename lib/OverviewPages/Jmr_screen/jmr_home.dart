@@ -1,4 +1,5 @@
 import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
@@ -47,19 +48,7 @@ class _JMRPageState extends State<JMRPage> {
   final endDate = TextEditingController();
 
   List nextJmrIndex = [];
-  List<List<dynamic>> data = [
-    [
-      '                ',
-      '                    ',
-      '                                                                ',
-      '                ',
-      '                                                               ',
-      '                 ',
-      '       ',
-      '       ',
-      '       '
-    ],
-  ];
+  List<List<dynamic>> data = [];
 
   List<JMRModel> jmrtable = <JMRModel>[];
   late JmrDataSource _jmrDataSource;
@@ -72,6 +61,7 @@ class _JMRPageState extends State<JMRPage> {
 
   @override
   void initState() {
+    print(widget.title);
     super.initState();
     _stream = FirebaseFirestore.instance
         .collection('JMRCollection')
@@ -115,18 +105,6 @@ class _JMRPageState extends State<JMRPage> {
   }
 
   @override
-  void dispose() {
-    // Clean up the controller when the widget is removed from the widget tree.
-    loiRefNum.dispose();
-    note.dispose();
-    date.dispose();
-    projectName.dispose();
-    refNo.dispose();
-    siteLocation.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
@@ -139,8 +117,8 @@ class _JMRPageState extends State<JMRPage> {
               appBar: PreferredSize(
                 // ignore: sort_child_properties_last
                 child: CustomAppBar(
+                  depoName: widget.depoName,
                   userId: widget.userId,
-                  cityName: widget.cityName,
                   text:
                       '${widget.cityName} / ${widget.depoName} / ${widget.title.toString()}',
                   // icon: Icons.logout,
@@ -148,7 +126,7 @@ class _JMRPageState extends State<JMRPage> {
                   store: () {
                     nextIndex().then((value) => StoreData());
                   },
-                  depoName: widget.depoName,
+                  cityName: widget.cityName,
                 ),
                 preferredSize: const Size.fromHeight(50),
               ),
