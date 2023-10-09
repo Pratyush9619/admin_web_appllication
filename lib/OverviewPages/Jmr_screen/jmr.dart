@@ -20,7 +20,6 @@ class Jmr extends StatefulWidget {
 class _JmrState extends State<Jmr> {
   List<List<int>> jmrTabLen = [];
   int _selectedIndex = 0;
-
   bool isLoading = true;
   List<String> title = ['R1', 'R2', 'R3', 'R4', 'R5'];
   List<String> tabName = ['Civil', 'Electrical'];

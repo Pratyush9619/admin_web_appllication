@@ -52,6 +52,8 @@ class _KeyEventsUserState extends State<KeyEventsUser> {
           // ignore: sort_child_properties_last
           child: CustomAppBar(
             cityName: widget.cityName,
+            showDepoBar: true,
+            toPlanning: true,
             depoName: widget.depoName,
             text: ' ${widget.cityName} / ${widget.depoName}',
             userId: widget.userId,
