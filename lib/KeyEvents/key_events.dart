@@ -5,6 +5,7 @@ import 'package:gantt_chart/gantt_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:web_appllication/FirebaseApi/firebase_api.dart';
+import 'package:web_appllication/KeyEvents/upload.dart';
 import 'package:web_appllication/model/employee.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/provider/key_provider.dart';
@@ -308,6 +309,7 @@ class _KeyEventsState extends State<KeyEvents> {
                 body: StreamBuilder(
                     stream: yourstream,
                     builder: (context, snapshot) {
+                      ganttdata.clear();
                       if (snapshot.hasData) {
                         if (snapshot.data.docs.length != 0) {
                           int length = snapshot.data.docs.length;
@@ -742,16 +744,26 @@ class _KeyEventsState extends State<KeyEvents> {
                                                   1];
 
                                       Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  StatutoryAprovalA2(
-                                                      userid: widget.userId,
-                                                      cityName: widget.cityName,
-                                                      depoName: widget.depoName,
-                                                      events: row
-                                                          .getCells()[0]
-                                                          .value
-                                                          .toString())));
+                                          MaterialPageRoute(builder: (context) {
+                                        if (row.getCells().first.value ==
+                                            'A1') {
+                                          return UploadDocument(
+                                              userId: widget.userId,
+                                              cityName: widget.cityName,
+                                              depoName: widget.depoName,
+                                              title: 'Key Events',
+                                              activity: widget.cityName);
+                                        } else {
+                                          return StatutoryAprovalA2(
+                                              userid: widget.userId,
+                                              cityName: widget.cityName,
+                                              depoName: widget.depoName,
+                                              events: row
+                                                  .getCells()[0]
+                                                  .value
+                                                  .toString());
+                                        }
+                                      }));
                                     },
                                     allowEditing: true,
                                     frozenColumnsCount: 2,
@@ -778,9 +790,7 @@ class _KeyEventsState extends State<KeyEvents> {
                                           child: Text(
                                             'Sr No',
                                             overflow: TextOverflow.values.first,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
+                                            style: tableheader,
 
                                             //    textAlign: TextAlign.center,
                                           ),
@@ -797,24 +807,21 @@ class _KeyEventsState extends State<KeyEvents> {
                                           child: Text(
                                             'Activity',
                                             overflow: TextOverflow.values.first,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
+                                            style: tableheader,
                                           ),
                                         ),
                                       ),
                                       GridColumn(
                                         columnName: 'OriginalDuration',
                                         allowEditing: false,
+                                        width: 80,
                                         label: Container(
                                           alignment: Alignment.center,
                                           child: Text(
                                             'Original Duration',
                                             overflow: TextOverflow.values.first,
                                             textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
+                                            style: tableheader,
                                           ),
                                         ),
                                       ),
@@ -826,9 +833,7 @@ class _KeyEventsState extends State<KeyEvents> {
                                           child: Text(
                                             'Start Date',
                                             overflow: TextOverflow.values.first,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
+                                            style: tableheader,
                                           ),
                                         ),
                                       ),
@@ -840,9 +845,7 @@ class _KeyEventsState extends State<KeyEvents> {
                                           child: Text(
                                             'End Date',
                                             overflow: TextOverflow.values.first,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
+                                            style: tableheader,
                                           ),
                                         ),
                                       ),
@@ -855,9 +858,7 @@ class _KeyEventsState extends State<KeyEvents> {
                                             'Actual Start',
                                             overflow: TextOverflow.values.first,
                                             textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
+                                            style: tableheader,
                                           ),
                                         ),
                                       ),
@@ -872,9 +873,7 @@ class _KeyEventsState extends State<KeyEvents> {
                                             textAlign: TextAlign.center,
                                             'Actual End',
                                             overflow: TextOverflow.values.first,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
+                                            style: tableheader,
                                           ),
                                         ),
                                       ),
@@ -887,9 +886,7 @@ class _KeyEventsState extends State<KeyEvents> {
                                             'Actual Duration',
                                             overflow: TextOverflow.values.first,
                                             textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
+                                            style: tableheader,
                                           ),
                                         ),
                                       ),
@@ -902,9 +899,7 @@ class _KeyEventsState extends State<KeyEvents> {
                                             'Delay',
                                             overflow: TextOverflow.values.first,
                                             textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
+                                            style: tableheader,
                                           ),
                                         ),
                                       ),
@@ -974,9 +969,7 @@ class _KeyEventsState extends State<KeyEvents> {
                                             '% of Progress',
                                             overflow: TextOverflow.values.first,
                                             textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
+                                            style: tableheader,
                                           ),
                                         ),
                                       ),
@@ -989,9 +982,7 @@ class _KeyEventsState extends State<KeyEvents> {
                                             'Weightage',
                                             overflow: TextOverflow.values.first,
                                             textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
+                                            style: tableheader,
                                           ),
                                         ),
                                       ),
@@ -1057,8 +1048,10 @@ class _KeyEventsState extends State<KeyEvents> {
                                           userid: widget.userId,
                                           cityName: widget.cityName,
                                           depoName: widget.depoName,
-                                          events:
-                                              '${row.getCells()[0].value.toString()}')
+                                          events: row
+                                              .getCells()[0]
+                                              .value
+                                              .toString())
                                       //  menuwidget[
                                       //     details.rowColumnIndex.rowIndex - 1]
                                       ));
@@ -1115,6 +1108,7 @@ class _KeyEventsState extends State<KeyEvents> {
                                   GridColumn(
                                     columnName: 'OriginalDuration',
                                     allowEditing: false,
+                                    width: 80,
                                     label: Container(
                                       alignment: Alignment.center,
                                       child: Text(
@@ -1190,6 +1184,7 @@ class _KeyEventsState extends State<KeyEvents> {
                                   GridColumn(
                                     columnName: 'ActualDuration',
                                     allowEditing: false,
+                                    width: 80,
                                     label: Container(
                                       alignment: Alignment.center,
                                       child: Text(

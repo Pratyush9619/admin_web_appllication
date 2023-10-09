@@ -43,7 +43,7 @@ class StatutoryAprovalA2 extends StatefulWidget {
 class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
   late EmployeeDataSource _employeeDataSource;
   List<Employee> _employees = <Employee>[];
-  List<EmployeeStatutory> statutory = <EmployeeStatutory>[];
+
   late DataGridController _dataGridController;
   KeyProvider? _keyProvider;
   List<dynamic> tabledata2 = [];
@@ -76,9 +76,9 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
     _keyProvider!
         .getFirestoreData(widget.userid, widget.events, '${widget.depoName}')
         .whenComplete(() {
-      print(_keyProvider!.startdate!.length);
+      print(_keyProvider!.startdate.length);
       ganttdata = [];
-      for (int i = 0; i < _keyProvider!.startdate!.length; i++) {
+      for (int i = 0; i < _keyProvider!.startdate.length; i++) {
         ganttdata.add(GanttAbsoluteEvent(
           suggestedColor: Colors.yellow,
           displayNameBuilder: (context) {
@@ -194,6 +194,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                     return LoadingPage();
                   }
                   if (snapshot.hasData || snapshot.data.exists == false) {
+                    _employees.clear();
                     alldata = '';
                     alldata = snapshot.data['data'] as List<dynamic>;
 
@@ -241,9 +242,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text(
                                             'Sr No',
                                             overflow: TextOverflow.values.first,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
+                                            style: tableheader,
                                             //    textAlign: TextAlign.center,
                                           ),
                                         ),
@@ -257,9 +256,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text(
                                             'Activity',
                                             overflow: TextOverflow.values.first,
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16),
+                                            style: tableheader,
                                           ),
                                         ),
                                       ),
@@ -278,35 +275,33 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                       // ),
                                       GridColumn(
                                         columnName: 'OriginalDuration',
-                                        allowEditing: true,
+                                        allowEditing: false,
+                                        width: 80,
                                         label: Container(
                                           alignment: Alignment.center,
                                           child: Text('Original Duration',
+                                              textAlign: TextAlign.center,
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
                                         columnName: 'StartDate',
                                         allowEditing: false,
-                                        width: 200,
+                                        width: 150,
                                         label: Container(
                                           alignment: Alignment.center,
                                           child: Text('Start Date',
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
                                         columnName: 'EndDate',
                                         allowEditing: false,
-                                        width: 200,
+                                        width: 130,
                                         label: Container(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 16.0),
@@ -314,15 +309,13 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text('End Date',
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
                                         columnName: 'ActualStart',
                                         allowEditing: false,
-                                        width: 180,
+                                        width: 140,
                                         label: Container(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 16.0),
@@ -330,15 +323,13 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text('Actual Start',
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
                                         columnName: 'ActualEnd',
                                         allowEditing: false,
-                                        width: 180,
+                                        width: 140,
                                         label: Container(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 16.0),
@@ -346,22 +337,20 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text('Actual End',
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
                                         columnName: 'ActualDuration',
                                         allowEditing: true,
+                                        width: 100,
                                         label: Container(
                                           alignment: Alignment.center,
                                           child: Text('Actual Duration',
+                                              textAlign: TextAlign.center,
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -370,11 +359,10 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                         label: Container(
                                           alignment: Alignment.center,
                                           child: Text('Delay',
+                                              textAlign: TextAlign.center,
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -383,11 +371,10 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                         label: Container(
                                           alignment: Alignment.center,
                                           child: Text('Reason For Delay',
+                                              textAlign: TextAlign.center,
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -396,11 +383,10 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                         label: Container(
                                           alignment: Alignment.center,
                                           child: Text('Unit',
+                                              textAlign: TextAlign.center,
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -409,11 +395,10 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                         label: Container(
                                           alignment: Alignment.center,
                                           child: Text('Oty as per scope',
+                                              textAlign: TextAlign.center,
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -422,11 +407,10 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                         label: Container(
                                           alignment: Alignment.center,
                                           child: Text('Qty executed',
+                                              textAlign: TextAlign.center,
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -436,11 +420,10 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           width: 150,
                                           alignment: Alignment.center,
                                           child: Text('Balanced Qty',
+                                              textAlign: TextAlign.center,
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -449,11 +432,10 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                         label: Container(
                                           alignment: Alignment.center,
                                           child: Text('% of Progress',
+                                              textAlign: TextAlign.center,
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -464,9 +446,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text('Weightage',
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                     ],
@@ -682,9 +662,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text('Original Duration',
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -696,9 +674,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text('Start Date',
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -712,9 +688,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text('End Date',
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -728,9 +702,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text('Actual Start',
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -744,9 +716,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text('Actual End',
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -757,9 +727,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text('Actual Duration',
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -770,9 +738,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text('Delay',
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -784,9 +750,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                               textAlign: TextAlign.center,
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -797,9 +761,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text('Unit',
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -810,9 +772,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text('Oty as per scope',
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -823,9 +783,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text('Qty executed',
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -837,9 +795,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text('Balanced Qty',
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -850,9 +806,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text('% of Progress',
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                       GridColumn(
@@ -863,9 +817,7 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                                           child: Text('Weightage',
                                               overflow:
                                                   TextOverflow.values.first,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16)),
+                                              style: tableheader),
                                         ),
                                       ),
                                     ],
