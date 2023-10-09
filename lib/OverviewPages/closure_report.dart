@@ -66,6 +66,8 @@ class _ClosureReportState extends State<ClosureReport> {
         appBar: PreferredSize(
             // ignore: sort_child_properties_last
             child: CustomAppBar(
+              showDepoBar: true,
+              toClosure: true,
               cityName: widget.cityName,
               depoName: widget.depoName,
               text: ' ${widget.cityName}/ ${widget.depoName} / Close Report',
