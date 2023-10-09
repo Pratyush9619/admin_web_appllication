@@ -23,7 +23,7 @@ class Mydepots extends StatefulWidget {
 }
 
 class _MydepotsState extends State<Mydepots> {
-  String cityName = "";
+  String depoName = "";
   File? pickedImage;
   // Uint8List? webImage;
   dynamic webImage;
@@ -50,6 +50,7 @@ class _MydepotsState extends State<Mydepots> {
       appBar: PreferredSize(
           // ignore: sort_child_properties_last
           child: CustomAppBar(
+            toDepots: true,
             text: 'Depots - ${widget.cityName}',
             cityName: widget.cityName,
             userId: widget.userId,
@@ -140,7 +141,7 @@ class _MydepotsState extends State<Mydepots> {
                       TextField(
                         onChanged: (val) {
                           setState(() {
-                            cityName = val;
+                            depoName = val;
                           });
                         },
                         decoration: InputDecoration(
@@ -193,7 +194,7 @@ class _MydepotsState extends State<Mydepots> {
                           final ref = FirebaseStorage.instance
                               .ref()
                               .child('DepoImages')
-                              .child('/' + cityName);
+                              .child('/' + depoName);
                           await ref.putData(webImage,
                               SettableMetadata(contentType: 'image/jpeg'));
                           var downloadurl = await ref
@@ -204,13 +205,20 @@ class _MydepotsState extends State<Mydepots> {
                           //     .uploadDepoData(cityName, downloadurl)
                           //     .whenComplete(() => pickedImage == null);
                           // Navigator.pop(context);
+                          FirebaseFirestore.instance
+                              .collection('DepoName')
+                              .doc(widget.cityName!)
+                              .set({
+                            'userId': widget.userId,
+                          });
 
                           FirebaseFirestore.instance
                               .collection('DepoName')
                               .doc(widget.cityName!)
                               .collection('AllDepots')
-                              .add({
-                            'DepoName': cityName,
+                              .doc(depoName)
+                              .set({
+                            'DepoName': depoName,
                             'DepoUrl': downloadurl,
                           }).whenComplete(() => pickedImage == null);
                           Navigator.pop(context);

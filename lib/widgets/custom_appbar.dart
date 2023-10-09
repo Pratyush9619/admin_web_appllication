@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 import 'package:web_appllication/KeyEvents/key_eventsUser.dart';
-import 'package:web_appllication/OverviewPages/closure_summary.dart';
 import 'package:web_appllication/OverviewPages/closure_summary_table.dart';
 import 'package:web_appllication/OverviewPages/monthly_summary.dart';
 import 'package:web_appllication/Planning/overview.dart';
@@ -17,11 +16,13 @@ import '../OverviewPages/material_vendor.dart';
 import '../OverviewPages/quality_checklist.dart';
 import '../OverviewPages/safety_summary.dart';
 import '../OverviewPages/testing_report.dart';
+import '../Planning/depot.dart';
 import '../style.dart';
 
 class CustomAppBar extends StatefulWidget {
   final String? text;
   String? userId;
+  bool toDepots;
   // final IconData? icon;
   final bool haveSynced;
   final bool haveSummary;
@@ -51,6 +52,7 @@ class CustomAppBar extends StatefulWidget {
 
   CustomAppBar(
       {super.key,
+      this.toDepots = false,
       this.text,
       this.userId,
       this.haveSynced = false,
@@ -103,41 +105,51 @@ class _CustomAppBarState extends State<CustomAppBar> {
               widget.text.toString(),
             ),
             actions: [
-              widget.toMainOverview
-                  ? Container(
-                      padding: const EdgeInsets.all(5.0),
-                      width: 200,
-                      height: 30,
-                      child: TypeAheadField(
-                          animationStart: BorderSide.strokeAlignCenter,
-                          suggestionsCallback: (pattern) async {
-                            return await getCityList(pattern);
-                          },
-                          itemBuilder: (context, suggestion) {
-                            return ListTile(
-                              title: Text(
-                                suggestion.toString(),
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                            );
-                          },
-                          onSuggestionSelected: (suggestion) {
-                            selectedCityController.text = suggestion.toString();
-                          },
-                          textFieldConfiguration: TextFieldConfiguration(
-                            decoration: InputDecoration(
-                              fillColor: Colors.white,
-                              filled: true,
-                              contentPadding: const EdgeInsets.all(5.0),
-                              hintText: widget.cityName,
-                            ),
-                            style: const TextStyle(
-                              fontSize: 15,
-                            ),
-                            controller: selectedCityController,
-                          )),
-                    )
-                  : Container(),
+              Container(
+                padding: const EdgeInsets.all(5.0),
+                width: 200,
+                height: 30,
+                child: TypeAheadField(
+                    animationStart: BorderSide.strokeAlignCenter,
+                    suggestionsCallback: (pattern) async {
+                      return await getCityList(pattern);
+                    },
+                    itemBuilder: (context, suggestion) {
+                      return ListTile(
+                        title: Text(
+                          suggestion.toString(),
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      );
+                    },
+                    onSuggestionSelected: (suggestion) {
+                      selectedCityController.text = suggestion.toString();
+                      selectedDepoController.clear();
+
+                      widget.toDepots
+                          ? Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Mydepots(
+                                  userId: widget.userId,
+                                  cityName: selectedCityController.text,
+                                ),
+                              ))
+                          : Container();
+                    },
+                    textFieldConfiguration: TextFieldConfiguration(
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        contentPadding: const EdgeInsets.all(5.0),
+                        hintText: widget.cityName,
+                      ),
+                      style: const TextStyle(
+                        fontSize: 15,
+                      ),
+                      controller: selectedCityController,
+                    )),
+              ),
               widget.showDepoBar
                   ? Container(
                       padding: const EdgeInsets.all(5.0),
@@ -160,73 +172,78 @@ class _CustomAppBarState extends State<CustomAppBar> {
                             selectedDepoController.text = suggestion.toString();
 
                             if (selectedCityController.text.isNotEmpty) {
-                              widget.toMainOverview
+                              widget.toDepots
                                   ? Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => MyOverview(
-                                          depoName: suggestion.toString(),
+                                        builder: (context) => Mydepots(
+                                          userId: widget.userId,
                                           cityName: selectedCityController.text,
                                         ),
                                       ))
-                                  : widget.toDaily
+                                  : widget.toMainOverview
                                       ? Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => DailyProject(
+                                            builder: (context) => MyOverview(
+                                              userId: widget.userId,
                                               depoName: suggestion.toString(),
                                               cityName:
                                                   selectedCityController.text,
                                             ),
                                           ))
-                                      : widget.toOverview
+                                      : widget.toDaily
                                           ? Navigator.pushReplacement(
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) =>
-                                                    DepotOverview(
+                                                    DailyProject(
+                                                  userId: widget.userId,
+                                                  depoName:
+                                                      suggestion.toString(),
                                                   cityName:
                                                       selectedCityController
                                                           .text,
-                                                  depoName:
-                                                      suggestion.toString(),
                                                 ),
                                               ))
-                                          : widget.toPlanning
+                                          : widget.toOverview
                                               ? Navigator.pushReplacement(
                                                   context,
                                                   MaterialPageRoute(
                                                     builder: (context) =>
-                                                        KeyEventsUser(
-                                                      depoName:
-                                                          suggestion.toString(),
+                                                        DepotOverview(
+                                                      userid: widget.userId,
                                                       cityName:
                                                           selectedCityController
                                                               .text,
-                                                      userId: widget.userId,
+                                                      depoName:
+                                                          suggestion.toString(),
                                                     ),
                                                   ))
-                                              : widget.toMaterial
+                                              : widget.toPlanning
                                                   ? Navigator.pushReplacement(
                                                       context,
                                                       MaterialPageRoute(
                                                         builder: (context) =>
-                                                            MaterialProcurement(
+                                                            KeyEventsUser(
                                                           depoName: suggestion
                                                               .toString(),
                                                           cityName:
                                                               selectedCityController
                                                                   .text,
+                                                          userId: widget.userId,
                                                         ),
                                                       ))
-                                                  : widget.toSubmission
+                                                  : widget.toMaterial
                                                       ? Navigator
                                                           .pushReplacement(
                                                               context,
                                                               MaterialPageRoute(
                                                                 builder:
                                                                     (context) =>
-                                                                        DailyProject(
+                                                                        MaterialProcurement(
+                                                                  userId: widget
+                                                                      .userId,
                                                                   depoName:
                                                                       suggestion
                                                                           .toString(),
@@ -235,98 +252,117 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                                                           .text,
                                                                 ),
                                                               ))
-                                                      : widget.toMonthly
+                                                      : widget.toSubmission
                                                           ? Navigator
                                                               .pushReplacement(
                                                                   context,
                                                                   MaterialPageRoute(
                                                                     builder:
                                                                         (context) =>
-                                                                            MonthlySummary(
+                                                                            DailyProject(
+                                                                      userId: widget
+                                                                          .userId,
                                                                       depoName:
                                                                           suggestion
                                                                               .toString(),
                                                                       cityName:
                                                                           selectedCityController
                                                                               .text,
-                                                                      id: 'Monthly Summary',
                                                                     ),
                                                                   ))
-                                                          : widget
-                                                                  .toDetailEngineering
+                                                          : widget.toMonthly
                                                               ? Navigator
                                                                   .pushReplacement(
                                                                       context,
                                                                       MaterialPageRoute(
                                                                         builder:
                                                                             (context) =>
-                                                                                DetailedEng(
-                                                                          cityName:
-                                                                              selectedCityController.text,
+                                                                                MonthlySummary(
+                                                                          userId:
+                                                                              widget.userId,
                                                                           depoName:
                                                                               suggestion.toString(),
+                                                                          cityName:
+                                                                              selectedCityController.text,
+                                                                          id: 'Monthly Summary',
                                                                         ),
                                                                       ))
-                                                              : widget.toJmr
+                                                              : widget
+                                                                      .toDetailEngineering
                                                                   ? Navigator
                                                                       .pushReplacement(
                                                                           context,
                                                                           MaterialPageRoute(
                                                                             builder: (context) =>
-                                                                                Jmr(
+                                                                                DetailedEng(
+                                                                              userId: widget.userId,
                                                                               cityName: selectedCityController.text,
                                                                               depoName: suggestion.toString(),
                                                                             ),
                                                                           ))
-                                                                  : widget.toSafety
+                                                                  : widget.toJmr
                                                                       ? Navigator.pushReplacement(
                                                                           context,
                                                                           MaterialPageRoute(
                                                                             builder: (context) =>
-                                                                                SafetySummary(
+                                                                                Jmr(
+                                                                              userId: widget.userId,
                                                                               cityName: selectedCityController.text,
                                                                               depoName: suggestion.toString(),
                                                                             ),
                                                                           ))
-                                                                      : widget.toChecklist
+                                                                      : widget.toSafety
                                                                           ? Navigator.pushReplacement(
                                                                               context,
                                                                               MaterialPageRoute(
-                                                                                builder: (context) => QualityChecklist(
+                                                                                builder: (context) => SafetySummary(
+                                                                                  userId: widget.userId,
                                                                                   cityName: selectedCityController.text,
                                                                                   depoName: suggestion.toString(),
                                                                                 ),
                                                                               ))
-                                                                          : widget.toTesting
+                                                                          : widget.toChecklist
                                                                               ? Navigator.pushReplacement(
                                                                                   context,
                                                                                   MaterialPageRoute(
-                                                                                    builder: (context) => TestingReport(
+                                                                                    builder: (context) => QualityChecklist(
+                                                                                      userId: widget.userId,
                                                                                       cityName: selectedCityController.text,
                                                                                       depoName: suggestion.toString(),
                                                                                     ),
                                                                                   ))
-                                                                              : widget.toClosure
+                                                                              : widget.toTesting
                                                                                   ? Navigator.pushReplacement(
                                                                                       context,
                                                                                       MaterialPageRoute(
-                                                                                        builder: (context) => ClosureSummaryTable(
-                                                                                          depoName: suggestion.toString(),
+                                                                                        builder: (context) => TestingReport(
+                                                                                          userId: widget.userId,
                                                                                           cityName: selectedCityController.text,
-                                                                                          id: 'Closure Report',
+                                                                                          depoName: suggestion.toString(),
                                                                                         ),
                                                                                       ))
-                                                                                  : widget.toEasyMonitoring
+                                                                                  : widget.toClosure
                                                                                       ? Navigator.pushReplacement(
                                                                                           context,
                                                                                           MaterialPageRoute(
-                                                                                            builder: (context) => KeyEvents(
+                                                                                            builder: (context) => ClosureSummaryTable(
+                                                                                              userId: widget.userId,
                                                                                               depoName: suggestion.toString(),
                                                                                               cityName: selectedCityController.text,
-                                                                                              userId: '',
+                                                                                              id: 'Closure Report',
                                                                                             ),
                                                                                           ))
-                                                                                      : ' ';
+                                                                                      : widget.toEasyMonitoring
+                                                                                          ? Navigator.pushReplacement(
+                                                                                              context,
+                                                                                              MaterialPageRoute(
+                                                                                                builder: (context) => KeyEvents(
+                                                                                                  userId: widget.userId,
+                                                                                                  depoName: suggestion.toString(),
+                                                                                                  cityName: selectedCityController.text,
+                                                                                                ),
+                                                                                              ))
+                                                                                          : ' ';
                             }
                           },
                           textFieldConfiguration: TextFieldConfiguration(

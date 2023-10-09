@@ -77,6 +77,7 @@ class _QualityChecklistState extends State<QualityChecklist> {
   @override
   void initState() {
     getUserId().whenComplete(() {});
+
     super.initState();
   }
 
