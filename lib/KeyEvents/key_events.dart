@@ -2,10 +2,12 @@ import 'dart:html';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gantt_chart/gantt_chart.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:web_appllication/FirebaseApi/firebase_api.dart';
 import 'package:web_appllication/KeyEvents/upload.dart';
+import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 import 'package:web_appllication/model/employee.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/provider/key_provider.dart';
@@ -61,6 +63,17 @@ class _KeyEventsState extends State<KeyEvents> {
   bool _isInit = true;
   int? num_id;
   int? length;
+
+  Duration? delay2 = const Duration(hours: 0),
+      delay3 = const Duration(hours: 0),
+      delay4 = const Duration(hours: 0),
+      delay5 = const Duration(hours: 0),
+      delay6 = const Duration(hours: 0),
+      delay7 = const Duration(hours: 0),
+      delay8 = const Duration(hours: 0),
+      delay9 = const Duration(hours: 0),
+      delay10 = const Duration(hours: 0);
+
   String? sdate2,
       sdate3,
       sdate4,
@@ -218,7 +231,7 @@ class _KeyEventsState extends State<KeyEvents> {
         .collection('KeyEventsTable')
         .doc(widget.depoName!)
         .collection('KeyDataTable')
-        .doc('ZW3210')
+        .doc(widget.userId)
         .collection('KeyAllEvents')
         // .collection(widget.userId!)
         // .doc('${widget.depoName}')
@@ -297,8 +310,7 @@ class _KeyEventsState extends State<KeyEvents> {
                       showDepoBar: true,
                       depoName: widget.depoName,
                       cityName: widget.cityName,
-                      text:
-                          'Overview - ${widget.cityName} - ${widget.depoName}',
+                      text: 'Overview/${widget.cityName}/${widget.depoName}',
                       userId: widget.userId,
                     ),
                     preferredSize: const Size.fromHeight(50)),
@@ -346,6 +358,13 @@ class _KeyEventsState extends State<KeyEvents> {
                                   totalBalanceQty10 =
                                       balanceQty10 + totalBalanceQty10;
                                   totalweightage = totalweightage + weightage;
+
+                                  DateTime aedateFormat =
+                                      DateFormat('dd-MM-yyyy').parse(aedate10!);
+                                  DateTime edateFormat =
+                                      DateFormat('dd-MM-yyyy').parse(edate10!);
+                                  delay10 =
+                                      aedateFormat.difference(edateFormat);
                                 }
                                 perc10 = ((totalBalanceQty10 / totalscope10) *
                                     totalweightage);
@@ -368,6 +387,11 @@ class _KeyEventsState extends State<KeyEvents> {
                                 asdate2 = alldataA2[0]['ActualStart'];
                                 aedate2 = alldataA2[alldataA2.length - 1]
                                     ['ActualEnd'];
+                                DateTime aedateFormat =
+                                    DateFormat('dd-MM-yyyy').parse(aedate2!);
+                                DateTime edateFormat =
+                                    DateFormat('dd-MM-yyyy').parse(edate2!);
+                                delay2 = aedateFormat.difference(edateFormat);
 
                                 for (int i = 0; i < alldataA2.length; i++) {
                                   perc2 = 0;
@@ -403,6 +427,11 @@ class _KeyEventsState extends State<KeyEvents> {
                                 asdate3 = alldataA3[0]['ActualStart'];
                                 aedate3 = alldataA3[alldataA3.length - 1]
                                     ['ActualEnd'];
+                                DateTime aedateFormat =
+                                    DateFormat('dd-MM-yyyy').parse(aedate3!);
+                                DateTime edateFormat =
+                                    DateFormat('dd-MM-yyyy').parse(edate3!);
+                                delay3 = aedateFormat.difference(edateFormat);
 
                                 for (int i = 0; i < alldataA3.length; i++) {
                                   perc3 = 0;
@@ -448,6 +477,12 @@ class _KeyEventsState extends State<KeyEvents> {
                                   totalscope4 = scope4 + totalscope4;
                                   totalBalanceQty4 =
                                       balanceQty4 + totalBalanceQty4;
+
+                                  DateTime aedateFormat =
+                                      DateFormat('dd-MM-yyyy').parse(aedate4!);
+                                  DateTime edateFormat =
+                                      DateFormat('dd-MM-yyyy').parse(edate4!);
+                                  delay4 = aedateFormat.difference(edateFormat);
                                 }
                                 perc4 = ((totalBalanceQty4 / totalscope4) *
                                     totalweightage);
@@ -481,6 +516,12 @@ class _KeyEventsState extends State<KeyEvents> {
                                   totalBalanceQty5 =
                                       balanceQty5 + totalBalanceQty5;
                                   totalweightage = totalweightage + weightage;
+
+                                  DateTime aedateFormat =
+                                      DateFormat('dd-MM-yyyy').parse(aedate5!);
+                                  DateTime edateFormat =
+                                      DateFormat('dd-MM-yyyy').parse(edate5!);
+                                  delay5 = aedateFormat.difference(edateFormat);
                                 }
                                 perc5 = ((totalBalanceQty5 / totalscope5) *
                                     totalweightage);
@@ -514,6 +555,11 @@ class _KeyEventsState extends State<KeyEvents> {
                                       balanceQty6 + totalBalanceQty6;
                                   var weightage = alldataA6[i]['Weightage'];
                                   totalweightage = totalweightage + weightage;
+                                  DateTime aedateFormat =
+                                      DateFormat('dd-MM-yyyy').parse(aedate6!);
+                                  DateTime edateFormat =
+                                      DateFormat('dd-MM-yyyy').parse(edate6!);
+                                  delay6 = aedateFormat.difference(edateFormat);
                                 }
                                 perc6 = ((totalBalanceQty6 / totalscope6) *
                                     totalweightage);
@@ -547,6 +593,11 @@ class _KeyEventsState extends State<KeyEvents> {
                                       balanceQty7 + totalBalanceQty7;
                                   var weightage = alldataA7[i]['Weightage'];
                                   totalweightage = totalweightage + weightage;
+                                  DateTime aedateFormat =
+                                      DateFormat('dd-MM-yyyy').parse(aedate7!);
+                                  DateTime edateFormat =
+                                      DateFormat('dd-MM-yyyy').parse(edate7!);
+                                  delay7 = aedateFormat.difference(edateFormat);
                                 }
                                 perc7 = ((totalBalanceQty7 / totalscope7) *
                                     totalweightage);
@@ -580,6 +631,11 @@ class _KeyEventsState extends State<KeyEvents> {
                                   totalBalanceQty8 =
                                       balanceQty8 + totalBalanceQty8;
                                   totalweightage = totalweightage + weightage;
+                                  DateTime aedateFormat =
+                                      DateFormat('dd-MM-yyyy').parse(aedate8!);
+                                  DateTime edateFormat =
+                                      DateFormat('dd-MM-yyyy').parse(edate8!);
+                                  delay8 = aedateFormat.difference(edateFormat);
                                 }
                                 perc8 = ((totalBalanceQty8 / totalscope8) *
                                     totalweightage);
@@ -613,6 +669,11 @@ class _KeyEventsState extends State<KeyEvents> {
                                       balanceQty9 + totalBalanceQty9;
                                   var weightage = alldataA9[i]['Weightage'];
                                   totalweightage = totalweightage + weightage;
+                                  DateTime aedateFormat =
+                                      DateFormat('dd-MM-yyyy').parse(aedate9!);
+                                  DateTime edateFormat =
+                                      DateFormat('dd-MM-yyyy').parse(edate9!);
+                                  delay9 = aedateFormat.difference(edateFormat);
                                 }
                               }
                               perc9 = ((totalBalanceQty9 / totalscope9) *
@@ -753,7 +814,8 @@ class _KeyEventsState extends State<KeyEvents> {
                                               cityName: widget.cityName,
                                               depoName: widget.depoName,
                                               title: 'Key Events',
-                                              activity: widget.cityName);
+                                              activity:
+                                                  row.getCells()[1].value);
                                         } else {
                                           return StatutoryAprovalA2(
                                               userid: widget.userId,
@@ -1044,18 +1106,26 @@ class _KeyEventsState extends State<KeyEvents> {
                                       _keyDataSourceKeyEvents.effectiveRows[
                                           details.rowColumnIndex.rowIndex - 1];
 
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => StatutoryAprovalA2(
+                                  Navigator.of(context).push(
+                                      MaterialPageRoute(builder: (context) {
+                                    if (row.getCells().first.value == 'A1') {
+                                      return UploadDocument(
+                                          userId: widget.userId,
+                                          cityName: widget.cityName,
+                                          depoName: widget.depoName,
+                                          title: 'Key Events',
+                                          activity: row.getCells()[1].value);
+                                    } else {
+                                      return StatutoryAprovalA2(
                                           userid: widget.userId,
                                           cityName: widget.cityName,
                                           depoName: widget.depoName,
                                           events: row
                                               .getCells()[0]
                                               .value
-                                              .toString())
-                                      //  menuwidget[
-                                      //     details.rowColumnIndex.rowIndex - 1]
-                                      ));
+                                              .toString());
+                                    }
+                                  }));
                                 },
                                 allowEditing: true,
                                 frozenColumnsCount: 2,
@@ -1531,9 +1601,7 @@ class _KeyEventsState extends State<KeyEvents> {
           actualDuration: durationParse(
               asdate2 ?? DateFormat('dd-MM-yyyy').format(DateTime.now()),
               aedate2 ?? DateFormat('dd-MM-yyyy').format(DateTime.now())),
-          delay: durationParse(
-              edate2 ?? DateFormat('dd-MM-yyyy').format(DateTime.now()),
-              aedate2 ?? DateFormat('dd-MM-yyyy').format(DateTime.now())),
+          delay: int.parse(delay2!.inDays.toString()),
           reasonDelay: '',
           unit: 0,
           scope: 0,
@@ -1559,9 +1627,7 @@ class _KeyEventsState extends State<KeyEvents> {
         actualDuration: durationParse(
             asdate3 ?? DateFormat('dd-MM-yyyy').format(DateTime.now()),
             aedate3 ?? DateFormat('dd-MM-yyyy').format(DateTime.now())),
-        delay: durationParse(
-            edate3 ?? DateFormat('dd-MM-yyyy').format(DateTime.now()),
-            aedate3 ?? DateFormat('dd-MM-yyyy').format(DateTime.now())),
+        delay: int.parse(delay3!.inDays.toString()),
         reasonDelay: '',
         unit: 0,
         scope: 0,
@@ -1587,9 +1653,7 @@ class _KeyEventsState extends State<KeyEvents> {
         actualDuration: durationParse(
             asdate4 ?? DateFormat('dd-MM-yyyy').format(DateTime.now()),
             aedate4 ?? DateFormat('dd-MM-yyyy').format(DateTime.now())),
-        delay: durationParse(
-            edate4 ?? DateFormat('dd-MM-yyyy').format(DateTime.now()),
-            aedate4 ?? DateFormat('dd-MM-yyyy').format(DateTime.now())),
+        delay: int.parse(delay4!.inDays.toString()),
         reasonDelay: '',
         unit: 0,
         scope: 0,
@@ -1615,9 +1679,7 @@ class _KeyEventsState extends State<KeyEvents> {
         actualDuration: durationParse(
             asdate5 ?? DateFormat('dd-MM-yyyy').format(DateTime.now()),
             aedate5 ?? DateFormat('dd-MM-yyyy').format(DateTime.now())),
-        delay: durationParse(
-            edate5 ?? DateFormat('dd-MM-yyyy').format(DateTime.now()),
-            aedate5 ?? DateFormat('dd-MM-yyyy').format(DateTime.now())),
+        delay: int.parse(delay5!.inDays.toString()),
         reasonDelay: '',
         unit: 0,
         scope: 0,
@@ -1643,9 +1705,7 @@ class _KeyEventsState extends State<KeyEvents> {
         actualDuration: durationParse(
             asdate6 ?? DateFormat('dd-MM-yyyy').format(DateTime.now()),
             aedate6 ?? DateFormat('dd-MM-yyyy').format(DateTime.now())),
-        delay: durationParse(
-            edate6 ?? DateFormat('dd-MM-yyyy').format(DateTime.now()),
-            aedate6 ?? DateFormat('dd-MM-yyyy').format(DateTime.now())),
+        delay: int.parse(delay6!.inDays.toString()),
         reasonDelay: '',
         unit: 0,
         scope: 0,
@@ -1671,9 +1731,7 @@ class _KeyEventsState extends State<KeyEvents> {
         actualDuration: durationParse(
             asdate7 ?? DateFormat('dd-MM-yyyy').format(DateTime.now()),
             aedate7 ?? DateFormat('dd-MM-yyyy').format(DateTime.now())),
-        delay: durationParse(
-            edate7 ?? DateFormat('dd-MM-yyyy').format(DateTime.now()),
-            aedate7 ?? DateFormat('dd-MM-yyyy').format(DateTime.now())),
+        delay: int.parse(delay7!.inDays.toString()),
         reasonDelay: '',
         unit: 0,
         scope: 0,
@@ -1699,7 +1757,7 @@ class _KeyEventsState extends State<KeyEvents> {
         actualDuration: durationParse(
             asdate8 ?? DateFormat('dd-MM-yyyy').format(DateTime.now()),
             aedate8 ?? DateFormat('dd-MM-yyyy').format(DateTime.now())),
-        delay: 0,
+        delay: int.parse(delay8!.inDays.toString()),
         reasonDelay: '',
         unit: 0,
         scope: 0,
@@ -1725,9 +1783,7 @@ class _KeyEventsState extends State<KeyEvents> {
         actualDuration: durationParse(
             asdate9 ?? DateFormat('dd-MM-yyyy').format(DateTime.now()),
             aedate9 ?? DateFormat('dd-MM-yyyy').format(DateTime.now())),
-        delay: durationParse(
-            edate2 ?? DateFormat('dd-MM-yyyy').format(DateTime.now()),
-            aedate2 ?? DateFormat('dd-MM-yyyy').format(DateTime.now())),
+        delay: int.parse(delay9!.inDays.toString()),
         reasonDelay: '',
         unit: 0,
         scope: 0,
@@ -1753,9 +1809,7 @@ class _KeyEventsState extends State<KeyEvents> {
         actualDuration: durationParse(
             asdate10 ?? DateFormat('dd-MM-yyyy').format(DateTime.now()),
             aedate10 ?? DateFormat('dd-MM-yyyy').format(DateTime.now())),
-        delay: durationParse(
-            edate10 ?? DateFormat('dd-MM-yyyy').format(DateTime.now()),
-            aedate10 ?? DateFormat('dd-MM-yyyy').format(DateTime.now())),
+        delay: int.parse(delay10!.inDays.toString()),
         reasonDelay: '',
         unit: 0,
         scope: 0,

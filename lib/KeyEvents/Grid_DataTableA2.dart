@@ -12,6 +12,7 @@ import 'package:web_appllication/model/employee.dart';
 import 'package:web_appllication/model/employee_statutory.dart';
 import 'package:web_appllication/provider/key_provider.dart';
 import 'package:web_appllication/style.dart';
+import 'package:web_appllication/widgets/nodata_available.dart';
 import '../Authentication/auth_service.dart';
 import '../FirebaseApi/firebase_api.dart';
 import '../components/loading_page.dart';
@@ -192,6 +193,9 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
                   print(ganttdata);
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return LoadingPage();
+                  }
+                  if (!snapshot.data.exists) {
+                    return NodataAvailable();
                   }
                   if (snapshot.hasData || snapshot.data.exists == false) {
                     _employees.clear();

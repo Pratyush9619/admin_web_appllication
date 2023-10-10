@@ -55,6 +55,8 @@ class EmployeeDataSource extends DataGridSource {
     int? balnceQtyValue;
     double? percProgress;
     DateTime? getActualEnddate;
+    DateTime? getEndDate;
+    Duration? calculateDelay;
     final int dataIndex = dataGridRows.indexOf(row);
     if (dataIndex != null) {
       balnceQtyValue = _employees[dataIndex].balanceQty =
@@ -64,6 +66,9 @@ class EmployeeDataSource extends DataGridSource {
               _employees[dataIndex].weightage);
       getActualEnddate = DateFormat("dd-MM-yyyy")
           .parse(_employees[dataIndex].actualendDate.toString());
+      getEndDate = DateFormat("dd-MM-yyyy")
+          .parse(_employees[dataIndex].endDate.toString());
+      calculateDelay = getActualEnddate.difference(getEndDate);
     }
     return DataGridRowAdapter(
         cells: row.getCells().map<Widget>((dataGridCell) {
@@ -87,7 +92,9 @@ class EmployeeDataSource extends DataGridSource {
               Alignment.center,
           // : Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child:
+          child: dataGridCell.columnName == 'Delay'
+              ? Text(calculateDelay!.inDays.toString())
+              :
               // dataGridCell.columnName == 'button'
               //     ? LayoutBuilder(
               //         builder: (BuildContext ctx, BoxConstraints constraints) {
