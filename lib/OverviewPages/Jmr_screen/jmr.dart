@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 import 'package:web_appllication/OverviewPages/Jmr_screen/jmr_home.dart';
+import 'package:web_appllication/widgets/nodata_available.dart';
 import '../../KeyEvents/Grid_DataTable.dart';
 import '../../components/Loading_page.dart';
 import '../../style.dart';
@@ -161,8 +162,12 @@ class _JmrState extends State<Jmr> {
               ],
             ),
           ),
-          body: TabBarView(
-              children: [customRowList('Civil'), customRowList('Electrical')]),
+          body: isPageEmpty
+              ? const NodataAvailable()
+              : TabBarView(children: [
+                  customRowList('Civil'),
+                  customRowList('Electrical')
+                ]),
         ));
   }
 
@@ -179,10 +184,7 @@ class _JmrState extends State<Jmr> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return LoadingPage();
         } else if (!snapshot.hasData) {
-          return const Center(
-              child: Text(
-            'No Data Available',
-          ));
+          return NodataAvailable();
         } else if (snapshot.hasError) {
           return const Center(
               child: Text(
@@ -323,6 +325,14 @@ class _JmrState extends State<Jmr> {
     List<dynamic> userListId =
         querySnapshot.docs.map((data) => data.id).toList();
 
+    if (userListId.isEmpty) {
+      isPageEmpty = true;
+      isLoading = false;
+
+      setState(() {});
+      return jmrTabLen;
+    }
+
     for (int i = 0; i < userListId.length; i++) {
       List<int> tempList = [];
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
@@ -338,39 +348,32 @@ class _JmrState extends State<Jmr> {
       List<dynamic> jmrTabList =
           querySnapshot.docs.map((data) => data.id).toList();
 
-      if (jmrTabList.isEmpty) {
-        isPageEmpty = true;
-        setState(() {});
+      for (int j = 0; j < jmrTabList.length; j++) {
+        QuerySnapshot jmrLen = await FirebaseFirestore.instance
+            .collection('JMRCollection')
+            .doc(widget.depoName)
+            .collection('Table')
+            .doc('${tabName[_selectedIndex]}JmrTable')
+            .collection('userId')
+            .doc(userListId[i])
+            .collection('jmrTabName')
+            .doc(jmrTabList[j])
+            .collection('jmrTabIndex')
+            .get();
 
-        return jmrTabLen;
-      } else {
-        for (int j = 0; j < jmrTabList.length; j++) {
-          QuerySnapshot jmrLen = await FirebaseFirestore.instance
-              .collection('JMRCollection')
-              .doc(widget.depoName)
-              .collection('Table')
-              .doc('${tabName[_selectedIndex]}JmrTable')
-              .collection('userId')
-              .doc(userListId[i])
-              .collection('jmrTabName')
-              .doc(jmrTabList[j])
-              .collection('jmrTabIndex')
-              .get();
+        int jmrLength = jmrLen.docs.length;
 
-          int jmrLength = jmrLen.docs.length;
-
-          tempList.add(jmrLength);
-        }
-        if (tempList.length < 5) {
-          int tempJmrLen = tempList.length;
-          int loop = 5 - tempJmrLen;
-          for (int k = 0; k < loop; k++) {
-            tempList.add(0);
-          }
-        }
-
-        jmrTabLen.add(tempList);
+        tempList.add(jmrLength);
       }
+      if (tempList.length < 5) {
+        int tempJmrLen = tempList.length;
+        int loop = 5 - tempJmrLen;
+        for (int k = 0; k < loop; k++) {
+          tempList.add(0);
+        }
+      }
+
+      jmrTabLen.add(tempList);
 
       setState(() {
         isLoading = false;
