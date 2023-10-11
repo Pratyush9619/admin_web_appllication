@@ -21,6 +21,8 @@ class _JmrState extends State<Jmr> {
   List<List<int>> jmrTabLen = [];
   int _selectedIndex = 0;
   bool isLoading = true;
+  bool isPageEmpty = false;
+  TextEditingController selectedCityController = TextEditingController();
   List<String> title = ['R1', 'R2', 'R3', 'R4', 'R5'];
   List<String> tabName = ['Civil', 'Electrical'];
   TextEditingController selectedDepoController = TextEditingController();
@@ -40,6 +42,40 @@ class _JmrState extends State<Jmr> {
             title: Text('${widget.cityName} / ${widget.depoName} / JMR'),
             backgroundColor: blue,
             actions: [
+              Container(
+                padding: const EdgeInsets.all(5.0),
+                width: 200,
+                height: 30,
+                child: TypeAheadField(
+                    animationStart: BorderSide.strokeAlignCenter,
+                    suggestionsCallback: (pattern) async {
+                      return await getCityList(pattern);
+                    },
+                    itemBuilder: (context, suggestion) {
+                      return ListTile(
+                        title: Text(
+                          suggestion.toString(),
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      );
+                    },
+                    onSuggestionSelected: (suggestion) {
+                      selectedCityController.text = suggestion.toString();
+                      selectedDepoController.clear();
+                    },
+                    textFieldConfiguration: TextFieldConfiguration(
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        contentPadding: const EdgeInsets.all(5.0),
+                        hintText: widget.cityName,
+                      ),
+                      style: const TextStyle(
+                        fontSize: 15,
+                      ),
+                      controller: selectedCityController,
+                    )),
+              ),
               Container(
                 padding: const EdgeInsets.all(5.0),
                 width: 200,
@@ -287,8 +323,6 @@ class _JmrState extends State<Jmr> {
     List<dynamic> userListId =
         querySnapshot.docs.map((data) => data.id).toList();
 
-    print('userListId - ${userListId}');
-
     for (int i = 0; i < userListId.length; i++) {
       List<int> tempList = [];
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
@@ -304,53 +338,84 @@ class _JmrState extends State<Jmr> {
       List<dynamic> jmrTabList =
           querySnapshot.docs.map((data) => data.id).toList();
 
-      for (int j = 0; j < jmrTabList.length; j++) {
-        QuerySnapshot jmrLen = await FirebaseFirestore.instance
-            .collection('JMRCollection')
-            .doc(widget.depoName)
-            .collection('Table')
-            .doc('${tabName[_selectedIndex]}JmrTable')
-            .collection('userId')
-            .doc(userListId[i])
-            .collection('jmrTabName')
-            .doc(jmrTabList[j])
-            .collection('jmrTabIndex')
-            .get();
+      if (jmrTabList.isEmpty) {
+        isPageEmpty = true;
+        setState(() {});
 
-        int jmrLength = jmrLen.docs.length;
+        return jmrTabLen;
+      } else {
+        for (int j = 0; j < jmrTabList.length; j++) {
+          QuerySnapshot jmrLen = await FirebaseFirestore.instance
+              .collection('JMRCollection')
+              .doc(widget.depoName)
+              .collection('Table')
+              .doc('${tabName[_selectedIndex]}JmrTable')
+              .collection('userId')
+              .doc(userListId[i])
+              .collection('jmrTabName')
+              .doc(jmrTabList[j])
+              .collection('jmrTabIndex')
+              .get();
 
-        tempList.add(jmrLength);
-      }
-      if (tempList.length < 5) {
-        int tempJmrLen = tempList.length;
-        int loop = 5 - tempJmrLen;
-        for (int k = 0; k < loop; k++) {
-          tempList.add(0);
+          int jmrLength = jmrLen.docs.length;
+
+          tempList.add(jmrLength);
         }
-      }
-      print('jmrTabLen - ${jmrTabLen}');
-      jmrTabLen.add(tempList);
-    }
+        if (tempList.length < 5) {
+          int tempJmrLen = tempList.length;
+          int loop = 5 - tempJmrLen;
+          for (int k = 0; k < loop; k++) {
+            tempList.add(0);
+          }
+        }
 
-    setState(() {
-      isLoading = false;
-    });
+        jmrTabLen.add(tempList);
+      }
+
+      setState(() {
+        isLoading = false;
+      });
+    }
 
     return jmrTabLen;
   }
 
   Future<List<dynamic>> getDepoList(String pattern) async {
     List<dynamic> depoList = [];
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('DepoName')
-        .doc(widget.cityName)
-        .collection('AllDepots')
-        .get();
 
-    depoList = querySnapshot.docs.map((deponame) => deponame.id).toList();
+    if (selectedCityController.text.isNotEmpty) {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('DepoName')
+          .doc(selectedCityController.text)
+          .collection('AllDepots')
+          .get();
+
+      depoList = querySnapshot.docs.map((deponame) => deponame.id).toList();
+
+      if (pattern.isNotEmpty) {
+        depoList = depoList
+            .where((element) => element
+                .toString()
+                .toUpperCase()
+                .startsWith(pattern.toUpperCase()))
+            .toList();
+      }
+    } else {
+      depoList.add('Please Select a City');
+    }
+
+    return depoList;
+  }
+
+  Future<List<dynamic>> getCityList(String pattern) async {
+    List<dynamic> cityList = [];
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('DepoName').get();
+
+    cityList = querySnapshot.docs.map((deponame) => deponame.id).toList();
 
     if (pattern.isNotEmpty) {
-      depoList = depoList
+      cityList = cityList
           .where((element) => element
               .toString()
               .toUpperCase()
@@ -358,6 +423,6 @@ class _JmrState extends State<Jmr> {
           .toList();
     }
 
-    return depoList;
+    return cityList;
   }
 }

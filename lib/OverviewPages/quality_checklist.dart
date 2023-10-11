@@ -43,6 +43,8 @@ dynamic empName,
 dynamic alldata;
 int? _selectedIndex = 0;
 dynamic userId;
+TextEditingController selectedCityController = TextEditingController();
+
 TextEditingController selectedDepoController = TextEditingController();
 List<String> title = [
   'CHECKLIST FOR INSTALLATION OF PSS',
@@ -97,6 +99,40 @@ class _QualityChecklistState extends State<QualityChecklist> {
                   widget.isHeader! ? widget.isHeader! : false,
               backgroundColor: blue,
               actions: [
+                Container(
+                  padding: const EdgeInsets.all(5.0),
+                  width: 200,
+                  height: 30,
+                  child: TypeAheadField(
+                      animationStart: BorderSide.strokeAlignCenter,
+                      suggestionsCallback: (pattern) async {
+                        return await getCityList(pattern);
+                      },
+                      itemBuilder: (context, suggestion) {
+                        return ListTile(
+                          title: Text(
+                            suggestion.toString(),
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        );
+                      },
+                      onSuggestionSelected: (suggestion) {
+                        selectedCityController.text = suggestion.toString();
+                        selectedDepoController.clear();
+                      },
+                      textFieldConfiguration: TextFieldConfiguration(
+                        decoration: InputDecoration(
+                          fillColor: Colors.white,
+                          filled: true,
+                          contentPadding: const EdgeInsets.all(5.0),
+                          hintText: widget.cityName,
+                        ),
+                        style: const TextStyle(
+                          fontSize: 15,
+                        ),
+                        controller: selectedCityController,
+                      )),
+                ),
                 Container(
                   padding: const EdgeInsets.all(5.0),
                   width: 200,
@@ -215,16 +251,40 @@ class _QualityChecklistState extends State<QualityChecklist> {
 
   Future<List<dynamic>> getDepoList(String pattern) async {
     List<dynamic> depoList = [];
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('DepoName')
-        .doc(widget.cityName)
-        .collection('AllDepots')
-        .get();
 
-    depoList = querySnapshot.docs.map((deponame) => deponame.id).toList();
+    if (selectedCityController.text.isNotEmpty) {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('DepoName')
+          .doc(selectedCityController.text)
+          .collection('AllDepots')
+          .get();
+
+      depoList = querySnapshot.docs.map((deponame) => deponame.id).toList();
+
+      if (pattern.isNotEmpty) {
+        depoList = depoList
+            .where((element) => element
+                .toString()
+                .toUpperCase()
+                .startsWith(pattern.toUpperCase()))
+            .toList();
+      }
+    } else {
+      depoList.add('Please Select a City');
+    }
+
+    return depoList;
+  }
+
+  Future<List<dynamic>> getCityList(String pattern) async {
+    List<dynamic> cityList = [];
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('DepoName').get();
+
+    cityList = querySnapshot.docs.map((deponame) => deponame.id).toList();
 
     if (pattern.isNotEmpty) {
-      depoList = depoList
+      cityList = cityList
           .where((element) => element
               .toString()
               .toUpperCase()
@@ -232,6 +292,6 @@ class _QualityChecklistState extends State<QualityChecklist> {
           .toList();
     }
 
-    return depoList;
+    return cityList;
   }
 }

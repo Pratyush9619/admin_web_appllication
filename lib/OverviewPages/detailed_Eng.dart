@@ -28,6 +28,7 @@ class DetailedEng extends StatefulWidget {
 class _DetailedEngtState extends State<DetailedEng>
     with TickerProviderStateMixin {
   TextEditingController selectedDepoController = TextEditingController();
+  TextEditingController selectedCityController = TextEditingController();
 
   List<DetailedEngModel> detailedProject = <DetailedEngModel>[];
   List<DetailedEngModel> DetailedProjectev = <DetailedEngModel>[];
@@ -160,6 +161,40 @@ class _DetailedEngtState extends State<DetailedEng>
               '${widget.cityName} / ${widget.depoName} / Detailed Engineering',
             ),
             actions: [
+              Container(
+                padding: const EdgeInsets.all(5.0),
+                width: 200,
+                height: 30,
+                child: TypeAheadField(
+                    animationStart: BorderSide.strokeAlignCenter,
+                    suggestionsCallback: (pattern) async {
+                      return await getCityList(pattern);
+                    },
+                    itemBuilder: (context, suggestion) {
+                      return ListTile(
+                        title: Text(
+                          suggestion.toString(),
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      );
+                    },
+                    onSuggestionSelected: (suggestion) {
+                      selectedCityController.text = suggestion.toString();
+                      selectedDepoController.clear();
+                    },
+                    textFieldConfiguration: TextFieldConfiguration(
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        contentPadding: const EdgeInsets.all(5.0),
+                        hintText: widget.cityName,
+                      ),
+                      style: const TextStyle(
+                        fontSize: 15,
+                      ),
+                      controller: selectedCityController,
+                    )),
+              ),
               Container(
                 padding: const EdgeInsets.all(5.0),
                 width: 200,
@@ -1946,5 +1981,24 @@ class _DetailedEngtState extends State<DetailedEng>
     }
 
     return depoList;
+  }
+
+  Future<List<dynamic>> getCityList(String pattern) async {
+    List<dynamic> cityList = [];
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('DepoName').get();
+
+    cityList = querySnapshot.docs.map((deponame) => deponame.id).toList();
+
+    if (pattern.isNotEmpty) {
+      cityList = cityList
+          .where((element) => element
+              .toString()
+              .toUpperCase()
+              .startsWith(pattern.toUpperCase()))
+          .toList();
+    }
+
+    return cityList;
   }
 }

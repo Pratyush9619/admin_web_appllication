@@ -19,6 +19,8 @@ class ClosureSummaryTable extends StatefulWidget {
 class _ClosureSummaryTableState extends State<ClosureSummaryTable> {
   //Daily Project Row List for view summary
   List<List<dynamic>> rowList = [];
+  TextEditingController selectedDepoController = TextEditingController();
+  TextEditingController selectedCityController = TextEditingController();
 
   @override
   void initState() {
@@ -36,6 +38,8 @@ class _ClosureSummaryTableState extends State<ClosureSummaryTable> {
       appBar: PreferredSize(
           // ignore: sort_child_properties_last
           child: CustomAppBar(
+            showDepoBar: true,
+            toClosure: true,
             depoName: widget.depoName,
             cityName: widget.cityName,
             text: ' ${widget.cityName}/ ${widget.depoName} / ${widget.id}',

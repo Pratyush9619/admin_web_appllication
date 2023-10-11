@@ -91,8 +91,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
   @override
   void initState() {
-    selectedCityController.text = widget.cityName.toString();
-    selectedDepoController.text = widget.depoName.toString();
     super.initState();
   }
 
