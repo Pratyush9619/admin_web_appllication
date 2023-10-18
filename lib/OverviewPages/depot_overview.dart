@@ -9,7 +9,6 @@ import 'package:web_appllication/Authentication/auth_service.dart';
 import 'package:web_appllication/KeyEvents/ChartData.dart';
 import 'package:web_appllication/style.dart';
 import 'package:web_appllication/widgets/custom_appbar.dart';
-import 'package:web_appllication/widgets/nodata_available.dart';
 import '../KeyEvents/view_AllFiles.dart';
 import '../datasource/depot_overviewdatasource.dart';
 import '../model/depot_overview.dart';
@@ -178,8 +177,8 @@ class _DepotOverviewState extends State<DepotOverview> {
         appBar: PreferredSize(
           // ignore: sort_child_properties_last
           child: CustomAppBar(
-            toOverview: true,
-            showDepoBar: true,
+              toOverview: true,
+              showDepoBar: true,
               depoName: widget.depoName,
               cityName: widget.cityName,
               text: '${widget.cityName}/ ${widget.depoName} /Depot Overview',

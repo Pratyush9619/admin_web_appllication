@@ -46,7 +46,7 @@ class _ClosureSummaryTableState extends State<ClosureSummaryTable> {
             userId: widget.userId,
           ),
           preferredSize: const Size.fromHeight(50)),
-      body: FutureBuilder<List<List<dynamic>>>(
+      body: FutureBuilder(
         future: fetchData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -106,12 +106,6 @@ class _ClosureSummaryTableState extends State<ClosureSummaryTable> {
                           ),
                         )),
                         DataColumn(
-                            label: Text('Date',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ))),
-                        DataColumn(
                             label: Text('Closure Report',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
@@ -123,7 +117,6 @@ class _ClosureSummaryTableState extends State<ClosureSummaryTable> {
                           return DataRow(
                             cells: [
                               DataCell(Text(rowData[0])),
-                              DataCell(Text(rowData[2])),
                               DataCell(ElevatedButton(
                                 onPressed: () {
                                   Navigator.push(
@@ -133,7 +126,6 @@ class _ClosureSummaryTableState extends State<ClosureSummaryTable> {
                                         depoName: widget.depoName,
                                         cityName: widget.cityName,
                                         id: 'Closure Summary',
-                                        date: rowData[2],
                                         user_id: rowData[0],
                                       ),
                                     ),
@@ -169,19 +161,7 @@ class _ClosureSummaryTableState extends State<ClosureSummaryTable> {
     List<dynamic> userIdList = querySnapshot.docs.map((e) => e.id).toList();
 
     for (int i = 0; i < userIdList.length; i++) {
-      QuerySnapshot userEntryDate = await FirebaseFirestore.instance
-          .collection('ClosureReportTable')
-          .doc('${widget.depoName}')
-          .collection('userId')
-          .doc(userIdList[i])
-          .collection('date')
-          .get();
-
-      List<dynamic> withDateData = userEntryDate.docs.map((e) => e.id).toList();
-
-      for (int j = 0; j < withDateData.length; j++) {
-        rowList.add([userIdList[i], 'PDF', withDateData[j]]);
-      }
+      rowList.add([userIdList[i], 'PDF']);
     }
   }
 }
