@@ -457,14 +457,14 @@ class _CivilQualityChecklistState extends State<CivilQualityChecklist> {
         civilFieldDocSnapshot.data() as Map<String, dynamic>;
 
     List<List<dynamic>> fieldData = [
-      ['PROJECT :', '${civilMapData['projectName']}'],
-      ['Date :', '${civilMapData['date']}'],
-      ['Location :', '${civilMapData['location']}'],
-      ['Component of structure : ', '${civilMapData['componentName']}'],
-      ['Vendor / Sub Vendor :', '${civilMapData['vendor']}'],
-      ['Grid / Axis & Level :', '${civilMapData['grid']}'],
-      ['Drawing Number :', '${civilMapData['drawing']}'],
-      ['Type of Filling :', '${civilMapData['filling']}'],
+      ['PROJECT :', '${civilMapData['projectName'] ?? ''}'],
+      ['Date :', '${civilMapData['date'] ?? ''}'],
+      ['Location :', '${civilMapData['location'] ?? ''}'],
+      ['Component of structure : ', '${civilMapData['componentName'] ?? ''}'],
+      ['Vendor / Sub Vendor :', '${civilMapData['vendor'] ?? ''}'],
+      ['Grid / Axis & Level :', '${civilMapData['grid'] ?? ''}'],
+      ['Drawing Number :', '${civilMapData['drawing'] ?? ''}'],
+      ['Type of Filling :', '${civilMapData['filling'] ?? ''}'],
     ];
 
     List<pw.TableRow> rows = [];

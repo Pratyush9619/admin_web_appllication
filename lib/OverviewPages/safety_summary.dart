@@ -244,12 +244,38 @@ class _SafetySummaryState extends State<SafetySummary> {
     Map<String, dynamic> safetyMapData =
         safetyFieldDocSanpshot.data() as Map<String, dynamic>;
 
-    Timestamp installationDate = safetyMapData['InstallationDate'];
-    DateTime date1 = installationDate.toDate();
-    Timestamp EnegizationDate = safetyMapData['EnegizationDate'];
-    DateTime date2 = EnegizationDate.toDate();
-    Timestamp BoardingDate = safetyMapData['BoardingDate'];
-    DateTime date3 = BoardingDate.toDate();
+    bool isDate1Empty = false;
+    bool isDate2Empty = false;
+    bool isDate3Empty = false;
+    if (safetyMapData['InstallationDate'].toString().trim().isEmpty) {
+      isDate1Empty = true;
+    }
+    if (safetyMapData['EnegizationDate'].toString().trim().isEmpty) {
+      isDate2Empty = true;
+    }
+    if (safetyMapData['BoardingDate'].toString().trim().isEmpty) {
+      isDate3Empty = true;
+    }
+
+    dynamic installationDateToDateTime =
+        isDate1Empty ? "" : safetyMapData['InstallationDate'].toDate();
+    String date1 = isDate1Empty
+        ? ""
+        : "${installationDateToDateTime.day}-${installationDateToDateTime.month}-${installationDateToDateTime.year}";
+
+    dynamic EnegizationDateToDateTime =
+        isDate2Empty ? "" : safetyMapData['EnegizationDate'].toDate();
+
+    String date2 = isDate2Empty
+        ? ""
+        : "${EnegizationDateToDateTime.day}-${EnegizationDateToDateTime.month}-${EnegizationDateToDateTime.year}";
+
+    dynamic BoardingDateToDateTime =
+        isDate3Empty ? "" : safetyMapData['BoardingDate'].toDate();
+
+    String date3 = isDate3Empty
+        ? ""
+        : "${BoardingDateToDateTime.day}-${BoardingDateToDateTime.month}-${BoardingDateToDateTime.year}";
 
     List<List<dynamic>> fieldData = [
       ['Installation Date', '$date1'],

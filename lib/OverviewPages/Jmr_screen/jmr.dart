@@ -120,29 +120,33 @@ class _JmrState extends State<Jmr> {
                     )),
               ),
               Padding(
-                  padding: const EdgeInsets.only(right: 15, left: 15),
-                  child: GestureDetector(
-                      onTap: () {
-                        onWillPop(context);
-                      },
-                      child: Row(
-                        children: [
-                          Image.asset(
-                            'assets/logout.png',
-                            height: 20,
-                            width: 20,
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            widget.userId ?? '',
-                            style: const TextStyle(fontSize: 18),
-                          )
-                        ],
-                      ))),
+                padding: const EdgeInsets.only(right: 15, left: 15),
+                child: GestureDetector(
+                  onTap: () {
+                    onWillPop(context);
+                  },
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        'assets/logout.png',
+                        height: 20,
+                        width: 20,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        widget.userId ?? '',
+                        style: const TextStyle(fontSize: 18),
+                      )
+                    ],
+                  ),
+                ),
+              ),
             ],
             bottom: TabBar(
               onTap: (value) {
                 _selectedIndex = value;
+                isLoading = true;
+                setState(() {});
                 generateAllJmrList();
               },
               labelColor: white,
@@ -164,10 +168,12 @@ class _JmrState extends State<Jmr> {
           ),
           body: isPageEmpty
               ? const NodataAvailable()
-              : TabBarView(children: [
-                  customRowList('Civil'),
-                  customRowList('Electrical')
-                ]),
+              : isLoading
+                  ? LoadingPage()
+                  : TabBarView(children: [
+                      customRowList('Civil'),
+                      customRowList('Electrical')
+                    ]),
         ));
   }
 
@@ -184,7 +190,7 @@ class _JmrState extends State<Jmr> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return LoadingPage();
         } else if (!snapshot.hasData) {
-          return NodataAvailable();
+          return const NodataAvailable();
         } else if (snapshot.hasError) {
           return const Center(
               child: Text(
@@ -194,69 +200,65 @@ class _JmrState extends State<Jmr> {
           final data = snapshot.data!;
           List<dynamic> userList = data.docs.map((e) => e.id).toList();
 
-          return isLoading
-              ? LoadingPage()
-              : ListView.builder(
-                  itemCount: userList.length, //Length of user ID
-                  itemBuilder: (context, index) {
-                    // generateJmrListLen(userList[index]);
-                    return Padding(
-                      padding: const EdgeInsets.only(
-                          left: 10.0, right: 20.0, bottom: 3.0, top: 3.0),
-                      child: ExpansionTile(
-                        backgroundColor: Colors.blue[500],
-                        trailing: const Icon(
-                          Icons.arrow_drop_down,
-                          color: Colors.white,
-                        ),
-                        collapsedBackgroundColor: Colors.blue[400],
-                        title: Text(
-                          'User ID - ${userList[index]}',
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        children: [
-                          ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: 5,
-                              itemBuilder: (context, index2) {
-                                return Container(
-                                  padding: const EdgeInsets.only(
-                                      left: 15.0, right: 10.0, bottom: 10.0),
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        SizedBox(
-                                          height: 32,
-                                          child: TextButton(
-                                              onPressed: () {},
-                                              style: ButtonStyle(
-                                                  backgroundColor:
-                                                      MaterialStateProperty.all(
-                                                          Colors.blue[900])),
-                                              child: Text(
-                                                title[index2],
-                                                style: const TextStyle(
-                                                    color: Colors.white),
-                                              )),
-                                        ),
-                                        const SizedBox(
-                                          width: 30.0,
-                                        ),
-                                        jmrTabList(
-                                            userList[index], index2, index),
-                                      ],
-                                    ),
+          return ListView.builder(
+            itemCount: userList.length, //Length of user ID
+            itemBuilder: (context, index) {
+              // generateJmrListLen(userList[index]);
+              return Padding(
+                padding: const EdgeInsets.only(
+                    left: 10.0, right: 20.0, bottom: 3.0, top: 3.0),
+                child: ExpansionTile(
+                  backgroundColor: Colors.blue[500],
+                  trailing: const Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.white,
+                  ),
+                  collapsedBackgroundColor: Colors.blue[400],
+                  title: Text(
+                    'User ID - ${userList[index]}',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  children: [
+                    ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: 5,
+                        itemBuilder: (context, index2) {
+                          return Container(
+                            padding: const EdgeInsets.only(
+                                left: 15.0, right: 10.0, bottom: 10.0),
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    height: 32,
+                                    child: TextButton(
+                                        onPressed: () {},
+                                        style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    Colors.blue[900])),
+                                        child: Text(
+                                          title[index2],
+                                          style: const TextStyle(
+                                              color: Colors.white),
+                                        )),
                                   ),
-                                );
-                              })
-                        ],
-                      ),
-                    );
-                  },
-                );
+                                  const SizedBox(
+                                    width: 30.0,
+                                  ),
+                                  jmrTabList(userList[index], index2, index),
+                                ],
+                              ),
+                            ),
+                          );
+                        })
+                  ],
+                ),
+              );
+            },
+          );
         }
         return Container();
       },
@@ -308,12 +310,6 @@ class _JmrState extends State<Jmr> {
   // Function to calculate Length of JMR all components with ID
 
   Future<List<dynamic>> generateAllJmrList() async {
-    if (isLoading == false) {
-      setState(() {
-        isLoading = true;
-      });
-    }
-
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('JMRCollection')
         .doc(widget.depoName)
@@ -374,11 +370,10 @@ class _JmrState extends State<Jmr> {
       }
 
       jmrTabLen.add(tempList);
-
-      setState(() {
-        isLoading = false;
-      });
     }
+    setState(() {
+      isLoading = false;
+    });
 
     return jmrTabLen;
   }

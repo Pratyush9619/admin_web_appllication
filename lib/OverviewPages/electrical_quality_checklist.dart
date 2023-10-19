@@ -440,14 +440,14 @@ class _ElectricalQualityChecklistState
         elecFieldDocSanpshot.data() as Map<String, dynamic>;
 
     List<List<dynamic>> fieldData = [
-      ['Employee Name :', '${electricalMapData['employeeName']}'],
-      ['Doc No. : TPCL/DIST-EV :', '${electricalMapData['docNo']}'],
-      ['Vendor Name :', '${electricalMapData['vendor']}'],
-      ['Date : ', '${electricalMapData['date']}'],
-      ['OLA Number :', '${electricalMapData['olaNumber']}'],
-      ['PANEL SR NO :', '${electricalMapData['panelNumber']}'],
-      ['Depot Name :', '${electricalMapData['depotName']}'],
-      ['Customer Name :', '${electricalMapData['customerName']}'],
+      ['Employee Name :', '${electricalMapData['employeeName'] ?? ''}'],
+      ['Doc No. : TPCL/DIST-EV :', '${electricalMapData['docNo'] ?? ''}'],
+      ['Vendor Name :', '${electricalMapData['vendor'] ?? ''}'],
+      ['Date : ', '${electricalMapData['date'] ?? ''}'],
+      ['OLA Number :', '${electricalMapData['olaNumber'] ?? ''}'],
+      ['PANEL SR NO :', '${electricalMapData['panelNumber'] ?? ''}'],
+      ['Depot Name :', '${electricalMapData['depotName'] ?? ''}'],
+      ['Customer Name :', '${electricalMapData['customerName'] ?? ''}'],
     ];
 
     List<pw.TableRow> rows = [];
