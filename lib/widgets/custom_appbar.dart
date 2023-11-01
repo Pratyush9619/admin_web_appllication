@@ -23,6 +23,7 @@ class CustomAppBar extends StatefulWidget {
   final String? text;
   String? userId;
   bool toDepots;
+  VoidCallback? donwloadFun;
   // final IconData? icon;
   final bool haveSynced;
   final bool haveSummary;
@@ -59,6 +60,7 @@ class CustomAppBar extends StatefulWidget {
       this.haveSummary = false,
       this.store,
       this.onTap,
+      this.donwloadFun,
       this.havebottom = false,
       this.isdownload = false,
       this.isdetailedTab = false,
@@ -378,10 +380,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     )
                   : Container(),
               widget.isdownload
-                  ? const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Icon(Icons.download),
-                    )
+                  ? ElevatedButton(
+                      onPressed: widget.donwloadFun,
+                      child: const Icon(
+                        Icons.download,
+                        color: Colors.white,
+                      ))
                   : widget.haveSummary
                       ? Padding(
                           padding: const EdgeInsets.only(
