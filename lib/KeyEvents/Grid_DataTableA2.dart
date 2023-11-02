@@ -90,10 +90,15 @@ class _StatutoryAprovalA2State extends State<StatutoryAprovalA2> {
           //displayName: yAxis[i].toString()
         ));
         ganttdata.add(GanttAbsoluteEvent(
-          suggestedColor:
-              _keyProvider!.actualdate[i] == _keyProvider!.actualenddate[i]
-                  ? green
-                  : red,
+          suggestedColor: DateFormat('dd-MM-yyyy')
+                  .parse(_keyProvider!.actualdate[i])
+                  .isBefore(DateFormat('dd-MM-yyyy')
+                      .parse(_keyProvider!.enddate[i])
+                      .add(const Duration(days: 1)))
+              // _keyProvider!.actualdate[i]
+              //  == _keyProvider!.actualenddate[i]
+              ? green
+              : red,
           displayNameBuilder: (context) {
             return '';
           },
