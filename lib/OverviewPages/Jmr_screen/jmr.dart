@@ -24,7 +24,18 @@ class _JmrState extends State<Jmr> {
   bool isLoading = true;
   bool isPageEmpty = false;
   TextEditingController selectedCityController = TextEditingController();
-  List<String> title = ['R1', 'R2', 'R3', 'R4', 'R5'];
+  List<String> title = [
+    'R1',
+    'R2',
+    'R3',
+    'R4',
+    'R5',
+    'R6',
+    'R7',
+    'R8',
+    'R9',
+    'R10'
+  ];
   List<String> tabName = ['Civil', 'Electrical'];
   TextEditingController selectedDepoController = TextEditingController();
 
@@ -286,7 +297,7 @@ class _JmrState extends State<Jmr> {
                       MaterialPageRoute(
                         builder: (context) => JMRPage(
                           title:
-                              '${tabName[_selectedIndex]}-${title[index3]}-JMR${index3 + 1}',
+                              '${tabName[_selectedIndex]}-${title[secondIndex]}-JMR${index3 + 1}',
                           jmrTab: title[secondIndex],
                           cityName: widget.cityName,
                           depoName: widget.depoName,
@@ -374,6 +385,7 @@ class _JmrState extends State<Jmr> {
     setState(() {
       isLoading = false;
     });
+    print('jmrTabLen - ${jmrTabLen}');
 
     return jmrTabLen;
   }

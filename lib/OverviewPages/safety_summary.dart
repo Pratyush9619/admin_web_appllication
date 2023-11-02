@@ -320,25 +320,19 @@ class _SafetySummaryState extends State<SafetySummary> {
           padding: const pw.EdgeInsets.all(2.0),
           child: pw.Center(
               child: pw.Text(
-            'Image5',
+            'Image1',
           ))),
       pw.Container(
           padding: const pw.EdgeInsets.all(2.0),
           child: pw.Center(
               child: pw.Text(
-            'Image6',
+            'Image2',
           ))),
       pw.Container(
           padding: const pw.EdgeInsets.all(2.0),
           child: pw.Center(
               child: pw.Text(
-            'Image7',
-          ))),
-      pw.Container(
-          padding: const pw.EdgeInsets.all(2.0),
-          child: pw.Center(
-              child: pw.Text(
-            'Image8',
+            'Image3',
           ))),
     ]));
 
@@ -361,7 +355,7 @@ class _SafetySummaryState extends State<SafetySummary> {
 
       for (Map<String, dynamic> mapData in userData) {
         String images_Path =
-            'gs://tp-zap-solz.appspot.com/SafetyChecklist/${widget.cityName}/${widget.depoName}/$user_id/$date/${mapData['srNo']}';
+            '/SafetyChecklist/${widget.cityName}/${widget.depoName}/$user_id/$date/${mapData['srNo']}';
         ListResult result =
             await FirebaseStorage.instance.ref().child(images_Path).listAll();
 
@@ -391,8 +385,8 @@ class _SafetySummaryState extends State<SafetySummary> {
               );
             }
           }
-          if (imageUrls.length < 8) {
-            int imageLoop = 8 - imageUrls.length;
+          if (imageUrls.length < 3) {
+            int imageLoop = 3 - imageUrls.length;
             for (int i = 0; i < imageLoop; i++) {
               imageUrls.add(
                 pw.Container(
@@ -402,6 +396,27 @@ class _SafetySummaryState extends State<SafetySummary> {
                     child: pw.Text('')),
               );
             }
+          } else {
+            int imageLoop = 10 - imageUrls.length;
+            for (int i = 0; i < imageLoop; i++) {
+              imageUrls.add(
+                pw.Container(
+                    padding: const pw.EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    width: 60,
+                    height: 100,
+                    child: pw.Text('')),
+              );
+            }
+          }
+        } else {
+          for (int i = 0; i < 3; i++) {
+            imageUrls.add(
+              pw.Container(
+                  padding: const pw.EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  width: 60,
+                  height: 100,
+                  child: pw.Text('')),
+            );
           }
         }
         result.items.clear();
@@ -430,9 +445,12 @@ class _SafetySummaryState extends State<SafetySummary> {
               child: pw.Center(
                   child: pw.Text(mapData['Remark'].toString(),
                       style: const pw.TextStyle(fontSize: 13)))),
+          imageUrls[0],
+          imageUrls[1],
+          imageUrls[2],
         ]));
 
-        if (imageUrls.isNotEmpty) {
+        if (imageUrls.length - 3 > 0) {
           //Image Rows of PDF Table
           rows.add(pw.TableRow(children: [
             pw.Container(
@@ -445,15 +463,14 @@ class _SafetySummaryState extends State<SafetySummary> {
                 child: pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
                     children: [
-                      imageUrls[0],
-                      imageUrls[1],
+                      imageUrls[3],
+                      imageUrls[4],
                     ])),
-            imageUrls[2],
-            imageUrls[3],
-            imageUrls[4],
             imageUrls[5],
             imageUrls[6],
-            imageUrls[7]
+            imageUrls[7],
+            imageUrls[8],
+            imageUrls[9],
           ]));
         }
         imageUrls.clear();
@@ -530,7 +547,7 @@ class _SafetySummaryState extends State<SafetySummary> {
                         style:
                             pw.TextStyle(color: PdfColors.black, fontSize: 17)),
                     pw.TextSpan(
-                        text: '$date',
+                        text: date,
                         style: const pw.TextStyle(
                             color: PdfColors.blue700, fontSize: 15))
                   ])),
@@ -538,10 +555,10 @@ class _SafetySummaryState extends State<SafetySummary> {
                       text: pw.TextSpan(children: [
                     const pw.TextSpan(
                         text: 'UserID : ',
-                        style: const pw.TextStyle(
-                            color: PdfColors.black, fontSize: 15)),
+                        style:
+                            pw.TextStyle(color: PdfColors.black, fontSize: 15)),
                     pw.TextSpan(
-                        text: '$user_id',
+                        text: user_id,
                         style: const pw.TextStyle(
                             color: PdfColors.blue700, fontSize: 15))
                   ])),
@@ -631,11 +648,10 @@ class _SafetySummaryState extends State<SafetySummary> {
                 0: const pw.FixedColumnWidth(30),
                 1: const pw.FixedColumnWidth(160),
                 2: const pw.FixedColumnWidth(70),
-                3: const pw.FixedColumnWidth(70),
+                3: const pw.FixedColumnWidth(100),
                 4: const pw.FixedColumnWidth(70),
                 5: const pw.FixedColumnWidth(70),
                 6: const pw.FixedColumnWidth(70),
-                7: const pw.FixedColumnWidth(70),
               },
               defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
               tableWidth: pw.TableWidth.max,

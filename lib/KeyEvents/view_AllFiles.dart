@@ -33,8 +33,8 @@ class ViewAllPdf extends StatefulWidget {
 
 class _ViewAllPdfState extends State<ViewAllPdf> {
   late Future<List<FirebaseFile>> futureFiles;
-  List<dynamic> drawingId = [];
   List<dynamic> drawingRef = [];
+  List<dynamic> drawingId = [];
   List<dynamic> drawingfullpath = [];
   bool _isload = true;
 
