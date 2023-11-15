@@ -8,6 +8,7 @@ import 'package:web_appllication/MenuPage/user.dart';
 import 'package:web_appllication/provider/assigned_user_provider.dart';
 import 'package:web_appllication/provider/key_provider.dart';
 import 'package:web_appllication/provider/menuUserPageProvider.dart';
+import 'package:web_appllication/provider/selected_row_index.dart';
 import 'package:web_appllication/provider/text_provider.dart';
 import 'package:web_appllication/small_screen.dart';
 import 'package:web_appllication/style.dart';
@@ -41,14 +42,15 @@ class MyApp extends StatelessWidget {
             create: (context) => textprovider(),
           ),
           ChangeNotifierProvider<KeyProvider>(
-              create: (context) => KeyProvider())
+              create: (context) => KeyProvider()),
+          ChangeNotifierProvider(create: (context) => SelectedRowIndexModel())
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'TATA POWER CONTROL PANEL',
           initialRoute: MenuHomePage.id,
           routes: {
-            AdminPage.id: (context) => const SmallScreen(),
+            DashBoardScreen.id: (context) => const SmallScreen(),
             MenuUserPage.id: (context) => const MenuUserPage(),
             ProjectPanning.id: (context) => const ProjectPanning(),
 
