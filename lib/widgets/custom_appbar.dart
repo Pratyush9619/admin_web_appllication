@@ -381,8 +381,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   : Container(),
               widget.isdownload
                   ? ElevatedButton(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll(blue)),
                       onPressed: widget.donwloadFun,
                       child: const Icon(
                         Icons.download,
