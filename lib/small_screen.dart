@@ -22,9 +22,9 @@ class _SmallScreenState extends State<SmallScreen> {
           selectedScreen = const MenuHomePage();
         });
         break;
-      case AdminPage.id:
+      case DashBoardScreen.id:
         setState(() {
-          selectedScreen = AdminPage();
+          selectedScreen = const DashBoardScreen();
         });
         break;
       case ProjectPanning.id:
@@ -59,7 +59,7 @@ class _SmallScreenState extends State<SmallScreen> {
           ),
           AdminMenuItem(
             title: 'Admin',
-            route: AdminPage.id,
+            route: DashBoardScreen.id,
             icon: Icons.dashboard,
           ),
           AdminMenuItem(

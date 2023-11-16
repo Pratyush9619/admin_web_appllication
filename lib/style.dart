@@ -14,6 +14,8 @@ TextStyle formtext = const TextStyle(
   fontWeight: FontWeight.bold,
 );
 
+TextStyle dashboardStyle = const TextStyle(fontSize: 9, color: Colors.black);
+
 TextStyle tableheaderwhitecolor = TextStyle(
   fontWeight: FontWeight.bold,
   fontSize: 14,

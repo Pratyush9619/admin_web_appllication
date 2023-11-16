@@ -31,6 +31,7 @@ environment:
 
 dependencies:
   advanced_search: ^2.2.3
+  fl_chart:
   cloud_firestore: ^4.1.0
   country_pickers: ^2.0.0
   csv: ^5.0.1
@@ -72,10 +73,11 @@ dependencies:
   lottie:
   flutter_typeahead:
   printing: ^5.10.4
-  pie_chart: ^5.3.2
+  pie_chart:
   percent_indicator: ^4.2.3
   dependencies:
   flutter_widget_from_html:
+  data_table_2:
 
 dev_dependencies:
   flutter_lints: ^2.0.0
