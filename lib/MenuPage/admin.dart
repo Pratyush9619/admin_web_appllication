@@ -62,7 +62,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
               itemCount: 3,
               itemBuilder: ((context, index) {
                 return Container(
-                  width: MediaQuery.of(context).size.width * 0.84 / 3,
+                  width: MediaQuery.of(context).size.width * 0.88 / 3,
                   height: 200,
                   child: Stack(
                     children: [
@@ -70,7 +70,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           top: 15,
                           left: 5,
                           child: Container(
-                            width: MediaQuery.of(context).size.width * 0.82 / 3,
+                            width: MediaQuery.of(context).size.width * 0.86 / 3,
                             height: 200,
                             child: Card(
                                 elevation: 10,
@@ -82,7 +82,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     Container(
                                       padding: const EdgeInsets.all(5.0),
                                       width: MediaQuery.of(context).size.width *
-                                          0.81,
+                                          0.88,
                                       height: 40,
                                       child: Row(
                                         mainAxisAlignment:
@@ -332,7 +332,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               Container(
                                 padding:
                                     const EdgeInsets.only(left: 5.0, top: 40),
-                                height: 300,
+                                height: 340,
                                 width: MediaQuery.of(context).size.width *
                                     0.94 /
                                     3,
@@ -458,71 +458,302 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   ],
                 ),
               ),
+
+              //Asset Capitalised + Commercial Achievement
+
+              Column(
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.96 / 2.6,
+                    height: 190,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          top: 10,
+                          left: 0,
+                          child: Container(
+                            width:
+                                MediaQuery.of(context).size.width * 0.96 / 2.7,
+                            height: 180,
+                            child: Card(
+                              elevation: 10,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.only(
+                                        top: 35, left: 10.0),
+                                    width: MediaQuery.of(context).size.width *
+                                        (0.96 / 2.8),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        GridView.builder(
+                                            itemCount: 4,
+                                            shrinkWrap: true,
+                                            gridDelegate:
+                                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisCount: 4,
+                                                    crossAxisSpacing: 10,
+                                                    mainAxisSpacing: 5),
+                                            itemBuilder: ((context, index) {
+                                              return Container(
+                                                decoration: BoxDecoration(
+                                                    border: Border(
+                                                        top: BorderSide(
+                                                            color: blue,
+                                                            width: 1),
+                                                        bottom: BorderSide(
+                                                            color: blue,
+                                                            width: 1))),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  children: [
+                                                    Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(5),
+                                                        child: Text(
+                                                            budgetVsActuals[
+                                                                index],
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        13))),
+                                                    Container(
+                                                      child: Text('Value'),
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            }))
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                            top: 0,
+                            left: 20,
+                            child: Card(
+                                shadowColor: Colors.black,
+                                elevation: 5,
+                                color: blue,
+                                child: Container(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: const Text(
+                                      'Asset Capitalised',
+                                      style: TextStyle(color: Colors.white),
+                                    )))),
+                      ],
+                    ),
+                  ),
+
+                  //Commercial Achievement
+
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.96 / 2.6,
+                    height: 200,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          top: 10,
+                          left: 0,
+                          child: Container(
+                            width:
+                                MediaQuery.of(context).size.width * 0.96 / 2.7,
+                            height: 190,
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              elevation: 10,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.only(
+                                        left: 5.0, top: 25),
+                                    height: 165,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.96 /
+                                        5.5,
+                                    child: DataTable2(
+                                        headingRowHeight: 25,
+                                        headingRowColor:
+                                            MaterialStatePropertyAll(blue),
+                                        columnSpacing: 10,
+                                        dataTextStyle: dashboardStyle,
+                                        dataRowHeight: 20,
+                                        headingTextStyle: TextStyle(
+                                            color: white, fontSize: 10),
+                                        showBottomBorder: false,
+                                        dividerThickness: 0,
+                                        columns: const [
+                                          DataColumn2(
+                                              label: Text(
+                                            '% of Financial Progress\nof EV Bus Project',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(fontSize: 9),
+                                          )),
+                                          DataColumn2(
+                                              label: Text(
+                                            '% of pending JMR\napproval form TML',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(fontSize: 9),
+                                          )),
+                                        ],
+                                        rows: List.generate(10, (index) {
+                                          return DataRow2(
+                                              color: index ==
+                                                      Provider.of<SelectedRowIndexModel>(
+                                                              context,
+                                                              listen: false)
+                                                          .selectedRowIndex
+                                                  ? const MaterialStatePropertyAll(
+                                                      Color.fromARGB(
+                                                          255, 190, 226, 255))
+                                                  : MaterialStatePropertyAll(
+                                                      white),
+
+                                              // onSelectChanged: (isSelected) {
+                                              //   Provider.of<SelectedRowIndexModel>(
+                                              //           context,
+                                              //           listen: false)
+                                              //       .setSelectedRowIndex(index);
+                                              // },
+                                              cells: const [
+                                                DataCell(Text('\$100000')),
+                                                DataCell(Text('Hellow World')),
+                                              ]);
+                                        })),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding:
+                                            const EdgeInsets.only(left: 20.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const Text(
+                                              '% of Financial Progress\nof EV Bus Project',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  color: Colors.green,
+                                                  fontSize: 11),
+                                            ),
+                                            RichText(
+                                                text: const TextSpan(children: [
+                                              WidgetSpan(
+                                                  child: Padding(
+                                                padding:
+                                                    EdgeInsets.only(right: 5),
+                                                child: Icon(
+                                                  Icons.arrow_upward_sharp,
+                                                  size: 20,
+                                                  color: Colors.green,
+                                                ),
+                                              )),
+                                              TextSpan(
+                                                  text: '48%',
+                                                  style: TextStyle(
+                                                      color: Colors.green,
+                                                      fontSize: 15))
+                                            ]))
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        padding:
+                                            const EdgeInsets.only(left: 10.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const Text(
+                                              '% of pending JMR \napproval form TML',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  color: Colors.redAccent,
+                                                  fontSize: 11),
+                                            ),
+                                            RichText(
+                                                text: const TextSpan(children: [
+                                              WidgetSpan(
+                                                  child: Padding(
+                                                padding:
+                                                    EdgeInsets.only(right: 5),
+                                                child: Icon(
+                                                  Icons.arrow_downward_sharp,
+                                                  size: 20,
+                                                  color: Colors.redAccent,
+                                                ),
+                                              )),
+                                              TextSpan(
+                                                  text: '48%',
+                                                  style: TextStyle(
+                                                      color: Colors.redAccent,
+                                                      fontSize: 15))
+                                            ]))
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                            top: 0,
+                            left: 20,
+                            child: Card(
+                                shadowColor: Colors.black,
+                                elevation: 5,
+                                color: blue,
+                                child: Container(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: const Text(
+                                      'Commercial Achievement',
+                                      style: TextStyle(color: Colors.white),
+                                    )))),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
               Container(
-                width: MediaQuery.of(context).size.width * 0.96 / 2.6,
-                height: 220,
+                width: MediaQuery.of(context).size.width * 0.96 / 5.5,
+                height: 400,
                 child: Stack(
                   children: [
                     Positioned(
                       top: 10,
                       left: 0,
                       child: Container(
-                        width: MediaQuery.of(context).size.width * 0.96 / 2.7,
-                        height: 200,
+                        width: MediaQuery.of(context).size.width * 0.96 / 5.6,
+                        height: 380,
                         child: Card(
                           elevation: 10,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                padding:
-                                    const EdgeInsets.only(top: 35, left: 10.0),
-                                width: MediaQuery.of(context).size.width *
-                                    (0.96 / 2.8),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    GridView.builder(
-                                        itemCount: 4,
-                                        shrinkWrap: true,
-                                        gridDelegate:
-                                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                                crossAxisCount: 4,
-                                                crossAxisSpacing: 10,
-                                                mainAxisSpacing: 5),
-                                        itemBuilder: ((context, index) {
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                                border: Border(
-                                                    top: BorderSide(
-                                                        color: blue, width: 1),
-                                                    bottom: BorderSide(
-                                                        color: blue,
-                                                        width: 1))),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              children: [
-                                                Container(
-                                                    padding:
-                                                        const EdgeInsets.all(5),
-                                                    child: Text(
-                                                        budgetVsActuals[index],
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: const TextStyle(
-                                                            fontSize: 13))),
-                                                Container(
-                                                  child: Text('Value'),
-                                                )
-                                              ],
-                                            ),
-                                          );
-                                        }))
-                                  ],
-                                ),
+                                child: Center(child: Text('Hello')),
                               ),
                             ],
                           ),
@@ -539,12 +770,12 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             child: Container(
                                 padding: const EdgeInsets.all(8.0),
                                 child: const Text(
-                                  'Asset Capitalised',
+                                  'Jmr',
                                   style: TextStyle(color: Colors.white),
                                 )))),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         )

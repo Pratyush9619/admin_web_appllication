@@ -49,6 +49,7 @@ class _SmallScreenState extends State<SmallScreen> {
         backgroundColor: blue,
       ),
       sideBar: SideBar(
+        width: 150,
         activeBackgroundColor: white,
         backgroundColor: white,
         items: const [
@@ -112,7 +113,7 @@ class _SmallScreenState extends State<SmallScreen> {
         header: Container(
           height: 50,
           width: double.infinity,
-          color: Color.fromARGB(255, 252, 249, 249),
+          color: const Color.fromARGB(255, 252, 249, 249),
           child: const Center(
             child: Text(
               'Dashboard',
