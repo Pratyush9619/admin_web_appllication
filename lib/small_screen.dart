@@ -45,7 +45,7 @@ class _SmallScreenState extends State<SmallScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Admin Panel'),
+        title: const Text('EV Bus Project Performance Analysis Dashboard'),
         backgroundColor: blue,
       ),
       sideBar: SideBar(
@@ -54,14 +54,14 @@ class _SmallScreenState extends State<SmallScreen> {
         backgroundColor: white,
         items: const [
           AdminMenuItem(
-            title: 'Home',
-            route: MenuHomePage.id,
-            icon: Icons.home_max_outlined,
-          ),
-          AdminMenuItem(
-            title: 'Admin',
+            title: 'EV Dashboard',
             route: DashBoardScreen.id,
             icon: Icons.dashboard,
+          ),
+          AdminMenuItem(
+            title: 'O & M Dashboard',
+            route: MenuHomePage.id,
+            icon: Icons.home_max_outlined,
           ),
           AdminMenuItem(
             title: 'User',
@@ -110,17 +110,17 @@ class _SmallScreenState extends State<SmallScreen> {
         onSelected: (item) {
           currentScreen(item);
         },
-        header: Container(
-          height: 50,
-          width: double.infinity,
-          color: const Color.fromARGB(255, 252, 249, 249),
-          child: const Center(
-            child: Text(
-              'Dashboard',
-              style: TextStyle(color: Colors.black, fontSize: 20),
-            ),
-          ),
-        ),
+        // header: Container(
+        //   height: 50,
+        //   width: double.infinity,
+        //   color: const Color.fromARGB(255, 252, 249, 249),
+        //   child: const Center(
+        //     child: Text(
+        //       'Dashboard',
+        //       style: TextStyle(color: Colors.black, fontSize: 20),
+        //     ),
+        //   ),
+        // ),
         footer: Container(
           height: 50,
           width: double.infinity,
