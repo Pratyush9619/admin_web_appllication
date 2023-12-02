@@ -21,6 +21,7 @@ class DashBoardScreen extends StatefulWidget {
 class _DashBoardScreenState extends State<DashBoardScreen> {
   double totalPlannedChargers = 0;
   double totalChargersCommissioned = 0;
+  double totalBalancedCharger = 0;
   double totalTprelBudget = 0;
   double totalTpevslBudget = 0;
   double totalBudget = 0;
@@ -44,14 +45,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   List<dynamic> tmlTotalList = [];
   List<dynamic> assetTotalList = [];
   List<dynamic> budgetActualTotalList = [];
+  List<dynamic> commercialTotalList = [];
 
-  List<Color> colorList = [Colors.blue, Colors.indigo];
-  List<Color> tmlApprovalJmrColorList = [
-    Colors.teal,
-    Colors.orange,
-    Colors.blue,
-    Colors.indigo
-  ];
+  List<Color> colorList = [Colors.blue, Colors.blue[900]!];
 
   bool isExcelSelected = false;
   int totalForAllCol = 0;
@@ -62,11 +58,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   Map<String, dynamic> tmlApprovedPieData = {};
 
   List<String> evProgressLegendNames = [
-    'Planned \n  Chargers',
-    'Chargers \n  Commisioned'
+    'Chargers \n  Commisioned',
+    'Balance \n Chargers'
   ];
 
-  List<String> evBottomValue = ['Planned Chargers', 'Chargers Commisioned'];
+  List<String> evBottomValue = [
+    'Planned Chargers',
+    'Chargers Commisioned',
+    'Balance Chargers'
+  ];
 
   List<List<String>> budgetLegendNames = [
     ['TPREL\nBudget', 'TPEVSL\nBudget', 'Total\nBuget'],
@@ -74,8 +74,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   ];
 
   List<List<String>> budgetActualBottomValue = [
-    ['TPREL\nBudget', 'TPEVSL\nBudget', 'Total\nBuget'],
-    ['Actual\nExpense', 'Actual\nExpense TPREL', 'Total\nActual TPEVSL'],
+    ['TPREL Budget', 'TPEVSL Budget', 'Total Buget'],
+    ['Actual Expense TPREL', 'Actual Expense TPEVSL', 'Total Actual TPEVSL'],
   ];
 
   List<String> actualExpenseLegendNames = [
@@ -85,15 +85,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   ];
 
   List<String> assetCapitalisedLegendNames = [
-    'Asset Capitalised \n Amount (TPREL)',
-    'Asset Capitalised \n Amount (TPEVSL)',
     'Cumulative Asset \n Capitalised Amount (FY24)',
     'Pending Asset \n Capitalisation Amount'
   ];
 
   List<String> tmlApprovedLegendNames = [
-    'Infra \n Amount',
-    'EV chargers \n Amount',
     'Approved \n JMR Amount',
     'Pending \n JMR Amount'
   ];
@@ -103,6 +99,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     'EV chargers Amount',
     'Approved JMR Amount',
     'Pending JMR Amount'
+  ];
+
+  List<String> commercialBottomValue = [
+    '% of financial Progress',
+    '% of pending JMR Approval'
   ];
 
   double tableDataFontSize = 0;
@@ -152,10 +153,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   List<List<String?>> secondSheetData = [];
 
   List<String> assetCapitalisationBottomValue = [
-    ' Asset Capitalised\nAmount(TPREL)',
-    'Asset Capitalised\nAmount(TPEVCSL)',
-    'Cumulative Asset\nCapitalised Amount(FY24)',
-    'Pending Asset\nCapitalised Amount',
+    ' Asset Capitalised (TPREL)',
+    'Asset Capitalised (TPEVCSL)',
+    'Cumulative Asset Capitalised',
+    'Pending Asset Capitalised ',
   ];
 
   List<String> assetCapitalisation = [
@@ -266,7 +267,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                             10,
                                                                         width:
                                                                             10,
-                                                                        color: tmlApprovalJmrColorList[
+                                                                        color: colorList[
                                                                             index])),
                                                                 const WidgetSpan(
                                                                     child:
@@ -398,14 +399,12 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                       dashboardColNames[3][1]:
                                                           isExcelSelected
                                                               ? double.parse(
-                                                                  plannedChargersCol[
+                                                                  chargersComissioned[
                                                                       totalForAllCol])
                                                               : 0,
                                                       dashboardColNames[3][2]:
                                                           isExcelSelected
-                                                              ? double.parse(
-                                                                  chargersComissioned[
-                                                                      totalForAllCol])
+                                                              ? totalBalancedCharger
                                                               : 0,
                                                     },
                                                     legendOptions:
@@ -430,68 +429,63 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                     chartType: ChartType.disc,
                                                     totalValue: isExcelSelected
                                                         ? double.parse(
-                                                                plannedChargersCol[
-                                                                    totalForAllCol]) +
-                                                            double.parse(
-                                                                chargersComissioned[
-                                                                    totalForAllCol])
+                                                            plannedChargersCol[
+                                                                totalForAllCol])
                                                         : 0,
                                                   ),
                                                 )
                                               ],
                                             ),
+
+                                            //
                                             Container(
-                                              padding: const EdgeInsets.only(
-                                                  left: 20, top: 5),
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width *
-                                                  0.80,
-                                              height: 20,
-                                              child: ListView.builder(
-                                                  scrollDirection:
-                                                      Axis.horizontal,
+                                                  0.88 /
+                                                  3.2,
+                                              height: 26,
+                                              child: GridView.builder(
                                                   shrinkWrap: true,
-                                                  itemCount: 2,
-                                                  itemBuilder: (contex, index) {
-                                                    return Container(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              right: 15),
-                                                      child: RichText(
-                                                          text: TextSpan(
-                                                              children: [
-                                                            TextSpan(
-                                                                text:
-                                                                    evBottomValue[
-                                                                        index],
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        10,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    color:
-                                                                        black)),
-                                                            const WidgetSpan(
-                                                                child: SizedBox(
-                                                              width: 5,
-                                                            )),
-                                                            TextSpan(
-                                                                text: isExcelSelected
-                                                                    ? evTotalList[
-                                                                            index]
-                                                                        .toString()
-                                                                    : '0',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        10,
-                                                                    color: blue,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold))
-                                                          ])),
-                                                    );
+                                                  gridDelegate:
+                                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                                          crossAxisCount: 2,
+                                                          crossAxisSpacing: 5,
+                                                          childAspectRatio: 16),
+                                                  itemCount: 3,
+                                                  itemBuilder:
+                                                      (context, index3) {
+                                                    return RichText(
+                                                        text:
+                                                            TextSpan(children: [
+                                                      TextSpan(
+                                                          text:
+                                                              '${evBottomValue[index3]}:',
+                                                          style: GoogleFonts
+                                                              .azeretMono(
+                                                                  fontSize: 8,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      black)),
+                                                      const WidgetSpan(
+                                                          child: SizedBox(
+                                                        width: 5,
+                                                      )),
+                                                      TextSpan(
+                                                          text: isExcelSelected
+                                                              ? evTotalList[
+                                                                      index3]
+                                                                  .toString()
+                                                              : '0',
+                                                          style: TextStyle(
+                                                              fontSize: 9,
+                                                              color: blue,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold))
+                                                    ]));
                                                   }),
                                             )
                                           ],
@@ -552,7 +546,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                       scrollDirection:
                                                           Axis.horizontal,
                                                       shrinkWrap: true,
-                                                      itemCount: 4,
+                                                      itemCount: 2,
                                                       itemBuilder:
                                                           ((context, index) {
                                                         return Container(
@@ -571,7 +565,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                             10,
                                                                         width:
                                                                             10,
-                                                                        color: tmlApprovalJmrColorList[
+                                                                        color: colorList[
                                                                             index])),
                                                                 const WidgetSpan(
                                                                     child:
@@ -690,22 +684,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                       tmlApprovedLegendNames[0]:
                                                           isExcelSelected
                                                               ? double.parse(
-                                                                  infraAmountCol[
-                                                                      totalForAllCol])
-                                                              : 0,
-                                                      tmlApprovedLegendNames[1]:
-                                                          isExcelSelected
-                                                              ? double.parse(
-                                                                  evChargersAmountCol[
-                                                                      totalForAllCol])
-                                                              : 0,
-                                                      tmlApprovedLegendNames[2]:
-                                                          isExcelSelected
-                                                              ? double.parse(
                                                                   totalApprovedJmrAmountCol[
                                                                       totalForAllCol])
                                                               : 0,
-                                                      tmlApprovedLegendNames[3]:
+                                                      tmlApprovedLegendNames[1]:
                                                           isExcelSelected
                                                               ? double.parse(
                                                                   totalPendingJmrAmountCol[
@@ -730,17 +712,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                           true,
                                                     ),
                                                     chartRadius: chartRadius,
-                                                    colorList:
-                                                        tmlApprovalJmrColorList,
+                                                    colorList: colorList,
                                                     chartType: ChartType.disc,
                                                     totalValue: isExcelSelected
                                                         ? double.parse(
-                                                                infraAmountCol[
-                                                                    totalForAllCol]) +
-                                                            double.parse(
-                                                                evChargersAmountCol[
-                                                                    totalForAllCol]) +
-                                                            double.parse(
                                                                 totalApprovedJmrAmountCol[
                                                                     totalForAllCol]) +
                                                             double.parse(
@@ -752,68 +727,55 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                               ],
                                             ),
                                             Container(
-                                                padding: const EdgeInsets.only(
-                                                    left: 10, top: 5),
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.80,
-                                                height: 26,
-                                                child: GridView.builder(
-                                                    shrinkWrap: true,
-                                                    gridDelegate:
-                                                        const SliverGridDelegateWithFixedCrossAxisCount(
-                                                            crossAxisCount: 4,
-                                                            mainAxisSpacing: 0),
-                                                    itemCount: 4,
-                                                    itemBuilder:
-                                                        (context, index) {
-                                                      return Container(
-                                                        child: RichText(
-                                                            text: TextSpan(
-                                                                children: [
-                                                              TextSpan(
-                                                                  text:
-                                                                      '${tmlApprovedBottomValue[index]}:\n',
-                                                                  style: GoogleFonts.azeretMono(
-                                                                      fontSize:
-                                                                          7,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color:
-                                                                          black)),
-                                                              const WidgetSpan(
-                                                                  child:
-                                                                      SizedBox(
-                                                                width: 5,
-                                                              )),
-                                                              TextSpan(
-                                                                  text: isExcelSelected
-                                                                      ? tmlTotalList[
-                                                                              index]
-                                                                          .toString()
-                                                                      : '0',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          8,
-                                                                      color:
-                                                                          blue,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold))
-                                                            ])),
-                                                      );
-                                                    })
-
-                                                //  ListView.builder(
-                                                //     scrollDirection:
-                                                //         Axis.horizontal,
-                                                //     shrinkWrap: true,
-                                                //     itemCount: 4,
-                                                //     itemBuilder: (contex, index) {
-                                                //       return }),
-                                                )
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.88 /
+                                                  3.1,
+                                              height: 26,
+                                              child: GridView.builder(
+                                                  shrinkWrap: true,
+                                                  gridDelegate:
+                                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                                          crossAxisCount: 2,
+                                                          crossAxisSpacing: 5,
+                                                          childAspectRatio: 20),
+                                                  itemCount: 4,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    return RichText(
+                                                        text:
+                                                            TextSpan(children: [
+                                                      TextSpan(
+                                                          text:
+                                                              '${tmlApprovedBottomValue[index]}:',
+                                                          style: GoogleFonts
+                                                              .azeretMono(
+                                                                  fontSize: 8,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color:
+                                                                      black)),
+                                                      const WidgetSpan(
+                                                          child: SizedBox(
+                                                        width: 5,
+                                                      )),
+                                                      TextSpan(
+                                                          text: isExcelSelected
+                                                              ? tmlTotalList[
+                                                                      index]
+                                                                  .toString()
+                                                              : '0',
+                                                          style: TextStyle(
+                                                              fontSize: 8,
+                                                              color: blue,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold))
+                                                    ]));
+                                                  }),
+                                            )
                                           ],
                                         )),
                                   )),
@@ -1095,59 +1057,57 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                       ],
                                                     ),
                                                     Container(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 20, top: 5),
                                                       width:
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .width *
-                                                              0.84,
-                                                      height: 25,
-                                                      child: ListView.builder(
-                                                          scrollDirection:
-                                                              Axis.horizontal,
+                                                              0.88 /
+                                                              3.6,
+                                                      height: 26,
+                                                      child: GridView.builder(
                                                           shrinkWrap: true,
+                                                          gridDelegate:
+                                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                                                  crossAxisCount:
+                                                                      2,
+                                                                  crossAxisSpacing:
+                                                                      5,
+                                                                  childAspectRatio:
+                                                                      16),
                                                           itemCount: 3,
-                                                          itemBuilder:
-                                                              (contex, index3) {
-                                                            return Container(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .only(
-                                                                      right:
-                                                                          15),
-                                                              child: RichText(
-                                                                  text: TextSpan(
-                                                                      children: [
-                                                                    TextSpan(
-                                                                        text:
-                                                                            '${budgetActualBottomValue[index1][index3]} :',
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                8,
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: black)),
-                                                                    const WidgetSpan(
-                                                                        child:
-                                                                            SizedBox(
-                                                                      width: 5,
-                                                                    )),
-                                                                    TextSpan(
-                                                                        text: isExcelSelected
-                                                                            ? budgetActualTotalList[index1][index3]
-                                                                                .toString()
-                                                                            : '0',
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                8,
-                                                                            color:
-                                                                                blue,
-                                                                            fontWeight:
-                                                                                FontWeight.bold))
-                                                                  ])),
-                                                            );
+                                                          itemBuilder: (context,
+                                                              index3) {
+                                                            return RichText(
+                                                                text: TextSpan(
+                                                                    children: [
+                                                                  TextSpan(
+                                                                      text:
+                                                                          '${budgetActualBottomValue[index1][index3]} :',
+                                                                      style: GoogleFonts.azeretMono(
+                                                                          fontSize:
+                                                                              8,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
+                                                                          color:
+                                                                              black)),
+                                                                  const WidgetSpan(
+                                                                      child:
+                                                                          SizedBox(
+                                                                    width: 5,
+                                                                  )),
+                                                                  TextSpan(
+                                                                      text: isExcelSelected
+                                                                          ? budgetActualTotalList[index1][index3]
+                                                                              .toString()
+                                                                          : '0',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              9,
+                                                                          color:
+                                                                              blue,
+                                                                          fontWeight:
+                                                                              FontWeight.bold))
+                                                                ]));
                                                           }),
                                                     )
                                                   ],
@@ -1198,20 +1158,19 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(20))),
                                         elevation: 10,
-                                        child: Row(
+                                        child: Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.start,
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
-                                            //Table Part
                                             Container(
                                               padding: const EdgeInsets.only(
-                                                  left: 5.0, top: 10),
+                                                  left: 5.0, top: 40),
                                               height: 160,
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width *
                                                   0.83 /
-                                                  4.4,
+                                                  4.2,
                                               child: DataTable2(
                                                   headingRowHeight: 28,
                                                   headingRowColor:
@@ -1280,6 +1239,53 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                         ]);
                                                   })),
                                             ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.88 /
+                                                  3.1,
+                                              height: 40,
+                                              child: GridView.builder(
+                                                  shrinkWrap: true,
+                                                  gridDelegate:
+                                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                                          crossAxisCount: 2,
+                                                          crossAxisSpacing: 5,
+                                                          childAspectRatio: 5),
+                                                  itemCount: 2,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    return Container(
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceAround,
+                                                        children: [
+                                                          Text(
+                                                            commercialBottomValue[
+                                                                index],
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 10,
+                                                                color: blue),
+                                                          ),
+                                                          Text(
+                                                              isExcelSelected
+                                                                  ? '${commercialTotalList[index].toString()}%'
+                                                                  : '0%',
+                                                              style: const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 10))
+                                                        ],
+                                                      ),
+                                                    );
+                                                  }),
+                                            )
                                           ],
                                         ),
                                       ),
@@ -1345,7 +1351,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                         scrollDirection:
                                                             Axis.horizontal,
                                                         shrinkWrap: true,
-                                                        itemCount: 4,
+                                                        itemCount: 2,
                                                         itemBuilder:
                                                             ((context, index) {
                                                           return Container(
@@ -1365,7 +1371,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                           width:
                                                                               10,
                                                                           color:
-                                                                              tmlApprovalJmrColorList[index])),
+                                                                              colorList[index])),
                                                                   const WidgetSpan(
                                                                       child:
                                                                           SizedBox(
@@ -1486,25 +1492,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                   0]:
                                                               isExcelSelected
                                                                   ? double.parse(
-                                                                      assetCapitalisedTprelCol[
-                                                                          totalForAllCol])
-                                                                  : 0,
-                                                          assetCapitalisedLegendNames[
-                                                                  1]:
-                                                              isExcelSelected
-                                                                  ? double.parse(
-                                                                      assetCapitalisedTpevslCol[
-                                                                          totalForAllCol])
-                                                                  : 0,
-                                                          assetCapitalisedLegendNames[
-                                                                  2]:
-                                                              isExcelSelected
-                                                                  ? double.parse(
                                                                       cumulativeAssetCapitalizedCol[
                                                                           totalForAllCol])
                                                                   : 0,
                                                           assetCapitalisedLegendNames[
-                                                                  3]:
+                                                                  1]:
                                                               isExcelSelected
                                                                   ? double.parse(
                                                                       pendingAssetCapitalisationCol[
@@ -1532,18 +1524,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                         ),
                                                         chartRadius:
                                                             chartRadius,
-                                                        colorList:
-                                                            tmlApprovalJmrColorList,
+                                                        colorList: colorList,
                                                         chartType:
                                                             ChartType.disc,
                                                         totalValue: isExcelSelected
                                                             ? double.parse(
-                                                                    assetCapitalisedTprelCol[
-                                                                        totalForAllCol]) +
-                                                                double.parse(
-                                                                    assetCapitalisedTpevslCol[
-                                                                        totalForAllCol]) +
-                                                                double.parse(
                                                                     cumulativeAssetCapitalizedCol[
                                                                         totalForAllCol]) +
                                                                 double.parse(
@@ -1554,61 +1539,54 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                 ],
                                               ),
                                               Container(
-                                                padding: const EdgeInsets.only(
-                                                    left: 10, top: 5),
                                                 width: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.80,
-                                                height: 25,
-                                                child: ListView.builder(
-                                                    scrollDirection:
-                                                        Axis.horizontal,
+                                                    0.9 /
+                                                    2.8,
+                                                height: 26,
+                                                child: GridView.builder(
                                                     shrinkWrap: true,
+                                                    gridDelegate:
+                                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                                            crossAxisCount: 2,
+                                                            crossAxisSpacing: 5,
+                                                            childAspectRatio:
+                                                                20),
                                                     itemCount: 4,
                                                     itemBuilder:
-                                                        (contex, index) {
-                                                      return Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                right: 15),
-                                                        child: RichText(
-                                                            text: TextSpan(
-                                                                children: [
-                                                              TextSpan(
-                                                                  text:
-                                                                      assetCapitalisationBottomValue[
-                                                                          index],
-                                                                  style: GoogleFonts.azeretMono(
-                                                                      fontSize:
-                                                                          7,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color:
-                                                                          black)),
-                                                              const WidgetSpan(
-                                                                  child:
-                                                                      SizedBox(
-                                                                width: 5,
-                                                              )),
-                                                              TextSpan(
-                                                                  text: isExcelSelected
-                                                                      ? assetTotalList[
-                                                                              index]
-                                                                          .toString()
-                                                                      : '0',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          8,
-                                                                      color:
-                                                                          blue,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold))
-                                                            ])),
-                                                      );
+                                                        (context, index) {
+                                                      return RichText(
+                                                          text: TextSpan(
+                                                              children: [
+                                                            TextSpan(
+                                                                text:
+                                                                    assetCapitalisationBottomValue[
+                                                                        index],
+                                                                style: GoogleFonts.azeretMono(
+                                                                    fontSize: 8,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        black)),
+                                                            const WidgetSpan(
+                                                                child: SizedBox(
+                                                              width: 5,
+                                                            )),
+                                                            TextSpan(
+                                                                text: isExcelSelected
+                                                                    ? assetTotalList[
+                                                                            index]
+                                                                        .toString()
+                                                                    : '0',
+                                                                style: TextStyle(
+                                                                    fontSize: 9,
+                                                                    color: blue,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold))
+                                                          ]));
                                                     }),
                                               )
                                             ],
@@ -1756,9 +1734,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
         totalPlannedChargers = double.parse(plannedChargersCol[totalForAllCol]);
         totalChargersCommissioned =
             double.parse(chargersComissioned[totalForAllCol]);
+        totalBalancedCharger = totalPlannedChargers - totalChargersCommissioned;
 
         evTotalList.add(totalPlannedChargers);
         evTotalList.add(totalChargersCommissioned);
+        evTotalList.add(totalBalancedCharger);
 
         totalTprelBudget = double.parse(tprelBudgetCol[totalForAllCol]);
         totalTpevslBudget = double.parse(tpevslBudgetCol[totalForAllCol]);
@@ -1796,6 +1776,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             double.parse(financialProgressCol[totalForAllCol]);
         totalPendingJmrPercent =
             double.parse(pendingJmrApprovalCol[totalForAllCol]);
+
+        commercialTotalList.add(totalFinancialProgress);
+        commercialTotalList.add(totalPendingJmrPercent);
 
         totalTprelAssetCapitalised =
             double.parse(assetCapitalisedTprelCol[totalForAllCol]);
