@@ -78,6 +78,7 @@ dependencies:
   dependencies:
   flutter_widget_from_html:
   data_table_2:
+  money_formatter:
 
 dev_dependencies:
   flutter_lints: ^2.0.0
