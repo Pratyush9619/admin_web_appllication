@@ -773,16 +773,16 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                           white),
                                                                   cells: [
                                                                     DataCell(Text(
-                                                                        formatNumber(
+                                                                        formatNum(
                                                                             double.parse(infraAmountCol[index])))),
                                                                     DataCell(Text(
-                                                                        formatNumber(
+                                                                        formatNum(
                                                                             double.parse(evChargersAmountCol[index])))),
                                                                     DataCell(Text(
-                                                                        formatNumber(
+                                                                        formatNum(
                                                                             double.parse(totalApprovedJmrAmountCol[index])))),
                                                                     DataCell(Text(
-                                                                        formatNumber(
+                                                                        formatNum(
                                                                             double.parse(totalPendingJmrAmountCol[index])))),
                                                                   ]);
                                                             })),
@@ -885,7 +885,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 )),
                                                                 TextSpan(
                                                                     text: isExcelSelected
-                                                                        ? formatNumber(double.parse(tmlTotalList[index]
+                                                                        ? formatNum(double.parse(tmlTotalList[index]
                                                                             .toString()))
                                                                         : '0',
                                                                     style: TextStyle(
@@ -1077,9 +1077,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                           return DataRow2(
                                                                               color: index2 == Provider.of<SelectedRowIndexModel>(context, listen: false).selectedRowIndex ? const MaterialStatePropertyAll(Color.fromARGB(255, 190, 226, 255)) : MaterialStatePropertyAll(white),
                                                                               cells: [
-                                                                                DataCell(Text(formatNumber(double.parse(budgetActualCol[index1][0][index2].toString())))),
-                                                                                DataCell(Text('${MoneyFormatter(amount: double.parse(budgetActualCol[index1][1][index2]), settings: MoneyFormatterSettings(symbol: '₹')).output.symbolOnLeft}')),
-                                                                                DataCell(Text('${MoneyFormatter(amount: double.parse(budgetActualCol[index1][2][index2]), settings: MoneyFormatterSettings(symbol: '₹')).output.symbolOnLeft}')),
+                                                                                DataCell(Text(formatNum(double.parse(budgetActualCol[index1][0][index2].toString())))),
+                                                                                DataCell(Text(formatNum(double.parse(budgetActualCol[index1][1][index2].toString())))),
+                                                                                DataCell(Text(formatNum(double.parse(budgetActualCol[index1][2][index2].toString())))),
                                                                               ]);
                                                                         })),
                                                               ),
@@ -1182,7 +1182,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                               width: 5,
                                                                             )),
                                                                             TextSpan(
-                                                                                text: isExcelSelected ? '${MoneyFormatter(amount: double.parse(budgetActualTotalList[index1][index3].toString()), settings: MoneyFormatterSettings(symbol: '₹')).output.symbolOnLeft}' : '0',
+                                                                                text: isExcelSelected ? formatNum(double.parse(budgetActualTotalList[index1][index3].toString())) : '0',
                                                                                 style: TextStyle(fontSize: 9, color: blue, fontWeight: FontWeight.bold))
                                                                           ]));
                                                                     }),
@@ -1592,13 +1592,17 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                             white),
                                                                     cells: [
                                                                       DataCell(Text(
-                                                                          '${MoneyFormatter(amount: double.parse(assetCapitalisedTprelCol[index]), settings: MoneyFormatterSettings(symbol: '₹')).output.symbolOnLeft}')),
+                                                                          formatNum(
+                                                                              double.parse(assetCapitalisedTprelCol[index].toString())))),
                                                                       DataCell(Text(
-                                                                          '${MoneyFormatter(amount: double.parse(assetCapitalisedTpevslCol[index]), settings: MoneyFormatterSettings(symbol: '₹')).output.symbolOnLeft}')),
+                                                                          formatNum(
+                                                                              double.parse(assetCapitalisedTpevslCol[index].toString())))),
                                                                       DataCell(Text(
-                                                                          '${MoneyFormatter(amount: double.parse(cumulativeAssetCapitalizedCol[index]), settings: MoneyFormatterSettings(symbol: '₹')).output.symbolOnLeft}')),
+                                                                          formatNum(
+                                                                              double.parse(cumulativeAssetCapitalizedCol[index].toString())))),
                                                                       DataCell(Text(
-                                                                          '${MoneyFormatter(amount: double.parse(pendingAssetCapitalisationCol[index]), settings: MoneyFormatterSettings(symbol: '₹')).output.symbolOnLeft}')),
+                                                                          formatNum(
+                                                                              double.parse(pendingAssetCapitalisationCol[index].toString())))),
                                                                     ]);
                                                               })),
                                                         ),
@@ -1697,7 +1701,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                   )),
                                                                   TextSpan(
                                                                       text: isExcelSelected
-                                                                          ? '${MoneyFormatter(amount: double.parse(assetTotalList[index].toString()), settings: MoneyFormatterSettings(symbol: '₹')).output.symbolOnLeft}'
+                                                                          ? formatNum(double.parse(assetTotalList[index]
+                                                                              .toString()))
                                                                           : '0',
                                                                       style: TextStyle(
                                                                           fontSize:
@@ -2045,5 +2050,20 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   String formatNumber(double number) {
     final format = NumberFormat.compact();
     return format.format(number);
+  }
+
+  String formatNum(double number) {
+    String convertedNum = '';
+    if (number >= 100000 && number < 10000000) {
+      dynamic num = number.round() / 100000;
+      String roundedNum = double.parse(num.toString()).toStringAsFixed(1);
+
+      convertedNum = '${roundedNum}K';
+    } else if (number > 10000000) {
+      dynamic num = number.round() / 10000000;
+      String roundedNum = double.parse(num.toString()).toStringAsFixed(1);
+      convertedNum = '${roundedNum}Cr';
+    }
+    return convertedNum;
   }
 }
