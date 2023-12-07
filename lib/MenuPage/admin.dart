@@ -42,6 +42,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   double totalPlannedChargers = 0;
   double totalChargersCommissioned = 0;
   double totalBalancedCharger = 0;
+  double totalBalancedCharger = 0;
   double totalTprelBudget = 0;
   double totalTpevslBudget = 0;
   double totalBudget = 0;
@@ -78,8 +79,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   List<String> evProgressLegendNames = [
     'Chargers \n  Commisioned',
     'Balance \n Chargers'
+        'Chargers \n  Commisioned',
+    'Balance \n Chargers'
   ];
 
+  List<String> evBottomValue = [
+    'Planned Chargers',
+    'Chargers Commisioned',
+    'Balance Chargers'
+  ];
   List<String> evBottomValue = [
     'Planned Chargers',
     'Chargers Commisioned',
@@ -92,6 +100,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   ];
 
   List<List<String>> budgetActualBottomValue = [
+    ['TPREL Budget', 'TPEVSL Budget', 'Total Buget'],
+    ['Actual Expense TPREL', 'Actual Expense TPEVSL', 'Total Actual TPEVSL'],
     ['TPREL Budget', 'TPEVSL Budget', 'Total Buget'],
     ['Actual Expense TPREL', 'Actual Expense TPEVSL', 'Total Actual TPEVSL'],
   ];
@@ -117,6 +127,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     'EV chargers Amount',
     'Approved JMR Amount',
     'Pending JMR Amount'
+  ];
+
+  List<String> commercialBottomValue = [
+    '% of financial Progress',
+    '% of pending JMR Approval'
   ];
 
   List<String> commercialBottomValue = [
@@ -172,6 +187,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   List<List<String?>> secondSheetData = [];
 
   List<String> assetCapitalisationBottomValue = [
+    ' Asset Capitalised (TPREL)',
+    'Asset Capitalised (TPEVCSL)',
+    'Cumulative Asset Capitalised',
+    'Pending Asset Capitalised ',
     ' Asset Capitalised (TPREL)',
     'Asset Capitalised (TPEVCSL)',
     'Cumulative Asset Capitalised',
