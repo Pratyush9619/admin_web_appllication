@@ -7,7 +7,10 @@ import 'package:web_appllication/MenuPage/user.dart';
 import 'package:web_appllication/style.dart';
 
 class SmallScreen extends StatefulWidget {
-  const SmallScreen({super.key});
+  bool isDashBoard;
+  final VoidCallback? uploadExcel;
+
+  SmallScreen({super.key, this.isDashBoard = false, this.uploadExcel});
 
   @override
   State<SmallScreen> createState() => _SmallScreenState();
@@ -15,6 +18,7 @@ class SmallScreen extends StatefulWidget {
 
 class _SmallScreenState extends State<SmallScreen> {
   Widget selectedScreen = const MenuHomePage();
+
   currentScreen(item) {
     switch (item.route) {
       case MenuHomePage.id:
@@ -69,7 +73,7 @@ class _SmallScreenState extends State<SmallScreen> {
             icon: Icons.person,
           ),
           AdminMenuItem(
-            title: 'Cities ',
+            title: 'Cities',
             route: ProjectPanning.id,
             icon: Icons.location_city_outlined,
           ),

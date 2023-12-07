@@ -279,7 +279,7 @@ class _SignInPageState extends State<SignInPage> {
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const SmallScreen(),
+                  builder: (context) => SmallScreen(),
                 ));
           });
         } else if (_pass == snap.docs[0]['Password'] &&

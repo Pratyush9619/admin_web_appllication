@@ -1,26 +1,47 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:money_formatter/money_formatter.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:provider/provider.dart';
-import 'package:web_appllication/components/loading_page.dart';
+import 'package:web_appllication/components/Loading_page.dart';
 import 'package:web_appllication/provider/selected_row_index.dart';
 import 'package:web_appllication/style.dart';
 
 class DashBoardScreen extends StatefulWidget {
+  final Function? callbackFun;
+  const DashBoardScreen({Key? key, this.callbackFun}) : super(key: key);
+
   static const String id = 'admin-page';
-  const DashBoardScreen({super.key});
 
   @override
   State<DashBoardScreen> createState() => _DashBoardScreenState();
 }
 
 class _DashBoardScreenState extends State<DashBoardScreen> {
+  final ScrollController _scrollController = ScrollController();
+
+  List<String> selectedDepoList = [];
+  List<dynamic> cityList = [];
+  String selectedCity = '';
+
+  List<String> evProgressTable = [
+    'Name of Project',
+    'Depot Name',
+    '% of Physical\nprogress',
+    'Planned Start\nDate',
+    'Planned End\nDate',
+    'Estimated Date of\nCompletion',
+    'Project Actual End\nDate'
+  ];
+
   double totalPlannedChargers = 0;
   double totalChargersCommissioned = 0;
+  double totalBalancedCharger = 0;
   double totalTprelBudget = 0;
   double totalTpevslBudget = 0;
   double totalBudget = 0;
@@ -44,15 +65,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   List<dynamic> tmlTotalList = [];
   List<dynamic> assetTotalList = [];
   List<dynamic> budgetActualTotalList = [];
-
-  List<Color> colorList = [Colors.blue, Colors.indigo];
-  List<Color> tmlApprovalJmrColorList = [
-    Colors.teal,
-    Colors.orange,
-    Colors.blue,
-    Colors.indigo
-  ];
-
+  List<dynamic> commercialTotalList = [];
+  List<Color> colorList = [Colors.blue, Colors.blue[900]!];
   bool isExcelSelected = false;
   int totalForAllCol = 0;
   Map<String, dynamic> evBusProgressPieData = {};
@@ -62,11 +76,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   Map<String, dynamic> tmlApprovedPieData = {};
 
   List<String> evProgressLegendNames = [
-    'Planned \n  Chargers',
-    'Chargers \n  Commisioned'
+    'Chargers \n  Commisioned',
+    'Balance \n Chargers'
   ];
 
-  List<String> evBottomValue = ['Planned Chargers', 'Chargers Commisioned'];
+  List<String> evBottomValue = [
+    'Planned Chargers',
+    'Chargers Commisioned',
+    'Balance Chargers'
+  ];
 
   List<List<String>> budgetLegendNames = [
     ['TPREL\nBudget', 'TPEVSL\nBudget', 'Total\nBuget'],
@@ -74,8 +92,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   ];
 
   List<List<String>> budgetActualBottomValue = [
-    ['TPREL\nBudget', 'TPEVSL\nBudget', 'Total\nBuget'],
-    ['Actual\nExpense', 'Actual\nExpense TPREL', 'Total\nActual TPEVSL'],
+    ['TPREL Budget', 'TPEVSL Budget', 'Total Buget'],
+    ['Actual Expense TPREL', 'Actual Expense TPEVSL', 'Total Actual TPEVSL'],
   ];
 
   List<String> actualExpenseLegendNames = [
@@ -85,15 +103,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   ];
 
   List<String> assetCapitalisedLegendNames = [
-    'Asset Capitalised \n Amount (TPREL)',
-    'Asset Capitalised \n Amount (TPEVSL)',
     'Cumulative Asset \n Capitalised Amount (FY24)',
     'Pending Asset \n Capitalisation Amount'
   ];
 
   List<String> tmlApprovedLegendNames = [
-    'Infra \n Amount',
-    'EV chargers \n Amount',
     'Approved \n JMR Amount',
     'Pending \n JMR Amount'
   ];
@@ -103,6 +117,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     'EV chargers Amount',
     'Approved JMR Amount',
     'Pending JMR Amount'
+  ];
+
+  List<String> commercialBottomValue = [
+    '% of financial Progress',
+    '% of pending JMR Approval'
   ];
 
   double tableDataFontSize = 0;
@@ -149,13 +168,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     'Actual Expense',
     'TML Approved JMR Status'
   ];
+
   List<List<String?>> secondSheetData = [];
 
   List<String> assetCapitalisationBottomValue = [
-    ' Asset Capitalised\nAmount(TPREL)',
-    'Asset Capitalised\nAmount(TPEVCSL)',
-    'Cumulative Asset\nCapitalised Amount(FY24)',
-    'Pending Asset\nCapitalised Amount',
+    ' Asset Capitalised (TPREL)',
+    'Asset Capitalised (TPEVCSL)',
+    'Cumulative Asset Capitalised',
+    'Pending Asset Capitalised ',
   ];
 
   List<String> assetCapitalisation = [
@@ -184,7 +204,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   int touchIndex = 0;
 
   @override
+  void initState() {
+    getCityName();
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<SelectedRowIndexModel>(context);
     deviceHeight = MediaQuery.of(context).size.height;
     if (deviceHeight < 700) {
       tableDataFontSize = 8;
@@ -198,673 +226,1205 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       fontSize = 11;
     }
     return Scaffold(
+      appBar: PreferredSize(
+          preferredSize: Size(MediaQuery.of(context).size.width, 40),
+          child: AppBar(
+            actions: [
+              Container(
+                padding: EdgeInsets.all(5.0),
+                child: ElevatedButton(
+                    onPressed: pickAndProcessFile,
+                    child: const Text('Upload Excel')),
+              )
+            ],
+            title: Text(
+              'EV BUS Project Performance Analysis Dashboard',
+              style: TextStyle(color: white, fontSize: 15),
+            ),
+            backgroundColor: blue,
+            centerTitle: true,
+          )),
       body: isLoading
           ? LoadingPage()
           : Container(
-              color: const Color.fromARGB(255, 219, 239, 255),
+              // color: const Color.fromARGB(255, 219, 239, 255),
               child: Padding(
                 padding: const EdgeInsets.only(top: 10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.only(left: 10),
-                          width: MediaQuery.of(context).size.width * 0.93 / 3,
-                          height: 240,
-                          child: Stack(
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
                             children: [
-                              Positioned(
-                                  top: 10,
-                                  left: 0,
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.9 /
-                                        3,
-                                    height: 225,
-                                    child: Card(
-                                        elevation: 10,
-                                        shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20))),
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.all(5.0),
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.95,
-                                              height: 40,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  ListView.builder(
-                                                      scrollDirection:
-                                                          Axis.horizontal,
-                                                      itemCount: 2,
-                                                      shrinkWrap: true,
-                                                      itemBuilder:
-                                                          ((context, index) {
-                                                        return Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  left: 5.0,
-                                                                  right: 5.0,
-                                                                  top: 5.0),
-                                                          child: RichText(
-                                                              text: TextSpan(
-                                                                  children: [
-                                                                WidgetSpan(
-                                                                    child: Container(
-                                                                        height:
-                                                                            10,
-                                                                        width:
-                                                                            10,
-                                                                        color: tmlApprovalJmrColorList[
-                                                                            index])),
-                                                                const WidgetSpan(
-                                                                    child:
-                                                                        SizedBox(
-                                                                  width: 5,
-                                                                )),
-                                                                TextSpan(
-                                                                    text: evProgressLegendNames[
-                                                                        index],
-                                                                    style: const TextStyle(
-                                                                        color: Colors
-                                                                            .black,
-                                                                        fontSize:
-                                                                            10))
-                                                              ])),
-                                                        );
-                                                      })),
-                                                ],
-                                              ),
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              children: [
-                                                Container(
-                                                  decoration: BoxDecoration(
+                              Container(
+                                padding: const EdgeInsets.only(left: 10),
+                                width: MediaQuery.of(context).size.width *
+                                    0.93 /
+                                    3,
+                                height: 270,
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                        top: 10,
+                                        left: 0,
+                                        child: Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.9 /
+                                              3,
+                                          height: 255,
+                                          child: Card(
+                                              elevation: 10,
+                                              shape:
+                                                  const RoundedRectangleBorder(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              5)),
-                                                  height: 150,
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.81 /
-                                                      3.8,
-                                                  child: DataTable2(
-                                                      headingRowColor:
-                                                          MaterialStatePropertyAll(
-                                                              blue),
-                                                      headingTextStyle: TextStyle(
-                                                          color: white,
-                                                          fontSize:
-                                                              tableHeadingFontSize),
-                                                      headingRowHeight: 25,
-                                                      dataTextStyle: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          fontSize:
-                                                              tableDataFontSize,
-                                                          color: black),
-                                                      columnSpacing: 2,
-                                                      showBottomBorder: false,
-                                                      dividerThickness: 0,
-                                                      dataRowHeight: 20,
-                                                      columns: [
-                                                        DataColumn2(
-                                                            label: Text(
-                                                          dashboardColNames[3]
-                                                              [0],
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        )),
-                                                        DataColumn2(
-                                                            label: Text(
-                                                          dashboardColNames[3]
-                                                              [1],
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        )),
-                                                        DataColumn2(
-                                                            label: Text(
-                                                          dashboardColNames[3]
-                                                              [2],
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        )),
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  20))),
+                                              child: Column(
+                                                children: [
+                                                  Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.95,
+                                                    height: 40,
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        ListView.builder(
+                                                            scrollDirection:
+                                                                Axis.horizontal,
+                                                            itemCount: 2,
+                                                            shrinkWrap: true,
+                                                            itemBuilder:
+                                                                ((context,
+                                                                    index) {
+                                                              return Container(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            5.0,
+                                                                        right:
+                                                                            5.0,
+                                                                        top:
+                                                                            5.0),
+                                                                child: RichText(
+                                                                    text: TextSpan(
+                                                                        children: [
+                                                                      WidgetSpan(
+                                                                          child: Container(
+                                                                              height: 10,
+                                                                              width: 10,
+                                                                              color: colorList[index])),
+                                                                      const WidgetSpan(
+                                                                          child:
+                                                                              SizedBox(
+                                                                        width:
+                                                                            5,
+                                                                      )),
+                                                                      TextSpan(
+                                                                          text: evProgressLegendNames[
+                                                                              index],
+                                                                          style: const TextStyle(
+                                                                              color: Colors.black,
+                                                                              fontSize: 10))
+                                                                    ])),
+                                                              );
+                                                            })),
                                                       ],
-                                                      rows: List.generate(
-                                                          projectNameColLen,
-                                                          (index) {
-                                                        return DataRow2(
-                                                            color: index ==
-                                                                    Provider.of<SelectedRowIndexModel>(
-                                                                            context)
-                                                                        .selectedRowIndex
-                                                                ? const MaterialStatePropertyAll(
-                                                                    Color.fromARGB(
-                                                                        255,
-                                                                        190,
-                                                                        226,
-                                                                        255))
-                                                                : MaterialStatePropertyAll(
-                                                                    white),
-                                                            onTap: () {
-                                                              Provider.of<SelectedRowIndexModel>(
-                                                                      context,
-                                                                      listen:
-                                                                          false)
-                                                                  .setSelectedRowIndex(
-                                                                      index);
-                                                            },
-                                                            // onSelectChanged: (isSelected) {
-                                                            //   Provider.of<SelectedRowIndexModel>(
-                                                            //           context,
-                                                            //           listen: false)
-                                                            //       .setSelectedRowIndex(index);
-                                                            // },
-                                                            cells: [
-                                                              DataCell(Text(
-                                                                  projectNameCol[
-                                                                          index]
-                                                                      .toString())),
-                                                              DataCell(Text(
-                                                                  plannedChargersCol[
-                                                                          index]
-                                                                      .toString())),
-                                                              DataCell(Text(
-                                                                  chargersComissioned[
-                                                                          index]
-                                                                      .toString())),
-                                                            ]);
-                                                      })),
-                                                ),
-                                                Container(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: PieChart(
-                                                    dataMap: {
-                                                      dashboardColNames[3][1]:
-                                                          isExcelSelected
-                                                              ? double.parse(
-                                                                  plannedChargersCol[
-                                                                      totalForAllCol])
-                                                              : 0,
-                                                      dashboardColNames[3][2]:
-                                                          isExcelSelected
-                                                              ? double.parse(
-                                                                  chargersComissioned[
-                                                                      totalForAllCol])
-                                                              : 0,
-                                                    },
-                                                    legendOptions:
-                                                        const LegendOptions(
-                                                            showLegends: false),
-                                                    animationDuration:
-                                                        const Duration(
-                                                            milliseconds: 1500),
-                                                    chartValuesOptions:
-                                                        ChartValuesOptions(
-                                                      showChartValueBackground:
-                                                          false,
-                                                      chartValueStyle:
-                                                          TextStyle(
-                                                              color: white,
-                                                              fontSize: 10),
-                                                      showChartValuesInPercentage:
-                                                          true,
                                                     ),
-                                                    chartRadius: chartRadius,
-                                                    colorList: colorList,
-                                                    chartType: ChartType.disc,
-                                                    totalValue: isExcelSelected
-                                                        ? double.parse(
-                                                                plannedChargersCol[
-                                                                    totalForAllCol]) +
-                                                            double.parse(
-                                                                chargersComissioned[
-                                                                    totalForAllCol])
-                                                        : 0,
                                                   ),
-                                                )
-                                              ],
-                                            ),
-                                            Container(
-                                              padding: const EdgeInsets.only(
-                                                  left: 20, top: 5),
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.80,
-                                              height: 20,
-                                              child: ListView.builder(
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  shrinkWrap: true,
-                                                  itemCount: 2,
-                                                  itemBuilder: (contex, index) {
-                                                    return Container(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              right: 15),
-                                                      child: RichText(
-                                                          text: TextSpan(
-                                                              children: [
-                                                            TextSpan(
-                                                                text:
-                                                                    evBottomValue[
-                                                                        index],
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        10,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Container(
+                                                        decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5)),
+                                                        height: 160,
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.81 /
+                                                            3.8,
+                                                        child: DataTable2(
+                                                            headingRowColor:
+                                                                MaterialStatePropertyAll(
+                                                                    blue),
+                                                            headingTextStyle:
+                                                                TextStyle(
                                                                     color:
-                                                                        black)),
-                                                            const WidgetSpan(
-                                                                child: SizedBox(
-                                                              width: 5,
-                                                            )),
-                                                            TextSpan(
-                                                                text: isExcelSelected
-                                                                    ? evTotalList[
-                                                                            index]
-                                                                        .toString()
-                                                                    : '0',
-                                                                style: TextStyle(
+                                                                        white,
                                                                     fontSize:
-                                                                        10,
-                                                                    color: blue,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold))
-                                                          ])),
-                                                    );
-                                                  }),
-                                            )
-                                          ],
-                                        )),
-                                  )),
-                              Positioned(
-                                  top: 0,
-                                  left: 20,
-                                  child: Card(
-                                      shadowColor: Colors.black,
-                                      elevation: 5,
-                                      color: blue,
-                                      child: Container(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: const Text(
-                                            'EV Bus Project Progress Status',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 10),
-                                          )))),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(left: 10),
-                          width: MediaQuery.of(context).size.width * 0.93 / 3,
-                          height: 250,
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                  top: 10,
-                                  left: 0,
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.9 /
-                                        3,
-                                    height: 225,
-                                    child: Card(
-                                        elevation: 10,
-                                        shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20))),
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.all(5.0),
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.95,
-                                              height: 40,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  ListView.builder(
-                                                      scrollDirection:
-                                                          Axis.horizontal,
-                                                      shrinkWrap: true,
-                                                      itemCount: 4,
-                                                      itemBuilder:
-                                                          ((context, index) {
-                                                        return Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  left: 5.0,
-                                                                  right: 5.0,
-                                                                  top: 5.0),
-                                                          child: RichText(
+                                                                        tableHeadingFontSize),
+                                                            headingRowHeight:
+                                                                25,
+                                                            dataTextStyle: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                fontSize:
+                                                                    tableDataFontSize,
+                                                                color: black),
+                                                            columnSpacing: 2,
+                                                            showBottomBorder:
+                                                                false,
+                                                            dividerThickness: 0,
+                                                            dataRowHeight: 20,
+                                                            columns: [
+                                                              DataColumn2(
+                                                                  label: Text(
+                                                                dashboardColNames[
+                                                                    3][0],
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              )),
+                                                              DataColumn2(
+                                                                  label: Text(
+                                                                dashboardColNames[
+                                                                    3][1],
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              )),
+                                                              DataColumn2(
+                                                                  label: Text(
+                                                                dashboardColNames[
+                                                                    3][2],
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              )),
+                                                            ],
+                                                            rows: List.generate(
+                                                                projectNameColLen,
+                                                                (index) {
+                                                              return DataRow2(
+                                                                  color: index ==
+                                                                          Provider.of<SelectedRowIndexModel>(context, listen: false)
+                                                                              .selectedRowIndex
+                                                                      ? const MaterialStatePropertyAll(Color.fromARGB(
+                                                                          255,
+                                                                          190,
+                                                                          226,
+                                                                          255))
+                                                                      : MaterialStatePropertyAll(
+                                                                          white),
+                                                                  onTap: () {
+                                                                    Provider.of<SelectedRowIndexModel>(
+                                                                            context,
+                                                                            listen:
+                                                                                false)
+                                                                        .setSelectedRowIndex(
+                                                                            index);
+                                                                    getCityFromString(
+                                                                        projectNameCol[index]
+                                                                            .toString());
+                                                                    print(projectNameCol[
+                                                                        index]);
+                                                                  },
+                                                                  // onSelectChanged: (isSelected) {
+                                                                  //   Provider.of<SelectedRowIndexModel>(
+                                                                  //           context,
+                                                                  //           listen: false)
+                                                                  //       .setSelectedRowIndex(index);
+                                                                  // },
+                                                                  cells: [
+                                                                    DataCell(Text(
+                                                                        projectNameCol[index]
+                                                                            .toString())),
+                                                                    DataCell(Text(
+                                                                        '${plannedChargersCol[index].toString()} Nos')),
+                                                                    DataCell(Text(
+                                                                        '${chargersComissioned[index].toString()} Nos')),
+                                                                  ]);
+                                                            })),
+                                                      ),
+                                                      Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(5.0),
+                                                        child: PieChart(
+                                                          dataMap: {
+                                                            dashboardColNames[3]
+                                                                    [1]:
+                                                                isExcelSelected
+                                                                    ? double.parse(
+                                                                        chargersComissioned[
+                                                                            totalForAllCol])
+                                                                    : 0,
+                                                            dashboardColNames[3]
+                                                                    [2]:
+                                                                isExcelSelected
+                                                                    ? totalBalancedCharger
+                                                                    : 0,
+                                                          },
+                                                          legendOptions:
+                                                              const LegendOptions(
+                                                                  showLegends:
+                                                                      false),
+                                                          animationDuration:
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      1500),
+                                                          chartValuesOptions:
+                                                              ChartValuesOptions(
+                                                            showChartValueBackground:
+                                                                false,
+                                                            chartValueStyle:
+                                                                TextStyle(
+                                                                    color:
+                                                                        white,
+                                                                    fontSize:
+                                                                        10),
+                                                            showChartValuesInPercentage:
+                                                                true,
+                                                          ),
+                                                          chartRadius:
+                                                              chartRadius,
+                                                          colorList: colorList,
+                                                          chartType:
+                                                              ChartType.disc,
+                                                          totalValue: isExcelSelected
+                                                              ? double.parse(
+                                                                  plannedChargersCol[
+                                                                      totalForAllCol])
+                                                              : 0,
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.88 /
+                                                            3.2,
+                                                    height: 26,
+                                                    child: GridView.builder(
+                                                        shrinkWrap: true,
+                                                        gridDelegate:
+                                                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                                                crossAxisCount:
+                                                                    2,
+                                                                crossAxisSpacing:
+                                                                    0,
+                                                                childAspectRatio:
+                                                                    16),
+                                                        itemCount: 3,
+                                                        itemBuilder:
+                                                            (context, index3) {
+                                                          return RichText(
                                                               text: TextSpan(
                                                                   children: [
-                                                                WidgetSpan(
-                                                                    child: Container(
-                                                                        height:
-                                                                            10,
-                                                                        width:
-                                                                            10,
-                                                                        color: tmlApprovalJmrColorList[
-                                                                            index])),
+                                                                TextSpan(
+                                                                    text:
+                                                                        '${evBottomValue[index3]}:',
+                                                                    style: GoogleFonts.aleo(
+                                                                        fontSize:
+                                                                            8,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        color:
+                                                                            black)),
                                                                 const WidgetSpan(
                                                                     child:
                                                                         SizedBox(
                                                                   width: 5,
                                                                 )),
                                                                 TextSpan(
-                                                                    text: tmlApprovedLegendNames[
-                                                                        index],
-                                                                    style: const TextStyle(
-                                                                        color: Colors
-                                                                            .black,
+                                                                    text: isExcelSelected
+                                                                        ? '${evTotalList[index3].toString()} Nos'
+                                                                        : '0',
+                                                                    style: TextStyle(
                                                                         fontSize:
-                                                                            8))
-                                                              ])),
-                                                        );
-                                                      })),
+                                                                            9,
+                                                                        color:
+                                                                            blue,
+                                                                        fontWeight:
+                                                                            FontWeight.bold))
+                                                              ]));
+                                                        }),
+                                                  )
                                                 ],
-                                              ),
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              children: [
-                                                Container(
-                                                  decoration: BoxDecoration(
+                                              )),
+                                        )),
+                                    Positioned(
+                                        top: 0,
+                                        left: 20,
+                                        child: Card(
+                                            shadowColor: Colors.black,
+                                            elevation: 5,
+                                            color: blue,
+                                            child: Container(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: const Text(
+                                                  'EV Bus Project Progress Status',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 10),
+                                                )))),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 10),
+                                width: MediaQuery.of(context).size.width *
+                                    0.93 /
+                                    3,
+                                height: 270,
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                        top: 10,
+                                        left: 0,
+                                        child: Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.9 /
+                                              3,
+                                          height: 255,
+                                          child: Card(
+                                              elevation: 10,
+                                              shape:
+                                                  const RoundedRectangleBorder(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              5)),
-                                                  height: 150,
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  20))),
+                                              child: Column(
+                                                children: [
+                                                  Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.95,
+                                                    height: 40,
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        ListView.builder(
+                                                            scrollDirection:
+                                                                Axis.horizontal,
+                                                            shrinkWrap: true,
+                                                            itemCount: 2,
+                                                            itemBuilder:
+                                                                ((context,
+                                                                    index) {
+                                                              return Container(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            5.0,
+                                                                        right:
+                                                                            5.0,
+                                                                        top:
+                                                                            5.0),
+                                                                child: RichText(
+                                                                    text: TextSpan(
+                                                                        children: [
+                                                                      WidgetSpan(
+                                                                          child: Container(
+                                                                              height: 10,
+                                                                              width: 10,
+                                                                              color: colorList[index])),
+                                                                      const WidgetSpan(
+                                                                          child:
+                                                                              SizedBox(
+                                                                        width:
+                                                                            5,
+                                                                      )),
+                                                                      TextSpan(
+                                                                          text: tmlApprovedLegendNames[
+                                                                              index],
+                                                                          style: const TextStyle(
+                                                                              color: Colors.black,
+                                                                              fontSize: 10))
+                                                                    ])),
+                                                              );
+                                                            })),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceAround,
+                                                    children: [
+                                                      Container(
+                                                        decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5)),
+                                                        height: 150,
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.81 /
+                                                            3.7,
+                                                        child: DataTable2(
+                                                            minWidth: 320,
+                                                            headingRowColor:
+                                                                MaterialStatePropertyAll(
+                                                                    blue),
+                                                            headingTextStyle:
+                                                                TextStyle(
+                                                                    color:
+                                                                        white,
+                                                                    fontSize:
+                                                                        tableHeadingFontSize),
+                                                            headingRowHeight:
+                                                                28,
+                                                            dataTextStyle:
+                                                                TextStyle(
+                                                                    fontSize:
+                                                                        tableDataFontSize,
+                                                                    color:
+                                                                        black),
+                                                            columnSpacing: 2,
+                                                            showBottomBorder:
+                                                                false,
+                                                            dividerThickness: 0,
+                                                            dataRowHeight: 20,
+                                                            columns: [
+                                                              DataColumn2(
+                                                                  label: Text(
+                                                                dashboardColNames[
+                                                                    2][0],
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .start,
+                                                              )),
+                                                              DataColumn2(
+                                                                  label: Text(
+                                                                dashboardColNames[
+                                                                    2][1],
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .start,
+                                                              )),
+                                                              DataColumn2(
+                                                                  label: Text(
+                                                                dashboardColNames[
+                                                                    2][2],
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .start,
+                                                              )),
+                                                              DataColumn2(
+                                                                  label: Text(
+                                                                dashboardColNames[
+                                                                    2][3],
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .start,
+                                                              )),
+                                                            ],
+                                                            rows: List.generate(
+                                                                infraAmountColLen,
+                                                                (index) {
+                                                              return DataRow2(
+                                                                  color: index ==
+                                                                          Provider.of<SelectedRowIndexModel>(context, listen: false)
+                                                                              .selectedRowIndex
+                                                                      ? const MaterialStatePropertyAll(Color.fromARGB(
+                                                                          255,
+                                                                          190,
+                                                                          226,
+                                                                          255))
+                                                                      : MaterialStatePropertyAll(
+                                                                          white),
+                                                                  cells: [
+                                                                    DataCell(Text(
+                                                                        formatNumber(
+                                                                            double.parse(infraAmountCol[index])))),
+                                                                    DataCell(Text(
+                                                                        formatNumber(
+                                                                            double.parse(evChargersAmountCol[index])))),
+                                                                    DataCell(Text(
+                                                                        formatNumber(
+                                                                            double.parse(totalApprovedJmrAmountCol[index])))),
+                                                                    DataCell(Text(
+                                                                        formatNumber(
+                                                                            double.parse(totalPendingJmrAmountCol[index])))),
+                                                                  ]);
+                                                            })),
+                                                      ),
+                                                      PieChart(
+                                                        dataMap: {
+                                                          tmlApprovedLegendNames[
+                                                                  0]:
+                                                              isExcelSelected
+                                                                  ? double.parse(
+                                                                      totalApprovedJmrAmountCol[
+                                                                          totalForAllCol])
+                                                                  : 0,
+                                                          tmlApprovedLegendNames[
+                                                                  1]:
+                                                              isExcelSelected
+                                                                  ? double.parse(
+                                                                      totalPendingJmrAmountCol[
+                                                                          totalForAllCol])
+                                                                  : 0,
+                                                        },
+                                                        legendOptions:
+                                                            const LegendOptions(
+                                                                showLegends:
+                                                                    false),
+                                                        animationDuration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    1500),
+                                                        chartValuesOptions:
+                                                            ChartValuesOptions(
+                                                          showChartValueBackground:
+                                                              false,
+                                                          chartValueStyle:
+                                                              TextStyle(
+                                                                  color: white,
+                                                                  fontSize: 10),
+                                                          showChartValuesInPercentage:
+                                                              true,
+                                                        ),
+                                                        chartRadius:
+                                                            chartRadius,
+                                                        colorList: colorList,
+                                                        chartType:
+                                                            ChartType.disc,
+                                                        totalValue: isExcelSelected
+                                                            ? double.parse(
+                                                                    totalApprovedJmrAmountCol[
+                                                                        totalForAllCol]) +
+                                                                double.parse(
+                                                                    totalPendingJmrAmountCol[
+                                                                        totalForAllCol])
+                                                            : 0,
+                                                      )
+                                                    ],
+                                                  ),
+                                                  Container(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 5),
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.93 /
+                                                            3.1,
+                                                    height: 30,
+                                                    child: GridView.builder(
+                                                        shrinkWrap: true,
+                                                        gridDelegate:
+                                                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                                                crossAxisCount:
+                                                                    2,
+                                                                crossAxisSpacing:
+                                                                    0,
+                                                                childAspectRatio:
+                                                                    16),
+                                                        itemCount: 4,
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          return RichText(
+                                                              text: TextSpan(
+                                                                  children: [
+                                                                TextSpan(
+                                                                    text:
+                                                                        //  '${MoneyFormatter(amount: double.parse(budgetActualTotalList[index1][index3].toString()), settings: MoneyFormatterSettings(symbol: '₹')).output.symbolOnLeft}'
+                                                                        '${tmlApprovedBottomValue[index]}:',
+                                                                    style: GoogleFonts.aleo(
+                                                                        fontSize:
+                                                                            8,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        color:
+                                                                            black)),
+                                                                const WidgetSpan(
+                                                                    child:
+                                                                        SizedBox(
+                                                                  width: 5,
+                                                                )),
+                                                                TextSpan(
+                                                                    text: isExcelSelected
+                                                                        ? formatNumber(double.parse(tmlTotalList[index]
+                                                                            .toString()))
+                                                                        : '0',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            9,
+                                                                        color:
+                                                                            blue,
+                                                                        fontWeight:
+                                                                            FontWeight.bold))
+                                                              ]));
+                                                        }),
+                                                  )
+                                                ],
+                                              )),
+                                        )),
+                                    Positioned(
+                                        top: 0,
+                                        left: 20,
+                                        child: Card(
+                                            shadowColor: Colors.black,
+                                            elevation: 5,
+                                            color: blue,
+                                            child: Container(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  dashboardTitle[2],
+                                                  style: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 10),
+                                                )))),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                height: 270,
+                                child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    shrinkWrap: true,
+                                    itemCount: 2,
+                                    itemBuilder: ((context, index1) {
+                                      return Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.85 /
+                                                3,
+                                        height: 270,
+                                        child: Stack(
+                                          children: [
+                                            Positioned(
+                                                top: 10,
+                                                left: 10,
+                                                child: Container(
                                                   width: MediaQuery.of(context)
                                                           .size
                                                           .width *
-                                                      0.81 /
-                                                      3.8,
-                                                  child: DataTable2(
-                                                      headingRowColor:
-                                                          MaterialStatePropertyAll(
-                                                              blue),
-                                                      headingTextStyle: TextStyle(
-                                                          color: white,
-                                                          fontSize:
-                                                              tableHeadingFontSize),
-                                                      headingRowHeight: 28,
-                                                      dataTextStyle: TextStyle(
-                                                          fontSize:
-                                                              tableDataFontSize,
-                                                          color: black),
-                                                      columnSpacing: 2,
-                                                      showBottomBorder: false,
-                                                      dividerThickness: 0,
-                                                      dataRowHeight: 20,
-                                                      columns: [
-                                                        DataColumn2(
-                                                            label: Text(
-                                                          dashboardColNames[2]
-                                                              [0],
-                                                          textAlign:
-                                                              TextAlign.start,
-                                                        )),
-                                                        DataColumn2(
-                                                            label: Text(
-                                                          dashboardColNames[2]
-                                                              [1],
-                                                          textAlign:
-                                                              TextAlign.start,
-                                                        )),
-                                                        DataColumn2(
-                                                            label: Text(
-                                                          dashboardColNames[2]
-                                                              [2],
-                                                          textAlign:
-                                                              TextAlign.start,
-                                                        )),
-                                                        DataColumn2(
-                                                            label: Text(
-                                                          dashboardColNames[2]
-                                                              [3],
-                                                          textAlign:
-                                                              TextAlign.start,
-                                                        )),
-                                                      ],
-                                                      rows: List.generate(
-                                                          infraAmountColLen,
-                                                          (index) {
-                                                        return DataRow2(
-                                                            color: index ==
-                                                                    Provider.of<SelectedRowIndexModel>(
+                                                      0.82 /
+                                                      3,
+                                                  height: 255,
+                                                  child: Card(
+                                                      elevation: 10,
+                                                      shape: const RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          20))),
+                                                      child: Column(
+                                                        children: [
+                                                          Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(5.0),
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.76,
+                                                            height: 40,
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .end,
+                                                              children: [
+                                                                ListView
+                                                                    .builder(
+                                                                        scrollDirection:
+                                                                            Axis
+                                                                                .horizontal,
+                                                                        shrinkWrap:
+                                                                            true,
+                                                                        itemCount:
+                                                                            2,
+                                                                        itemBuilder:
+                                                                            ((context,
+                                                                                index) {
+                                                                          return Container(
+                                                                            padding: const EdgeInsets.only(
+                                                                                left: 5.0,
+                                                                                right: 5.0,
+                                                                                top: 5.0),
+                                                                            child: RichText(
+                                                                                text: TextSpan(children: [
+                                                                              WidgetSpan(child: Container(height: 10, width: 10, color: colorList[index])),
+                                                                              const WidgetSpan(
+                                                                                  child: SizedBox(
+                                                                                width: 5,
+                                                                              )),
+                                                                              TextSpan(text: budgetLegendNames[index1][index], style: const TextStyle(color: Colors.black, fontSize: 9))
+                                                                            ])),
+                                                                          );
+                                                                        })),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Container(
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            5)),
+                                                                height: 150,
+                                                                width: MediaQuery.of(
                                                                             context)
-                                                                        .selectedRowIndex
-                                                                ? const MaterialStatePropertyAll(
-                                                                    Color.fromARGB(
-                                                                        255,
-                                                                        190,
-                                                                        226,
-                                                                        255))
-                                                                : MaterialStatePropertyAll(
-                                                                    white),
-                                                            cells: [
-                                                              DataCell(Text(
-                                                                  '${MoneyFormatter(amount: double.parse(infraAmountCol[index]), settings: MoneyFormatterSettings(symbol: '₹')).output.nonSymbol}')),
-                                                              DataCell(Text(
-                                                                  '${MoneyFormatter(amount: double.parse(evChargersAmountCol[index]), settings: MoneyFormatterSettings(symbol: '₹')).output.nonSymbol}')),
-                                                              DataCell(Text(
-                                                                  '${MoneyFormatter(amount: double.parse(totalApprovedJmrAmountCol[index]), settings: MoneyFormatterSettings(symbol: '₹')).output.nonSymbol}')),
-                                                              DataCell(Text(
-                                                                  '${MoneyFormatter(amount: double.parse(totalPendingJmrAmountCol[index]), settings: MoneyFormatterSettings(symbol: '₹')).output.nonSymbol}')),
-                                                            ]);
-                                                      })),
-                                                ),
-                                                Container(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: PieChart(
-                                                    dataMap: {
-                                                      tmlApprovedLegendNames[0]:
-                                                          isExcelSelected
-                                                              ? double.parse(
-                                                                  infraAmountCol[
-                                                                      totalForAllCol])
-                                                              : 0,
-                                                      tmlApprovedLegendNames[1]:
-                                                          isExcelSelected
-                                                              ? double.parse(
-                                                                  evChargersAmountCol[
-                                                                      totalForAllCol])
-                                                              : 0,
-                                                      tmlApprovedLegendNames[2]:
-                                                          isExcelSelected
-                                                              ? double.parse(
-                                                                  totalApprovedJmrAmountCol[
-                                                                      totalForAllCol])
-                                                              : 0,
-                                                      tmlApprovedLegendNames[3]:
-                                                          isExcelSelected
-                                                              ? double.parse(
-                                                                  totalPendingJmrAmountCol[
-                                                                      totalForAllCol])
-                                                              : 0,
-                                                    },
-                                                    legendOptions:
-                                                        const LegendOptions(
-                                                            showLegends: false),
-                                                    animationDuration:
-                                                        const Duration(
-                                                            milliseconds: 1500),
-                                                    chartValuesOptions:
-                                                        ChartValuesOptions(
-                                                      showChartValueBackground:
-                                                          false,
-                                                      chartValueStyle:
-                                                          TextStyle(
-                                                              color: white,
-                                                              fontSize: 10),
-                                                      showChartValuesInPercentage:
-                                                          true,
-                                                    ),
-                                                    chartRadius: chartRadius,
-                                                    colorList:
-                                                        tmlApprovalJmrColorList,
-                                                    chartType: ChartType.disc,
-                                                    totalValue: isExcelSelected
-                                                        ? double.parse(
-                                                                infraAmountCol[
-                                                                    totalForAllCol]) +
-                                                            double.parse(
-                                                                evChargersAmountCol[
-                                                                    totalForAllCol]) +
-                                                            double.parse(
-                                                                totalApprovedJmrAmountCol[
-                                                                    totalForAllCol]) +
-                                                            double.parse(
-                                                                totalPendingJmrAmountCol[
-                                                                    totalForAllCol])
-                                                        : 0,
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                            Container(
-                                                padding: const EdgeInsets.only(
-                                                    left: 10, top: 5),
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.80,
-                                                height: 26,
-                                                child: GridView.builder(
-                                                    shrinkWrap: true,
-                                                    gridDelegate:
-                                                        const SliverGridDelegateWithFixedCrossAxisCount(
-                                                            crossAxisCount: 4,
-                                                            mainAxisSpacing: 0),
-                                                    itemCount: 4,
-                                                    itemBuilder:
-                                                        (context, index) {
-                                                      return Container(
-                                                        child: RichText(
-                                                            text: TextSpan(
-                                                                children: [
-                                                              TextSpan(
-                                                                  text:
-                                                                      '${tmlApprovedBottomValue[index]}:\n',
-                                                                  style: GoogleFonts.azeretMono(
-                                                                      fontSize:
-                                                                          7,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color:
-                                                                          black)),
-                                                              const WidgetSpan(
-                                                                  child:
-                                                                      SizedBox(
-                                                                width: 5,
-                                                              )),
-                                                              TextSpan(
-                                                                  text: isExcelSelected
-                                                                      ? tmlTotalList[
-                                                                              index]
-                                                                          .toString()
-                                                                      : '0',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          8,
-                                                                      color:
-                                                                          blue,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold))
-                                                            ])),
-                                                      );
-                                                    })
-
-                                                //  ListView.builder(
-                                                //     scrollDirection:
-                                                //         Axis.horizontal,
-                                                //     shrinkWrap: true,
-                                                //     itemCount: 4,
-                                                //     itemBuilder: (contex, index) {
-                                                //       return }),
-                                                )
+                                                                        .size
+                                                                        .width *
+                                                                    0.81 /
+                                                                    4.4,
+                                                                child:
+                                                                    DataTable2(
+                                                                        minWidth:
+                                                                            280,
+                                                                        headingRowColor:
+                                                                            MaterialStatePropertyAll(
+                                                                                blue),
+                                                                        headingTextStyle: TextStyle(
+                                                                            color:
+                                                                                white,
+                                                                            fontSize:
+                                                                                tableHeadingFontSize),
+                                                                        headingRowHeight:
+                                                                            25,
+                                                                        dataTextStyle: TextStyle(
+                                                                            fontSize:
+                                                                                tableDataFontSize,
+                                                                            color:
+                                                                                black),
+                                                                        columnSpacing:
+                                                                            2,
+                                                                        showBottomBorder:
+                                                                            false,
+                                                                        dividerThickness:
+                                                                            0,
+                                                                        dataRowHeight:
+                                                                            20,
+                                                                        columns: [
+                                                                          DataColumn2(
+                                                                              label: Text(
+                                                                            dashboardColNames[index1][0],
+                                                                            textAlign:
+                                                                                TextAlign.start,
+                                                                          )),
+                                                                          DataColumn2(
+                                                                              label: Text(
+                                                                            dashboardColNames[index1][1],
+                                                                            textAlign:
+                                                                                TextAlign.start,
+                                                                          )),
+                                                                          DataColumn2(
+                                                                              label: Text(
+                                                                            dashboardColNames[index1][2],
+                                                                            textAlign:
+                                                                                TextAlign.start,
+                                                                          )),
+                                                                        ],
+                                                                        rows: List.generate(
+                                                                            tprelBudgetColLen,
+                                                                            (index2) {
+                                                                          return DataRow2(
+                                                                              color: index2 == Provider.of<SelectedRowIndexModel>(context, listen: false).selectedRowIndex ? const MaterialStatePropertyAll(Color.fromARGB(255, 190, 226, 255)) : MaterialStatePropertyAll(white),
+                                                                              cells: [
+                                                                                DataCell(Text(formatNumber(double.parse(budgetActualCol[index1][0][index2].toString())))),
+                                                                                DataCell(Text('${MoneyFormatter(amount: double.parse(budgetActualCol[index1][1][index2]), settings: MoneyFormatterSettings(symbol: '₹')).output.symbolOnLeft}')),
+                                                                                DataCell(Text('${MoneyFormatter(amount: double.parse(budgetActualCol[index1][2][index2]), settings: MoneyFormatterSettings(symbol: '₹')).output.symbolOnLeft}')),
+                                                                              ]);
+                                                                        })),
+                                                              ),
+                                                              Container(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .all(
+                                                                        5.0),
+                                                                child: PieChart(
+                                                                  dataMap: {
+                                                                    budgetActualBottomValue[index1]
+                                                                            [0]:
+                                                                        isExcelSelected
+                                                                            ? index1 == 0
+                                                                                ? double.parse(tprelBudgetCol[totalForAllCol])
+                                                                                : double.parse(actualExpenseTprelCol[totalForAllCol])
+                                                                            : 0,
+                                                                    budgetActualBottomValue[index1]
+                                                                            [1]:
+                                                                        isExcelSelected
+                                                                            ? index1 == 0
+                                                                                ? double.parse(tpevslBudgetCol[totalForAllCol])
+                                                                                : double.parse(actualExpenseTpevslCol[totalForAllCol])
+                                                                            : 0,
+                                                                  },
+                                                                  legendOptions:
+                                                                      const LegendOptions(
+                                                                          showLegends:
+                                                                              false),
+                                                                  animationDuration:
+                                                                      const Duration(
+                                                                          milliseconds:
+                                                                              1500),
+                                                                  chartValuesOptions:
+                                                                      ChartValuesOptions(
+                                                                    showChartValueBackground:
+                                                                        false,
+                                                                    chartValueStyle: TextStyle(
+                                                                        color:
+                                                                            white,
+                                                                        fontSize:
+                                                                            10),
+                                                                    showChartValuesInPercentage:
+                                                                        true,
+                                                                  ),
+                                                                  chartRadius:
+                                                                      chartRadius,
+                                                                  colorList:
+                                                                      colorList,
+                                                                  chartType:
+                                                                      ChartType
+                                                                          .disc,
+                                                                  totalValue: isExcelSelected
+                                                                      ? index1 == 0
+                                                                          ? double.parse(tprelBudgetCol[totalForAllCol]) + double.parse(tpevslBudgetCol[totalForAllCol])
+                                                                          : index1 == 1
+                                                                              ? double.parse(actualExpenseTprelCol[totalForAllCol]) + double.parse(actualExpenseTpevslCol[totalForAllCol])
+                                                                              : 0
+                                                                      : 0,
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                          Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    left: 5),
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.88 /
+                                                                3.2,
+                                                            height: 26,
+                                                            child: GridView
+                                                                .builder(
+                                                                    shrinkWrap:
+                                                                        true,
+                                                                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                                                        crossAxisCount:
+                                                                            2,
+                                                                        crossAxisSpacing:
+                                                                            0,
+                                                                        childAspectRatio:
+                                                                            16),
+                                                                    itemCount:
+                                                                        3,
+                                                                    itemBuilder:
+                                                                        (context,
+                                                                            index3) {
+                                                                      return RichText(
+                                                                          text: TextSpan(
+                                                                              children: [
+                                                                            TextSpan(
+                                                                                text: '${budgetActualBottomValue[index1][index3]}:',
+                                                                                style: GoogleFonts.aleo(fontSize: 8, fontWeight: FontWeight.bold, color: black)),
+                                                                            const WidgetSpan(
+                                                                                child: SizedBox(
+                                                                              width: 5,
+                                                                            )),
+                                                                            TextSpan(
+                                                                                text: isExcelSelected ? '${MoneyFormatter(amount: double.parse(budgetActualTotalList[index1][index3].toString()), settings: MoneyFormatterSettings(symbol: '₹')).output.symbolOnLeft}' : '0',
+                                                                                style: TextStyle(fontSize: 9, color: blue, fontWeight: FontWeight.bold))
+                                                                          ]));
+                                                                    }),
+                                                          )
+                                                        ],
+                                                      )),
+                                                )),
+                                            Positioned(
+                                                top: 0,
+                                                left: 30,
+                                                child: Card(
+                                                    shadowColor: Colors.black,
+                                                    elevation: 5,
+                                                    color: blue,
+                                                    child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: Text(
+                                                          dashboardTitle[
+                                                              index1],
+                                                          style:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize: 10),
+                                                        )))),
                                           ],
-                                        )),
-                                  )),
-                              Positioned(
-                                  top: 0,
-                                  left: 20,
-                                  child: Card(
-                                      shadowColor: Colors.black,
-                                      elevation: 5,
-                                      color: blue,
-                                      child: Container(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            dashboardTitle[2],
-                                            style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 10),
-                                          )))),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 240,
-                          child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              shrinkWrap: true,
-                              itemCount: 2,
-                              itemBuilder: ((context, index1) {
-                                return Container(
-                                  width: MediaQuery.of(context).size.width *
-                                      0.85 /
-                                      3,
-                                  height: 235,
-                                  child: Stack(
-                                    children: [
-                                      Positioned(
+                                        ),
+                                      );
+                                    })),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  //Commercial Achievement
+
+                                  Container(
+                                    padding: const EdgeInsets.only(left: 10),
+                                    width: MediaQuery.of(context).size.width *
+                                        0.86 /
+                                        4.0,
+                                    height: 270,
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
                                           top: 10,
-                                          left: 10,
+                                          left: 0,
                                           child: Container(
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
-                                                0.82 /
-                                                3,
-                                            height: 225,
+                                                0.84 /
+                                                4.2,
+                                            height: 255,
+                                            child: Card(
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  20))),
+                                              elevation: 10,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: [
+                                                  Container(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 5.0, top: 30),
+                                                    height: 170,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.83 /
+                                                            4.2,
+                                                    child: DataTable2(
+                                                        headingRowHeight: 28,
+                                                        headingRowColor:
+                                                            MaterialStatePropertyAll(
+                                                                blue),
+                                                        columnSpacing: 10,
+                                                        dataTextStyle: TextStyle(
+                                                            fontSize:
+                                                                tableDataFontSize,
+                                                            color: black),
+                                                        dataRowHeight: 20,
+                                                        headingTextStyle: TextStyle(
+                                                            color: white,
+                                                            fontSize:
+                                                                tableHeadingFontSize),
+                                                        showBottomBorder: false,
+                                                        dividerThickness: 0,
+                                                        columns: const [
+                                                          DataColumn2(
+                                                              label: Text(
+                                                            '% of Financial Progress\nof EV Bus Project',
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: TextStyle(
+                                                                fontSize: 9),
+                                                          )),
+                                                          DataColumn2(
+                                                              label: Text(
+                                                            '% of pending JMR\napproval form TML',
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: TextStyle(
+                                                                fontSize: 9),
+                                                          )),
+                                                        ],
+                                                        rows: List.generate(
+                                                            financialProgressLen,
+                                                            (index) {
+                                                          return DataRow2(
+                                                              color: index ==
+                                                                      Provider.of<SelectedRowIndexModel>(
+                                                                              context,
+                                                                              listen:
+                                                                                  false)
+                                                                          .selectedRowIndex
+                                                                  ? const MaterialStatePropertyAll(
+                                                                      Color.fromARGB(
+                                                                          255,
+                                                                          190,
+                                                                          226,
+                                                                          255))
+                                                                  : MaterialStatePropertyAll(
+                                                                      white),
+
+                                                              // onSelectChanged: (isSelected) {
+                                                              //   Provider.of<SelectedRowIndexModel>(
+                                                              //           context,
+                                                              //           listen: false)
+                                                              //       .setSelectedRowIndex(index);
+                                                              // },
+                                                              cells: [
+                                                                DataCell(Text(
+                                                                    '${financialProgressCol[index].toString()}%')),
+                                                                DataCell(Text(
+                                                                    '${pendingJmrApprovalCol[index]}%')),
+                                                              ]);
+                                                        })),
+                                                  ),
+                                                  Container(
+                                                    // color: blue,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.88 /
+                                                            4.55,
+                                                    height: 35,
+                                                    child: GridView.builder(
+                                                        shrinkWrap: true,
+                                                        gridDelegate:
+                                                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                                                crossAxisCount:
+                                                                    2,
+                                                                crossAxisSpacing:
+                                                                    0,
+                                                                childAspectRatio:
+                                                                    4),
+                                                        itemCount: 2,
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          return Container(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceAround,
+                                                              children: [
+                                                                Text(
+                                                                  commercialBottomValue[
+                                                                      index],
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          10,
+                                                                      color:
+                                                                          blue),
+                                                                ),
+                                                                Text(
+                                                                    isExcelSelected
+                                                                        ? '${commercialTotalList[index].toString()}%'
+                                                                        : '0%',
+                                                                    style: const TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        fontSize:
+                                                                            10))
+                                                              ],
+                                                            ),
+                                                          );
+                                                        }),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                            top: 0,
+                                            left: 20,
+                                            child: Card(
+                                                shadowColor: Colors.black,
+                                                elevation: 5,
+                                                color: blue,
+                                                child: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: const Text(
+                                                      'Commercial Achievement',
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 10),
+                                                    )))),
+                                      ],
+                                    ),
+                                  ),
+
+                                  //Asset Capitalized
+
+                                  Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.88 /
+                                        2.5,
+                                    height: 270,
+                                    child: Stack(
+                                      children: [
+                                        Positioned(
+                                          top: 10,
+                                          left: 5,
+                                          child: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.88 /
+                                                2.55,
+                                            height: 255,
                                             child: Card(
                                                 elevation: 10,
                                                 shape:
@@ -923,8 +1483,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                         )),
                                                                         TextSpan(
                                                                             text:
-                                                                                budgetLegendNames[index1][index],
-                                                                            style: const TextStyle(color: Colors.black, fontSize: 9))
+                                                                                assetCapitalisedLegendNames[index],
+                                                                            style: const TextStyle(color: Colors.black, fontSize: 10))
                                                                       ])),
                                                                 );
                                                               })),
@@ -948,8 +1508,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                   .size
                                                                   .width *
                                                               0.81 /
-                                                              4.4,
+                                                              3.2,
                                                           child: DataTable2(
+                                                              minWidth: 370,
                                                               headingRowColor:
                                                                   MaterialStatePropertyAll(
                                                                       blue),
@@ -960,7 +1521,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                       fontSize:
                                                                           tableHeadingFontSize),
                                                               headingRowHeight:
-                                                                  25,
+                                                                  30,
                                                               dataTextStyle:
                                                                   TextStyle(
                                                                       fontSize:
@@ -976,35 +1537,43 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                               columns: [
                                                                 DataColumn2(
                                                                     label: Text(
-                                                                  dashboardColNames[
-                                                                      index1][0],
+                                                                  assetCapitalisation[
+                                                                      0],
                                                                   textAlign:
                                                                       TextAlign
                                                                           .start,
                                                                 )),
                                                                 DataColumn2(
                                                                     label: Text(
-                                                                  dashboardColNames[
-                                                                      index1][1],
+                                                                  assetCapitalisation[
+                                                                      1],
                                                                   textAlign:
                                                                       TextAlign
                                                                           .start,
                                                                 )),
                                                                 DataColumn2(
                                                                     label: Text(
-                                                                  dashboardColNames[
-                                                                      index1][2],
+                                                                  assetCapitalisation[
+                                                                      2],
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .start,
+                                                                )),
+                                                                DataColumn2(
+                                                                    label: Text(
+                                                                  assetCapitalisation[
+                                                                      3],
                                                                   textAlign:
                                                                       TextAlign
                                                                           .start,
                                                                 )),
                                                               ],
                                                               rows: List.generate(
-                                                                  tprelBudgetColLen,
-                                                                  (index2) {
+                                                                  assetCapitalisedTprelLen,
+                                                                  (index) {
                                                                 return DataRow2(
-                                                                    color: index2 ==
-                                                                            Provider.of<SelectedRowIndexModel>(context)
+                                                                    color: index ==
+                                                                            Provider.of<SelectedRowIndexModel>(context, listen: true)
                                                                                 .selectedRowIndex
                                                                         ? const MaterialStatePropertyAll(Color.fromARGB(
                                                                             255,
@@ -1015,39 +1584,31 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                             white),
                                                                     cells: [
                                                                       DataCell(Text(
-                                                                          '${MoneyFormatter(amount: double.parse(budgetActualCol[index1][0][index2]), settings: MoneyFormatterSettings(symbol: '₹')).output.nonSymbol}')),
+                                                                          '${MoneyFormatter(amount: double.parse(assetCapitalisedTprelCol[index]), settings: MoneyFormatterSettings(symbol: '₹')).output.symbolOnLeft}')),
                                                                       DataCell(Text(
-                                                                          '${MoneyFormatter(amount: double.parse(budgetActualCol[index1][1][index2]), settings: MoneyFormatterSettings(symbol: '₹')).output.nonSymbol}')),
+                                                                          '${MoneyFormatter(amount: double.parse(assetCapitalisedTpevslCol[index]), settings: MoneyFormatterSettings(symbol: '₹')).output.symbolOnLeft}')),
                                                                       DataCell(Text(
-                                                                          '${MoneyFormatter(amount: double.parse(budgetActualCol[index1][2][index2]), settings: MoneyFormatterSettings(symbol: '₹')).output.nonSymbol}')),
+                                                                          '${MoneyFormatter(amount: double.parse(cumulativeAssetCapitalizedCol[index]), settings: MoneyFormatterSettings(symbol: '₹')).output.symbolOnLeft}')),
+                                                                      DataCell(Text(
+                                                                          '${MoneyFormatter(amount: double.parse(pendingAssetCapitalisationCol[index]), settings: MoneyFormatterSettings(symbol: '₹')).output.symbolOnLeft}')),
                                                                     ]);
                                                               })),
                                                         ),
-                                                        Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(5.0),
-                                                          child: PieChart(
+                                                        PieChart(
                                                             dataMap: {
-                                                              budgetActualBottomValue[
-                                                                      index1][0]:
+                                                              assetCapitalisedLegendNames[
+                                                                      0]:
                                                                   isExcelSelected
-                                                                      ? index1 ==
-                                                                              0
-                                                                          ? double.parse(tprelBudgetCol[
+                                                                      ? double.parse(
+                                                                          cumulativeAssetCapitalizedCol[
                                                                               totalForAllCol])
-                                                                          : double.parse(
-                                                                              actualExpenseTprelCol[totalForAllCol])
                                                                       : 0,
-                                                              budgetActualBottomValue[
-                                                                      index1][1]:
+                                                              assetCapitalisedLegendNames[
+                                                                      1]:
                                                                   isExcelSelected
-                                                                      ? index1 ==
-                                                                              0
-                                                                          ? double.parse(tpevslBudgetCol[
+                                                                      ? double.parse(
+                                                                          pendingAssetCapitalisationCol[
                                                                               totalForAllCol])
-                                                                          : double.parse(
-                                                                              actualExpenseTpevslCol[totalForAllCol])
                                                                       : 0,
                                                             },
                                                             legendOptions:
@@ -1077,579 +1638,195 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 colorList,
                                                             chartType:
                                                                 ChartType.disc,
-                                                            totalValue:
-                                                                isExcelSelected
-                                                                    ? index1 ==
-                                                                            0
-                                                                        ? double.parse(tprelBudgetCol[totalForAllCol]) +
-                                                                            double.parse(tpevslBudgetCol[
-                                                                                totalForAllCol])
-                                                                        : index1 ==
-                                                                                1
-                                                                            ? double.parse(actualExpenseTprelCol[totalForAllCol]) +
-                                                                                double.parse(actualExpenseTpevslCol[totalForAllCol])
-                                                                            : 0
-                                                                    : 0,
-                                                          ),
-                                                        )
+                                                            totalValue: isExcelSelected
+                                                                ? double.parse(
+                                                                        cumulativeAssetCapitalizedCol[
+                                                                            totalForAllCol]) +
+                                                                    double.parse(
+                                                                        pendingAssetCapitalisationCol[
+                                                                            totalForAllCol])
+                                                                : 0),
                                                       ],
                                                     ),
                                                     Container(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 20, top: 5),
                                                       width:
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .width *
-                                                              0.84,
-                                                      height: 25,
-                                                      child: ListView.builder(
-                                                          scrollDirection:
-                                                              Axis.horizontal,
+                                                              0.9 /
+                                                              2.8,
+                                                      height: 26,
+                                                      child: GridView.builder(
                                                           shrinkWrap: true,
-                                                          itemCount: 3,
+                                                          gridDelegate:
+                                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                                                  crossAxisCount:
+                                                                      2,
+                                                                  crossAxisSpacing:
+                                                                      0,
+                                                                  childAspectRatio:
+                                                                      20),
+                                                          itemCount: 4,
                                                           itemBuilder:
-                                                              (contex, index3) {
-                                                            return Container(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .only(
-                                                                      right:
-                                                                          15),
-                                                              child: RichText(
-                                                                  text: TextSpan(
-                                                                      children: [
-                                                                    TextSpan(
-                                                                        text:
-                                                                            '${budgetActualBottomValue[index1][index3]} :',
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                8,
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: black)),
-                                                                    const WidgetSpan(
-                                                                        child:
-                                                                            SizedBox(
-                                                                      width: 5,
-                                                                    )),
-                                                                    TextSpan(
-                                                                        text: isExcelSelected
-                                                                            ? budgetActualTotalList[index1][index3]
-                                                                                .toString()
-                                                                            : '0',
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                8,
-                                                                            color:
-                                                                                blue,
-                                                                            fontWeight:
-                                                                                FontWeight.bold))
-                                                                  ])),
-                                                            );
-                                                          }),
-                                                    )
-                                                  ],
-                                                )),
-                                          )),
-                                      Positioned(
-                                          top: 0,
-                                          left: 30,
-                                          child: Card(
-                                              shadowColor: Colors.black,
-                                              elevation: 5,
-                                              color: blue,
-                                              child: Container(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Text(
-                                                    dashboardTitle[index1],
-                                                    style: const TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 10),
-                                                  )))),
-                                    ],
-                                  ),
-                                );
-                              })),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.only(left: 10),
-                              width: MediaQuery.of(context).size.width *
-                                  0.86 /
-                                  4.0,
-                              height: 240,
-                              child: Stack(
-                                children: [
-                                  Positioned(
-                                    top: 10,
-                                    left: 0,
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.84 /
-                                          4.2,
-                                      height: 225,
-                                      child: Card(
-                                        shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20))),
-                                        elevation: 10,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            //Table Part
-                                            Container(
-                                              padding: const EdgeInsets.only(
-                                                  left: 5.0, top: 10),
-                                              height: 160,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.83 /
-                                                  4.4,
-                                              child: DataTable2(
-                                                  headingRowHeight: 28,
-                                                  headingRowColor:
-                                                      MaterialStatePropertyAll(
-                                                          blue),
-                                                  columnSpacing: 10,
-                                                  dataTextStyle: TextStyle(
-                                                      fontSize:
-                                                          tableDataFontSize,
-                                                      color: black),
-                                                  dataRowHeight: 20,
-                                                  headingTextStyle: TextStyle(
-                                                      color: white,
-                                                      fontSize:
-                                                          tableHeadingFontSize),
-                                                  showBottomBorder: false,
-                                                  dividerThickness: 0,
-                                                  columns: const [
-                                                    DataColumn2(
-                                                        label: Text(
-                                                      '% of Financial Progress\nof EV Bus Project',
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                          fontSize: 9),
-                                                    )),
-                                                    DataColumn2(
-                                                        label: Text(
-                                                      '% of pending JMR\napproval form TML',
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                          fontSize: 9),
-                                                    )),
-                                                  ],
-                                                  rows: List.generate(
-                                                      financialProgressLen,
-                                                      (index) {
-                                                    return DataRow2(
-                                                        color: index ==
-                                                                Provider.of<SelectedRowIndexModel>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                    .selectedRowIndex
-                                                            ? const MaterialStatePropertyAll(
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    190,
-                                                                    226,
-                                                                    255))
-                                                            : MaterialStatePropertyAll(
-                                                                white),
-
-                                                        // onSelectChanged: (isSelected) {
-                                                        //   Provider.of<SelectedRowIndexModel>(
-                                                        //           context,
-                                                        //           listen: false)
-                                                        //       .setSelectedRowIndex(index);
-                                                        // },
-                                                        cells: [
-                                                          DataCell(Text(
-                                                              '${financialProgressCol[index].toString()}%')),
-                                                          DataCell(Text(
-                                                              '${pendingJmrApprovalCol[index]}%')),
-                                                        ]);
-                                                  })),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                      top: 0,
-                                      left: 20,
-                                      child: Card(
-                                          shadowColor: Colors.black,
-                                          elevation: 5,
-                                          color: blue,
-                                          child: Container(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: const Text(
-                                                'Commercial Achievement',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 10),
-                                              )))),
-                                ],
-                              ),
-                            ),
-
-                            //Asset Capitalized
-
-                            Container(
-                              width: MediaQuery.of(context).size.width *
-                                  0.88 /
-                                  2.5,
-                              height: 240,
-                              child: Stack(
-                                children: [
-                                  Positioned(
-                                    top: 10,
-                                    left: 5,
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.88 /
-                                          2.55,
-                                      height: 225,
-                                      child: Card(
-                                          elevation: 10,
-                                          shape: const RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(20))),
-                                          child: Column(
-                                            children: [
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.all(5.0),
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.76,
-                                                height: 40,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: [
-                                                    ListView.builder(
-                                                        scrollDirection:
-                                                            Axis.horizontal,
-                                                        shrinkWrap: true,
-                                                        itemCount: 4,
-                                                        itemBuilder:
-                                                            ((context, index) {
-                                                          return Container(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    left: 5.0,
-                                                                    right: 5.0,
-                                                                    top: 5.0),
-                                                            child: RichText(
+                                                              (context, index) {
+                                                            return RichText(
                                                                 text: TextSpan(
                                                                     children: [
-                                                                  WidgetSpan(
-                                                                      child: Container(
-                                                                          height:
-                                                                              10,
-                                                                          width:
-                                                                              10,
+                                                                  TextSpan(
+                                                                      text: assetCapitalisationBottomValue[
+                                                                          index],
+                                                                      style: GoogleFonts.aleo(
+                                                                          fontSize:
+                                                                              8,
+                                                                          fontWeight: FontWeight
+                                                                              .bold,
                                                                           color:
-                                                                              tmlApprovalJmrColorList[index])),
+                                                                              black)),
                                                                   const WidgetSpan(
                                                                       child:
                                                                           SizedBox(
                                                                     width: 5,
                                                                   )),
                                                                   TextSpan(
-                                                                      text: assetCapitalisedLegendNames[
-                                                                          index],
-                                                                      style: const TextStyle(
-                                                                          color: Colors
-                                                                              .black,
+                                                                      text: isExcelSelected
+                                                                          ? '${MoneyFormatter(amount: double.parse(assetTotalList[index].toString()), settings: MoneyFormatterSettings(symbol: '₹')).output.symbolOnLeft}'
+                                                                          : '0',
+                                                                      style: TextStyle(
                                                                           fontSize:
-                                                                              7.8))
-                                                                ])),
-                                                          );
-                                                        })),
+                                                                              9,
+                                                                          color:
+                                                                              blue,
+                                                                          fontWeight:
+                                                                              FontWeight.bold))
+                                                                ]));
+                                                          }),
+                                                    )
                                                   ],
-                                                ),
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5)),
-                                                    height: 150,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.81 /
-                                                            3.2,
-                                                    child: DataTable2(
-                                                        headingRowColor:
-                                                            MaterialStatePropertyAll(
-                                                                blue),
-                                                        headingTextStyle: TextStyle(
-                                                            color: white,
-                                                            fontSize:
-                                                                tableHeadingFontSize),
-                                                        headingRowHeight: 30,
-                                                        dataTextStyle: TextStyle(
-                                                            fontSize:
-                                                                tableDataFontSize,
-                                                            color: black),
-                                                        columnSpacing: 2,
-                                                        showBottomBorder: false,
-                                                        dividerThickness: 0,
-                                                        dataRowHeight: 20,
-                                                        columns: [
-                                                          DataColumn2(
-                                                              label: Text(
-                                                            assetCapitalisation[
-                                                                0],
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                          )),
-                                                          DataColumn2(
-                                                              label: Text(
-                                                            assetCapitalisation[
-                                                                1],
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                          )),
-                                                          DataColumn2(
-                                                              label: Text(
-                                                            assetCapitalisation[
-                                                                2],
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                          )),
-                                                          DataColumn2(
-                                                              label: Text(
-                                                            assetCapitalisation[
-                                                                3],
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                          )),
-                                                        ],
-                                                        rows: List.generate(
-                                                            assetCapitalisedTprelLen,
-                                                            (index) {
-                                                          return DataRow2(
-                                                              color: index ==
-                                                                      Provider.of<SelectedRowIndexModel>(
-                                                                              context)
-                                                                          .selectedRowIndex
-                                                                  ? const MaterialStatePropertyAll(
-                                                                      Color.fromARGB(
-                                                                          255,
-                                                                          190,
-                                                                          226,
-                                                                          255))
-                                                                  : MaterialStatePropertyAll(
-                                                                      white),
-                                                              cells: [
-                                                                DataCell(Text(
-                                                                    '${MoneyFormatter(amount: double.parse(assetCapitalisedTprelCol[index]), settings: MoneyFormatterSettings(symbol: '₹')).output.nonSymbol}')),
-                                                                DataCell(Text(
-                                                                    '${MoneyFormatter(amount: double.parse(assetCapitalisedTpevslCol[index]), settings: MoneyFormatterSettings(symbol: '₹')).output.nonSymbol}')),
-                                                                DataCell(Text(
-                                                                    '${MoneyFormatter(amount: double.parse(cumulativeAssetCapitalizedCol[index]), settings: MoneyFormatterSettings(symbol: '₹')).output.nonSymbol}')),
-                                                                DataCell(Text(
-                                                                    '${MoneyFormatter(amount: double.parse(pendingAssetCapitalisationCol[index]), settings: MoneyFormatterSettings(symbol: '₹')).output.nonSymbol}')),
-                                                              ]);
-                                                        })),
-                                                  ),
-                                                  Container(
+                                                )),
+                                          ),
+                                        ),
+                                        Positioned(
+                                            top: 0,
+                                            left: 25,
+                                            child: Card(
+                                                shadowColor: Colors.black,
+                                                elevation: 5,
+                                                color: blue,
+                                                child: Container(
                                                     padding:
                                                         const EdgeInsets.all(
-                                                            5.0),
-                                                    child: PieChart(
-                                                        dataMap: {
-                                                          assetCapitalisedLegendNames[
-                                                                  0]:
-                                                              isExcelSelected
-                                                                  ? double.parse(
-                                                                      assetCapitalisedTprelCol[
-                                                                          totalForAllCol])
-                                                                  : 0,
-                                                          assetCapitalisedLegendNames[
-                                                                  1]:
-                                                              isExcelSelected
-                                                                  ? double.parse(
-                                                                      assetCapitalisedTpevslCol[
-                                                                          totalForAllCol])
-                                                                  : 0,
-                                                          assetCapitalisedLegendNames[
-                                                                  2]:
-                                                              isExcelSelected
-                                                                  ? double.parse(
-                                                                      cumulativeAssetCapitalizedCol[
-                                                                          totalForAllCol])
-                                                                  : 0,
-                                                          assetCapitalisedLegendNames[
-                                                                  3]:
-                                                              isExcelSelected
-                                                                  ? double.parse(
-                                                                      pendingAssetCapitalisationCol[
-                                                                          totalForAllCol])
-                                                                  : 0,
-                                                        },
-                                                        legendOptions:
-                                                            const LegendOptions(
-                                                                showLegends:
-                                                                    false),
-                                                        animationDuration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    1500),
-                                                        chartValuesOptions:
-                                                            ChartValuesOptions(
-                                                          showChartValueBackground:
-                                                              false,
-                                                          chartValueStyle:
-                                                              TextStyle(
-                                                                  color: white,
-                                                                  fontSize: 10),
-                                                          showChartValuesInPercentage:
-                                                              true,
-                                                        ),
-                                                        chartRadius:
-                                                            chartRadius,
-                                                        colorList:
-                                                            tmlApprovalJmrColorList,
-                                                        chartType:
-                                                            ChartType.disc,
-                                                        totalValue: isExcelSelected
-                                                            ? double.parse(
-                                                                    assetCapitalisedTprelCol[
-                                                                        totalForAllCol]) +
-                                                                double.parse(
-                                                                    assetCapitalisedTpevslCol[
-                                                                        totalForAllCol]) +
-                                                                double.parse(
-                                                                    cumulativeAssetCapitalizedCol[
-                                                                        totalForAllCol]) +
-                                                                double.parse(
-                                                                    pendingAssetCapitalisationCol[
-                                                                        totalForAllCol])
-                                                            : 0),
-                                                  )
-                                                ],
-                                              ),
-                                              Container(
-                                                padding: const EdgeInsets.only(
-                                                    left: 10, top: 5),
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.80,
-                                                height: 25,
-                                                child: ListView.builder(
-                                                    scrollDirection:
-                                                        Axis.horizontal,
-                                                    shrinkWrap: true,
-                                                    itemCount: 4,
-                                                    itemBuilder:
-                                                        (contex, index) {
-                                                      return Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                right: 15),
-                                                        child: RichText(
-                                                            text: TextSpan(
-                                                                children: [
-                                                              TextSpan(
-                                                                  text:
-                                                                      assetCapitalisationBottomValue[
-                                                                          index],
-                                                                  style: GoogleFonts.azeretMono(
-                                                                      fontSize:
-                                                                          7,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color:
-                                                                          black)),
-                                                              const WidgetSpan(
-                                                                  child:
-                                                                      SizedBox(
-                                                                width: 5,
-                                                              )),
-                                                              TextSpan(
-                                                                  text: isExcelSelected
-                                                                      ? assetTotalList[
-                                                                              index]
-                                                                          .toString()
-                                                                      : '0',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          8,
-                                                                      color:
-                                                                          blue,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold))
-                                                            ])),
-                                                      );
-                                                    }),
-                                              )
-                                            ],
-                                          )),
+                                                            8.0),
+                                                    child: const Text(
+                                                      'Asset Capitalised',
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 10),
+                                                    )))),
+                                      ],
                                     ),
                                   ),
-                                  Positioned(
-                                      top: 0,
-                                      left: 25,
-                                      child: Card(
-                                          shadowColor: Colors.black,
-                                          elevation: 5,
-                                          color: blue,
-                                          child: Container(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: const Text(
-                                                'Asset Capitalised',
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 10),
-                                              )))),
                                 ],
                               ),
+                            ],
+                          )
+                        ],
+                      ),
+
+                      // EV BUS PROGRESS REPORT
+                      Container(
+                        height: 50,
+                        padding:
+                            const EdgeInsets.only(right: 25, top: 5, bottom: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                _scrollTable();
+                              },
+                              child: const Text('See Table'),
                             ),
                           ],
                         ),
-                      ],
-                    )
-                  ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(5.0),
+                            decoration: BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(color: blue, width: 2))),
+                            child: Text(
+                              'EV BUS Project Progress Report',
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: blue,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        padding: const EdgeInsets.only(top: 30),
+                        width: MediaQuery.of(context).size.width * 0.85,
+                        height: 1000,
+                        child: Consumer<SelectedRowIndexModel>(
+                          builder: (context, value, child) {
+                            return DataTable2(
+                                headingRowColor: MaterialStatePropertyAll(blue),
+                                dividerThickness: 0,
+                                minWidth: 900,
+                                dataRowHeight: 40,
+                                headingRowHeight: 50,
+                                border: TableBorder.all(),
+                                headingTextStyle:
+                                    TextStyle(fontSize: 13, color: white),
+                                columns: evProgressTable.map((columnNames) {
+                                  return DataColumn2(label: Text(columnNames));
+                                }).toList(),
+                                rows: List.generate(selectedDepoList.length,
+                                    (index) {
+                                  return DataRow2(cells: [
+                                    DataCell(
+                                        Text(index == 0 ? selectedCity : '')),
+                                    DataCell(Text(selectedDepoList[index])),
+                                    DataCell(Text('')),
+                                    DataCell(Text('')),
+                                    DataCell(Text('')),
+                                    DataCell(Text('')),
+                                    DataCell(Text('')),
+                                  ]);
+                                }));
+                          },
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: pickAndProcessFile,
-        child: const Icon(Icons.add),
-      ),
     );
   }
 
-  void pickAndProcessFile() async {
+  void getDepoName(selectCity) async {
+    QuerySnapshot depoListQuery = await FirebaseFirestore.instance
+        .collection('DepoName')
+        .doc(selectCity)
+        .collection('AllDepots')
+        .get();
+
+    List<String> depoList =
+        depoListQuery.docs.map((deponame) => deponame.id).toList();
+    selectedDepoList = depoList;
+  }
+
+  void _scrollTable() {
+    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 1000), curve: Curves.easeInOut);
+  }
+
+  pickAndProcessFile() async {
     List<List<dynamic>> tempList1 = [];
     List<List<dynamic>> tempList2 = [];
 
@@ -1756,9 +1933,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
         totalPlannedChargers = double.parse(plannedChargersCol[totalForAllCol]);
         totalChargersCommissioned =
             double.parse(chargersComissioned[totalForAllCol]);
+        totalBalancedCharger = totalPlannedChargers - totalChargersCommissioned;
 
         evTotalList.add(totalPlannedChargers);
         evTotalList.add(totalChargersCommissioned);
+        evTotalList.add(totalBalancedCharger);
 
         totalTprelBudget = double.parse(tprelBudgetCol[totalForAllCol]);
         totalTpevslBudget = double.parse(tpevslBudgetCol[totalForAllCol]);
@@ -1797,6 +1976,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
         totalPendingJmrPercent =
             double.parse(pendingJmrApprovalCol[totalForAllCol]);
 
+        commercialTotalList.add(totalFinancialProgress);
+        commercialTotalList.add(totalPendingJmrPercent);
+
         totalTprelAssetCapitalised =
             double.parse(assetCapitalisedTprelCol[totalForAllCol]);
         totalTpevslAssetCapitalised =
@@ -1825,5 +2007,35 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       print(stackTrace);
       // Handle the error as needed
     }
+  }
+
+  void getCityFromString(String sentence) async {
+    String fetchedDepo = '';
+    cityList.any((word) {
+      bool containsWord = sentence.contains(word);
+      if (sentence.contains('Bangalore')) {
+        fetchedDepo = 'Bangaluru';
+      } else if (sentence.contains('TML Dhadwad')) {
+        fetchedDepo = 'TML Dharwad';
+      } else if (containsWord) {
+        fetchedDepo = word;
+      }
+      print(fetchedDepo);
+
+      return containsWord;
+    });
+    getDepoName(fetchedDepo);
+    selectedCity = fetchedDepo;
+  }
+
+  void getCityName() async {
+    QuerySnapshot cityListQuery =
+        await FirebaseFirestore.instance.collection('DepoName').get();
+    cityList = cityListQuery.docs.map((e) => e.id).toList();
+  }
+
+  String formatNumber(double number) {
+    final format = NumberFormat.compact();
+    return format.format(number);
   }
 }
