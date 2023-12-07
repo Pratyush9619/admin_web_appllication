@@ -42,7 +42,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   double totalPlannedChargers = 0;
   double totalChargersCommissioned = 0;
   double totalBalancedCharger = 0;
-  double totalBalancedCharger = 0;
   double totalTprelBudget = 0;
   double totalTpevslBudget = 0;
   double totalBudget = 0;
@@ -88,11 +87,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     'Chargers Commisioned',
     'Balance Chargers'
   ];
-  List<String> evBottomValue = [
-    'Planned Chargers',
-    'Chargers Commisioned',
-    'Balance Chargers'
-  ];
 
   List<List<String>> budgetLegendNames = [
     ['TPREL\nBudget', 'TPEVSL\nBudget', 'Total\nBuget'],
@@ -127,11 +121,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     'EV chargers Amount',
     'Approved JMR Amount',
     'Pending JMR Amount'
-  ];
-
-  List<String> commercialBottomValue = [
-    '% of financial Progress',
-    '% of pending JMR Approval'
   ];
 
   List<String> commercialBottomValue = [
