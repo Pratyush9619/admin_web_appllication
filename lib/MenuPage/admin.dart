@@ -214,6 +214,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   @override
   void initState() {
     getCityName();
+    tempFunc();
     // TODO: implement initState
     super.initState();
   }
@@ -223,12 +224,12 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     final provider = Provider.of<SelectedRowIndexModel>(context);
     deviceHeight = MediaQuery.of(context).size.height;
     if (deviceHeight < 700) {
-      tableDataFontSize = 8;
+      tableDataFontSize = 10;
       tableHeadingFontSize = 8;
       chartRadius = 80;
       fontSize = 8;
     } else {
-      tableDataFontSize = 8;
+      tableDataFontSize = 11;
       tableHeadingFontSize = 8;
       chartRadius = 90;
       fontSize = 11;
@@ -383,27 +384,28 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                         tableHeadingFontSize),
                                                             headingRowHeight:
                                                                 25,
-                                                            dataTextStyle: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                fontSize:
-                                                                    tableDataFontSize,
-                                                                color: black),
+                                                            dataTextStyle:
+                                                                TextStyle(
+                                                                    fontSize:
+                                                                        tableDataFontSize,
+                                                                    color:
+                                                                        black),
                                                             columnSpacing: 2,
                                                             showBottomBorder:
                                                                 false,
                                                             dividerThickness: 0,
-                                                            dataRowHeight: 20,
+                                                            dataRowHeight: 30,
                                                             columns: [
                                                               DataColumn2(
+                                                                  fixedWidth:
+                                                                      90,
                                                                   label: Text(
-                                                                dashboardColNames[
-                                                                    3][0],
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                              )),
+                                                                    dashboardColNames[
+                                                                        3][0],
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                  )),
                                                               DataColumn2(
                                                                   label: Text(
                                                                 dashboardColNames[
@@ -435,18 +437,25 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                           255))
                                                                       : MaterialStatePropertyAll(
                                                                           white),
-                                                                  onTap: () {
-                                                                    Provider.of<SelectedRowIndexModel>(
-                                                                            context,
-                                                                            listen:
-                                                                                false)
-                                                                        .setSelectedRowIndex(
-                                                                            index);
-                                                                    getCityFromString(
+                                                                  onTap:
+                                                                      () async {
+                                                                    String
+                                                                        cityName;
+                                                                    cityName = await getCityFromString(
                                                                         projectNameCol[index]
                                                                             .toString());
-                                                                    print(projectNameCol[
-                                                                        index]);
+
+                                                                    getDepoName(
+                                                                            cityName)
+                                                                        .whenComplete(
+                                                                            () {
+                                                                      Provider.of<SelectedRowIndexModel>(
+                                                                              context,
+                                                                              listen:
+                                                                                  false)
+                                                                          .setSelectedRowIndex(
+                                                                              index);
+                                                                    });
                                                                   },
                                                                   // onSelectChanged: (isSelected) {
                                                                   //   Provider.of<SelectedRowIndexModel>(
@@ -466,9 +475,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                             })),
                                                       ),
                                                       Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(5.0),
                                                         child: PieChart(
                                                           dataMap: {
                                                             dashboardColNames[3]
@@ -520,13 +526,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                     ],
                                                   ),
                                                   Container(
+                                                    padding: EdgeInsets.only(
+                                                        top: 10),
                                                     width:
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
                                                             0.88 /
                                                             3.2,
-                                                    height: 26,
+                                                    height: 30,
                                                     child: GridView.builder(
                                                         shrinkWrap: true,
                                                         gridDelegate:
@@ -1147,14 +1155,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                             padding:
                                                                 const EdgeInsets
                                                                         .only(
-                                                                    left: 5),
+                                                                    top: 5),
                                                             width: MediaQuery.of(
                                                                         context)
                                                                     .size
                                                                     .width *
                                                                 0.88 /
-                                                                3.2,
-                                                            height: 26,
+                                                                3.4,
+                                                            height: 28,
                                                             child: GridView
                                                                 .builder(
                                                                     shrinkWrap:
@@ -1334,7 +1342,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                         })),
                                                   ),
                                                   Container(
-                                                    // color: blue,
                                                     width:
                                                         MediaQuery.of(context)
                                                                 .size
@@ -1746,22 +1753,29 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                       ),
 
                       // EV BUS PROGRESS REPORT
-                      Container(
-                        height: 50,
-                        padding:
-                            const EdgeInsets.only(right: 25, top: 5, bottom: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                _scrollTable();
-                              },
-                              child: const Text('See Table'),
-                            ),
-                          ],
-                        ),
+
+                      //See Table Button
+
+                      // Container(
+                      //   height: 50,
+                      //   padding:
+                      //       const EdgeInsets.only(right: 25, top: 5, bottom: 5),
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.end,
+                      //     children: [
+                      //       ElevatedButton(
+                      //         onPressed: () {
+                      //           _scrollTable();
+                      //         },
+                      //         child: const Text('See Table'),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      SizedBox(
+                        height: 60,
                       ),
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -1822,7 +1836,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     );
   }
 
-  void getDepoName(selectCity) async {
+  Future<void> getDepoName(selectCity) async {
     QuerySnapshot depoListQuery = await FirebaseFirestore.instance
         .collection('DepoName')
         .doc(selectCity)
@@ -1832,6 +1846,19 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     List<String> depoList =
         depoListQuery.docs.map((deponame) => deponame.id).toList();
     selectedDepoList = depoList;
+    print(selectedDepoList);
+  }
+
+  void tempFunc() async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('DepoName')
+        .doc('TML Dharwad ')
+        .collection('AllDepots')
+        .get();
+
+    List<dynamic> tempList = [];
+    tempList = querySnapshot.docs.map((e) => e.id).toList();
+    print(tempList);
   }
 
   void _scrollTable() {
@@ -2022,14 +2049,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     }
   }
 
-  void getCityFromString(String sentence) async {
+  Future<String> getCityFromString(String sentence) async {
     String fetchedDepo = '';
     cityList.any((word) {
       bool containsWord = sentence.contains(word);
       if (sentence.contains('Bangalore')) {
-        fetchedDepo = 'Bangaluru';
+        fetchedDepo = 'Bengaluru';
       } else if (sentence.contains('TML Dhadwad')) {
-        fetchedDepo = 'TML Dharwad';
+        fetchedDepo = 'TML Dharwad ';
       } else if (containsWord) {
         fetchedDepo = word;
       }
@@ -2037,8 +2064,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
       return containsWord;
     });
-    getDepoName(fetchedDepo);
+
     selectedCity = fetchedDepo;
+    return fetchedDepo;
   }
 
   void getCityName() async {
@@ -2054,15 +2082,17 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   String formatNum(double number) {
     String convertedNum = '';
-    if (number >= 100000 && number < 10000000) {
+    if (number == 0) {
+      convertedNum = '0';
+    } else if (number >= 100000 && number < 10000000) {
       dynamic num = number.round() / 100000;
       String roundedNum = double.parse(num.toString()).toStringAsFixed(1);
 
-      convertedNum = '${roundedNum}K';
+      convertedNum = '${roundedNum} K';
     } else if (number > 10000000) {
       dynamic num = number.round() / 10000000;
       String roundedNum = double.parse(num.toString()).toStringAsFixed(1);
-      convertedNum = '${roundedNum}Cr';
+      convertedNum = '${roundedNum} Cr';
     }
     return convertedNum;
   }
