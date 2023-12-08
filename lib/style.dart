@@ -14,6 +14,8 @@ TextStyle formtext = const TextStyle(
   fontWeight: FontWeight.bold,
 );
 
+TextStyle dashboardStyle = const TextStyle(fontSize: 9, color: Colors.black);
+
 TextStyle tableheaderwhitecolor = TextStyle(
   fontWeight: FontWeight.bold,
   fontSize: 14,
@@ -26,6 +28,7 @@ TextStyle tableheader = const TextStyle(
 // TextStyle bodyText1 = GoogleFonts.ibmPlexSans(
 //     fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5);
 
+TextStyle appFontSize =const TextStyle(fontSize: 14);
 TextStyle bodyText2 = GoogleFonts.ibmPlexSans(
     fontSize: 14,
     fontWeight: FontWeight.w400,

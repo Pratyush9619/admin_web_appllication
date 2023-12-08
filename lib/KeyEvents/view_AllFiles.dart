@@ -33,8 +33,8 @@ class ViewAllPdf extends StatefulWidget {
 
 class _ViewAllPdfState extends State<ViewAllPdf> {
   late Future<List<FirebaseFile>> futureFiles;
-  List<dynamic> drawingRef = [];
   List<dynamic> drawingId = [];
+  List<dynamic> drawingRef = [];
   List<dynamic> drawingfullpath = [];
   bool _isload = true;
 
@@ -45,6 +45,12 @@ class _ViewAllPdfState extends State<ViewAllPdf> {
 
     getrefdata().whenComplete(() {
       for (int i = 0; i < drawingRef.length; i++) {
+        if (widget.title == 'Overview Page') {
+          print(
+              '${widget.title}/${widget.cityName}/${widget.depoName}/${drawingRef[i]}/${widget.docId}');
+          futureFiles = FirebaseApi.listAll(
+              '${widget.title}/${widget.cityName}/${widget.depoName}/${drawingRef[i]}/${widget.docId}');
+        }
         for (int j = 0; j < drawingfullpath.length; j++) {
           print('before ' + drawingfullpath[j]);
           print(
@@ -157,7 +163,7 @@ class _ViewAllPdfState extends State<ViewAllPdf> {
 
   Widget buildHeader(int length) => ListTile(
         tileColor: Colors.blue,
-        leading: Container(
+        leading: const SizedBox(
           width: 52,
           height: 52,
           child: Icon(

@@ -9,6 +9,7 @@ import 'package:web_appllication/OverviewPages/safety_summary.dart';
 import 'package:web_appllication/style.dart';
 import 'package:web_appllication/widgets/custom_appbar.dart';
 import '../KeyEvents/key_eventsUser.dart';
+import '../KeyEvents/view_AllFiles.dart';
 import '../OverviewPages/closure_summary_table.dart';
 import '../OverviewPages/detailed_Eng.dart';
 import '../KeyEvents/key_events.dart';
@@ -86,7 +87,7 @@ class _MyOverviewState extends State<MyOverview> {
       'Online JMR verification for projects',
       'Safety check list & observation',
       'FQP Checklist for Civil,Electrical work & Quality Checklist',
-      'Testing & Commissioning Reports of Equipment',
+      'Depot Insides',
       'Closure Report',
       'Easy monitoring of O & M schedule for all the equipment of depots.',
     ];
@@ -135,7 +136,6 @@ class _MyOverviewState extends State<MyOverview> {
       // ),
       DetailedEng(
         userId: widget.userId,
-
         // userId: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
@@ -163,14 +163,18 @@ class _MyOverviewState extends State<MyOverview> {
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
-      TestingReport(
-        userId: widget.userId,
-        cityName: widget.cityName,
-        depoName: widget.depoName,
-      ),
+      ViewAllPdf(
+          title: 'Overview Page',
+          cityName: widget.cityName,
+          depoName: widget.depoName,
+          docId: 'OverviewepoImages'),
+      // TestingReport(
+      //   userId: widget.userId,
+      //   cityName: widget.cityName,
+      //   depoName: widget.depoName,
+      // ),
       ClosureSummaryTable(
         userId: widget.userId,
-
         // userId: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,

@@ -117,7 +117,7 @@ class DetailedEngSource extends DataGridSource {
       return Container(
         // color: getcolor(),
         alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        padding: EdgeInsets.symmetric(horizontal: 20.0),
         child: (dataGridCell.columnName == 'Delete')
             ? IconButton(
                 onPressed: () {

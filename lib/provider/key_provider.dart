@@ -1,87 +1,53 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 
-class KeyProvider with ChangeNotifier {
-  // List<Employee> _employees = <Employee>[];
-  List<int> srNo = [];
-  List<String> sdate = [];
-  List<String> edate = [];
-  List<String> acdate = [];
-  List<String> aedate = [];
+class KeyProvider extends ChangeNotifier {
+  double totalvalue = 0.0;
+  int totaldelay = 0;
+  int totalduration = 0;
 
-  List<int> get serialNo {
-    return srNo;
+  double get perProgress => totalvalue;
+
+  int get delay => totaldelay;
+
+  int get duration => totalduration;
+
+  saveProgressValue(double value) {
+    totalvalue = value;
+    notifyListeners();
   }
 
-  List<String> get startdate {
-    return sdate;
-  }
-
-  List<String> get enddate {
-    return edate;
-  }
-
-  List<String> get actualdate {
-    return acdate;
-  }
-
-  List<String> get actualenddate {
-    return aedate;
-  }
-
-  Future getFirestoreData(userId, events, collectionName) async {
-    List docId = [];
-    List<int>? srno = [];
-    List<String> startdate = [];
-    List<String>? enddate = [];
-    List<String>? actualstartdate = [];
-    List<String>? actualenddate = [];
-    // await FirebaseFirestore.instance
-    //     .collection('KeyEventsTable')
-    //     .doc(collectionName)
-    //     .collection('KeyDataTable')
-    //     .get()
-    //     .then((value) {
-    //   value.docs.forEach((element) {
-    //     String documentId = element.id;
-    //     print('Document ID: $documentId');
-    //     docId.add(documentId);
-    //   });
-    // });
-
-    FirebaseFirestore instance = FirebaseFirestore.instance;
-    CollectionReference tabledata = instance.collection('KeyEventsTable');
-
-    // for (int i = 0; i < docId.length; i++) {
-    DocumentSnapshot snapshot = await tabledata
-        .doc(collectionName)
+  fetchDelayData(String depoName, dynamic userId) {
+    int delayData = 0;
+    int durationData = 0;
+    totaldelay = 0;
+    totalduration = 0;
+    List<int> indicesToSkip = [0, 2, 6, 13, 18, 28, 32, 38, 64, 76];
+    FirebaseFirestore.instance
+        .collection('KeyEventsTable')
+        .doc(depoName)
         .collection('KeyDataTable')
         .doc(userId)
         .collection('KeyAllEvents')
-        .doc('$collectionName$events')
-        .get();
-    var data = snapshot.data() as Map;
-    alldata = data['data'] as List<dynamic>;
+        .doc('keyEvents')
+        .get()
+        .then((value) {
+      var alldata = value.data();
+      for (int i = 0; i < value.data()!['data'].length; i++) {
+        if (indicesToSkip.contains(i)) {
+          int delay = value.data()!['data'][i]['Delay'];
+          int duration = value.data()!['data'][i]['OriginalDuration'];
 
-    // alldata.forEach((element) {
-    //   _employees.add(Employee.fromJson(element));
-    // });
-    for (int i = 0; i < alldata.length; i++) {
-      // totalweightage = totalweightage + allWeightage;
-      srno.add(alldata[i]['srNo']);
-      startdate.add(data['data'][i]['StartDate']);
-      enddate.add(data['data'][i]['EndDate']);
-      actualstartdate.add(data['data'][i]['ActualStart']);
-      actualenddate.add(data['data'][i]['ActualEnd']);
-    }
-    notifyListeners();
-    //   }
-    sdate = startdate;
-    edate = enddate;
-    acdate = actualstartdate;
-    aedate = actualenddate;
-    srNo = srno;
-    notifyListeners();
+          print('delay $i ${delay}');
+          print('duration $i ${duration}');
+          delayData = delayData + delay;
+          durationData = durationData + duration;
+        }
+      }
+
+      totaldelay = delayData;
+      totalduration = durationData;
+      notifyListeners();
+    });
   }
 }

@@ -17,7 +17,7 @@ class SummaryProvider extends ChangeNotifier {
     for (DateTime initialdate = date;
         initialdate.isBefore(endDate.add(const Duration(days: 1)));
         initialdate = initialdate.add(const Duration(days: 1))) {
-      print(DateFormat.yMMMMd().format(initialdate));
+      // print(DateFormat.yMMMMd().format(initialdate));
 
       FirebaseFirestore.instance
           .collection('DailyProjectReport2')
@@ -27,7 +27,7 @@ class SummaryProvider extends ChangeNotifier {
           .get()
           .then((value) {
         if (value.data() != null) {
-          print('swswssw${value.data()!['data'].length}');
+          // print('swswssw${value.data()!['data'].length}');
           for (int i = 0; i < value.data()!['data'].length; i++) {
             loadeddata
                 .add(DailyProjectModel.fromjson(value.data()!['data'][i]));

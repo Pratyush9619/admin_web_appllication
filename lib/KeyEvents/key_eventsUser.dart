@@ -9,14 +9,18 @@ import 'package:get/get.dart';
 import 'package:pdf/pdf.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:printing/printing.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:web_appllication/KeyEvents/ChartData.dart';
 import 'package:web_appllication/KeyEvents/key_events.dart';
 import 'package:web_appllication/components/Loading_page.dart';
 import 'package:web_appllication/style.dart';
 import 'package:web_appllication/widgets/nodata_available.dart';
+import '../provider/key_provider.dart';
 import '../widgets/custom_appbar.dart';
 import 'package:pdf/widgets.dart' as pw;
+
+import 'key_events2.dart';
 
 class KeyEventsUser extends StatefulWidget {
   final String? userId;
@@ -34,9 +38,12 @@ class _KeyEventsUserState extends State<KeyEventsUser> {
   //Daily Project Row List for view summary
   List<List<dynamic>> rowList = [];
   bool enableLoading = false;
+  KeyProvider? _keyProvider;
 
   @override
   void initState() {
+    _keyProvider = Provider.of<KeyProvider>(context, listen: false);
+    _keyProvider!.fetchDelayData(widget.depoName!, widget.userId);
     super.initState();
   }
 
@@ -74,7 +81,7 @@ class _KeyEventsUserState extends State<KeyEventsUser> {
                   final data = snapshot.data!;
 
                   if (data.isEmpty) {
-                    return NodataAvailable();
+                    return const NodataAvailable();
                   }
 
                   return Column(
@@ -133,7 +140,7 @@ class _KeyEventsUserState extends State<KeyEventsUser> {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => KeyEvents(
+                                              builder: (context) => KeyEvents2(
                                                 userId: rowData[0],
                                                 cityName: widget.cityName,
                                                 depoName: widget.depoName,
@@ -145,14 +152,19 @@ class _KeyEventsUserState extends State<KeyEventsUser> {
                                     DataCell(Container(
                                         height: 20,
                                         width: 250,
-                                        child: LinearPercentIndicator(
-                                          backgroundColor: red,
-                                          animation: true,
-                                          lineHeight: 20.0,
-                                          animationDuration: 2000,
-                                          percent: rowData[1] / 100,
-                                          center: Text("${rowData[1]}%"),
-                                          progressColor: Colors.green,
+                                        child: Consumer<KeyProvider>(
+                                          builder: (context, value, child) {
+                                            return LinearPercentIndicator(
+                                              backgroundColor: red,
+                                              animation: true,
+                                              lineHeight: 20.0,
+                                              animationDuration: 2000,
+                                              percent: 0 / 100,
+                                              center: Text(
+                                                  '${value.perProgress.toStringAsFixed(2)} %'),
+                                              progressColor: Colors.green,
+                                            );
+                                          },
                                         ))),
                                   ],
                                 );
@@ -200,29 +212,35 @@ class _KeyEventsUserState extends State<KeyEventsUser> {
           .then((value) {
         value.docs.forEach((element) {
           var alldata = element.data()['data'];
+          List<int> indicesToSkip = [0, 2, 8, 12, 16, 27, 33, 39, 65, 76];
           for (int i = 0; i < alldata.length; i++) {
-            weightage = 0;
-            perscope = 0;
-            qtyExecuted = 0;
-            percprogress = 0;
+            print('skipe${indicesToSkip.contains(i)}');
+            if (!indicesToSkip.contains(i)) {
+              weightage = 0;
+              perscope = 0;
+              qtyExecuted = 0;
+              percprogress = 0;
 
-            // allweightage = 0;
-            // allperScope = 0;
-            // allExecuted = 0;
-            weightage = alldata[i]['Weightage'];
-            perscope = alldata[i]['QtyScope'];
-            qtyExecuted = alldata[i]['QtyExecuted'];
-            allperScope = allperScope + perscope;
-            allExecuted = allExecuted + qtyExecuted;
-            allweightage = allweightage + weightage;
+              // allweightage = 0;
+              // allperScope = 0;
+              // allExecuted = 0;
+              weightage = alldata[i]['Weightage'];
+              perscope = alldata[i]['QtyScope'];
+              qtyExecuted = alldata[i]['QtyExecuted'];
+              allperScope = allperScope + perscope;
+              allExecuted = allExecuted + qtyExecuted;
+              allweightage = allweightage + weightage;
+
+              balanceQty = allperScope - allExecuted;
+              var calculatePercProgress =
+                  allExecuted / allperScope * allweightage;
+              percprogress = calculatePercProgress;
+              if (percprogress.isNaN || percprogress.isInfinite) {
+                percprogress = 0;
+              }
+              print(percprogress.toStringAsFixed(2));
+            }
           }
-          balanceQty = allperScope - allExecuted;
-          var calculatePercProgress = balanceQty / allperScope * allweightage;
-          percprogress = calculatePercProgress;
-          if (percprogress.isNaN || percprogress.isInfinite) {
-            percprogress = 0;
-          }
-          print(percprogress.toStringAsFixed(2));
         });
       });
       rowList
