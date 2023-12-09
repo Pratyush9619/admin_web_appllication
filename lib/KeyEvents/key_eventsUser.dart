@@ -42,8 +42,6 @@ class _KeyEventsUserState extends State<KeyEventsUser> {
 
   @override
   void initState() {
-    _keyProvider = Provider.of<KeyProvider>(context, listen: false);
-    _keyProvider!.fetchDelayData(widget.depoName!, widget.userId);
     super.initState();
   }
 
@@ -159,7 +157,7 @@ class _KeyEventsUserState extends State<KeyEventsUser> {
                                               animation: true,
                                               lineHeight: 20.0,
                                               animationDuration: 2000,
-                                              percent: 0 / 100,
+                                              percent: value.perProgress / 100,
                                               center: Text(
                                                   '${value.perProgress.toStringAsFixed(2)} %'),
                                               progressColor: Colors.green,

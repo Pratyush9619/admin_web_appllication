@@ -24,8 +24,8 @@ class _NavigationPageState extends State<NavigationPage> {
   List<Widget> selectedScreens = [
     DashBoardScreen(),
     MenuHomePage(),
+    MenuUserPage(),
     ProjectPanning(),
-    MenuUserPage()
   ];
   int selectedIndex = 0;
 
@@ -113,31 +113,19 @@ class NavigationWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap as void Function()?,
       child: Container(
-        height: 40,
-        color: index == selectedIndex
-            ? const Color.fromARGB(255, 201, 227, 248)
-            : null,
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 5.0),
-              child: Icon(
-                icon,
-                size: 16,
-                color: index == selectedIndex ? black : blue,
-              ),
+          height: 50,
+          color: index == selectedIndex
+              ? const Color.fromARGB(255, 201, 227, 248)
+              : null,
+          child: ListTile(
+            minLeadingWidth: 15,
+            contentPadding: EdgeInsets.only(left: 3),
+            leading: Icon(icon),
+            title: Text(
+              title,
+              style: TextStyle(fontSize: 11),
             ),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Text(
-                title,
-                style: TextStyle(
-                    color: index == selectedIndex ? black : blue, fontSize: 12),
-              ),
-            ),
-          ],
-        ),
-      ),
+          )),
     );
   }
 }

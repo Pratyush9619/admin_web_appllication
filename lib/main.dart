@@ -91,16 +91,15 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return
-        //  NavigationPage();
-        // SmallScreen();
-        // MenuUserPage();
-        // DepotOverview();
-        // ResourceAllocation();
-        //  EventsPage();
-        // KeyEvents();
-        // const CitiesPage();
-        const LoginRegister();
+    return NavigationPage();
+    // SmallScreen();
+    // MenuUserPage();
+    // DepotOverview();
+    // ResourceAllocation();
+    //  EventsPage();
+    // KeyEvents();
+    // const CitiesPage();
+    // const LoginRegister();
     // const PdfSummary();
   }
 }

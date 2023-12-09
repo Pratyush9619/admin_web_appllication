@@ -5,12 +5,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:money_formatter/money_formatter.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:provider/provider.dart';
 import 'package:web_appllication/components/Loading_page.dart';
 import 'package:web_appllication/provider/selected_row_index.dart';
 import 'package:web_appllication/style.dart';
+import 'package:web_appllication/widgets/table_loading.dart';
 
 class DashBoardScreen extends StatefulWidget {
   final Function? callbackFun;
@@ -23,10 +23,19 @@ class DashBoardScreen extends StatefulWidget {
 }
 
 class _DashBoardScreenState extends State<DashBoardScreen> {
+  bool isTableLoading = false;
+  List<dynamic> startDateList = [];
+  List<dynamic> estimatedDateList = [];
+  List<dynamic> actualEndDateList = [];
+  List<dynamic> endDateList = [];
   final ScrollController _scrollController = ScrollController();
+  dynamic depotProgress = '';
+  List<double> depotProgressList = [];
 
   List<String> selectedDepoList = [];
   List<dynamic> cityList = [];
+  List<List<dynamic>> rowList = [];
+
   String selectedCity = '';
 
   List<String> evProgressTable = [
@@ -449,6 +458,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                             cityName)
                                                                         .whenComplete(
                                                                             () {
+                                                                      getRowsForFutureBuilder();
                                                                       Provider.of<SelectedRowIndexModel>(
                                                                               context,
                                                                               listen:
@@ -536,6 +546,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                             3.2,
                                                     height: 30,
                                                     child: GridView.builder(
+                                                        physics:
+                                                            NeverScrollableScrollPhysics(),
                                                         shrinkWrap: true,
                                                         gridDelegate:
                                                             const SliverGridDelegateWithFixedCrossAxisCount(
@@ -847,6 +859,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                       )
                                                     ],
                                                   ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
                                                   Container(
                                                     padding:
                                                         const EdgeInsets.only(
@@ -859,6 +874,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                             3.1,
                                                     height: 30,
                                                     child: GridView.builder(
+                                                        physics:
+                                                            NeverScrollableScrollPhysics(),
                                                         shrinkWrap: true,
                                                         gridDelegate:
                                                             const SliverGridDelegateWithFixedCrossAxisCount(
@@ -1150,6 +1167,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 ),
                                                               )
                                                             ],
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 10,
                                                           ),
                                                           Container(
                                                             padding:
@@ -1667,6 +1687,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 : 0),
                                                       ],
                                                     ),
+                                                    const SizedBox(
+                                                      height: 10,
+                                                    ),
                                                     Container(
                                                       width:
                                                           MediaQuery.of(context)
@@ -1772,7 +1795,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                       //     ],
                       //   ),
                       // ),
-                      SizedBox(
+                      const SizedBox(
                         height: 60,
                       ),
 
@@ -1794,40 +1817,52 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           ),
                         ],
                       ),
-                      Container(
-                        padding: const EdgeInsets.only(top: 30),
-                        width: MediaQuery.of(context).size.width * 0.85,
-                        height: 1000,
-                        child: Consumer<SelectedRowIndexModel>(
-                          builder: (context, value, child) {
-                            return DataTable2(
-                                headingRowColor: MaterialStatePropertyAll(blue),
-                                dividerThickness: 0,
-                                minWidth: 900,
-                                dataRowHeight: 40,
-                                headingRowHeight: 50,
-                                border: TableBorder.all(),
-                                headingTextStyle:
-                                    TextStyle(fontSize: 13, color: white),
-                                columns: evProgressTable.map((columnNames) {
-                                  return DataColumn2(label: Text(columnNames));
-                                }).toList(),
-                                rows: List.generate(selectedDepoList.length,
-                                    (index) {
-                                  return DataRow2(cells: [
-                                    DataCell(
-                                        Text(index == 0 ? selectedCity : '')),
-                                    DataCell(Text(selectedDepoList[index])),
-                                    DataCell(Text('')),
-                                    DataCell(Text('')),
-                                    DataCell(Text('')),
-                                    DataCell(Text('')),
-                                    DataCell(Text('')),
-                                  ]);
-                                }));
-                          },
-                        ),
-                      )
+                      isTableLoading
+                          ? TableLoading()
+                          : Container(
+                              padding: const EdgeInsets.only(top: 30),
+                              width: MediaQuery.of(context).size.width * 0.85,
+                              height: 1000,
+                              child: Consumer<SelectedRowIndexModel>(
+                                builder: (context, value, child) {
+                                  return DataTable2(
+                                      headingRowColor:
+                                          MaterialStatePropertyAll(blue),
+                                      dividerThickness: 0,
+                                      minWidth: 900,
+                                      dataRowHeight: 40,
+                                      headingRowHeight: 60,
+                                      border: TableBorder.all(),
+                                      headingTextStyle:
+                                          TextStyle(fontSize: 13, color: white),
+                                      columns:
+                                          evProgressTable.map((columnNames) {
+                                        return DataColumn2(
+                                            fixedWidth: columnNames ==
+                                                    '% of Physical\nprogress'
+                                                ? 140
+                                                : null,
+                                            label: Text(columnNames));
+                                      }).toList(),
+                                      rows: List.generate(
+                                          selectedDepoList.length, (index) {
+                                        return DataRow2(cells: [
+                                          DataCell(Text(selectedCity)),
+                                          DataCell(
+                                              Text(selectedDepoList[index])),
+                                          DataCell(Text(
+                                              '${depotProgressList[index].toStringAsFixed(1)}%')),
+                                          DataCell(Text(startDateList[index])),
+                                          DataCell(Text(endDateList[index])),
+                                          DataCell(
+                                              Text(estimatedDateList[index])),
+                                          DataCell(
+                                              Text(actualEndDateList[index])),
+                                        ]);
+                                      }));
+                                },
+                              ),
+                            )
                     ],
                   ),
                 ),
@@ -1875,166 +1910,177 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
         isLoading = true;
       });
 
-      FilePickerResult? result = await FilePicker.platform.pickFiles();
+      FilePickerResult? result = await FilePicker.platform
+          .pickFiles(allowedExtensions: ['xlsx'], type: FileType.custom);
 
       if (result != null) {
-        isExcelSelected = true;
         final List<int> bytes = result.files.single.bytes!;
         final excel = Excel.decodeBytes(bytes);
         var sheet1 = excel.tables.keys.elementAt(0);
 
-        for (var row in excel.tables[sheet1]!.rows.skip(2)) {
-          projectNameCol.add(row[1]?.value.toString());
-          plannedChargersCol.add(row[2]?.value.toString());
-          chargersComissioned.add(row[3]?.value.toString());
+        if (excel.tables[sheet1]!.maxCols != 20) {
+          showCustomAlert();
+        } else {
+          isExcelSelected = true;
+          for (var row in excel.tables[sheet1]!.rows.skip(2)) {
+            projectNameCol.add(row[1]?.value.toString());
+            plannedChargersCol.add(row[2]?.value.toString());
+            chargersComissioned.add(row[3]?.value.toString());
 
-          tprelBudgetCol.add(double.parse(row[4]?.value.toString() ?? "")
-              .toStringAsFixed(2)
-              .toString());
-          tpevslBudgetCol.add(double.parse(row[5]?.value.toString() ?? "")
-              .toStringAsFixed(2)
-              .toString());
-          budgetCol.add(double.parse(row[6]?.value.toString() ?? "")
-              .toStringAsFixed(2)
-              .toString());
+            tprelBudgetCol.add(double.parse(row[4]?.value.toString() ?? "")
+                .toStringAsFixed(2)
+                .toString());
+            tpevslBudgetCol.add(double.parse(row[5]?.value.toString() ?? "")
+                .toStringAsFixed(2)
+                .toString());
+            budgetCol.add(double.parse(row[6]?.value.toString() ?? "")
+                .toStringAsFixed(2)
+                .toString());
 
-          actualExpenseTprelCol.add(double.parse(row[7]?.value.toString() ?? "")
-              .toStringAsFixed(2)
-              .toString());
-          actualExpenseTpevslCol.add(
-              double.parse(row[8]?.value.toString() ?? "")
-                  .toStringAsFixed(2)
-                  .toString());
-          totalActualExpenseCol.add(double.parse(row[9]?.value.toString() ?? "")
-              .toStringAsFixed(2)
-              .toString());
+            actualExpenseTprelCol.add(
+                double.parse(row[7]?.value.toString() ?? "")
+                    .toStringAsFixed(2)
+                    .toString());
+            actualExpenseTpevslCol.add(
+                double.parse(row[8]?.value.toString() ?? "")
+                    .toStringAsFixed(2)
+                    .toString());
+            totalActualExpenseCol.add(
+                double.parse(row[9]?.value.toString() ?? "")
+                    .toStringAsFixed(2)
+                    .toString());
 
-          infraAmountCol.add(double.parse(row[10]?.value.toString() ?? "")
-              .toStringAsFixed(2)
-              .toString());
-          evChargersAmountCol.add(double.parse(row[11]?.value.toString() ?? "")
-              .toStringAsFixed(2)
-              .toString());
-          totalApprovedJmrAmountCol.add(
-              double.parse(row[12]?.value.toString() ?? "")
-                  .toStringAsFixed(2)
-                  .toString());
+            infraAmountCol.add(double.parse(row[10]?.value.toString() ?? "")
+                .toStringAsFixed(2)
+                .toString());
+            evChargersAmountCol.add(
+                double.parse(row[11]?.value.toString() ?? "")
+                    .toStringAsFixed(2)
+                    .toString());
+            totalApprovedJmrAmountCol.add(
+                double.parse(row[12]?.value.toString() ?? "")
+                    .toStringAsFixed(2)
+                    .toString());
 
-          totalPendingJmrAmountCol.add(
-              double.parse(row[13]?.value.toString() ?? "")
-                  .toStringAsFixed(2)
-                  .toString());
+            totalPendingJmrAmountCol.add(
+                double.parse(row[13]?.value.toString() ?? "")
+                    .toStringAsFixed(2)
+                    .toString());
 
-          financialProgressCol.add(double.parse(row[14]?.value.toString() ?? "")
-              .toStringAsFixed(2)
-              .toString());
+            financialProgressCol.add(
+                double.parse(row[14]?.value.toString() ?? "")
+                    .toStringAsFixed(2)
+                    .toString());
 
-          pendingJmrApprovalCol.add(
-              double.parse(row[15]?.value.toString() ?? "")
-                  .toStringAsFixed(2)
-                  .toString());
+            pendingJmrApprovalCol.add(
+                double.parse(row[15]?.value.toString() ?? "")
+                    .toStringAsFixed(2)
+                    .toString());
 
-          assetCapitalisedTprelCol.add(
-              double.parse(row[16]?.value.toString() ?? "")
-                  .toStringAsFixed(2)
-                  .toString());
-          assetCapitalisedTpevslCol.add(
-              double.parse(row[17]?.value.toString() ?? "")
-                  .toStringAsFixed(2)
-                  .toString());
-          cumulativeAssetCapitalizedCol.add(
-              double.parse(row[18]?.value.toString() ?? "")
-                  .toStringAsFixed(2)
-                  .toString());
-          pendingAssetCapitalisationCol.add(
-              double.parse(row[19]?.value.toString() ?? "")
-                  .toStringAsFixed(2)
-                  .toString());
+            assetCapitalisedTprelCol.add(
+                double.parse(row[16]?.value.toString() ?? "")
+                    .toStringAsFixed(2)
+                    .toString());
+            assetCapitalisedTpevslCol.add(
+                double.parse(row[17]?.value.toString() ?? "")
+                    .toStringAsFixed(2)
+                    .toString());
+            cumulativeAssetCapitalizedCol.add(
+                double.parse(row[18]?.value.toString() ?? "")
+                    .toStringAsFixed(2)
+                    .toString());
+            pendingAssetCapitalisationCol.add(
+                double.parse(row[19]?.value.toString() ?? "")
+                    .toStringAsFixed(2)
+                    .toString());
+          }
+
+          tempList1.add(tprelBudgetCol);
+          tempList1.add(tpevslBudgetCol);
+          tempList1.add(budgetCol);
+
+          tempList2.add(actualExpenseTprelCol);
+          tempList2.add(actualExpenseTpevslCol);
+          tempList2.add(totalActualExpenseCol);
+
+          budgetActualCol.add(tempList1);
+          budgetActualCol.add(tempList2);
+
+          totalForAllCol = plannedChargersCol.length - 1;
+          projectNameColLen = projectNameCol.length - 1;
+          tprelBudgetColLen = tprelBudgetCol.length - 1;
+          infraAmountColLen = infraAmountCol.length - 1;
+          financialProgressLen = financialProgressCol.length - 1;
+          assetCapitalisedTprelLen = assetCapitalisedTprelCol.length - 1;
+
+          totalPlannedChargers =
+              double.parse(plannedChargersCol[totalForAllCol]);
+          totalChargersCommissioned =
+              double.parse(chargersComissioned[totalForAllCol]);
+          totalBalancedCharger =
+              totalPlannedChargers - totalChargersCommissioned;
+
+          evTotalList.add(totalPlannedChargers);
+          evTotalList.add(totalChargersCommissioned);
+          evTotalList.add(totalBalancedCharger);
+
+          totalTprelBudget = double.parse(tprelBudgetCol[totalForAllCol]);
+          totalTpevslBudget = double.parse(tpevslBudgetCol[totalForAllCol]);
+          totalBudget = double.parse(budgetCol[totalForAllCol]);
+
+          budgetTotalList.add(totalTprelBudget);
+          budgetTotalList.add(totalTpevslBudget);
+          budgetTotalList.add(totalBudget);
+
+          totalActualExpenseTprel =
+              double.parse(actualExpenseTprelCol[totalForAllCol]);
+          totalActualExpenseTpevsl =
+              double.parse(actualExpenseTpevslCol[totalForAllCol]);
+          totalActualExpense =
+              double.parse(totalActualExpenseCol[totalForAllCol]);
+
+          actualTotalList.add(totalActualExpenseTprel);
+          actualTotalList.add(totalActualExpenseTpevsl);
+          actualTotalList.add(totalActualExpense);
+
+          totalInfraAmount = double.parse(infraAmountCol[totalForAllCol]);
+          totalEvChargerAmount =
+              double.parse(evChargersAmountCol[totalForAllCol]);
+          totalApprovedJmrAmount =
+              double.parse(totalApprovedJmrAmountCol[totalForAllCol]);
+          totalPendingJmrAmount =
+              double.parse(totalPendingJmrAmountCol[totalForAllCol]);
+
+          tmlTotalList.add(totalInfraAmount);
+          tmlTotalList.add(totalEvChargerAmount);
+          tmlTotalList.add(totalApprovedJmrAmount);
+          tmlTotalList.add(totalPendingJmrAmount);
+
+          totalFinancialProgress =
+              double.parse(financialProgressCol[totalForAllCol]);
+          totalPendingJmrPercent =
+              double.parse(pendingJmrApprovalCol[totalForAllCol]);
+
+          commercialTotalList.add(totalFinancialProgress);
+          commercialTotalList.add(totalPendingJmrPercent);
+
+          totalTprelAssetCapitalised =
+              double.parse(assetCapitalisedTprelCol[totalForAllCol]);
+          totalTpevslAssetCapitalised =
+              double.parse(assetCapitalisedTpevslCol[totalForAllCol]);
+          totalCumulativeAssetCapitalised =
+              double.parse(cumulativeAssetCapitalizedCol[totalForAllCol]);
+          totalPendingAssetCapitlization =
+              double.parse(pendingAssetCapitalisationCol[totalForAllCol]);
+
+          assetTotalList.add(totalTprelAssetCapitalised);
+          assetTotalList.add(totalTpevslAssetCapitalised);
+          assetTotalList.add(totalCumulativeAssetCapitalised);
+          assetTotalList.add(totalPendingAssetCapitlization);
+
+          budgetActualTotalList.add(budgetTotalList);
+          budgetActualTotalList.add(actualTotalList);
         }
-
-        tempList1.add(tprelBudgetCol);
-        tempList1.add(tpevslBudgetCol);
-        tempList1.add(budgetCol);
-
-        tempList2.add(actualExpenseTprelCol);
-        tempList2.add(actualExpenseTpevslCol);
-        tempList2.add(totalActualExpenseCol);
-
-        budgetActualCol.add(tempList1);
-        budgetActualCol.add(tempList2);
-
-        totalForAllCol = plannedChargersCol.length - 1;
-        projectNameColLen = projectNameCol.length - 1;
-        tprelBudgetColLen = tprelBudgetCol.length - 1;
-        infraAmountColLen = infraAmountCol.length - 1;
-        financialProgressLen = financialProgressCol.length - 1;
-        assetCapitalisedTprelLen = assetCapitalisedTprelCol.length - 1;
-
-        totalPlannedChargers = double.parse(plannedChargersCol[totalForAllCol]);
-        totalChargersCommissioned =
-            double.parse(chargersComissioned[totalForAllCol]);
-        totalBalancedCharger = totalPlannedChargers - totalChargersCommissioned;
-
-        evTotalList.add(totalPlannedChargers);
-        evTotalList.add(totalChargersCommissioned);
-        evTotalList.add(totalBalancedCharger);
-
-        totalTprelBudget = double.parse(tprelBudgetCol[totalForAllCol]);
-        totalTpevslBudget = double.parse(tpevslBudgetCol[totalForAllCol]);
-        totalBudget = double.parse(budgetCol[totalForAllCol]);
-
-        budgetTotalList.add(totalTprelBudget);
-        budgetTotalList.add(totalTpevslBudget);
-        budgetTotalList.add(totalBudget);
-
-        totalActualExpenseTprel =
-            double.parse(actualExpenseTprelCol[totalForAllCol]);
-        totalActualExpenseTpevsl =
-            double.parse(actualExpenseTpevslCol[totalForAllCol]);
-        totalActualExpense =
-            double.parse(totalActualExpenseCol[totalForAllCol]);
-
-        actualTotalList.add(totalActualExpenseTprel);
-        actualTotalList.add(totalActualExpenseTpevsl);
-        actualTotalList.add(totalActualExpense);
-
-        totalInfraAmount = double.parse(infraAmountCol[totalForAllCol]);
-        totalEvChargerAmount =
-            double.parse(evChargersAmountCol[totalForAllCol]);
-        totalApprovedJmrAmount =
-            double.parse(totalApprovedJmrAmountCol[totalForAllCol]);
-        totalPendingJmrAmount =
-            double.parse(totalPendingJmrAmountCol[totalForAllCol]);
-
-        tmlTotalList.add(totalInfraAmount);
-        tmlTotalList.add(totalEvChargerAmount);
-        tmlTotalList.add(totalApprovedJmrAmount);
-        tmlTotalList.add(totalPendingJmrAmount);
-
-        totalFinancialProgress =
-            double.parse(financialProgressCol[totalForAllCol]);
-        totalPendingJmrPercent =
-            double.parse(pendingJmrApprovalCol[totalForAllCol]);
-
-        commercialTotalList.add(totalFinancialProgress);
-        commercialTotalList.add(totalPendingJmrPercent);
-
-        totalTprelAssetCapitalised =
-            double.parse(assetCapitalisedTprelCol[totalForAllCol]);
-        totalTpevslAssetCapitalised =
-            double.parse(assetCapitalisedTpevslCol[totalForAllCol]);
-        totalCumulativeAssetCapitalised =
-            double.parse(cumulativeAssetCapitalizedCol[totalForAllCol]);
-        totalPendingAssetCapitlization =
-            double.parse(pendingAssetCapitalisationCol[totalForAllCol]);
-
-        assetTotalList.add(totalTprelAssetCapitalised);
-        assetTotalList.add(totalTpevslAssetCapitalised);
-        assetTotalList.add(totalCumulativeAssetCapitalised);
-        assetTotalList.add(totalPendingAssetCapitlization);
-
-        budgetActualTotalList.add(budgetTotalList);
-        budgetActualTotalList.add(actualTotalList);
       } else {
         // User canceled the picker
       }
@@ -2047,6 +2093,38 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       print(stackTrace);
       // Handle the error as needed
     }
+  }
+
+  void showCustomAlert() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: Container(
+              height: 130,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Icon(
+                    Icons.warning_amber,
+                    size: 60,
+                    color: blue,
+                  ),
+                  const Text(
+                    'Excel Should Contain Only 20 Columns',
+                    style: TextStyle(fontWeight: FontWeight.w400),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Ok'),
+                  )
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   Future<String> getCityFromString(String sentence) async {
@@ -2092,8 +2170,130 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     } else if (number > 10000000) {
       dynamic num = number.round() / 10000000;
       String roundedNum = double.parse(num.toString()).toStringAsFixed(1);
-      convertedNum = '${roundedNum} Cr';
+      convertedNum = '$roundedNum Cr';
     }
     return convertedNum;
+  }
+
+  Future<void> getRowsForFutureBuilder() async {
+    actualEndDateList.clear();
+    estimatedDateList.clear();
+    startDateList.clear();
+    endDateList.clear();
+    List<dynamic> planningStartDate = [];
+    List<dynamic> planningEndDate = [];
+    List<dynamic> estimatedDate = [];
+    List<dynamic> actualEndDate = [];
+
+    bool isDateStored = false;
+    depotProgressList.clear();
+    setState(() {
+      isTableLoading = true;
+    });
+    double totalperc = 0.0;
+    for (int i = 0; i < selectedDepoList.length; i++) {
+      planningStartDate.clear();
+      planningEndDate.clear();
+      estimatedDate.clear();
+      actualEndDate.clear();
+      isDateStored = false;
+      totalperc = 0.0;
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('KeyEventsTable')
+          .doc(selectedDepoList[i])
+          .collection('KeyDataTable')
+          .get();
+
+      List<dynamic> userIdList = querySnapshot.docs.map((e) => e.id).toList();
+      for (int j = 0; j < userIdList.length; j++) {
+        dynamic allweightage = 0;
+        dynamic allperScope = 0;
+        dynamic allExecuted = 0;
+        dynamic weightage;
+        dynamic balanceQty = 0;
+        dynamic perscope;
+        dynamic qtyExecuted;
+        num percprogress = 0;
+        await FirebaseFirestore.instance
+            .collection('KeyEventsTable')
+            .doc(selectedDepoList[i])
+            .collection('KeyDataTable')
+            .doc(userIdList[j])
+            .collection('KeyAllEvents')
+            .get()
+            .then((value) {
+          value.docs.forEach((element) {
+            var alldata = element.data()['data'];
+            List<int> indicesToSkip = [0, 2, 6, 13, 18, 28, 32, 38, 64, 76];
+            totalperc = 0.0;
+            for (int k = 0; k < alldata.length; k++) {
+              if (!isDateStored) {
+                planningStartDate.add(alldata[k]['StartDate']);
+                planningEndDate.add(alldata[k]['EndDate']);
+                estimatedDate.add(alldata[k]['ActualStart']);
+                actualEndDate.add(alldata[k]['ActualEnd']);
+              }
+              // print('skipe${indicesToSkip.contains(k)}');
+              if (indicesToSkip.contains(k)) {
+                int qtyExecuted = alldata[k]['QtyExecuted'];
+                double weightage = alldata[k]['Weightage'];
+                int scope = alldata[k]['QtyScope'];
+
+                dynamic perc = ((qtyExecuted / scope) * weightage);
+                double value = perc.isNaN ? 0.0 : perc;
+                totalperc = totalperc + value;
+                print(totalperc.toStringAsFixed(2));
+              }
+            }
+          });
+        });
+      }
+
+      if (userIdList.length > 1) {
+        depotProgress = totalperc / userIdList.length;
+        depotProgressList.add(depotProgress);
+        // print('Average - $depotProgress');
+      } else if (totalperc > 0) {
+        depotProgressList.add(totalperc);
+        // print('totalperc${selectedDepoList[i]}-${totalperc}');
+      } else {
+        depotProgressList.add(0);
+      }
+
+      if (planningStartDate.isNotEmpty) {
+        planningStartDate.sort();
+        startDateList.add(planningStartDate.first);
+      } else {
+        startDateList.add('00-00-0000');
+      }
+
+      if (planningEndDate.isNotEmpty) {
+        planningEndDate.sort();
+        endDateList.add(planningEndDate.last);
+      } else {
+        endDateList.add('00-00-0000');
+      }
+
+      if (estimatedDate.isNotEmpty) {
+        estimatedDate.sort();
+        estimatedDateList.add(estimatedDate.first);
+      } else {
+        estimatedDateList.add('00-00-0000');
+      }
+
+      if (actualEndDate.isNotEmpty) {
+        actualEndDate.sort();
+        actualEndDateList.add(actualEndDate.last);
+      } else {
+        actualEndDateList.add('00-00-0000');
+      }
+    }
+
+    print(startDateList);
+    print(endDateList);
+
+    setState(() {
+      isTableLoading = false;
+    });
   }
 }

@@ -42,6 +42,8 @@ class _KeyEvents2State extends State<KeyEvents2> {
   late KeyDataSourceKeyEvents _KeyDataSourceKeyEvents;
   List<Employee> _employees = <Employee>[];
   late DataGridController _dataGridController;
+  ScrollController _dataGridScrollController = ScrollController();
+
   //  List<DataGridRow> dataGridRows = [];
   DataGridRow? dataGridRow;
   RowColumnIndex? rowColumnIndex;
