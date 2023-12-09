@@ -743,6 +743,7 @@ class _KeyEventsState extends State<KeyEvents> {
                           }
                           for (int i = 0; i < 1; i++) {
                             ganttdata.add(GanttAbsoluteEvent(
+                              suggestedColor: yellow,
                               displayNameBuilder: (context) {
                                 int sr = 1;
                                 return sr.toString();
@@ -752,6 +753,7 @@ class _KeyEventsState extends State<KeyEvents> {
                             ));
 
                             ganttdata.add(GanttAbsoluteEvent(
+                              suggestedColor: green,
                               displayNameBuilder: (context) {
                                 return '';
                               },
@@ -763,29 +765,35 @@ class _KeyEventsState extends State<KeyEvents> {
 
                           for (int i = 0; i < length; i++) {
                             ganttdata.add(GanttAbsoluteEvent(
-                                displayNameBuilder: (context) {
-                                  int sr = i + 2;
-                                  // int ss = sr + 1;
-                                  return sr.toString();
-                                },
-                                startDate: DateFormat('dd-MM-yyyy')
-                                    .parse(startDate[i]),
-                                endDate:
-                                    DateFormat('dd-MM-yyyy').parse(enddate[i]),
-                                suggestedColor: yellow));
+                              suggestedColor: yellow,
+                              displayNameBuilder: (context) {
+                                int sr = i + 2;
+                                // int ss = sr + 1;
+                                return sr.toString();
+                              },
+                              startDate:
+                                  DateFormat('dd-MM-yyyy').parse(startDate[i]),
+                              endDate:
+                                  DateFormat('dd-MM-yyyy').parse(enddate[i]),
+                            ));
 
                             ganttdata.add(GanttAbsoluteEvent(
-                                displayNameBuilder: (context) {
-                                  return '';
-                                },
-                                startDate: DateFormat('dd-MM-yyyy')
-                                    .parse(actualstart[i]),
-                                endDate: DateFormat('dd-MM-yyyy')
-                                    .parse(actualend[i]),
-                                //displayName: yAxis[i].toString()
-                                suggestedColor: actualstart[i] == actualend[i]
-                                    ? green
-                                    : red));
+                              displayNameBuilder: (context) {
+                                return '';
+                              },
+                              startDate: DateFormat('dd-MM-yyyy')
+                                  .parse(actualstart[i]),
+                              endDate:
+                                  DateFormat('dd-MM-yyyy').parse(actualend[i]),
+                              //displayName: yAxis[i].toString()
+                              suggestedColor: DateFormat('dd-MM-yyyy')
+                                      .parse(actualend[i])
+                                      .isBefore(DateFormat('dd-MM-yyyy')
+                                          .parse(enddate[i])
+                                          .add(Duration(days: 1)))
+                                  ? green
+                                  : red,
+                            ));
                           }
                           _employees = getEmployeeData();
                           _keyDataSourceKeyEvents =
@@ -805,28 +813,28 @@ class _KeyEventsState extends State<KeyEvents> {
                                               details.rowColumnIndex.rowIndex -
                                                   1];
 
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(builder: (context) {
-                                        if (row.getCells().first.value ==
-                                            'A1') {
-                                          return UploadDocument(
-                                              userId: widget.userId,
-                                              cityName: widget.cityName,
-                                              depoName: widget.depoName,
-                                              title: 'Key Events',
-                                              activity:
-                                                  row.getCells()[1].value);
-                                        } else {
-                                          return StatutoryAprovalA2(
-                                              userid: widget.userId,
-                                              cityName: widget.cityName,
-                                              depoName: widget.depoName,
-                                              events: row
-                                                  .getCells()[0]
-                                                  .value
-                                                  .toString());
-                                        }
-                                      }));
+                                      // Navigator.of(context).push(
+                                      //     MaterialPageRoute(builder: (context) {
+                                      //   if (row.getCells().first.value ==
+                                      //       'A1') {
+                                      //     return UploadDocument(
+                                      //         userId: widget.userId,
+                                      //         cityName: widget.cityName,
+                                      //         depoName: widget.depoName,
+                                      //         title: 'Key Events',
+                                      //         activity:
+                                      //             row.getCells()[1].value);
+                                      //   } else {
+                                      //     return StatutoryAprovalA2(
+                                      //         userid: widget.userId,
+                                      //         cityName: widget.cityName,
+                                      //         depoName: widget.depoName,
+                                      //         events: row
+                                      //             .getCells()[0]
+                                      //             .value
+                                      //             .toString());
+                                      //   }
+                                      // }));
                                     },
                                     allowEditing: true,
                                     frozenColumnsCount: 2,
@@ -1106,26 +1114,26 @@ class _KeyEventsState extends State<KeyEvents> {
                                       _keyDataSourceKeyEvents.effectiveRows[
                                           details.rowColumnIndex.rowIndex - 1];
 
-                                  Navigator.of(context).push(
-                                      MaterialPageRoute(builder: (context) {
-                                    if (row.getCells().first.value == 'A1') {
-                                      return UploadDocument(
-                                          userId: widget.userId,
-                                          cityName: widget.cityName,
-                                          depoName: widget.depoName,
-                                          title: 'Key Events',
-                                          activity: row.getCells()[1].value);
-                                    } else {
-                                      return StatutoryAprovalA2(
-                                          userid: widget.userId,
-                                          cityName: widget.cityName,
-                                          depoName: widget.depoName,
-                                          events: row
-                                              .getCells()[0]
-                                              .value
-                                              .toString());
-                                    }
-                                  }));
+                                  // Navigator.of(context).push(
+                                  //     MaterialPageRoute(builder: (context) {
+                                  //   if (row.getCells().first.value == 'A1') {
+                                  //     return UploadDocument(
+                                  //         userId: widget.userId,
+                                  //         cityName: widget.cityName,
+                                  //         depoName: widget.depoName,
+                                  //         title: 'Key Events',
+                                  //         activity: row.getCells()[1].value);
+                                  //   } else {
+                                  //     return StatutoryAprovalA2(
+                                  //         userid: widget.userId,
+                                  //         cityName: widget.cityName,
+                                  //         depoName: widget.depoName,
+                                  //         events: row
+                                  //             .getCells()[0]
+                                  //             .value
+                                  //             .toString());
+                                  //   }
+                                  // }));
                                 },
                                 allowEditing: true,
                                 frozenColumnsCount: 2,

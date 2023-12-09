@@ -34,11 +34,11 @@ class Employee {
   String? reasonDelay;
   int delay;
   String? dependency;
-  int unit;
+  dynamic unit;
   int scope;
   int qtyExecuted;
   int balanceQty;
-  int percProgress;
+  double percProgress;
   double weightage;
 
   factory Employee.fromJson(Map<String, dynamic> json) {
@@ -75,11 +75,11 @@ class Employee {
       DataGridCell<int>(columnName: 'ActualDuration', value: actualDuration),
       DataGridCell<int>(columnName: 'Delay', value: delay),
       DataGridCell<String>(columnName: 'ReasonDelay', value: reasonDelay),
-      DataGridCell<int>(columnName: 'Unit', value: unit),
+      DataGridCell<dynamic>(columnName: 'Unit', value: unit),
       DataGridCell<int>(columnName: 'QtyScope', value: scope),
       DataGridCell<int>(columnName: 'QtyExecuted', value: qtyExecuted),
       DataGridCell<int>(columnName: 'BalancedQty', value: balanceQty),
-      DataGridCell<int>(columnName: 'Progress', value: percProgress),
+      DataGridCell<double>(columnName: 'Progress', value: percProgress),
       DataGridCell<double>(columnName: 'Weightage', value: weightage),
     ]);
   }
@@ -88,21 +88,22 @@ class Employee {
     return DataGridRow(cells: <DataGridCell>[
       DataGridCell<dynamic>(columnName: 'srNo', value: srNo),
       DataGridCell<String>(columnName: 'Activity', value: activity),
-      // const DataGridCell<Widget>(columnName: 'button', value: null),
+      // const DataGridCell<Widget>(columnName: 'viewbutton', value: null),
+      // const DataGridCell<Widget>(columnName: 'uploadbutton', value: null),
       DataGridCell<int>(
           columnName: 'OriginalDuration', value: originalDuration),
       DataGridCell<String>(columnName: 'StartDate', value: startDate),
       DataGridCell<String>(columnName: 'EndDate', value: endDate),
       DataGridCell<String>(columnName: 'ActualStart', value: actualstartDate),
       DataGridCell<String>(columnName: 'ActualEnd', value: actualendDate),
-      DataGridCell<int>(columnName: 'ActuaslDuration', value: actualDuration),
+      DataGridCell<int>(columnName: 'ActualDuration', value: actualDuration),
       DataGridCell<int>(columnName: 'Delay', value: delay),
-      // DataGridCell<String>(columnName: 'Dependency', value: dependency),
-      // DataGridCell<int>(columnName: 'Unit', value: unit),
-      // DataGridCell<int>(columnName: 'QtyScope', value: scope),
-      // DataGridCell<int>(columnName: 'QtyExecuted', value: qtyExecuted),
-      // DataGridCell<int>(columnName: 'BalancedQty', value: balanceQty),
-      DataGridCell<int>(columnName: 'Progress', value: percProgress),
+      // DataGridCell<String>(columnName: 'ReasonDelay', value: reasonDelay),
+      DataGridCell<dynamic>(columnName: 'Unit', value: unit),
+      DataGridCell<int>(columnName: 'QtyScope', value: scope),
+      DataGridCell<int>(columnName: 'QtyExecuted', value: qtyExecuted),
+      DataGridCell<int>(columnName: 'BalancedQty', value: balanceQty),
+      DataGridCell<dynamic>(columnName: 'Progress', value: percProgress),
       DataGridCell<double>(columnName: 'Weightage', value: weightage),
     ]);
   }
