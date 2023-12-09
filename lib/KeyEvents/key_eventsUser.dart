@@ -42,8 +42,9 @@ class _KeyEventsUserState extends State<KeyEventsUser> {
 
   @override
   void initState() {
-    _keyProvider = Provider.of<KeyProvider>(context, listen: false);
-    _keyProvider!.fetchDelayData(widget.depoName!, widget.userId);
+    // _keyProvider = Provider.of<KeyProvider>(context, listen: false);
+    // _keyProvider!.fetchDelayData(widget.depoName!, widget.userId);
+
     super.initState();
   }
 
@@ -159,9 +160,9 @@ class _KeyEventsUserState extends State<KeyEventsUser> {
                                               animation: true,
                                               lineHeight: 20.0,
                                               animationDuration: 2000,
-                                              percent: 0 / 100,
+                                              percent: rowData[1] / 100,
                                               center: Text(
-                                                  '${value.perProgress.toStringAsFixed(2)} %'),
+                                                  '${rowData[1].toStringAsFixed(2)} %'),
                                               progressColor: Colors.green,
                                             );
                                           },
@@ -184,6 +185,10 @@ class _KeyEventsUserState extends State<KeyEventsUser> {
   }
 
   Future<void> getRowsForFutureBuilder() async {
+    double weightage = 0;
+    int qtyExecuted = 0;
+
+    double totalperc = 0.0;
     rowList.clear();
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('KeyEventsTable')
@@ -212,40 +217,25 @@ class _KeyEventsUserState extends State<KeyEventsUser> {
           .then((value) {
         value.docs.forEach((element) {
           var alldata = element.data()['data'];
-          List<int> indicesToSkip = [0, 2, 8, 12, 16, 27, 33, 39, 65, 76];
+          List<int> indicesToSkip = [0, 2, 6, 13, 18, 28, 32, 38, 64, 76];
           for (int i = 0; i < alldata.length; i++) {
             print('skipe${indicesToSkip.contains(i)}');
-            if (!indicesToSkip.contains(i)) {
-              weightage = 0;
-              perscope = 0;
-              qtyExecuted = 0;
-              percprogress = 0;
 
-              // allweightage = 0;
-              // allperScope = 0;
-              // allExecuted = 0;
-              weightage = alldata[i]['Weightage'];
-              perscope = alldata[i]['QtyScope'];
+            if (indicesToSkip.contains(i)) {
               qtyExecuted = alldata[i]['QtyExecuted'];
-              allperScope = allperScope + perscope;
-              allExecuted = allExecuted + qtyExecuted;
-              allweightage = allweightage + weightage;
+              weightage = alldata[i]['Weightage'];
+              int scope = alldata[i]['QtyScope'];
 
-              balanceQty = allperScope - allExecuted;
-              var calculatePercProgress =
-                  allExecuted / allperScope * allweightage;
-              percprogress = calculatePercProgress;
-              if (percprogress.isNaN || percprogress.isInfinite) {
-                percprogress = 0;
-              }
-              print(percprogress.toStringAsFixed(2));
+              dynamic perc = ((qtyExecuted / scope) * weightage);
+              double value = perc.isNaN ? 0.0 : perc;
+              totalperc = totalperc + value;
+              print('perc progress${totalperc}');
             }
           }
         });
       });
-      rowList
-          .add([userIdList[i], double.parse(percprogress.toStringAsFixed(1))]);
-      print(rowList);
+      rowList.add([userIdList[i], double.parse(totalperc.toStringAsFixed(1))]);
+      //  print(rowList);
     }
   }
 
