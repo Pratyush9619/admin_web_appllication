@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_appllication/Authentication/reset_password.dart';
+import 'package:web_appllication/MenuPage/nav_screen.dart';
 import 'package:web_appllication/Planning/cities.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/main.dart';
@@ -279,7 +280,7 @@ class _SignInPageState extends State<SignInPage> {
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const SmallScreen(),
+                  builder: (context) => NavigationPage(),
                 ));
           });
         } else if (_pass == snap.docs[0]['Password'] &&

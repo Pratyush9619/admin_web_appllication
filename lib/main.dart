@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web_appllication/MenuPage/admin.dart';
 import 'package:web_appllication/MenuPage/home.dart';
+import 'package:web_appllication/MenuPage/nav_screen.dart';
 import 'package:web_appllication/MenuPage/project_planning.dart';
 import 'package:web_appllication/MenuPage/user.dart';
 import 'package:web_appllication/provider/assigned_user_provider.dart';
@@ -50,7 +51,7 @@ class MyApp extends StatelessWidget {
           title: 'TATA POWER CONTROL PANEL',
           initialRoute: MenuHomePage.id,
           routes: {
-            DashBoardScreen.id: (context) => const SmallScreen(),
+            DashBoardScreen.id: (context) => SmallScreen(),
             MenuUserPage.id: (context) => const MenuUserPage(),
             ProjectPanning.id: (context) => const ProjectPanning(),
 
@@ -90,14 +91,16 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return const SmallScreen();
-    // MenuUserPage();
-    // DepotOverview();
-    // ResourceAllocation();
-    //  EventsPage();
-    // KeyEvents();
-    // const CitiesPage();
-  //  const LoginRegister();
+    return
+        //NavigationPage();
+        // SmallScreen();
+        // MenuUserPage();
+        // DepotOverview();
+        // ResourceAllocation();
+        //  EventsPage();
+        // KeyEvents();
+        // const CitiesPage();
+        const LoginRegister();
     // const PdfSummary();
   }
 }

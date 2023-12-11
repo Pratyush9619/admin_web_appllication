@@ -37,6 +37,9 @@ class _KeyEvents2State extends State<KeyEvents2> {
   late KeyDataSourceKeyEvents _KeyDataSourceKeyEvents;
   List<Employee> _employees = <Employee>[];
   late DataGridController _dataGridController;
+  ScrollController _verticalGridController = ScrollController();
+  ScrollController _dataGridScrollController = ScrollController();
+
   //  List<DataGridRow> dataGridRows = [];
   DataGridRow? dataGridRow;
   RowColumnIndex? rowColumnIndex;
@@ -60,7 +63,7 @@ class _KeyEvents2State extends State<KeyEvents2> {
   String? aedate;
   var alldata;
   bool _isLoading = true;
-  bool _isInit = true;
+
   int? length;
   List<GanttEventBase> ganttdata = [];
   List<String> startDate = [];
@@ -242,7 +245,7 @@ class _KeyEvents2State extends State<KeyEvents2> {
   List<int> indicesToSkip = [0, 2, 6, 13, 18, 28, 32, 38, 64, 76];
   //[0, 2, 8, 12, 16, 27, 33, 39, 65, 76];
   ScrollController _scrollController = ScrollController();
-  final ScrollController _ganttChartController = ScrollController();
+
   double totalperc = 0.0;
   KeyProvider? _keyProvider;
 
@@ -264,6 +267,13 @@ class _KeyEvents2State extends State<KeyEvents2> {
         .snapshots();
 
     _isLoading = false;
+    _verticalGridController.addListener(() {
+      _dataGridScrollController.jumpTo(_verticalGridController.offset);
+    });
+    _dataGridScrollController.addListener(() {
+      _verticalGridController.jumpTo(_dataGridScrollController.offset);
+    });
+
     setState(() {});
 
     super.initState();
@@ -410,6 +420,8 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                         )),
                                     child: SfDataGrid(
                                       source: _KeyDataSourceKeyEvents,
+                                      verticalScrollController:
+                                          _verticalGridController,
                                       onSelectionChanged:
                                           (addedRows, removedRows) {
                                         if (addedRows.first
@@ -465,7 +477,7 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                         ),
                                         GridColumn(
                                           columnName: 'Activity',
-                                          allowEditing: false,
+                                          allowEditing: true,
                                           width: 250,
                                           label: Container(
                                             padding: const EdgeInsets.symmetric(
@@ -668,7 +680,7 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                         ),
                                         GridColumn(
                                           columnName: 'Weightage',
-                                          allowEditing: false,
+                                          allowEditing: true,
                                           label: Container(
                                             alignment: Alignment.center,
                                             child: Text(
@@ -1715,6 +1727,9 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                     navigationMode: GridNavigationMode.cell,
                                     columnWidthMode: ColumnWidthMode.auto,
                                     controller: _dataGridController,
+                                    verticalScrollController:
+                                        _verticalGridController,
+
                                     rowHeight: 55,
                                     columns: [
                                       GridColumn(
@@ -1947,14 +1962,16 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                   height:
                                       MediaQuery.of(context).size.height * 0.93,
                                   child: SingleChildScrollView(
+                                    controller: _dataGridScrollController,
                                     child: GanttChartView(
-                                        scrollController: _scrollController,
+                                        // scrollController: _scrollController,
                                         maxDuration: null,
                                         // const Duration(days: 30 * 2),
                                         // optional, set to null for infinite horizontal scroll
                                         startDate: dateTime, //required
                                         dayWidth:
                                             35, //column width for each day
+
                                         dayHeaderHeight: 35,
                                         eventHeight: 55, //row height for events
                                         stickyAreaWidth: 70, //sticky area width

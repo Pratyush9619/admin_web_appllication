@@ -42,9 +42,6 @@ class _KeyEventsUserState extends State<KeyEventsUser> {
 
   @override
   void initState() {
-    // _keyProvider = Provider.of<KeyProvider>(context, listen: false);
-    // _keyProvider!.fetchDelayData(widget.depoName!, widget.userId);
-
     super.initState();
   }
 
