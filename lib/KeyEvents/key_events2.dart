@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,12 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:web_appllication/KeyEvents/upload.dart';
 import 'package:web_appllication/KeyEvents/view_AllFiles.dart';
-import '../Authentication/auth_service.dart';
-import '../FirebaseApi/firebase_api.dart';
-
 import '../components/loading_page.dart';
 import '../datasource/key_datasource.dart';
 import '../model/employee.dart';
@@ -1720,8 +1715,6 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                     navigationMode: GridNavigationMode.cell,
                                     columnWidthMode: ColumnWidthMode.auto,
                                     controller: _dataGridController,
-                                    verticalScrollPhysics:
-                                        AlwaysScrollableScrollPhysics(),
                                     rowHeight: 55,
                                     columns: [
                                       GridColumn(
