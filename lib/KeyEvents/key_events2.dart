@@ -42,6 +42,7 @@ class _KeyEvents2State extends State<KeyEvents2> {
   late KeyDataSourceKeyEvents _KeyDataSourceKeyEvents;
   List<Employee> _employees = <Employee>[];
   late DataGridController _dataGridController;
+  ScrollController _verticalGridController = ScrollController();
   ScrollController _dataGridScrollController = ScrollController();
 
   //  List<DataGridRow> dataGridRows = [];
@@ -271,6 +272,9 @@ class _KeyEvents2State extends State<KeyEvents2> {
         .snapshots();
 
     _isLoading = false;
+    _verticalGridController.addListener(() {
+      _dataGridScrollController.jumpTo(_verticalGridController.offset);
+    });
     setState(() {});
 
     super.initState();
@@ -1722,6 +1726,8 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                     navigationMode: GridNavigationMode.cell,
                                     columnWidthMode: ColumnWidthMode.auto,
                                     controller: _dataGridController,
+                                    verticalScrollController:
+                                        _verticalGridController,
                                     verticalScrollPhysics:
                                         AlwaysScrollableScrollPhysics(),
                                     rowHeight: 55,
@@ -1956,8 +1962,9 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                   height:
                                       MediaQuery.of(context).size.height * 0.93,
                                   child: SingleChildScrollView(
+                                    controller: _dataGridScrollController,
                                     child: GanttChartView(
-                                        scrollController: _scrollController,
+                                        // scrollController: _scrollController,
                                         maxDuration: null,
                                         // const Duration(days: 30 * 2),
                                         // optional, set to null for infinite horizontal scroll
