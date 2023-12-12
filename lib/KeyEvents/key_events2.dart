@@ -37,8 +37,8 @@ class _KeyEvents2State extends State<KeyEvents2> {
   late KeyDataSourceKeyEvents _KeyDataSourceKeyEvents;
   List<Employee> _employees = <Employee>[];
   late DataGridController _dataGridController;
-  ScrollController _verticalGridController = ScrollController();
-  ScrollController _dataGridScrollController = ScrollController();
+  final ScrollController _verticalGridController = ScrollController();
+  final ScrollController _dataGridScrollController = ScrollController();
 
   //  List<DataGridRow> dataGridRows = [];
   DataGridRow? dataGridRow;
@@ -61,6 +61,7 @@ class _KeyEvents2State extends State<KeyEvents2> {
   String? edate;
   String? asdate;
   String? aedate;
+  // ignore: prefer_typing_uninitialized_variables
   var alldata;
   bool _isLoading = true;
 
@@ -1652,6 +1653,7 @@ class _KeyEvents2State extends State<KeyEvents2> {
                               //displayName: yAxis[i].toString()
                             ));
                           }
+                          k++;
                         }
 
                         return SizedBox(
@@ -1961,36 +1963,68 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                   width: 450,
                                   height:
                                       MediaQuery.of(context).size.height * 0.93,
-                                  child: SingleChildScrollView(
-                                    controller: _dataGridScrollController,
-                                    child: GanttChartView(
-                                        // scrollController: _scrollController,
-                                        maxDuration: null,
-                                        // const Duration(days: 30 * 2),
-                                        // optional, set to null for infinite horizontal scroll
-                                        startDate: dateTime, //required
-                                        dayWidth:
-                                            35, //column width for each day
+                                  child: Column(
+                                    children: [
+                                      // GanttChartView(
+                                      //     scrollController: _scrollController,
+                                      //     maxDuration: null,
+                                      //     // const Duration(days: 30 * 2),
+                                      //     // optional, set to null for infinite horizontal scroll
+                                      //     startDate: dateTime, //required
+                                      //     dayWidth:
+                                      //         35, //column width for each day
 
-                                        dayHeaderHeight: 35,
-                                        eventHeight: 55, //row height for events
-                                        stickyAreaWidth: 70, //sticky area width
-                                        showStickyArea:
-                                            true, //show sticky area or not
-                                        showDays: true, //show days or not
-                                        startOfTheWeek: WeekDay
-                                            .monday, //custom start of the week
-                                        weekHeaderHeight: 22,
-                                        weekEnds: const {
-                                          // WeekDay.saturday,
-                                          // WeekDay.sunday
-                                        }, //custom weekends
-                                        // isExtraHoliday: (context, day) {
-                                        //   //define custom holiday logic for each day
-                                        //   return DateUtils.isSameDay(
-                                        //       DateTime(2023, 7, 1), day);
-                                        // },
-                                        events: ganttdata),
+                                      //     dayHeaderHeight: 35,
+                                      //     eventHeight:
+                                      //         55, //row height for events
+                                      //     stickyAreaWidth:
+                                      //         70, //sticky area width
+                                      //     showStickyArea:
+                                      //         false, //show sticky area or not
+                                      //     showDays: false, //show days or not
+                                      //     startOfTheWeek: WeekDay
+                                      //         .monday, //custom start of the week
+                                      //     weekHeaderHeight: 22,
+                                      //     weekEnds: const {
+                                      //       // WeekDay.saturday,
+                                      //       // WeekDay.sunday
+                                      //     }, //custom weekends
+
+                                      //     events: []),
+
+                                      Expanded(
+                                        child: SingleChildScrollView(
+                                          controller: _dataGridScrollController,
+                                          child: GanttChartView(
+                                              scrollController:
+                                                  _scrollController,
+                                              maxDuration: null,
+                                              // const Duration(days: 30 * 2),
+                                              // optional, set to null for infinite horizontal scroll
+                                              startDate: dateTime, //required
+                                              dayWidth:
+                                                  35, //column width for each day
+
+                                              dayHeaderHeight: 35,
+                                              eventHeight:
+                                                  55, //row height for events
+                                              stickyAreaWidth:
+                                                  70, //sticky area width
+                                              showStickyArea:
+                                                  false, //show sticky area or not
+                                              showDays: true, //show days or not
+                                              startOfTheWeek: WeekDay
+                                                  .monday, //custom start of the week
+                                              weekHeaderHeight: 22,
+                                              weekEnds: const {
+                                                // WeekDay.saturday,
+                                                // WeekDay.sunday
+                                              }, //custom weekends
+
+                                              events: ganttdata),
+                                        ),
+                                      ),
+                                    ],
                                   ))
                             ]));
                       }
