@@ -3,7 +3,6 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +22,14 @@ class DashBoardScreen extends StatefulWidget {
 }
 
 class _DashBoardScreenState extends State<DashBoardScreen> {
+  List<String> tabNamesToStore = [
+    'evTable',
+    'budgetTable',
+    'actualTable',
+    'tmlJmrTable',
+    'commercialTable',
+    'assetTable'
+  ];
   bool isTableLoading = false;
   List<dynamic> startDateList = [];
   List<dynamic> estimatedDateList = [];
@@ -133,16 +140,17 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   ];
 
   List<String> commercialBottomValue = [
-    '% of financial Progress',
-    '% of pending JMR Approval'
+    '% of financial\nProgress',
+    '% of pending JMR\nApproval'
   ];
 
+  double piePercentSize = 13;
   double tableDataFontSize = 0;
   dynamic deviceHeight = 0;
   double fontSize = 0;
   double tableHeadingFontSize = 0;
   double chartRadius = 0;
-  bool isLoading = false;
+  bool isLoading = true;
 
   List<dynamic> projectNameCol = [];
   int projectNameColLen = 0;
@@ -223,8 +231,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   @override
   void initState() {
     getCityName();
-    tempFunc();
-    // TODO: implement initState
+    fetchExcelData(); // TODO: implement initState
     super.initState();
   }
 
@@ -233,12 +240,12 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     final provider = Provider.of<SelectedRowIndexModel>(context);
     deviceHeight = MediaQuery.of(context).size.height;
     if (deviceHeight < 700) {
-      tableDataFontSize = 10;
+      tableDataFontSize = 11;
       tableHeadingFontSize = 8;
       chartRadius = 80;
       fontSize = 8;
     } else {
-      tableDataFontSize = 11;
+      tableDataFontSize = 12;
       tableHeadingFontSize = 8;
       chartRadius = 90;
       fontSize = 11;
@@ -356,6 +363,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                           text: evProgressLegendNames[
                                                                               index],
                                                                           style: const TextStyle(
+                                                                              fontWeight: FontWeight.bold,
                                                                               color: Colors.black,
                                                                               fontSize: 10))
                                                                     ])),
@@ -387,6 +395,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                     blue),
                                                             headingTextStyle:
                                                                 TextStyle(
+                                                                    letterSpacing:
+                                                                        0.5,
                                                                     color:
                                                                         white,
                                                                     fontSize:
@@ -395,8 +405,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 25,
                                                             dataTextStyle:
                                                                 TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
                                                                     fontSize:
-                                                                        tableDataFontSize,
+                                                                        10,
                                                                     color:
                                                                         black),
                                                             columnSpacing: 2,
@@ -512,12 +525,13 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                               ChartValuesOptions(
                                                             showChartValueBackground:
                                                                 false,
+                                                            decimalPlaces: 0,
                                                             chartValueStyle:
                                                                 TextStyle(
                                                                     color:
                                                                         white,
                                                                     fontSize:
-                                                                        10),
+                                                                        piePercentSize),
                                                             showChartValuesInPercentage:
                                                                 true,
                                                           ),
@@ -536,18 +550,19 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                     ],
                                                   ),
                                                   Container(
-                                                    padding: EdgeInsets.only(
-                                                        top: 10),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 10),
                                                     width:
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width *
                                                             0.88 /
                                                             3.2,
-                                                    height: 30,
+                                                    height: 35,
                                                     child: GridView.builder(
                                                         physics:
-                                                            NeverScrollableScrollPhysics(),
+                                                            const NeverScrollableScrollPhysics(),
                                                         shrinkWrap: true,
                                                         gridDelegate:
                                                             const SliverGridDelegateWithFixedCrossAxisCount(
@@ -566,9 +581,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 TextSpan(
                                                                     text:
                                                                         '${evBottomValue[index3]}:',
-                                                                    style: GoogleFonts.aleo(
+                                                                    style: TextStyle(
                                                                         fontSize:
-                                                                            8,
+                                                                            10,
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .bold,
@@ -610,13 +625,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                   'EV Bus Project Progress Status',
                                                   style: TextStyle(
                                                       color: Colors.white,
-                                                      fontSize: 10),
+                                                      fontSize: 11,
+                                                      fontWeight:
+                                                          FontWeight.bold),
                                                 )))),
                                   ],
                                 ),
                               ),
                               Container(
-                                padding: EdgeInsets.only(left: 10),
+                                padding: const EdgeInsets.only(left: 10),
                                 width: MediaQuery.of(context).size.width *
                                     0.93 /
                                     3,
@@ -693,6 +710,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                           text: tmlApprovedLegendNames[
                                                                               index],
                                                                           style: const TextStyle(
+                                                                              fontWeight: FontWeight.bold,
                                                                               color: Colors.black,
                                                                               fontSize: 10))
                                                                     ])),
@@ -726,18 +744,21 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                     blue),
                                                             headingTextStyle:
                                                                 TextStyle(
+                                                                    letterSpacing:
+                                                                        0.5,
                                                                     color:
                                                                         white,
                                                                     fontSize:
                                                                         tableHeadingFontSize),
                                                             headingRowHeight:
                                                                 28,
-                                                            dataTextStyle:
-                                                                TextStyle(
-                                                                    fontSize:
-                                                                        tableDataFontSize,
-                                                                    color:
-                                                                        black),
+                                                            dataTextStyle: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize:
+                                                                    tableDataFontSize,
+                                                                color: black),
                                                             columnSpacing: 2,
                                                             showBottomBorder:
                                                                 false,
@@ -834,12 +855,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                     1500),
                                                         chartValuesOptions:
                                                             ChartValuesOptions(
+                                                          decimalPlaces: 0,
                                                           showChartValueBackground:
                                                               false,
                                                           chartValueStyle:
                                                               TextStyle(
                                                                   color: white,
-                                                                  fontSize: 10),
+                                                                  fontSize:
+                                                                      piePercentSize),
                                                           showChartValuesInPercentage:
                                                               true,
                                                         ),
@@ -872,7 +895,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 .width *
                                                             0.93 /
                                                             3.1,
-                                                    height: 30,
+                                                    height: 35,
                                                     child: GridView.builder(
                                                         physics:
                                                             NeverScrollableScrollPhysics(),
@@ -895,9 +918,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                     text:
                                                                         //  '${MoneyFormatter(amount: double.parse(budgetActualTotalList[index1][index3].toString()), settings: MoneyFormatterSettings(symbol: '₹')).output.symbolOnLeft}'
                                                                         '${tmlApprovedBottomValue[index]}:',
-                                                                    style: GoogleFonts.aleo(
+                                                                    style: TextStyle(
                                                                         fontSize:
-                                                                            8,
+                                                                            10,
                                                                         fontWeight:
                                                                             FontWeight
                                                                                 .bold,
@@ -940,7 +963,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                   dashboardTitle[2],
                                                   style: const TextStyle(
                                                       color: Colors.white,
-                                                      fontSize: 10),
+                                                      fontSize: 11,
+                                                      fontWeight:
+                                                          FontWeight.bold),
                                                 )))),
                                   ],
                                 ),
@@ -1025,7 +1050,13 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                                   child: SizedBox(
                                                                                 width: 5,
                                                                               )),
-                                                                              TextSpan(text: budgetLegendNames[index1][index], style: const TextStyle(color: Colors.black, fontSize: 9))
+                                                                              TextSpan(
+                                                                                  text: budgetLegendNames[index1][index],
+                                                                                  style: const TextStyle(
+                                                                                    color: Colors.black,
+                                                                                    fontSize: 9,
+                                                                                    fontWeight: FontWeight.bold,
+                                                                                  ))
                                                                             ])),
                                                                           );
                                                                         })),
@@ -1057,6 +1088,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                             MaterialStatePropertyAll(
                                                                                 blue),
                                                                         headingTextStyle: TextStyle(
+                                                                            letterSpacing:
+                                                                                0.5,
                                                                             color:
                                                                                 white,
                                                                             fontSize:
@@ -1064,6 +1097,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                         headingRowHeight:
                                                                             25,
                                                                         dataTextStyle: TextStyle(
+                                                                            fontWeight: FontWeight
+                                                                                .bold,
                                                                             fontSize:
                                                                                 tableDataFontSize,
                                                                             color:
@@ -1140,13 +1175,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                               1500),
                                                                   chartValuesOptions:
                                                                       ChartValuesOptions(
+                                                                    decimalPlaces:
+                                                                        0,
                                                                     showChartValueBackground:
                                                                         false,
                                                                     chartValueStyle: TextStyle(
                                                                         color:
                                                                             white,
                                                                         fontSize:
-                                                                            10),
+                                                                            piePercentSize),
                                                                     showChartValuesInPercentage:
                                                                         true,
                                                                   ),
@@ -1204,7 +1241,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                               children: [
                                                                             TextSpan(
                                                                                 text: '${budgetActualBottomValue[index1][index3]}:',
-                                                                                style: GoogleFonts.aleo(fontSize: 8, fontWeight: FontWeight.bold, color: black)),
+                                                                                style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: black)),
                                                                             const WidgetSpan(
                                                                                 child: SizedBox(
                                                                               width: 5,
@@ -1232,11 +1269,13 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                         child: Text(
                                                           dashboardTitle[
                                                               index1],
-                                                          style:
-                                                              const TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 10),
+                                                          style: const TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 11,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
                                                         )))),
                                           ],
                                         ),
@@ -1256,6 +1295,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                         4.0,
                                     height: 270,
                                     child: Stack(
+                                      alignment: Alignment.topLeft,
                                       children: [
                                         Positioned(
                                           top: 10,
@@ -1286,7 +1326,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                     padding:
                                                         const EdgeInsets.only(
                                                             left: 5.0, top: 30),
-                                                    height: 170,
+                                                    height: 160,
                                                     width:
                                                         MediaQuery.of(context)
                                                                 .size
@@ -1300,11 +1340,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 blue),
                                                         columnSpacing: 10,
                                                         dataTextStyle: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                             fontSize:
                                                                 tableDataFontSize,
                                                             color: black),
                                                         dataRowHeight: 20,
                                                         headingTextStyle: TextStyle(
+                                                            letterSpacing: 0.5,
                                                             color: white,
                                                             fontSize:
                                                                 tableHeadingFontSize),
@@ -1368,8 +1411,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 .width *
                                                             0.88 /
                                                             4.55,
-                                                    height: 35,
+                                                    height: 40,
                                                     child: GridView.builder(
+                                                        physics:
+                                                            NeverScrollableScrollPhysics(),
                                                         shrinkWrap: true,
                                                         gridDelegate:
                                                             const SliverGridDelegateWithFixedCrossAxisCount(
@@ -1378,40 +1423,38 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 crossAxisSpacing:
                                                                     0,
                                                                 childAspectRatio:
-                                                                    4),
+                                                                    2.8),
                                                         itemCount: 2,
                                                         itemBuilder:
                                                             (context, index) {
-                                                          return Container(
-                                                            child: Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceAround,
-                                                              children: [
-                                                                Text(
-                                                                  commercialBottomValue[
-                                                                      index],
-                                                                  style: TextStyle(
+                                                          return Column(
+                                                            children: [
+                                                              Text(
+                                                                commercialBottomValue[
+                                                                    index],
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize:
+                                                                        10,
+                                                                    color:
+                                                                        blue),
+                                                              ),
+                                                              Text(
+                                                                  isExcelSelected
+                                                                      ? '${commercialTotalList[index].toString()}%'
+                                                                      : '0%',
+                                                                  style: const TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
                                                                               .bold,
                                                                       fontSize:
-                                                                          10,
-                                                                      color:
-                                                                          blue),
-                                                                ),
-                                                                Text(
-                                                                    isExcelSelected
-                                                                        ? '${commercialTotalList[index].toString()}%'
-                                                                        : '0%',
-                                                                    style: const TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        fontSize:
-                                                                            10))
-                                                              ],
-                                                            ),
+                                                                          10))
+                                                            ],
                                                           );
                                                         }),
                                                   )
@@ -1435,7 +1478,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                       'Commercial Achievement',
                                                       style: TextStyle(
                                                           color: Colors.white,
-                                                          fontSize: 10),
+                                                          fontSize: 11,
+                                                          fontWeight:
+                                                              FontWeight.bold),
                                                     )))),
                                       ],
                                     ),
@@ -1519,7 +1564,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                         TextSpan(
                                                                             text:
                                                                                 assetCapitalisedLegendNames[index],
-                                                                            style: const TextStyle(color: Colors.black, fontSize: 10))
+                                                                            style: const TextStyle(
+                                                                              color: Colors.black,
+                                                                              fontSize: 10,
+                                                                              fontWeight: FontWeight.bold,
+                                                                            ))
                                                                       ])),
                                                                 );
                                                               })),
@@ -1551,18 +1600,21 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                       blue),
                                                               headingTextStyle:
                                                                   TextStyle(
+                                                                      letterSpacing:
+                                                                          0.5,
                                                                       color:
                                                                           white,
                                                                       fontSize:
                                                                           tableHeadingFontSize),
                                                               headingRowHeight:
                                                                   30,
-                                                              dataTextStyle:
-                                                                  TextStyle(
-                                                                      fontSize:
-                                                                          tableDataFontSize,
-                                                                      color:
-                                                                          black),
+                                                              dataTextStyle: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize:
+                                                                      tableDataFontSize,
+                                                                  color: black),
                                                               columnSpacing: 2,
                                                               showBottomBorder:
                                                                   false,
@@ -1660,6 +1712,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                         1500),
                                                             chartValuesOptions:
                                                                 ChartValuesOptions(
+                                                              decimalPlaces: 0,
                                                               showChartValueBackground:
                                                                   false,
                                                               chartValueStyle:
@@ -1667,7 +1720,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                       color:
                                                                           white,
                                                                       fontSize:
-                                                                          10),
+                                                                          piePercentSize),
                                                               showChartValuesInPercentage:
                                                                   true,
                                                             ),
@@ -1717,9 +1770,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                   TextSpan(
                                                                       text: assetCapitalisationBottomValue[
                                                                           index],
-                                                                      style: GoogleFonts.aleo(
+                                                                      style: TextStyle(
                                                                           fontSize:
-                                                                              8,
+                                                                              10,
                                                                           fontWeight: FontWeight
                                                                               .bold,
                                                                           color:
@@ -1763,7 +1816,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                       'Asset Capitalised',
                                                       style: TextStyle(
                                                           color: Colors.white,
-                                                          fontSize: 10),
+                                                          fontSize: 11,
+                                                          fontWeight:
+                                                              FontWeight.bold),
                                                     )))),
                                       ],
                                     ),
@@ -1818,10 +1873,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                         ],
                       ),
                       isTableLoading
-                          ? TableLoading()
+                          ? const TableLoading()
                           : Container(
                               padding: const EdgeInsets.only(top: 30),
-                              width: MediaQuery.of(context).size.width * 0.85,
+                              width: MediaQuery.of(context).size.width * 0.88,
                               height: 1000,
                               child: Consumer<SelectedRowIndexModel>(
                                 builder: (context, value, child) {
@@ -1831,10 +1886,13 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       dividerThickness: 0,
                                       minWidth: 900,
                                       dataRowHeight: 40,
-                                      headingRowHeight: 60,
+                                      headingRowHeight: 40,
                                       border: TableBorder.all(),
-                                      headingTextStyle:
-                                          TextStyle(fontSize: 13, color: white),
+                                      headingTextStyle: TextStyle(
+                                        fontSize: 13,
+                                        color: white,
+                                        letterSpacing: 0.5,
+                                      ),
                                       columns:
                                           evProgressTable.map((columnNames) {
                                         return DataColumn2(
@@ -1856,8 +1914,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                           DataCell(Text(endDateList[index])),
                                           DataCell(
                                               Text(estimatedDateList[index])),
-                                          DataCell(
-                                              Text(actualEndDateList[index])),
+                                          DataCell(Text('W.I.P')),
+                                          // DataCell(
+                                          //     Text(actualEndDateList[index])),
                                         ]);
                                       }));
                                 },
@@ -1884,24 +1943,33 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     print(selectedDepoList);
   }
 
-  void tempFunc() async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('DepoName')
-        .doc('TML Dharwad ')
-        .collection('AllDepots')
-        .get();
-
-    List<dynamic> tempList = [];
-    tempList = querySnapshot.docs.map((e) => e.id).toList();
-    print(tempList);
-  }
-
   void _scrollTable() {
     _scrollController.animateTo(_scrollController.position.maxScrollExtent,
         duration: const Duration(milliseconds: 1000), curve: Curves.easeInOut);
   }
 
-  pickAndProcessFile() async {
+  Future<void> pickAndProcessFile() async {
+    //Clear All List
+    projectNameCol.clear();
+    plannedChargersCol.clear();
+    chargersComissioned.clear();
+    tprelBudgetCol.clear();
+    tpevslBudgetCol.clear();
+    budgetCol.clear();
+    actualExpenseTprelCol.clear();
+    actualExpenseTpevslCol.clear();
+    totalActualExpenseCol.clear();
+    infraAmountCol.clear();
+    evChargersAmountCol.clear();
+    totalApprovedJmrAmountCol.clear();
+    totalPendingJmrAmountCol.clear();
+    financialProgressCol.clear();
+    pendingJmrApprovalCol.clear();
+    assetCapitalisedTprelCol.clear();
+    assetCapitalisedTpevslCol.clear();
+    cumulativeAssetCapitalizedCol.clear();
+    pendingAssetCapitalisationCol.clear();
+
     List<List<dynamic>> tempList1 = [];
     List<List<dynamic>> tempList2 = [];
 
@@ -2085,6 +2153,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
         // User canceled the picker
       }
 
+      //Storing Excel Data into Firestore Database
+      await storeExcel();
+
       setState(() {
         isLoading = false;
       });
@@ -2093,6 +2164,159 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       print(stackTrace);
       // Handle the error as needed
     }
+  }
+
+  Future<void> fetchExcelData() async {
+    List<dynamic> tempList1 = [];
+    List<dynamic> tempList2 = [];
+    CollectionReference dashboardRef =
+        FirebaseFirestore.instance.collection('dashboard');
+
+//Fetching EV Table Data
+    DocumentSnapshot evSnap = await dashboardRef.doc(tabNamesToStore[0]).get();
+    Map<String, dynamic> evData = evSnap.data() as Map<String, dynamic>;
+    List<dynamic> evList = evData['evData'];
+    projectNameCol = evList[0]['projectName'];
+    plannedChargersCol = evList[1]['plannedChargers'];
+    chargersComissioned = evList[2]['chargersCommissioned'];
+
+//Fetching Budget Table Data
+    DocumentSnapshot budgetSnap =
+        await dashboardRef.doc(tabNamesToStore[1]).get();
+    Map<String, dynamic> budgetData = budgetSnap.data() as Map<String, dynamic>;
+    List<dynamic> budgetList = budgetData['budgetData'];
+    tprelBudgetCol = budgetList[0]['tprelBudget'];
+    tpevslBudgetCol = budgetList[1]['tpevslBudget'];
+    budgetCol = budgetList[2]['totalBudget'];
+
+//Fetching Actual Expense Table Data
+    DocumentSnapshot actualSnap =
+        await dashboardRef.doc(tabNamesToStore[2]).get();
+    Map<String, dynamic> actualData = actualSnap.data() as Map<String, dynamic>;
+    List<dynamic> actualList = actualData['actualData'];
+    actualExpenseTprelCol = actualList[0]['tprelActual'];
+    actualExpenseTpevslCol = actualList[1]['tpevslActual'];
+    totalActualExpenseCol = actualList[2]['totalActual'];
+
+//Fetching TML Approved JMR Expense Table Data
+    DocumentSnapshot tmlJmrSnap =
+        await dashboardRef.doc(tabNamesToStore[3]).get();
+    Map<String, dynamic> tmlJmrData = tmlJmrSnap.data() as Map<String, dynamic>;
+    List<dynamic> tmlJmrList = tmlJmrData['tmlJmrData'];
+    infraAmountCol = tmlJmrList[0]['infra'];
+    evChargersAmountCol = tmlJmrList[1]['evChargers'];
+    totalApprovedJmrAmountCol = tmlJmrList[2]['approvedJmr'];
+    totalPendingJmrAmountCol = tmlJmrList[3]['pendingJmr'];
+
+//Fetching Commercial Achievement Table Data
+    DocumentSnapshot commercialSnap =
+        await dashboardRef.doc(tabNamesToStore[4]).get();
+    Map<String, dynamic> commercialData =
+        commercialSnap.data() as Map<String, dynamic>;
+    List<dynamic> commercialList = commercialData['commercialData'];
+    financialProgressCol = commercialList[0]['financialProgress'];
+    pendingJmrApprovalCol = commercialList[1]['pendingJmr'];
+
+//Fetching Asset Capitalised Table Data
+    DocumentSnapshot assetSnap =
+        await dashboardRef.doc(tabNamesToStore[5]).get();
+    Map<String, dynamic> assetData = assetSnap.data() as Map<String, dynamic>;
+    List<dynamic> assetList = assetData['assetData'];
+    assetCapitalisedTprelCol = assetList[0]['tprelAsset'];
+    assetCapitalisedTpevslCol = assetList[1]['tpevslAsset'];
+    cumulativeAssetCapitalizedCol = assetList[2]['cumulativeAsset'];
+    pendingAssetCapitalisationCol = assetList[3]['pendingAsset'];
+
+//If Row Length is not empty
+    if (plannedChargersCol.isNotEmpty) {
+      isExcelSelected = true;
+      tempList1.add(tprelBudgetCol);
+      tempList1.add(tpevslBudgetCol);
+      tempList1.add(budgetCol);
+
+      tempList2.add(actualExpenseTprelCol);
+      tempList2.add(actualExpenseTpevslCol);
+      tempList2.add(totalActualExpenseCol);
+
+      budgetActualCol.add(tempList1);
+      budgetActualCol.add(tempList2);
+
+      totalForAllCol = plannedChargersCol.length - 1;
+      projectNameColLen = projectNameCol.length - 1;
+      tprelBudgetColLen = tprelBudgetCol.length - 1;
+      infraAmountColLen = infraAmountCol.length - 1;
+      financialProgressLen = financialProgressCol.length - 1;
+      assetCapitalisedTprelLen = assetCapitalisedTprelCol.length - 1;
+
+      totalPlannedChargers = double.parse(plannedChargersCol[totalForAllCol]);
+      print('TotalPending - $totalPlannedChargers');
+      totalChargersCommissioned =
+          double.parse(chargersComissioned[totalForAllCol]);
+      totalBalancedCharger = totalPlannedChargers - totalChargersCommissioned;
+
+      evTotalList.add(totalPlannedChargers);
+      evTotalList.add(totalChargersCommissioned);
+      evTotalList.add(totalBalancedCharger);
+
+      totalTprelBudget = double.parse(tprelBudgetCol[totalForAllCol]);
+      totalTpevslBudget = double.parse(tpevslBudgetCol[totalForAllCol]);
+      totalBudget = double.parse(budgetCol[totalForAllCol]);
+
+      budgetTotalList.add(totalTprelBudget);
+      budgetTotalList.add(totalTpevslBudget);
+      budgetTotalList.add(totalBudget);
+
+      totalActualExpenseTprel =
+          double.parse(actualExpenseTprelCol[totalForAllCol]);
+      totalActualExpenseTpevsl =
+          double.parse(actualExpenseTpevslCol[totalForAllCol]);
+      totalActualExpense = double.parse(totalActualExpenseCol[totalForAllCol]);
+
+      actualTotalList.add(totalActualExpenseTprel);
+      actualTotalList.add(totalActualExpenseTpevsl);
+      actualTotalList.add(totalActualExpense);
+
+      totalInfraAmount = double.parse(infraAmountCol[totalForAllCol]);
+      totalEvChargerAmount = double.parse(evChargersAmountCol[totalForAllCol]);
+      totalApprovedJmrAmount =
+          double.parse(totalApprovedJmrAmountCol[totalForAllCol]);
+      totalPendingJmrAmount =
+          double.parse(totalPendingJmrAmountCol[totalForAllCol]);
+
+      tmlTotalList.add(totalInfraAmount);
+      tmlTotalList.add(totalEvChargerAmount);
+      tmlTotalList.add(totalApprovedJmrAmount);
+      tmlTotalList.add(totalPendingJmrAmount);
+
+      totalFinancialProgress =
+          double.parse(financialProgressCol[totalForAllCol]);
+      totalPendingJmrPercent =
+          double.parse(pendingJmrApprovalCol[totalForAllCol]);
+
+      commercialTotalList.add(totalFinancialProgress);
+      commercialTotalList.add(totalPendingJmrPercent);
+
+      totalTprelAssetCapitalised =
+          double.parse(assetCapitalisedTprelCol[totalForAllCol]);
+      totalTpevslAssetCapitalised =
+          double.parse(assetCapitalisedTpevslCol[totalForAllCol]);
+      totalCumulativeAssetCapitalised =
+          double.parse(cumulativeAssetCapitalizedCol[totalForAllCol]);
+      totalPendingAssetCapitlization =
+          double.parse(pendingAssetCapitalisationCol[totalForAllCol]);
+
+      assetTotalList.add(totalTprelAssetCapitalised);
+      assetTotalList.add(totalTpevslAssetCapitalised);
+      assetTotalList.add(totalCumulativeAssetCapitalised);
+      assetTotalList.add(totalPendingAssetCapitlization);
+
+      budgetActualTotalList.add(budgetTotalList);
+      budgetActualTotalList.add(actualTotalList);
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void showCustomAlert() {
@@ -2147,6 +2371,69 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     return fetchedDepo;
   }
 
+  //Store Excel Data in Firebase
+  Future<void> storeExcel() async {
+    CollectionReference collectionReference =
+        FirebaseFirestore.instance.collection('dashboard');
+
+    //Storing EV Table Data
+    await collectionReference.doc(tabNamesToStore[0]).set({
+      'evData': [
+        {
+          "projectName": projectNameCol,
+        },
+        {"plannedChargers": plannedChargersCol},
+        {"chargersCommissioned": chargersComissioned}
+      ]
+    });
+
+    //Storing budget Table data
+    await collectionReference.doc(tabNamesToStore[1]).set({
+      'budgetData': [
+        {"tprelBudget": tprelBudgetCol},
+        {"tpevslBudget": tpevslBudgetCol},
+        {"totalBudget": budgetCol}
+      ]
+    });
+
+    //Storing actual Table Data
+    await collectionReference.doc(tabNamesToStore[2]).set({
+      'actualData': [
+        {"tprelActual": actualExpenseTprelCol},
+        {"tpevslActual": actualExpenseTpevslCol},
+        {"totalActual": totalActualExpenseCol}
+      ]
+    });
+
+    //Storing Tml Approved Table Data
+    await collectionReference.doc(tabNamesToStore[3]).set({
+      'tmlJmrData': [
+        {"infra": infraAmountCol},
+        {"evChargers": evChargersAmountCol},
+        {"approvedJmr": totalApprovedJmrAmountCol},
+        {"pendingJmr": totalPendingJmrAmountCol}
+      ]
+    });
+
+    //Storing Commercial Table Data
+    await collectionReference.doc(tabNamesToStore[4]).set({
+      'commercialData': [
+        {"financialProgress": financialProgressCol},
+        {"pendingJmr": pendingJmrApprovalCol}
+      ]
+    });
+
+    //Storing Asset Table Data
+    await collectionReference.doc(tabNamesToStore[5]).set({
+      'assetData': [
+        {"tprelAsset": assetCapitalisedTprelCol},
+        {"tpevslAsset": assetCapitalisedTpevslCol},
+        {"cumulativeAsset": cumulativeAssetCapitalizedCol},
+        {"pendingAsset": pendingAssetCapitalisationCol}
+      ]
+    });
+  }
+
   void getCityName() async {
     QuerySnapshot cityListQuery =
         await FirebaseFirestore.instance.collection('DepoName').get();
@@ -2166,7 +2453,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       dynamic num = number.round() / 100000;
       String roundedNum = double.parse(num.toString()).toStringAsFixed(1);
 
-      convertedNum = '${roundedNum} K';
+      convertedNum = '${roundedNum} Lakh';
     } else if (number > 10000000) {
       dynamic num = number.round() / 10000000;
       String roundedNum = double.parse(num.toString()).toStringAsFixed(1);
