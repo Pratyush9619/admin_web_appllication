@@ -455,10 +455,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                       radius: 20.0,
                                       lineWidth: 5.0,
                                       percent:
-                                          (value.perProgress.toInt()) / 100,
+                                          (value.perProgress.roundToDouble()) /
+                                              100,
                                       center: Text(
                                         // value.getName.toString(),
-                                        "${(value.perProgress.toInt())}% ",
+                                        "${(value.perProgress.roundToDouble())}% ",
 
                                         textAlign: TextAlign.center,
                                         style: captionWhite,

@@ -464,15 +464,16 @@ class KeyDataSourceKeyEvents extends DataGridSource {
                                           ? white
                                           : black),
                                 )
-                              : dataGridCell.columnName == 'Progress'
+                              :dataGridCell.columnName == 'Progress'
                                   ? Text(
-                                      indicesToSkip.contains(dataIndex)
-                                          ? perc!.isNaN
+                                      !indicesToSkip.contains(dataIndex)
+                                          ? totalperc!.isNaN
                                               ? '0.0%'
-                                              : '${perc.toStringAsFixed(2)}%'
-                                          : perc!.isNaN
-                                              ? '0.0 %'
-                                              : '${totalperc.toStringAsFixed(2)}%',
+                                              : '${totalperc.toStringAsFixed(2)}%'
+                                          :
+                                          // dataGridCell.value!.isNaN
+                                          //     ? '0.0 %'
+                                          '${dataGridCell.value.toStringAsFixed(2)}%',
                                       style: indicesToSkip.contains(dataIndex)
                                           ? TextStyle(
                                               fontSize: 12, color: white)
