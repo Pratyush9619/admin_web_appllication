@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +34,7 @@ class KeyEvents2 extends StatefulWidget {
 }
 
 class _KeyEvents2State extends State<KeyEvents2> {
+  // ignore: non_constant_identifier_names
   late KeyDataSourceKeyEvents _KeyDataSourceKeyEvents;
   List<Employee> _employees = <Employee>[];
   late DataGridController _dataGridController;
@@ -260,6 +260,18 @@ class _KeyEvents2State extends State<KeyEvents2> {
 
     _KeyDataSourceKeyEvents = KeyDataSourceKeyEvents(_employees, context);
     _dataGridController = DataGridController();
+    FirebaseFirestore.instance
+        .collection('KeyEventsTable')
+        .doc(widget.depoName!)
+        .collection('KeyDataTable')
+        .doc(widget.userId)
+        .collection('ClosureDates')
+        .doc('keyEvents')
+        .get()
+        .then((value) {
+      String? date = value.data()!['ClosureDate'];
+      // closureDate = DateFormat().add_yMMMMd().format(DateTime.parse(date!));
+    });
 
     yourstream = FirebaseFirestore.instance
         .collection('KeyEventsTable')
@@ -2161,57 +2173,76 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                     ],
                                   ),
                                 ])),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text(
-                                  'Select Project Closure Date :',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                IconButton(
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          title: const Text('choose Date'),
-                                          content: SizedBox(
-                                            width: 400,
-                                            height: 500,
-                                            child: SfDateRangePicker(
-                                              view: DateRangePickerView.month,
-                                              showTodayButton: false,
-                                              showActionButtons: true,
-                                              selectionMode:
-                                                  DateRangePickerSelectionMode
-                                                      .single,
-                                              onSelectionChanged:
-                                                  (DateRangePickerSelectionChangedArgs
-                                                      args) {
-                                                if (args.value
-                                                    is PickerDateRange) {
-                                                  rangestartDate =
-                                                      args.value.startDate;
-                                                }
-                                              },
-                                              onSubmit: (value) {
-                                                setState(() {
-                                                  closureDate = DateTime.parse(
-                                                      value.toString());
-                                                  print(closureDate);
-                                                });
-                                                Navigator.pop(context);
-                                              },
-                                              onCancel: () {},
+                            Container(
+                              width: 450,
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                    top: BorderSide(width: 2.0, color: blue),
+                                    right: BorderSide(width: 2.0, color: blue),
+                                    bottom: BorderSide(width: 2.0, color: blue),
+                                    left: BorderSide(width: 2.0, color: blue),
+                                  ),
+                                  shape: BoxShape.rectangle),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    'Select Project Closure Date :',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  IconButton(
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: const Text('choose Date'),
+                                            content: SizedBox(
+                                              width: 400,
+                                              height: 500,
+                                              child: SfDateRangePicker(
+                                                view: DateRangePickerView.month,
+                                                showTodayButton: false,
+                                                showActionButtons: true,
+                                                selectionMode:
+                                                    DateRangePickerSelectionMode
+                                                        .single,
+                                                onSelectionChanged:
+                                                    (DateRangePickerSelectionChangedArgs
+                                                        args) {
+                                                  if (args.value
+                                                      is PickerDateRange) {
+                                                    rangestartDate =
+                                                        args.value.startDate;
+                                                  }
+                                                },
+                                                onSubmit: (value) {
+                                                  setState(() {
+                                                    closureDate =
+                                                        DateTime.parse(
+                                                            value.toString());
+                                                    print(closureDate);
+                                                  });
+                                                  Navigator.pop(context);
+                                                },
+                                                onCancel: () {},
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    },
-                                    icon: const Icon(Icons.today)),
-                                Text(DateFormat.yMMMMd().format(closureDate!))
-                              ],
+                                        );
+                                      },
+                                      icon: const Icon(Icons.today)),
+                                  Text(
+                                    DateFormat('dd-MM-yyyy')
+                                        .format(closureDate!),
+                                    //  DateFormat.yMMMMd().format(closureDate!),
+                                    style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
                             ),
                           ],
                         );
@@ -2738,9 +2769,7 @@ class _KeyEvents2State extends State<KeyEvents2> {
         .doc('keyEvents')
         // .collection(widget.userid!)
         // .doc('${widget.depoName}${widget.keyEvents}')
-        .set({
-      'ClosureDate': closureDate,
-    });
+        .set({'ClosureDate': DateFormat('dd-MM-yyyy').format(closureDate!)});
     Map<String, dynamic> tableData = {};
     for (var i in _KeyDataSourceKeyEvents.dataGridRows) {
       for (var data in i.getCells()) {
