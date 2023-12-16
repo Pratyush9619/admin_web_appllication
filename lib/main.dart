@@ -93,14 +93,14 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return
         //NavigationPage();
-        //  SmallScreen();
-        // MenuUserPage();
-        // DepotOverview();
-        // ResourceAllocation();
-        //  EventsPage();
-        // KeyEvents();
-        // const CitiesPage();
-        const LoginRegister();
+        SmallScreen();
+    // MenuUserPage();
+    // DepotOverview();
+    // ResourceAllocation();
+    //  EventsPage();
+    // KeyEvents();
+    // const CitiesPage();
+    // const LoginRegister();
     // const PdfSummary();
   }
 
