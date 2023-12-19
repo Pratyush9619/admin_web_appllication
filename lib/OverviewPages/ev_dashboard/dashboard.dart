@@ -12,8 +12,10 @@ import 'package:web_appllication/style.dart';
 import 'package:web_appllication/widgets/table_loading.dart';
 
 class DashBoardScreen extends StatefulWidget {
+  final bool showAppBar;
   final Function? callbackFun;
-  const DashBoardScreen({Key? key, this.callbackFun}) : super(key: key);
+  const DashBoardScreen({Key? key, this.callbackFun, this.showAppBar = false})
+      : super(key: key);
 
   static const String id = 'admin-page';
 
@@ -262,6 +264,16 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       fontSize = 11;
     }
     return Scaffold(
+      appBar: widget.showAppBar
+          ? PreferredSize(
+              preferredSize: Size.fromHeight(45),
+              child: AppBar(
+                centerTitle: true,
+                backgroundColor: blue,
+                title: const Text('EV Bus Project Analysis Dashboard'),
+              ),
+            )
+          : null,
       body: isLoading
           ? LoadingPage()
           : Padding(
@@ -1829,37 +1841,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     //     ],
                     //   ),
                     // ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(
-                              top: 10, left: 10, bottom: 10, right: 20),
-                          color: blue,
-                          height: 35,
-                          width: 140,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(5),
-                            onTap: pickAndProcessFile,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Icon(
-                                    Icons.upload_file_outlined,
-                                    color: white,
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 3,
-                                  child: Text('Upload Excel',
-                                      style: TextStyle(color: white)),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+
                     const SizedBox(height: 30),
 
                     Row(
@@ -1936,6 +1918,65 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 ),
               ),
             ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: blue,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            height: 35,
+            width: 100,
+            child: InkWell(
+              onTap: pickAndProcessFile,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Icon(
+                      Icons.arrow_back_ios_new,
+                      color: white,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Text('Back', style: TextStyle(color: white)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Container(
+          decoration: BoxDecoration(
+              color: blue,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            height: 35,
+            width: 140,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(5),
+              onTap: pickAndProcessFile,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Icon(
+                      Icons.upload_file_outlined,
+                      color: white,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Text('Upload Excel', style: TextStyle(color: white)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

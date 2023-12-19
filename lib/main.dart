@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:web_appllication/OverviewPages/ev_dashboard/dashboard.dart';
 import 'package:web_appllication/MenuPage/home.dart';
+import 'package:web_appllication/OverviewPages/ev_dashboard/dashboard.dart';
 import 'package:web_appllication/OverviewPages/sidebar_nav/nav_screen.dart';
 import 'package:web_appllication/MenuPage/project_planning.dart';
 import 'package:web_appllication/MenuPage/user.dart';
@@ -13,8 +13,7 @@ import 'package:web_appllication/provider/selected_row_index.dart';
 import 'package:web_appllication/provider/text_provider.dart';
 import 'package:web_appllication/small_screen.dart';
 import 'package:web_appllication/style.dart';
-import 'Authentication/login_register.dart';
-import 'Planning/cities.dart';
+import 'screen/split_dashboard/split_dashboard.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,7 +50,7 @@ class MyApp extends StatelessWidget {
           title: 'TATA POWER CONTROL PANEL',
           initialRoute: MenuHomePage.id,
           routes: {
-            DashBoardScreen.id: (context) => SmallScreen(),
+            // DashBoardScreen.id: (context) => SmallScreen(),
             MenuUserPage.id: (context) => const MenuUserPage(),
             ProjectPanning.id: (context) => const ProjectPanning(),
 
@@ -91,17 +90,17 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return
-        //  NavigationPage();
-        // DashBoardScreen();
-        // SmallScreen();
-        // MenuUserPage();
-        // DepotOverview();
-        // ResourceAllocation();
-        //  EventsPage();
-        // KeyEvents();
-        // const CitiesPage();
-        const LoginRegister();
+    return SplitDashboard();
+    //  NavigationPage();
+    // DashBoardScreen();
+    // SmallScreen();
+    // MenuUserPage();
+    // DepotOverview();
+    // ResourceAllocation();
+    //  EventsPage();
+    // KeyEvents();
+    // const CitiesPage();
+    // const LoginRegister();
     // const PdfSummary();
   }
 }
