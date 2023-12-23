@@ -29,7 +29,7 @@ class _MyWidgetState extends State<PdfSummary> {
             pw.Column(children: [
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [ 
+                children: [
                   _card1('TPNo'),
                   _spacebar(5, 0),
                   _card1('Rev:() Date:29.11.2022'),

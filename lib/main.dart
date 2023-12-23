@@ -1,17 +1,18 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:web_appllication/Authentication/login_register.dart';
 import 'package:web_appllication/MenuPage/home.dart';
-import 'package:web_appllication/OverviewPages/ev_dashboard/dashboard.dart';
-import 'package:web_appllication/OverviewPages/sidebar_nav/nav_screen.dart';
 import 'package:web_appllication/MenuPage/project_planning.dart';
 import 'package:web_appllication/MenuPage/user.dart';
+import 'package:web_appllication/OverviewPages/sidebar_nav/nav_screen.dart';
 import 'package:web_appllication/provider/assigned_user_provider.dart';
+import 'package:web_appllication/provider/demandEnergyProvider.dart';
 import 'package:web_appllication/provider/key_provider.dart';
 import 'package:web_appllication/provider/menuUserPageProvider.dart';
 import 'package:web_appllication/provider/selected_row_index.dart';
 import 'package:web_appllication/provider/text_provider.dart';
-import 'package:web_appllication/small_screen.dart';
+import 'package:web_appllication/routeBuilder/route_generator.dart';
 import 'package:web_appllication/style.dart';
 import 'screen/split_dashboard/split_dashboard.dart';
 
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [
+          ChangeNotifierProvider(create: (_) => DemandEnergyProvider()),
           ChangeNotifierProvider(create: (_) => MenuUserPageProvider()),
           ChangeNotifierProvider<AssignedUserProvider>(
               create: (_) => AssignedUserProvider()),
@@ -46,20 +48,21 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (context) => SelectedRowIndexModel())
         ],
         child: MaterialApp(
+          onGenerateRoute: RouteGenerator.generateRoute,
           debugShowCheckedModeBanner: false,
           title: 'TATA POWER CONTROL PANEL',
-          initialRoute: MenuHomePage.id,
-          routes: {
-            // DashBoardScreen.id: (context) => SmallScreen(),
-            MenuUserPage.id: (context) => const MenuUserPage(),
-            ProjectPanning.id: (context) => const ProjectPanning(),
+          initialRoute: '/login',
+          // routes: {
+          //   // DashBoardScreen.id: (context) => SmallScreen(),
+          //   MenuUserPage.id: (context) => const MenuUserPage(),
+          //   ProjectPanning.id: (context) => const ProjectPanning(),
 
-            // "/menu": (context) => Menu(),
-            // "/user": (context) => User(),
-            // "/shop": (context) => Shop(),
-            // "/statistics": (context) => Stats(),
-            // "/settings": (context) => Settings()
-          },
+          //   // "/menu": (context) => Menu(),
+          //   // "/user": (context) => User(),
+          //   // "/shop": (context) => Shop(),
+          //   // "/statistics": (context) => Stats(),
+          //   // "/settings": (context) => Settings()
+          // },
           theme: ThemeData(
             primarySwatch: Colors.blue,
             dividerColor: grey,
@@ -90,7 +93,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return SplitDashboard();
+    return NavigationPage(
+      userId: '',
+    );
+    //  SplitDashboard();
     //  NavigationPage();
     // DashBoardScreen();
     // SmallScreen();

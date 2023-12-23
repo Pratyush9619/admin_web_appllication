@@ -5,9 +5,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 import 'package:web_appllication/Planning/overview.dart';
 import 'package:web_appllication/components/loading_page.dart';
+import 'package:web_appllication/components/page_routeBuilder.dart';
 import 'package:web_appllication/style.dart';
 import '../Authentication/auth_service.dart';
 import '../widgets/custom_appbar.dart';
@@ -254,7 +254,6 @@ class _MydepotsState extends State<Mydepots> {
             .collection('AllDepots')
             .snapshots(),
         builder: (context, snapshot) {
-        
           if (snapshot.hasData) {
             if (snapshot.data != null) {
               if (snapshot.data!.docs.isNotEmpty) {
@@ -265,7 +264,7 @@ class _MydepotsState extends State<Mydepots> {
                             crossAxisCount: 4),
                     itemBuilder: (context, index) {
                       return Padding(
-                        padding: const EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.only(left: 80, top: 20.0),
                         child: GestureDetector(
                           // onTap: () => onToScreen(index),
                           child: Stack(children: [
@@ -296,32 +295,16 @@ class _MydepotsState extends State<Mydepots> {
                                         backgroundColor: blue),
                                     onPressed: () {
                                       Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  //  DailyProject(
-                                                  //   // userId: widget.userid,
-                                                  //   cityName: widget.cityName,
-                                                  //   depoName: widget.depoName,
-                                                  // ),
-                                                  //  UserId(
-                                                  //       cityName: widget.cityName!,
-                                                  //       depoName: snapshot
-                                                  //               .data!.docs[index]
-                                                  //           ['DepoName'],
-                                                  //     )
-                                                  MyOverview(
-                                                    userId: widget.userId,
-                                                    cityName: widget.cityName!,
-                                                    depoName: snapshot
-                                                            .data!.docs[index]
-                                                        ['DepoName'],
-                                                  )
-                                              // Mydepots(
-                                              //       cityName: snapshot.data!
-                                              //           .docs[index]['cityName'],
-                                              //     )
-                                              ));
+                                        context,
+                                        CustomPageRoute(
+                                          page: MyOverview(
+                                            userId: widget.userId,
+                                            cityName: widget.cityName!,
+                                            depoName: snapshot.data!.docs[index]
+                                                ['DepoName'],
+                                          ),
+                                        ),
+                                      );
                                     },
                                     child: Text(
                                         snapshot.data!.docs[index]['DepoName']))

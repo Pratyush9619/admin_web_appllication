@@ -8,7 +8,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:web_appllication/Planning/depot.dart';
 import 'package:web_appllication/Service/database_service.dart';
 import 'package:web_appllication/components/loading_page.dart';
+import 'package:web_appllication/components/page_routeBuilder.dart';
 import 'package:web_appllication/style.dart';
+import 'package:web_appllication/widgets/custom_appbar.dart';
 import '../Authentication/auth_service.dart';
 
 class CitiesPage extends StatefulWidget {
@@ -39,13 +41,19 @@ class _CitiesPageState extends State<CitiesPage> {
     return _isLoading
         ? LoadingPage()
         : Scaffold(
+            // appBar: PreferredSize(
+            //     preferredSize: Size.fromHeight(50),
+            //     child: CustomAppBar(
+            //       text: 'Cities Page',
+            //       cityName: '',
+            //     )),
             floatingActionButton: companyName == 'TATA POWER'
                 ? FloatingActionButton(
                     onPressed: () {
                       PopupDialog(context);
                     },
-                    child: const Icon(Icons.add),
                     backgroundColor: blue,
+                    child: Icon(Icons.add),
                   )
                 : Container(),
             body: citylist(),
@@ -219,7 +227,7 @@ class _CitiesPageState extends State<CitiesPage> {
                     crossAxisCount: 4),
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.only(left: 80.0, top: 20),
                     child: GestureDetector(
                       // onTap: () => onToScreen(index),
                       child: Stack(children: [
@@ -251,12 +259,22 @@ class _CitiesPageState extends State<CitiesPage> {
                                 onPressed: () {
                                   Navigator.push(
                                       context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Mydepots(
-                                                userId: userId,
-                                                cityName: snapshot.data!
-                                                    .docs[index]['CityName'],
-                                              )));
+                                      CustomPageRoute(
+                                          page: Mydepots(
+                                        userId: userId,
+                                        cityName: snapshot.data!.docs[index]
+                                            ['CityName'],
+                                      )));
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => Mydepots(
+                                  //       userId: userId,
+                                  //       cityName: snapshot.data!.docs[index]
+                                  //           ['CityName'],
+                                  //     ),
+                                  //   ),
+                                  // );
                                 },
                                 child: Text(
                                     snapshot.data!.docs[index]['CityName']))

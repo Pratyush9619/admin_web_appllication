@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web_appllication/MenuPage/project_planning.dart';
 import 'package:web_appllication/MenuPage/user.dart';
-import 'package:web_appllication/OverviewPages/ev_dashboard/dashboard.dart';
+import 'package:web_appllication/OverviewPages/ev_dashboard/ev_dashboard.dart';
 import 'package:web_appllication/OverviewPages/o&m_dashboard/o&m_dashboard_screen.dart';
 import 'package:web_appllication/OverviewPages/sidebar_nav/drawer_header.dart';
 import 'package:web_appllication/Planning/cities.dart';
+import 'package:web_appllication/screen/demand%20energy%20management/demand%20energy%20management/demandScreen.dart';
 import 'package:web_appllication/style.dart';
 
 class NavigationPage extends StatefulWidget {
@@ -23,7 +24,7 @@ class _NavigationPageState extends State<NavigationPage> {
 
   List<String> pageNames = [
     'EV Dashboard Project',
-    'O & M Dashboard',
+    'Demand Energy Dashboard',
     'Cities',
     'User'
   ];
@@ -37,26 +38,28 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      switch (currentPage) {
-        case DrawerSection.evDashboard:
-          title = 'EV BUS Project Performance Analysis Dashboard';
-          container = const DashBoardScreen();
-          break;
-        case DrawerSection.oandmDashboard:
-          title = 'O & M Dashboard';
-          container = const ONMDashboard();
-          break;
-        case DrawerSection.cities:
-          title = 'Cities';
-          container = const CitiesPage();
-          break;
-        case DrawerSection.users:
-          title = 'Users';
-          container = const MenuUserPage();
-          break;
-      }
-    });
+    if (mounted) {
+      setState(() {
+        switch (currentPage) {
+          case DrawerSection.evDashboard:
+            title = 'EV BUS Project Performance Analysis Dashboard';
+            container = const EVDashboardScreen();
+            break;
+          case DrawerSection.oandmDashboard:
+            title = 'Demand Energy Dashboard';
+            container = const DemandEnergyScreen();
+            break;
+          case DrawerSection.cities:
+            title = 'Cities';
+            container = const CitiesPage();
+            break;
+          case DrawerSection.users:
+            title = 'Users';
+            container = const MenuUserPage();
+            break;
+        }
+      });
+    }
 
     return Scaffold(
       appBar: PreferredSize(
@@ -70,7 +73,7 @@ class _NavigationPageState extends State<NavigationPage> {
             centerTitle: true,
           )),
       drawer: Drawer(
-          width: 200,
+          width: 250,
           child: Container(
             padding: const EdgeInsets.all(10.0),
             child: Column(
@@ -104,26 +107,30 @@ class _NavigationPageState extends State<NavigationPage> {
 
   Widget menuItems(int id, String title, IconData icon, bool selected) {
     return Material(
-      color: selected ? Color.fromARGB(255, 220, 236, 249) : Colors.transparent,
+      color: selected
+          ? const Color.fromARGB(255, 220, 236, 249)
+          : Colors.transparent,
       child: InkWell(
         onTap: () {
           Navigator.pop(context);
-          setState(() {
-            switch (id) {
-              case 1:
-                currentPage = DrawerSection.evDashboard;
-                break;
-              case 2:
-                currentPage = DrawerSection.oandmDashboard;
-                break;
-              case 3:
-                currentPage = DrawerSection.cities;
-                break;
-              case 4:
-                currentPage = DrawerSection.users;
-                break;
-            }
-          });
+          if (mounted) {
+            setState(() {
+              switch (id) {
+                case 1:
+                  currentPage = DrawerSection.evDashboard;
+                  break;
+                case 2:
+                  currentPage = DrawerSection.oandmDashboard;
+                  break;
+                case 3:
+                  currentPage = DrawerSection.cities;
+                  break;
+                case 4:
+                  currentPage = DrawerSection.users;
+                  break;
+              }
+            });
+          }
         },
         child: Container(
           height: 40,

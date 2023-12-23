@@ -132,15 +132,17 @@ class _SignInPageState extends State<SignInPage> {
                                           text: ' Forget Password ?',
                                           recognizer: TapGestureRecognizer()
                                             ..onTap = (() => Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
+                                                  context,
+                                                  MaterialPageRoute(
                                                     builder: (context) =>
                                                         ResetPass(
                                                             // email: FirebaseAuth
                                                             //     .instance
                                                             //     .currentUser!
                                                             //     .email!,
-                                                            )))),
+                                                            ),
+                                                  ),
+                                                )),
                                           style: bodyText2White.copyWith(
                                               color: blue))
                                     ],

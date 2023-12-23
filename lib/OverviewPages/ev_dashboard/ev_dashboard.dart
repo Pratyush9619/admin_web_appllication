@@ -11,19 +11,21 @@ import 'package:web_appllication/provider/selected_row_index.dart';
 import 'package:web_appllication/style.dart';
 import 'package:web_appllication/widgets/table_loading.dart';
 
-class DashBoardScreen extends StatefulWidget {
+List<dynamic> cityList = [];
+
+class EVDashboardScreen extends StatefulWidget {
   final bool showAppBar;
   final Function? callbackFun;
-  const DashBoardScreen({Key? key, this.callbackFun, this.showAppBar = false})
+  const EVDashboardScreen({Key? key, this.callbackFun, this.showAppBar = false})
       : super(key: key);
 
   static const String id = 'admin-page';
 
   @override
-  State<DashBoardScreen> createState() => _DashBoardScreenState();
+  State<EVDashboardScreen> createState() => _EVDashboardScreenState();
 }
 
-class _DashBoardScreenState extends State<DashBoardScreen> {
+class _EVDashboardScreenState extends State<EVDashboardScreen> {
   List estimatedEndDate = [];
   var currentPage = DrawerSection.evDashboard;
 
@@ -55,7 +57,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   List<double> depotProgressList = [];
 
   List<String> selectedDepoList = [];
-  List<dynamic> cityList = [];
   List<List<dynamic>> rowList = [];
 
   String selectedCity = '';
@@ -271,6 +272,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 centerTitle: true,
                 backgroundColor: blue,
                 title: const Text('EV Bus Project Analysis Dashboard'),
+                actions: [
+                  IconButton(
+                      onPressed: () {
+                        showSearch(
+                            context: context, delegate: CustomSearchDelegate());
+                      },
+                      icon: Icon(Icons.search))
+                ],
               ),
             )
           : null,
@@ -1921,36 +1930,38 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: blue,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            height: 35,
-            width: 100,
-            child: InkWell(
-              onTap: pickAndProcessFile,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Icon(
-                      Icons.arrow_back_ios_new,
-                      color: white,
-                    ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: Text('Back', style: TextStyle(color: white)),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          // Container(
+          //   decoration: BoxDecoration(
+          //     color: blue,
+          //     borderRadius: BorderRadius.circular(4),
+          //   ),
+          //   height: 35,
+          //   width: 100,
+          //   child: InkWell(
+          //     onTap: () {
+          //       Navigator.pushNamed(context, '/dashboard');
+          //     },
+          //     child: Row(
+          //       children: [
+          //         Expanded(
+          //           child: Icon(
+          //             Icons.arrow_back_ios_new,
+          //             color: white,
+          //           ),
+          //         ),
+          //         Expanded(
+          //           flex: 3,
+          //           child: Text('Back', style: TextStyle(color: white)),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
           const SizedBox(
             width: 10,
           ),
           Container(
-          decoration: BoxDecoration(
+            decoration: BoxDecoration(
               color: blue,
               borderRadius: BorderRadius.circular(4),
             ),
@@ -2003,9 +2014,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     List<List<dynamic>> tempList2 = [];
 
     try {
-      setState(() {
-        isLoading = true;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = true;
+        });
+      }
 
       FilePickerResult? result = await FilePicker.platform
           .pickFiles(allowedExtensions: ['xlsx'], type: FileType.custom);
@@ -2217,9 +2230,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       //Storing Excel Data into Firestore Database
       await storeExcel();
 
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     } catch (e, stackTrace) {
       print('Error decoding Excel file: $e');
       print(stackTrace);
@@ -2374,9 +2389,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       budgetActualTotalList.add(actualTotalList);
     }
 
-    setState(() {
-      isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void showCustomAlert() {
@@ -2667,6 +2684,81 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     setState(() {
       isTableLoading = false;
     });
+  }
+}
+
+class CustomSearchDelegate extends SearchDelegate {
+  List<String> searchTerms = [
+    'Apple',
+    'Banana',
+    'Pear',
+    'Watermelons',
+    'Oranges',
+    'BlueBerries',
+    'Strawberries',
+    'Raspberries',
+  ];
+
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = "";
+        },
+      )
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    List<String> matchedList = [];
+    for (var fruit in cityList) {
+      if (fruit.toLowerCase().contains(query.toLowerCase())) {
+        matchedList.add(fruit);
+      }
+    }
+    return ListView.builder(
+        itemCount: matchedList.length,
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () {},
+            child: ListTile(
+              title: Text(matchedList[index]),
+            ),
+          );
+        });
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    List<String> matchedList = [];
+    for (var fruit in cityList) {
+      if (fruit.toLowerCase().contains(query.toLowerCase())) {
+        matchedList.add(fruit);
+      }
+    }
+    return ListView.builder(
+        itemCount: matchedList.length,
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () {},
+            child: ListTile(
+              title: Text(matchedList[index]),
+            ),
+          );
+        });
   }
 }
 

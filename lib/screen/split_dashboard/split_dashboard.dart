@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:web_appllication/OverviewPages/ev_dashboard/dashboard.dart';
+import 'package:web_appllication/OverviewPages/ev_dashboard/ev_dashboard.dart';
+import 'package:web_appllication/Planning/cities.dart';
+import 'package:web_appllication/components/page_routeBuilder.dart';
 import 'package:web_appllication/style.dart';
 
 class SplitDashboard extends StatelessWidget {
@@ -9,12 +11,12 @@ class SplitDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
+        preferredSize: Size.fromHeight(45),
         child: AppBar(
           backgroundColor: blue,
           centerTitle: true,
           title: const Text('Dashboard'),
         ),
-        preferredSize: Size.fromHeight(45),
       ),
       body: Column(
         children: [
@@ -31,12 +33,8 @@ class SplitDashboard extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const DashBoardScreen(
-                                        showAppBar: true,
-                                      )));
+                          Navigator.pushNamed(context, '/evDashboard',
+                              arguments: true);
                         },
                         child: Card(
                           elevation: 15,
@@ -59,13 +57,8 @@ class SplitDashboard extends StatelessWidget {
                                 backgroundColor:
                                     MaterialStatePropertyAll(blue)),
                             onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const DashBoardScreen(
-                                            showAppBar: true,
-                                          )));
+                              Navigator.pushNamed(context, '/evDashboard',
+                                  arguments: true);
                             },
                             child: const Text(
                                 'EV Bus Project Analysis Dashboard')),
@@ -82,12 +75,8 @@ class SplitDashboard extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const DashBoardScreen(
-                                        showAppBar: true,
-                                      )));
+                          Navigator.pushNamed(context, '/o&mDashboard',
+                              arguments: true);
                         },
                         child: Card(
                           elevation: 15,
@@ -108,7 +97,10 @@ class SplitDashboard extends StatelessWidget {
                         child: ElevatedButton(
                           style: ButtonStyle(
                               backgroundColor: MaterialStatePropertyAll(blue)),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/o&mDashboard',
+                                arguments: true);
+                          },
                           child: const Text('O & M Analysis Dashboard'),
                         ),
                       )
@@ -129,7 +121,11 @@ class SplitDashboard extends StatelessWidget {
             child: ElevatedButton(
               style:
                   ButtonStyle(backgroundColor: MaterialStatePropertyAll(blue)),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                    context, CustomPageRoute(page: const CitiesPage()));
+                // Navigator.pushNamed(context, '/cities');
+              },
               child: const Text('Proceed to Cities'),
             ),
           ),
