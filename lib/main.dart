@@ -13,6 +13,7 @@ import 'package:web_appllication/provider/menuUserPageProvider.dart';
 import 'package:web_appllication/provider/selected_row_index.dart';
 import 'package:web_appllication/provider/text_provider.dart';
 import 'package:web_appllication/routeBuilder/route_generator.dart';
+import 'package:web_appllication/screen/demand%20energy%20management/demand%20energy%20management/demandScreen.dart';
 import 'package:web_appllication/style.dart';
 import 'screen/split_dashboard/split_dashboard.dart';
 
@@ -51,7 +52,7 @@ class MyApp extends StatelessWidget {
           onGenerateRoute: RouteGenerator.generateRoute,
           debugShowCheckedModeBanner: false,
           title: 'TATA POWER CONTROL PANEL',
-          initialRoute: '/login',
+          initialRoute: '/demand',
           // routes: {
           //   // DashBoardScreen.id: (context) => SmallScreen(),
           //   MenuUserPage.id: (context) => const MenuUserPage(),
@@ -93,9 +94,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return NavigationPage(
-      userId: '',
-    );
+    return DemandEnergyScreen();
+    // NavigationPage(
+    //   userId: '',
+    // );
     //  SplitDashboard();
     //  NavigationPage();
     // DashBoardScreen();

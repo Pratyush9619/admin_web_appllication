@@ -2,6 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
 class DemandEnergyProvider extends ChangeNotifier {
+  String _startDate = '';
+  String get startDate => _startDate;
+
+  String _endDate = '';
+  String get endDate => _endDate;
+
+  String _selectedCity = '';
+  String get selectedCity => _selectedCity;
+
   bool _loadWidget = false;
   bool get loadWidget => _loadWidget;
 
@@ -13,7 +22,19 @@ class DemandEnergyProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getDepoName(String value) {
+  void setDepoName(String value) {
     _selectedDepo = value;
+  }
+
+  void setCityName(String value) {
+    _selectedCity = value;
+  }
+
+  void setStartDate(String value) {
+    _startDate = value;
+  }
+
+  void setEndDate(String value) {
+    _endDate = value;
   }
 }

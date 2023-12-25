@@ -5,7 +5,13 @@ import 'package:web_appllication/provider/demandEnergyProvider.dart';
 import 'package:web_appllication/style.dart';
 
 class BarGraphScreen extends StatefulWidget {
-  const BarGraphScreen({super.key});
+  final List<dynamic> timeIntervalList;
+  final List<dynamic> energyConsumedList;
+
+  BarGraphScreen(
+      {super.key,
+      required this.timeIntervalList,
+      required this.energyConsumedList});
 
   @override
   State<BarGraphScreen> createState() => _BarGraphScreenState();
@@ -31,62 +37,116 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Consumer<DemandEnergyProvider>(
-                builder: (context, providerValue, child) {
-                  return Container(
-                    margin:
-                        const EdgeInsets.only(left: 30, bottom: 20, top: 20),
-                    height: 30,
-                    width: 400,
-                    child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: choiceChipLabels.length,
-                        shrinkWrap: true,
-                        itemBuilder: ((context, index) {
-                          return Container(
-                            margin: const EdgeInsets.only(left: 10),
-                            height: 30,
-                            child: ChoiceChip(
-                              label: Text(
-                                choiceChipLabels[index],
+          Consumer<DemandEnergyProvider>(
+            builder: (context, providerValue, child) {
+              return Container(
+                margin: const EdgeInsets.only(top: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin:
+                          const EdgeInsets.only(left: 40, bottom: 20, top: 20),
+                      padding: EdgeInsets.only(left: 20),
+                      height: 30,
+                      width: 320,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: choiceChipLabels.length,
+                          shrinkWrap: true,
+                          itemBuilder: ((context, index) {
+                            return Container(
+                              margin: const EdgeInsets.only(left: 5),
+                              height: 30,
+                              child: ChoiceChip(
+                                label: Text(
+                                  choiceChipLabels[index],
+                                ),
+                                selected: choiceChipBoolList[index],
+                                selectedColor:
+                                    const Color.fromRGBO(33, 243, 156, 1),
+                                backgroundColor:
+                                    const Color.fromARGB(255, 103, 216, 245),
+                                onSelected: (value) {
+                                  switch (index) {
+                                    case 0:
+                                      _selectedIndex = 0;
+                                      break;
+                                    case 1:
+                                      _selectedIndex = 1;
+                                      break;
+                                    case 2:
+                                      _selectedIndex = 2;
+                                      break;
+                                    case 3:
+                                      _selectedIndex = 3;
+                                      break;
+                                    default:
+                                      _selectedIndex = 0;
+                                  }
+                                  print('Selected index: $_selectedIndex');
+                                  choiceChipBoolList[index] = value;
+                                  resetChoiceChip(index);
+                                  providerValue.reloadWidget(true);
+                                },
                               ),
-                              selected: choiceChipBoolList[index],
-                              selectedColor:
-                                  const Color.fromRGBO(33, 243, 156, 1),
-                              backgroundColor:
-                                  const Color.fromARGB(255, 103, 216, 245),
-                              onSelected: (value) {
-                                switch (index) {
-                                  case 0:
-                                    _selectedIndex = 0;
-                                    break;
-                                  case 1:
-                                    _selectedIndex = 1;
-                                    break;
-                                  case 2:
-                                    _selectedIndex = 2;
-                                    break;
-                                  case 3:
-                                    _selectedIndex = 3;
-                                    break;
-                                  default:
-                                    _selectedIndex = 0;
-                                }
-                                print('Selected index: $_selectedIndex');
-                                choiceChipBoolList[index] = value;
-                                resetChoiceChip(index);
-                                providerValue.reloadWidget(true);
-                              },
+                            );
+                          })),
+                    ),
+                    Container(
+                      height: 20,
+                      width: 200,
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                                text: 'From - ',
+                                style: TextStyle(
+                                    color: blue,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold)),
+                            TextSpan(
+                              text: providerValue.startDate.toString(),
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: black,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 20,
+                      width: 180,
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'To - ',
+                              style: TextStyle(
+                                  color: blue,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold),
                             ),
-                          );
-                        })),
-                  );
-                },
-              ),
-            ],
+                            TextSpan(
+                              text: providerValue.endDate.toString(),
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: black,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          const SizedBox(
+            height: 50,
           ),
           Container(
             margin: const EdgeInsets.only(bottom: 30),
@@ -98,67 +158,71 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
           Container(
             height: 350,
             width: 600,
-            child: BarChart(
-              swapAnimationCurve: Curves.bounceInOut,
-              swapAnimationDuration: const Duration(milliseconds: 1000),
-              BarChartData(
-                backgroundColor: const Color.fromARGB(255, 236, 252, 255),
-                barTouchData: BarTouchData(
-                  enabled: true,
-                  allowTouchBarBackDraw: true,
-                  touchTooltipData: BarTouchTooltipData(
-                    tooltipRoundedRadius: 5,
-                    tooltipBgColor: Colors.transparent,
-                    tooltipMargin: 5,
-                  ),
-                ),
-                minY: 0,
-                titlesData: FlTitlesData(
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      getTitlesWidget: (value, meta) {
-                        return Text(
-                          barData[1][value.toInt()],
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),
-                        );
-                      },
+            child: Consumer<DemandEnergyProvider>(
+              builder: (context, value, child) {
+                return BarChart(
+                  swapAnimationCurve: Curves.bounceInOut,
+                  swapAnimationDuration: const Duration(milliseconds: 1000),
+                  BarChartData(
+                    backgroundColor: const Color.fromARGB(255, 236, 252, 255),
+                    barTouchData: BarTouchData(
+                      enabled: true,
+                      allowTouchBarBackDraw: true,
+                      touchTooltipData: BarTouchTooltipData(
+                        tooltipRoundedRadius: 5,
+                        tooltipBgColor: Colors.transparent,
+                        tooltipMargin: 5,
+                      ),
                     ),
-                  ),
-                  rightTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  topTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      getTitlesWidget: (value, meta) {
-                        return Text(
-                          barData[0][value.toInt()].toString(),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),
-                        );
-                      },
+                    minY: 0,
+                    titlesData: FlTitlesData(
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            return Text(
+                              barData[1][value.toInt()],
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      rightTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      topTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            return Text(
+                              widget.timeIntervalList[value.toInt()].toString(),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                     ),
+                    gridData: FlGridData(
+                      drawHorizontalLine: false,
+                      drawVerticalLine: false,
+                    ),
+                    borderData: FlBorderData(
+                      border: const Border(
+                        left: BorderSide(),
+                        bottom: BorderSide(),
+                      ),
+                    ),
+                    maxY: 3000,
+                    barGroups: getBarGroups(),
                   ),
-                ),
-                gridData: FlGridData(
-                  drawHorizontalLine: false,
-                  drawVerticalLine: false,
-                ),
-                borderData: FlBorderData(
-                  border: const Border(
-                    left: BorderSide(),
-                    bottom: BorderSide(),
-                  ),
-                ),
-                maxY: 3000,
-                barGroups: getBarGroups(),
-              ),
+                );
+              },
             ),
           ),
         ],
@@ -168,7 +232,7 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
 
   List<BarChartGroupData> getBarGroups() {
     return List.generate(
-      barData[0].length,
+      widget.timeIntervalList.length,
       (index) {
         return BarChartGroupData(
           x: index,
@@ -177,7 +241,7 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
               borderSide: BorderSide(color: blue),
               backDrawRodData: BackgroundBarChartRodData(
                 toY: 3000,
-                fromY: barData[0][index],
+                fromY: 0,
                 show: true,
                 gradient: const LinearGradient(
                   colors: [
@@ -194,7 +258,7 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
               ),
               width: candleWidth,
               borderRadius: BorderRadius.circular(2),
-              toY: barData[0][index],
+              toY: widget.energyConsumedList[index],
             ),
           ],
         );

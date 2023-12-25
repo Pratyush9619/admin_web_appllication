@@ -7,18 +7,21 @@ import 'package:web_appllication/provider/demandEnergyProvider.dart';
 import 'package:web_appllication/style.dart';
 
 class DemandTable extends StatefulWidget {
-  final Future<dynamic> Function() callBackFunction;
+  final Future<dynamic> Function() getDailyData;
+  final Future<dynamic> Function() getMonthlyData;
+  final Future<dynamic> Function() getQuaterlyData;
+  final Future<dynamic> Function() getYearlyData;
   final List<dynamic> columns;
   final List<dynamic> rows;
-  final List<dynamic> serialNums;
-  final List<dynamic> energyConsumedList;
+
   DemandTable(
       {super.key,
       required this.columns,
       required this.rows,
-      required this.energyConsumedList,
-      required this.serialNums,
-      required this.callBackFunction});
+      required this.getDailyData,
+      required this.getMonthlyData,
+      required this.getQuaterlyData,
+      required this.getYearlyData});
 
   @override
   State<DemandTable> createState() => _DemandTableState();
@@ -64,17 +67,21 @@ class _DemandTableState extends State<DemandTable> {
                 Container(
                   margin: const EdgeInsets.all(5),
                   height: 40,
-                  width: 150,
+                  width: 200,
                   child: TypeAheadField(
                     hideOnLoading: true,
+                    animationDuration: Duration(milliseconds: 1000),
+                    animationStart: 0,
                     textFieldConfiguration: TextFieldConfiguration(
-                      style: const TextStyle(fontSize: 10),
+                      style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.bold),
                       controller: cityController,
                       decoration: const InputDecoration(
-                          labelText: 'Select a City',
-                          labelStyle:
-                              TextStyle(color: Colors.black, fontSize: 15),
-                          border: OutlineInputBorder()),
+                        labelText: 'Select a City',
+                        labelStyle:
+                            TextStyle(color: Colors.black, fontSize: 15),
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                     itemBuilder: (context, suggestion) {
                       return ListTile(
@@ -85,6 +92,7 @@ class _DemandTableState extends State<DemandTable> {
                     },
                     onSuggestionSelected: (suggestion) async {
                       cityController.text = suggestion.toString();
+                      provider.setCityName(suggestion.toString());
                     },
                     suggestionsCallback: (String pattern) async {
                       return await getUserdata(pattern);
@@ -97,11 +105,14 @@ class _DemandTableState extends State<DemandTable> {
                 Container(
                   margin: const EdgeInsets.all(5),
                   height: 40,
-                  width: 150,
+                  width: 300,
                   child: TypeAheadField(
                     hideOnLoading: true,
+                    animationDuration: Duration(milliseconds: 1000),
+                    animationStart: 0,
                     textFieldConfiguration: TextFieldConfiguration(
-                      style: const TextStyle(fontSize: 10),
+                      style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.bold),
                       controller: selectedDepo,
                       decoration: const InputDecoration(
                           labelText: 'Select a Depot',
@@ -116,10 +127,12 @@ class _DemandTableState extends State<DemandTable> {
                         ),
                       );
                     },
-                    onSuggestionSelected: (suggestion) {
+                    onSuggestionSelected: (suggestion) async {
                       selectedDepo.text = suggestion.toString();
-                      provider.getDepoName(suggestion.toString());
-                      widget.callBackFunction();
+                      provider.setDepoName(suggestion.toString());
+                      await widget.getDailyData();
+                      provider.reloadWidget(true);
+                      print('Hello World');
                     },
                     suggestionsCallback: (String pattern) async {
                       return await getDepoData(pattern);
@@ -131,49 +144,54 @@ class _DemandTableState extends State<DemandTable> {
             Flexible(
               child: Container(
                 height: 400,
-                child: DataTable2(
-                  columnSpacing: 15,
-                  headingRowColor: MaterialStatePropertyAll(tableHeadingColor),
-                  dataRowColor: MaterialStatePropertyAll(tableRowColor),
-                  border: TableBorder.all(),
-                  dividerThickness: 0,
-                  dataRowHeight: 40,
-                  headingRowHeight: 50,
-                  headingTextStyle:
-                      TextStyle(color: white, fontWeight: FontWeight.bold),
-                  dataTextStyle:
-                      TextStyle(fontWeight: FontWeight.bold, color: black),
-                  columns: List.generate(
-                    widget.columns.length,
-                    (index) => DataColumn2(
-                      fixedWidth: index == 0
-                          ? 50
-                          : index == 1
-                              ? 170
-                              : index == 3
-                                  ? 140
-                                  : null,
-                      label: Text(
-                        widget.columns[index],
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                  rows: List.generate(
-                    widget.rows.length,
-                    (rowNo) {
-                      return DataRow2(
-                        cells: List.generate(
-                          widget.rows[0].length,
-                          (cellNo) => DataCell(
-                            Text(
-                              widget.rows[rowNo][cellNo].toString(),
-                            ),
+                child: Consumer<DemandEnergyProvider>(
+                  builder: (context, providerValue, child) {
+                    return DataTable2(
+                      columnSpacing: 15,
+                      headingRowColor:
+                          MaterialStatePropertyAll(tableHeadingColor),
+                      dataRowColor: MaterialStatePropertyAll(tableRowColor),
+                      border: TableBorder.all(),
+                      dividerThickness: 0,
+                      dataRowHeight: 40,
+                      headingRowHeight: 50,
+                      headingTextStyle:
+                          TextStyle(color: white, fontWeight: FontWeight.bold),
+                      dataTextStyle:
+                          TextStyle(fontWeight: FontWeight.bold, color: black),
+                      columns: List.generate(
+                        widget.columns.length,
+                        (index) => DataColumn2(
+                          fixedWidth: index == 0
+                              ? 50
+                              : index == 1
+                                  ? 170
+                                  : index == 3
+                                      ? 140
+                                      : null,
+                          label: Text(
+                            widget.columns[index],
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                      rows: List.generate(
+                        widget.rows.length,
+                        (rowNo) {
+                          return DataRow2(
+                            cells: List.generate(
+                              widget.rows[0].length,
+                              (cellNo) => DataCell(
+                                Text(
+                                  widget.rows[rowNo][cellNo].toString(),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
