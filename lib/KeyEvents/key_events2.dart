@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:web_appllication/KeyEvents/upload.dart';
 import 'package:web_appllication/KeyEvents/view_AllFiles.dart';
@@ -270,7 +271,9 @@ class _KeyEvents2State extends State<KeyEvents2> {
         .get()
         .then((value) {
       String? date = value.data()!['ClosureDate'];
-      // closureDate = DateFormat().add_yMMMMd().format(DateTime.parse(date!));
+      closureDate = DateFormat('dd-MM-yyyy').parse(date!);
+
+      setState(() {});
     });
 
     yourstream = FirebaseFirestore.instance
@@ -287,13 +290,6 @@ class _KeyEvents2State extends State<KeyEvents2> {
     _verticalGridController.addListener(() {
       _dataGridScrollController.jumpTo(_verticalGridController.offset);
     });
-    _dataGridScrollController.addListener(() {
-      _verticalGridController.jumpTo(_dataGridScrollController.offset);
-    });
-    _scrollController.addListener(() {
-      _horizontalscrollController.jumpTo(_scrollController.offset);
-    });
-
     setState(() {});
 
     super.initState();
@@ -792,7 +788,7 @@ class _KeyEvents2State extends State<KeyEvents2> {
                               // print('$index$perc');
                               double value = perc.isNaN ? 0.0 : perc;
                               totalperc = totalperc + value;
-                              print(totalperc);
+                              // print(totalperc);
                             }
 
                             if (!indicesToSkip.contains(index)) {
@@ -1272,7 +1268,7 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                     100 *
                                     ((executed / scope) * weightage * 100);
 
-                                print(percValue);
+                                // print(percValue);
                                 percValue = percValue.isNaN ? 0.0 : percValue;
 
                                 progressValue = progressValue + percValue;

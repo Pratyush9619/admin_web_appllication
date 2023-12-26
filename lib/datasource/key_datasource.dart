@@ -464,7 +464,7 @@ class KeyDataSourceKeyEvents extends DataGridSource {
                                           ? white
                                           : black),
                                 )
-                              :dataGridCell.columnName == 'Progress'
+                              : dataGridCell.columnName == 'Progress'
                                   ? Text(
                                       !indicesToSkip.contains(dataIndex)
                                           ? totalperc!.isNaN

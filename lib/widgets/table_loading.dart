@@ -14,7 +14,7 @@ class TableLoading extends StatelessWidget {
             child: Container(
               height: 300,
               width: 300,
-              child: Image.asset('assets/table_loading.gif'),
+              child: Image.asset('animations/loading_animation.gif'),
             ),
           ),
           const Text(

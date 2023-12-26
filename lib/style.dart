@@ -13,6 +13,10 @@ TextStyle formtext = const TextStyle(
   fontSize: 13,
   fontWeight: FontWeight.bold,
 );
+TextStyle columnStyle =
+    TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: white);
+
+TextStyle columnText = const TextStyle(fontSize: 12);
 
 TextStyle tableheaderwhitecolor = TextStyle(
   fontWeight: FontWeight.bold,
@@ -23,10 +27,8 @@ TextStyle tableheader = const TextStyle(
   fontWeight: FontWeight.bold,
   fontSize: 14,
 );
-// TextStyle bodyText1 = GoogleFonts.ibmPlexSans(
-//     fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5);
 
-TextStyle appFontSize =const TextStyle(fontSize: 14);
+TextStyle appFontSize = const TextStyle(fontSize: 14);
 TextStyle bodyText2 = GoogleFonts.ibmPlexSans(
     fontSize: 14,
     fontWeight: FontWeight.w400,
