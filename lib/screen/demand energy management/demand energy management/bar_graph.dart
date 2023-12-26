@@ -22,11 +22,6 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
 
   List<bool> choiceChipBoolList = [true, false, false, false];
 
-  List<List<dynamic>> barData = [
-    [1000, 2500, 100, 1200],
-    ['4:00-10:00', '10:00-16:00', '16:00-22:00', '22:00-2:00']
-  ]; // Y-axis data and time intervals
-
   List<String> choiceChipLabels = ['Day', 'Monthly', 'Quaterly', 'Yearly'];
 
   final double candleWidth = 25;
@@ -47,7 +42,7 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                     Container(
                       margin:
                           const EdgeInsets.only(left: 40, bottom: 20, top: 20),
-                      padding: EdgeInsets.only(left: 20),
+                      padding: const EdgeInsets.only(left: 20),
                       height: 30,
                       width: 320,
                       child: ListView.builder(
@@ -84,10 +79,13 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                                     default:
                                       _selectedIndex = 0;
                                   }
-                                  print('Selected index: $_selectedIndex');
-                                  choiceChipBoolList[index] = value;
-                                  resetChoiceChip(index);
-                                  providerValue.reloadWidget(true);
+                                  providerValue
+                                      .setSelectedIndex(_selectedIndex);
+                                  if (providerValue.selectedDepo.isNotEmpty) {
+                                    choiceChipBoolList[index] = value;
+                                    resetChoiceChip(index);
+                                    providerValue.reloadWidget(true);
+                                  }
                                 },
                               ),
                             );
@@ -181,7 +179,7 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                           showTitles: true,
                           getTitlesWidget: (value, meta) {
                             return Text(
-                              barData[1][value.toInt()],
+                              widget.timeIntervalList[value.toInt()],
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
@@ -198,7 +196,8 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                           showTitles: true,
                           getTitlesWidget: (value, meta) {
                             return Text(
-                              widget.timeIntervalList[value.toInt()].toString(),
+                              widget.energyConsumedList[value.toInt()]
+                                  .toString(),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,

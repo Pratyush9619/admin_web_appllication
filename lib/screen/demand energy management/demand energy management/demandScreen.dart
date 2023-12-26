@@ -6,6 +6,7 @@ import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/provider/demandEnergyProvider.dart';
 import 'package:web_appllication/screen/demand%20energy%20management/demand%20energy%20management/bar_graph.dart';
 import 'package:web_appllication/screen/demand%20energy%20management/demand%20energy%20management/demand_table.dart';
+import 'package:web_appllication/style.dart';
 
 class DemandEnergyScreen extends StatefulWidget {
   const DemandEnergyScreen({super.key});
@@ -39,6 +40,7 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
   @override
   void initState() {
     super.initState();
+
     //Load Daily Data for Tables and Graphs
   }
 
@@ -46,11 +48,22 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
   Widget build(BuildContext context) {
     currentMonth = DateFormat('MMMM').format(currentDate);
 
+    final provider = Provider.of<DemandEnergyProvider>(context, listen: false);
+
+    //Set Callback Function in provider
+    provider.setCurrentDayFunction(getCurrentDayData);
+    provider.setCurrentMonthFunction(getCurrentMonthData);
+    provider.setQuaterlyFunction(getQuaterlyData);
+    provider.setYearlyFunction(getYearlyData);
+    provider.setShowAlertWidget(showCustomAlert);
+
     return Scaffold(
       body: Row(
         children: [
           Expanded(
             child: DemandTable(
+              getQuaterlyData: getQuaterlyData,
+              getYearlyData: getYearlyData,
               getMonthlyData: getCurrentMonthData,
               getDailyData: getCurrentDayData,
               columns: columns,
@@ -68,13 +81,11 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          print(Provider.of<DemandEnergyProvider>(context, listen: false)
-              .selectedDepo);
-        },
-        child: const Icon(Icons.ad_units),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //   },
+      //   child: const Icon(Icons.ad_units),
+      // ),
     );
   }
 
@@ -83,6 +94,7 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
       rows.clear();
       timeIntervalList.clear();
       energyConsumedList.clear();
+      dateList.clear();
       print('Callback Called');
       final selectedDepoName =
           Provider.of<DemandEnergyProvider>(context, listen: false)
@@ -132,7 +144,7 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
       //Sets Start and End Date for provider
       getStartEndDate();
     } catch (e) {
-      print('Error Occured - $e');
+      print('Error Occured in Fetching Daily Data - $e');
     }
   }
 
@@ -141,7 +153,7 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
       rows.clear();
       timeIntervalList.clear();
       energyConsumedList.clear();
-      print('Callback Called');
+      dateList.clear();
       final selectedDepoName =
           Provider.of<DemandEnergyProvider>(context, listen: false)
               .selectedDepo;
@@ -163,15 +175,24 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
 
       QuerySnapshot monthlyQuerySnap = await collectionReference.get();
       List<dynamic> monthlyDateList =
-          monthlyQuerySnap.docs.map((e) => e.id).toList();
+          monthlyQuerySnap.docs.map((data) => data.id).toList();
+      dateList = monthlyDateList;
+      // print('Monthly Data List - $monthlyDateList');
 
       for (int i = 0; i < monthlyDateList.length; i++) {
+        QuerySnapshot querySnapshot = await collectionReference
+            .doc(monthlyDateList[i])
+            .collection('UserId')
+            .get();
         List<dynamic> allUsers =
             querySnapshot.docs.map((userid) => userid.id).toList();
-        print('All Users - $allUsers');
-        for (int i = 0; i < allUsers.length; i++) {
-          DocumentSnapshot daySnap =
-              await collectionReference.doc(allUsers[i]).get();
+        // print('All Users - $allUsers');
+        for (int j = 0; j < allUsers.length; j++) {
+          DocumentSnapshot daySnap = await collectionReference
+              .doc(monthlyDateList[i])
+              .collection('UserId')
+              .doc(allUsers[j])
+              .get();
           Map<String, dynamic> mapData = daySnap.data() as Map<String, dynamic>;
           List<dynamic> userData = mapData['data'];
 
@@ -186,14 +207,76 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
             rows.add(row);
           }
         }
-        print('Rows - $rows');
+        // print('TimeIntervalList - $timeIntervalList');
       }
 
       //Sets Start and End Date for provider
       getStartEndDate();
     } catch (e) {
-      print('Error Occured - $e');
+      print('Error Occured in Fetching Monthly Data - $e');
     }
+  }
+
+  Future<void> getQuaterlyData() async {
+    try {} catch (error) {
+      print('Error Occured in Fetching Quaterly Data - $error');
+    }
+  }
+
+  Future<void> getYearlyData() async {
+    try {} catch (error) {
+      print('Error Occured in Fetching Yearly Data - $error');
+    }
+  }
+
+  Future<void> showCustomAlert() async {
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: Container(
+              width: 300,
+              height: 170,
+              child: Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    child: const Icon(
+                      Icons.warning,
+                      color: Color.fromARGB(255, 240, 222, 67),
+                      size: 80,
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 20),
+                    child: const Text(
+                      'Please Select a Depot First',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 80,
+                    height: 30,
+                    margin: const EdgeInsets.all(5),
+                    child: ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStatePropertyAll(blue)),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text(
+                          'OK',
+                          style: TextStyle(fontSize: 10),
+                        )),
+                  )
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   void getStartEndDate() {

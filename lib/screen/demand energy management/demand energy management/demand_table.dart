@@ -115,10 +115,11 @@ class _DemandTableState extends State<DemandTable> {
                           fontSize: 15, fontWeight: FontWeight.bold),
                       controller: selectedDepo,
                       decoration: const InputDecoration(
-                          labelText: 'Select a Depot',
-                          labelStyle:
-                              TextStyle(color: Colors.black, fontSize: 15),
-                          border: OutlineInputBorder()),
+                        labelText: 'Select a Depot',
+                        labelStyle:
+                            TextStyle(color: Colors.black, fontSize: 15),
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                     itemBuilder: (context, suggestion) {
                       return ListTile(
