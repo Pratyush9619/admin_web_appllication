@@ -60,7 +60,7 @@ class _MyOverviewState extends State<MyOverview> {
     // 'assets/overview_image/testing_commissioning.png',
     'assets/overview_image/testing_commissioning.png',
     'assets/overview_image/closure_report.png',
-    // 'assets/overview_image/easy_monitoring.jpg',
+    'assets/overview_image/easy_monitoring.jpg',
     // 'assets/overview_image/overview.png',
     // 'assets/overview_image/project_planning.png',
     // 'assets/overview_image/resource.png',
@@ -89,7 +89,7 @@ class _MyOverviewState extends State<MyOverview> {
       'FQP Checklist for Civil,Electrical work & Quality Checklist',
       'Depot Insides',
       'Closure Report',
-      // 'Easy monitoring of O & M schedule for all the equipment of depots.',
+      'Depot Demand Energy Management',
     ];
     pages = [
       DepotOverview(
@@ -185,12 +185,12 @@ class _MyOverviewState extends State<MyOverview> {
         userId: widget.userId,
         cityName: widget.cityName,
         depoName: widget.depoName,
-      )
-      // KeyEvents(
-      //   // userId: widget.userid,
-      //   depoName: widget.depoName,
-      //   cityName: widget.cityName,
-      // ),
+      ),
+      KeyEvents(
+        userId: widget.userId,
+        depoName: widget.depoName,
+        cityName: widget.cityName,
+      ),
     ];
 
     return Scaffold(

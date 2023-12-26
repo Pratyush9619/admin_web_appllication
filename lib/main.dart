@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web_appllication/OverviewPages/ev_dashboard/dashboard.dart';
 import 'package:web_appllication/MenuPage/home.dart';
-import 'package:web_appllication/OverviewPages/sidebar_nav/nav_screen.dart';
 import 'package:web_appllication/MenuPage/project_planning.dart';
 import 'package:web_appllication/MenuPage/user.dart';
 import 'package:web_appllication/provider/assigned_user_provider.dart';
@@ -14,7 +13,6 @@ import 'package:web_appllication/provider/text_provider.dart';
 import 'package:web_appllication/small_screen.dart';
 import 'package:web_appllication/style.dart';
 import 'Authentication/login_register.dart';
-import 'Planning/cities.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -94,14 +92,14 @@ class _MyHomePageState extends State<MyHomePage> {
     return
         //  NavigationPage();
         // DashBoardScreen();
-        // SmallScreen();
-        // MenuUserPage();
-        // DepotOverview();
-        // ResourceAllocation();
-        //  EventsPage();
-        // KeyEvents();
-        // const CitiesPage();
-        const LoginRegister();
+        SmallScreen();
+    // MenuUserPage();
+    // DepotOverview();
+    // ResourceAllocation();
+    //  EventsPage();
+    // KeyEvents();
+    // const CitiesPage();
+    // const LoginRegister();
     // const PdfSummary();
   }
 }
