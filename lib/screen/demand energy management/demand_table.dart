@@ -3,6 +3,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:provider/provider.dart';
+import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/provider/demandEnergyProvider.dart';
 import 'package:web_appllication/style.dart';
 
@@ -14,14 +15,15 @@ class DemandTable extends StatefulWidget {
   final List<dynamic> columns;
   final List<dynamic> rows;
 
-  DemandTable(
-      {super.key,
-      required this.columns,
-      required this.rows,
-      required this.getDailyData,
-      required this.getMonthlyData,
-      required this.getQuaterlyData,
-      required this.getYearlyData});
+  DemandTable({
+    super.key,
+    required this.columns,
+    required this.rows,
+    required this.getDailyData,
+    required this.getMonthlyData,
+    required this.getQuaterlyData,
+    required this.getYearlyData,
+  });
 
   @override
   State<DemandTable> createState() => _DemandTableState();
@@ -70,7 +72,7 @@ class _DemandTableState extends State<DemandTable> {
                   width: 200,
                   child: TypeAheadField(
                     hideOnLoading: true,
-                    animationDuration: Duration(milliseconds: 1000),
+                    animationDuration: const Duration(milliseconds: 1000),
                     animationStart: 0,
                     textFieldConfiguration: TextFieldConfiguration(
                       style: const TextStyle(
@@ -147,51 +149,54 @@ class _DemandTableState extends State<DemandTable> {
                 height: 400,
                 child: Consumer<DemandEnergyProvider>(
                   builder: (context, providerValue, child) {
-                    return DataTable2(
-                      columnSpacing: 15,
-                      headingRowColor:
-                          MaterialStatePropertyAll(tableHeadingColor),
-                      dataRowColor: MaterialStatePropertyAll(tableRowColor),
-                      border: TableBorder.all(),
-                      dividerThickness: 0,
-                      dataRowHeight: 40,
-                      headingRowHeight: 50,
-                      headingTextStyle:
-                          TextStyle(color: white, fontWeight: FontWeight.bold),
-                      dataTextStyle:
-                          TextStyle(fontWeight: FontWeight.bold, color: black),
-                      columns: List.generate(
-                        widget.columns.length,
-                        (index) => DataColumn2(
-                          fixedWidth: index == 0
-                              ? 50
-                              : index == 1
-                                  ? 170
-                                  : index == 3
-                                      ? 140
-                                      : null,
-                          label: Text(
-                            widget.columns[index],
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                      rows: List.generate(
-                        widget.rows.length,
-                        (rowNo) {
-                          return DataRow2(
-                            cells: List.generate(
-                              widget.rows[0].length,
-                              (cellNo) => DataCell(
-                                Text(
-                                  widget.rows[rowNo][cellNo].toString(),
+                    return provider.isLoadingBarCandle
+                        ? LoadingPage()
+                        : DataTable2(
+                            columnSpacing: 15,
+                            headingRowColor:
+                                MaterialStatePropertyAll(tableHeadingColor),
+                            dataRowColor:
+                                MaterialStatePropertyAll(tableRowColor),
+                            border: TableBorder.all(),
+                            dividerThickness: 0,
+                            dataRowHeight: 40,
+                            headingRowHeight: 50,
+                            headingTextStyle: TextStyle(
+                                color: white, fontWeight: FontWeight.bold),
+                            dataTextStyle: TextStyle(
+                                fontWeight: FontWeight.bold, color: black),
+                            columns: List.generate(
+                              widget.columns.length,
+                              (index) => DataColumn2(
+                                fixedWidth: index == 0
+                                    ? 50
+                                    : index == 1
+                                        ? 170
+                                        : index == 3
+                                            ? 140
+                                            : null,
+                                label: Text(
+                                  widget.columns[index],
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             ),
+                            rows: List.generate(
+                              widget.rows.length,
+                              (rowNo) {
+                                return DataRow2(
+                                  cells: List.generate(
+                                    widget.rows[0].length,
+                                    (cellNo) => DataCell(
+                                      Text(
+                                        widget.rows[rowNo][cellNo].toString(),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                           );
-                        },
-                      ),
-                    );
                   },
                 ),
               ),

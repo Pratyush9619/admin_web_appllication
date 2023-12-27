@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:web_appllication/components/loading_page.dart';
 import 'package:web_appllication/provider/demandEnergyProvider.dart';
-import 'package:web_appllication/screen/demand%20energy%20management/demand%20energy%20management/bar_graph.dart';
-import 'package:web_appllication/screen/demand%20energy%20management/demand%20energy%20management/demand_table.dart';
+import 'package:web_appllication/screen/demand%20energy%20management/bar_graph.dart';
+import 'package:web_appllication/screen/demand%20energy%20management/demand_table.dart';
 import 'package:web_appllication/style.dart';
 
 class DemandEnergyScreen extends StatefulWidget {
@@ -16,9 +17,14 @@ class DemandEnergyScreen extends StatefulWidget {
 }
 
 class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
-  List<dynamic> energyConsumedList = [];
+  double totalConsumedEnergy = 0;
+  List<double> energyConsumedList = [];
   List<dynamic> timeIntervalList = [];
+  List<dynamic> monthList = [];
   List<dynamic> dateList = [];
+  List<double> quaterlyEnergyConsumed = [];
+  List<double> yearlyEnergyConsumed = [];
+
   //Data table columns & rows
   List<String> columns = [
     'Sr.No.',
@@ -75,6 +81,10 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
           ),
           Expanded(
             child: BarGraphScreen(
+              energyConsumedQuaterlyList: quaterlyEnergyConsumed,
+              totalConsumedEnergy: totalConsumedEnergy,
+              monthList: monthList,
+              // totalConsumedEnergy: totalConsumedEnergy,
               energyConsumedList: energyConsumedList,
               timeIntervalList: timeIntervalList,
             ),
@@ -96,9 +106,10 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
       energyConsumedList.clear();
       dateList.clear();
       print('Callback Called');
-      final selectedDepoName =
-          Provider.of<DemandEnergyProvider>(context, listen: false)
-              .selectedDepo;
+
+      final provider =
+          Provider.of<DemandEnergyProvider>(context, listen: false);
+      final selectedDepoName = provider.selectedDepo;
 
       final selectedCityName =
           Provider.of<DemandEnergyProvider>(context, listen: false)
@@ -139,6 +150,9 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
           rows.add(row);
         }
       }
+
+      provider.setDailyConsumedList(energyConsumedList);
+
       print('Rows - $rows');
 
       //Sets Start and End Date for provider
@@ -151,9 +165,11 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
   Future<void> getCurrentMonthData() async {
     try {
       rows.clear();
+      monthList.clear();
       timeIntervalList.clear();
       energyConsumedList.clear();
       dateList.clear();
+      totalConsumedEnergy = 0;
       final selectedDepoName =
           Provider.of<DemandEnergyProvider>(context, listen: false)
               .selectedDepo;
@@ -172,40 +188,62 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
           .collection('Date');
 
       // dateList.add(currentDay);
+      monthList.add(currentMonth);
 
       QuerySnapshot monthlyQuerySnap = await collectionReference.get();
       List<dynamic> monthlyDateList =
           monthlyQuerySnap.docs.map((data) => data.id).toList();
       dateList = monthlyDateList;
-      // print('Monthly Data List - $monthlyDateList');
+      print('Monthly Data List - $monthlyDateList');
 
       for (int i = 0; i < monthlyDateList.length; i++) {
         QuerySnapshot querySnapshot = await collectionReference
             .doc(monthlyDateList[i])
             .collection('UserId')
             .get();
+
         List<dynamic> allUsers =
             querySnapshot.docs.map((userid) => userid.id).toList();
-        // print('All Users - $allUsers');
-        for (int j = 0; j < allUsers.length; j++) {
+
+        if (allUsers.isNotEmpty) {
           DocumentSnapshot daySnap = await collectionReference
               .doc(monthlyDateList[i])
               .collection('UserId')
-              .doc(allUsers[j])
+              .doc(allUsers[0])
               .get();
           Map<String, dynamic> mapData = daySnap.data() as Map<String, dynamic>;
           List<dynamic> userData = mapData['data'];
+          print('mapData - $userData');
 
-          for (var user in userData) {
+          for (int j = 0; j < userData.length; j++) {
             List<dynamic> row = [];
-            timeIntervalList.add(user['timeInterval']);
-            energyConsumedList.add(user['enrgyConsumed']);
-            row.add(user['srNo']);
+            timeIntervalList
+                .add(userData[j]['timeInterval']); // Adding Time interval
+            energyConsumedList
+                .add(userData[j]['enrgyConsumed']); // Adding Energy Consumed
+            row.add(userData[j]['srNo']); // Adding Serial Numbers for table
             row.add(selectedCityName);
             row.add(selectedDepoName);
-            row.add(user['enrgyConsumed']);
+            row.add(userData[j]['enrgyConsumed']); //Adding energy consumed
+            totalConsumedEnergy = totalConsumedEnergy +
+                double.parse(userData[j]['enrgyConsumed'].toString());
             rows.add(row);
           }
+
+          Provider.of<DemandEnergyProvider>(context, listen: false)
+              .setMonthlyEnergyConsumed(totalConsumedEnergy);
+
+          // print('monthly rows - $rows');
+          // for (var user in userData) {
+          //   List<dynamic> row = [];
+          //   timeIntervalList.add(user['timeInterval']);
+          //   energyConsumedList.add(user['enrgyConsumed']);
+          //   row.add(user['srNo']);
+          //   row.add(selectedCityName);
+          //   row.add(selectedDepoName);
+          //   row.add(user['enrgyConsumed']);
+          //   rows.add(row);
+          // }
         }
         // print('TimeIntervalList - $timeIntervalList');
       }
@@ -218,13 +256,203 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
   }
 
   Future<void> getQuaterlyData() async {
-    try {} catch (error) {
+    try {
+      rows.clear();
+      monthList.clear();
+      timeIntervalList.clear();
+      energyConsumedList.clear();
+      dateList.clear();
+      totalConsumedEnergy = 0;
+      final provider =
+          Provider.of<DemandEnergyProvider>(context, listen: false);
+
+      final selectedDepoName = provider.selectedDepo;
+
+      CollectionReference collectionReference = FirebaseFirestore.instance
+          .collection('EnergyManagementTable')
+          .doc(selectedDepoName)
+          .collection('Year')
+          .doc(currentYear.toString())
+          .collection('Months');
+
+      //March Month Data//
+
+      QuerySnapshot marchQuerySnap =
+          await collectionReference.doc('March').collection('Date').get();
+
+      List<dynamic> marchDates =
+          marchQuerySnap.docs.map((data) => data.id).toList();
+
+      double energyConsumedInMarch = 0;
+
+      energyConsumedInMarch = await fetchMonthlyData(
+          collectionReference, marchDates, energyConsumedInMarch, 'March');
+
+      //June Month Data//
+
+      QuerySnapshot juneQuerySnap =
+          await collectionReference.doc('June').collection('Date').get();
+
+      List<dynamic> juneDates =
+          juneQuerySnap.docs.map((data) => data.id).toList();
+
+      double energyConsumedInJune = 0;
+
+      energyConsumedInJune = await fetchMonthlyData(
+          collectionReference, juneDates, energyConsumedInJune, 'June');
+
+      //September Month Data
+
+      QuerySnapshot septemberQuerySnap =
+          await collectionReference.doc('September').collection('Date').get();
+
+      List<dynamic> septemberDates =
+          septemberQuerySnap.docs.map((data) => data.id).toList();
+
+      double energyConsumedInSeptember = 0;
+
+      energyConsumedInSeptember = await fetchMonthlyData(collectionReference,
+          septemberDates, energyConsumedInSeptember, 'September');
+
+      //December Month Data
+
+      QuerySnapshot decemberQuerySnap =
+          await collectionReference.doc('December').collection('Date').get();
+
+      List<dynamic> decemberDates =
+          decemberQuerySnap.docs.map((data) => data.id).toList();
+
+      double energyConsumedInDecember = 0;
+
+      energyConsumedInDecember = await fetchMonthlyData(collectionReference,
+          decemberDates, energyConsumedInDecember, 'December');
+
+      quaterlyEnergyConsumed.add(energyConsumedInMarch);
+      quaterlyEnergyConsumed.add(energyConsumedInJune);
+      quaterlyEnergyConsumed.add(energyConsumedInSeptember);
+      quaterlyEnergyConsumed.add(energyConsumedInDecember);
+
+      provider.setQuaterlyConsumedList(quaterlyEnergyConsumed);
+
+      print(
+          'QuaterlyData - $energyConsumedInMarch, $energyConsumedInJune, $energyConsumedInSeptember, $energyConsumedInDecember');
+    } catch (error) {
       print('Error Occured in Fetching Quaterly Data - $error');
     }
   }
 
+  Future<double> fetchMonthlyData(
+      CollectionReference collectionReference,
+      List<dynamic> dates,
+      double totalEnergyConsumedInMonth,
+      String month) async {
+    for (int i = 0; i < dates.length; i++) {
+      final provider =
+          Provider.of<DemandEnergyProvider>(context, listen: false);
+      final selectedCityName = provider.selectedCity;
+      final selectedDepoName = provider.selectedDepo;
+      QuerySnapshot querySnapshot = await collectionReference
+          .doc(month)
+          .collection('Date')
+          .doc(dates[i])
+          .collection('UserId')
+          .get();
+
+      // dateList.add(dates[i]);
+
+      List<dynamic> userIdList =
+          querySnapshot.docs.map((data) => data.id).toList();
+
+      print('SM UserId - $userIdList');
+
+      if (userIdList.isNotEmpty) {
+        DocumentSnapshot documentSnapshot = await collectionReference
+            .doc(month)
+            .collection('Date')
+            .doc(dates[i])
+            .collection('UserId')
+            .doc(userIdList[0])
+            .get();
+
+        Map<String, dynamic> mapData =
+            documentSnapshot.data() as Map<String, dynamic>;
+
+        List<dynamic> userData = mapData['data'];
+
+        for (var map in userData) {
+          totalEnergyConsumedInMonth = totalEnergyConsumedInMonth +
+              double.parse(map['enrgyConsumed'].toString());
+
+          List<dynamic> row = [];
+
+          timeIntervalList.add(map['timeInterval']); // Adding Time interval
+          row.add(map['srNo']); // Adding Serial Numbers for table
+          row.add(selectedCityName);
+          row.add(selectedDepoName);
+          row.add(map['enrgyConsumed']); //Adding energy consumed
+          totalConsumedEnergy = totalConsumedEnergy +
+              double.parse(map['enrgyConsumed'].toString());
+          rows.add(row);
+        }
+      }
+    }
+    return totalEnergyConsumedInMonth;
+  }
+
   Future<void> getYearlyData() async {
-    try {} catch (error) {
+    try {
+      rows.clear();
+      monthList.clear();
+      timeIntervalList.clear();
+      energyConsumedList.clear();
+      dateList.clear();
+      totalConsumedEnergy = 0;
+      final provider =
+          Provider.of<DemandEnergyProvider>(context, listen: false);
+
+      final selectedDepoName = provider.selectedDepo;
+
+      CollectionReference collectionReference = FirebaseFirestore.instance
+          .collection('EnergyManagementTable')
+          .doc(selectedDepoName)
+          .collection('Year')
+          .doc(currentYear.toString())
+          .collection('Months');
+
+      List<String> yearlyMonths = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+      ];
+
+      for (int i = 0; i < yearlyMonths.length; i++) {
+        QuerySnapshot marchQuerySnap = await collectionReference
+            .doc(yearlyMonths[i])
+            .collection('Date')
+            .get();
+
+        List<dynamic> marchDates =
+            marchQuerySnap.docs.map((data) => data.id).toList();
+
+        double energyConsumed = 0.0;
+
+        energyConsumed = await fetchMonthlyData(
+            collectionReference, marchDates, energyConsumed, yearlyMonths[i]);
+
+        yearlyEnergyConsumed.add(energyConsumed);
+      }
+
+      provider.setYearlyConsumedList(yearlyEnergyConsumed);
+    } catch (error) {
       print('Error Occured in Fetching Yearly Data - $error');
     }
   }

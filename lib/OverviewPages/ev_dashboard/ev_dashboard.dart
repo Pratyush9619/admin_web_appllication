@@ -1884,12 +1884,17 @@ class _EVDashboardScreenState extends State<EVDashboardScreen> {
                             child: Consumer<SelectedRowIndexModel>(
                               builder: (context, value, child) {
                                 return DataTable2(
+                                    columnSpacing: 16,
+                                    dataTextStyle: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blue,
+                                        fontSize: 12),
                                     headingRowColor:
                                         MaterialStatePropertyAll(blue),
                                     dividerThickness: 0,
                                     minWidth: 900,
-                                    dataRowHeight: 40,
-                                    headingRowHeight: 40,
+                                    // dataRowHeight: 40,
+                                    headingRowHeight: 50,
                                     border: TableBorder.all(),
                                     headingTextStyle: TextStyle(
                                       fontSize: 13,
@@ -1912,10 +1917,26 @@ class _EVDashboardScreenState extends State<EVDashboardScreen> {
                                         DataCell(Text(
                                             '${depotProgressList[index].toStringAsFixed(1)}%')),
                                         DataCell(Text(startDateList[index])),
-                                        DataCell(Text(endDateList[index])),
                                         DataCell(
-                                            Text(estimatedDateList[index])),
-                                        DataCell(Text(estimatedEndDate[index])),
+                                            Text(actualEndDateList[index])),
+                                        DataCell(
+                                          Text(
+                                            estimatedEndDate[index] == 'W.I.P'
+                                                ? actualEndDateList[index]
+                                                : 'Completed ✔',
+                                            style: TextStyle(
+                                                color:
+                                                    estimatedEndDate[index] !=
+                                                            'W.I.P'
+                                                        ? Colors.green
+                                                        : Colors.black),
+                                          ),
+                                        ),
+                                        DataCell(
+                                          Text(
+                                            estimatedEndDate[index],
+                                          ),
+                                        ),
                                         // DataCell(
                                         //     Text(actualEndDateList[index])),
                                       ]);
@@ -2564,6 +2585,7 @@ class _EVDashboardScreenState extends State<EVDashboardScreen> {
       actualEndDate.clear();
       isDateStored = false;
       totalperc = 0.0;
+
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('KeyEventsTable')
           .doc(selectedDepoList[i])

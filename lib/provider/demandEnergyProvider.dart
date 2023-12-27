@@ -20,6 +20,18 @@ class DemandEnergyProvider extends ChangeNotifier {
   int _selectedIndex = 0;
   int get selectedIndex => _selectedIndex;
 
+  List<double>? _dailyEnergyConsumed;
+  List<double>? get dailyEnergyConsumed => _dailyEnergyConsumed;
+
+  double? _monthlyEnergyConsumed;
+  double? get monthlyEnergyConsumed => _monthlyEnergyConsumed;
+
+  List<double>? _quaterlyEnergyConsumedList;
+  List<double>? get quaterlyEnergyConsumedList => _quaterlyEnergyConsumedList;
+
+  List<double>? _yearlyEnergyConsumedList;
+  List<double>? get yearlyEnergyConsumedList => _yearlyEnergyConsumedList;
+
   Future<dynamic> Function()? _getCurrentDayData;
   Future<dynamic> Function()? get getCurrentDayData => _getCurrentDayData;
 
@@ -35,9 +47,28 @@ class DemandEnergyProvider extends ChangeNotifier {
   Future<dynamic> Function()? _getShowAlertWidget;
   Future<dynamic> Function()? get getShowAlertWidget => _getShowAlertWidget;
 
+  bool _isLoadingBarCandle = false;
+  bool get isLoadingBarCandle => _isLoadingBarCandle;
+
   void reloadWidget(bool value) {
     _loadWidget = value;
     notifyListeners();
+  }
+
+  void setDailyConsumedList(List<double> value) {
+    _dailyEnergyConsumed = value;
+  }
+
+  void setQuaterlyConsumedList(List<double> value) {
+    _quaterlyEnergyConsumedList = value;
+  }
+
+  void setYearlyConsumedList(List<double> value) {
+    _yearlyEnergyConsumedList = value;
+  }
+
+  void setLoadingBarCandle(bool value) {
+    _isLoadingBarCandle = value;
   }
 
   void setDepoName(String value) {
@@ -59,25 +90,33 @@ class DemandEnergyProvider extends ChangeNotifier {
   void setSelectedIndex(int value) async {
     if (selectedDepo.isNotEmpty) {
       _selectedIndex = value;
-      print('Selected Index: $value');
+      print('Provider Selected Index: $value');
 
       switch (value) {
         case 0:
           await getCurrentDayData!();
+          _isLoadingBarCandle = false;
+
           print('Current Day Data fetched from provider');
           break;
         case 1:
           await getCurrentMonthData!();
+          _isLoadingBarCandle = false;
+
           print('Current Month Data fetched from provider');
 
           break;
         case 2:
           await getQuaterlyData!();
+          _isLoadingBarCandle = false;
+
           print('Quaterly Data fetched from provider');
 
           break;
         case 3:
           await getYearlyData!();
+          _isLoadingBarCandle = false;
+
           print('Yearly Day Data fetched from provider');
           break;
 
@@ -113,5 +152,9 @@ class DemandEnergyProvider extends ChangeNotifier {
   void showAlertWidget() {
     getShowAlertWidget!();
     print('Showing Alert Widget From Provider');
+  }
+
+  void setMonthlyEnergyConsumed(double value) {
+    _monthlyEnergyConsumed = value;
   }
 }

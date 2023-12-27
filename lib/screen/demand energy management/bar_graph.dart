@@ -7,11 +7,17 @@ import 'package:web_appllication/style.dart';
 class BarGraphScreen extends StatefulWidget {
   final List<dynamic> timeIntervalList;
   final List<dynamic> energyConsumedList;
+  final double totalConsumedEnergy;
+  final List<dynamic> monthList;
+  final List<dynamic> energyConsumedQuaterlyList;
 
   BarGraphScreen(
       {super.key,
       required this.timeIntervalList,
-      required this.energyConsumedList});
+      required this.energyConsumedList,
+      required this.monthList,
+      required this.totalConsumedEnergy,
+      required this.energyConsumedQuaterlyList});
 
   @override
   State<BarGraphScreen> createState() => _BarGraphScreenState();
@@ -23,11 +29,28 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
   List<bool> choiceChipBoolList = [true, false, false, false];
 
   List<String> choiceChipLabels = ['Day', 'Monthly', 'Quaterly', 'Yearly'];
+  List<String> quaterlyMonths = ['Mar', 'Jun', 'Sep', 'Dec'];
+  List<String> yearlyMonths = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+  ];
 
   final double candleWidth = 25;
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<DemandEnergyProvider>(context, listen: false);
+
     return Material(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -66,26 +89,28 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                                   switch (index) {
                                     case 0:
                                       _selectedIndex = 0;
+                                      provider.setLoadingBarCandle(true);
                                       break;
                                     case 1:
                                       _selectedIndex = 1;
+                                      provider.setLoadingBarCandle(true);
                                       break;
                                     case 2:
                                       _selectedIndex = 2;
+                                      provider.setLoadingBarCandle(true);
                                       break;
                                     case 3:
                                       _selectedIndex = 3;
+                                      provider.setLoadingBarCandle(true);
                                       break;
                                     default:
                                       _selectedIndex = 0;
                                   }
+                                  choiceChipBoolList[index] = value;
+                                  resetChoiceChip(index);
+                                  providerValue.reloadWidget(true);
                                   providerValue
                                       .setSelectedIndex(_selectedIndex);
-                                  if (providerValue.selectedDepo.isNotEmpty) {
-                                    choiceChipBoolList[index] = value;
-                                    resetChoiceChip(index);
-                                    providerValue.reloadWidget(true);
-                                  }
                                 },
                               ),
                             );
@@ -150,7 +175,10 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
             margin: const EdgeInsets.only(bottom: 30),
             child: const Text(
               'Energy Consumed (in kW)',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           Container(
@@ -159,10 +187,18 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
             child: Consumer<DemandEnergyProvider>(
               builder: (context, value, child) {
                 return BarChart(
-                  swapAnimationCurve: Curves.bounceInOut,
-                  swapAnimationDuration: const Duration(milliseconds: 1000),
+                  swapAnimationCurve: Curves.easeInOut,
+                  swapAnimationDuration: const Duration(
+                    milliseconds: 2000,
+                  ),
                   BarChartData(
-                    backgroundColor: const Color.fromARGB(255, 236, 252, 255),
+                    alignment: BarChartAlignment.spaceAround,
+                    backgroundColor: const Color.fromARGB(
+                      255,
+                      236,
+                      252,
+                      255,
+                    ),
                     barTouchData: BarTouchData(
                       enabled: true,
                       allowTouchBarBackDraw: true,
@@ -172,6 +208,9 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                         tooltipMargin: 5,
                       ),
                     ),
+                    maxY: provider.selectedIndex == 1
+                        ? provider.monthlyEnergyConsumed ?? 0 + 1000
+                        : 5000,
                     minY: 0,
                     titlesData: FlTitlesData(
                       bottomTitles: AxisTitles(
@@ -179,7 +218,14 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                           showTitles: true,
                           getTitlesWidget: (value, meta) {
                             return Text(
-                              widget.timeIntervalList[value.toInt()],
+                              provider.selectedIndex == 1
+                                  ? widget.monthList[value.toInt()]
+                                  : provider.selectedIndex == 2
+                                      ? quaterlyMonths[value.toInt()]
+                                      : provider.selectedIndex == 3
+                                          ? yearlyMonths[value.toInt()]
+                                          : widget
+                                              .timeIntervalList[value.toInt()],
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
@@ -193,7 +239,7 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                       ),
                       topTitles: AxisTitles(
                         sideTitles: SideTitles(
-                          showTitles: true,
+                          showTitles: false,
                           getTitlesWidget: (value, meta) {
                             return Text(
                               widget.energyConsumedList[value.toInt()]
@@ -217,8 +263,13 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                         bottom: BorderSide(),
                       ),
                     ),
-                    maxY: 3000,
-                    barGroups: getBarGroups(),
+                    barGroups: provider.selectedIndex == 1
+                        ? getMonthlyBarGroups()
+                        : provider.selectedIndex == 2
+                            ? getQuaterlyBarData()
+                            : provider.selectedIndex == 3
+                                ? getYearlyBarData()
+                                : getBarGroups(),
                   ),
                 );
               },
@@ -230,25 +281,29 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
   }
 
   List<BarChartGroupData> getBarGroups() {
+    final provider = Provider.of<DemandEnergyProvider>(context, listen: false);
+
+    // print('Daily BarChart Data Extracting');
     return List.generate(
       widget.timeIntervalList.length,
       (index) {
         return BarChartGroupData(
+          showingTooltipIndicators: [1],
           x: index,
           barRods: [
             BarChartRodData(
               borderSide: BorderSide(color: blue),
-              backDrawRodData: BackgroundBarChartRodData(
-                toY: 3000,
-                fromY: 0,
-                show: true,
-                gradient: const LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 200, 255, 247),
-                    Color.fromARGB(255, 151, 255, 226)
-                  ],
-                ),
-              ),
+              // backDrawRodData: BackgroundBarChartRodData(
+              //   toY: 5000,
+              //   fromY: 0,
+              //   show: true,
+              //   gradient: const LinearGradient(
+              //     colors: [
+              //       Color.fromARGB(255, 200, 255, 247),
+              //       Color.fromARGB(255, 151, 255, 226)
+              //     ],
+              //   ),
+              // ),
               gradient: const LinearGradient(
                 colors: [
                   Color.fromARGB(255, 16, 81, 231),
@@ -257,7 +312,132 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
               ),
               width: candleWidth,
               borderRadius: BorderRadius.circular(2),
-              toY: widget.energyConsumedList[index],
+              toY: provider.dailyEnergyConsumed?[index] ?? 0.0,
+            ),
+          ],
+        );
+      },
+    ).toList();
+  }
+
+  List<BarChartGroupData> getMonthlyBarGroups() {
+    final provider = Provider.of<DemandEnergyProvider>(context, listen: false);
+    // print('Monthly BarChart Data Extracting');
+    return List.generate(
+      1,
+      (index) {
+        return BarChartGroupData(
+          x: index,
+          barRods: [
+            BarChartRodData(
+              borderSide: BorderSide(color: blue),
+              // backDrawRodData: BackgroundBarChartRodData(
+              //   toY: provider.monthlyEnergyConsumed ?? 0 + 1000.0,
+              //   fromY: 0,
+              //   show: true,
+              //   gradient: const LinearGradient(
+              //     colors: [
+              //       Color.fromARGB(255, 200, 255, 247),
+              //       Color.fromARGB(255, 151, 255, 226)
+              //     ],
+              //   ),
+              // ),
+              gradient: const LinearGradient(
+                colors: [
+                  Color.fromARGB(255, 16, 81, 231),
+                  Color.fromARGB(255, 111, 150, 249)
+                ],
+              ),
+              width: candleWidth,
+              borderRadius: BorderRadius.circular(2),
+              toY: provider.monthlyEnergyConsumed ?? 0.0,
+            ),
+          ],
+        );
+      },
+    ).toList();
+  }
+
+  List<BarChartGroupData> getQuaterlyBarData() {
+    final provider = Provider.of<DemandEnergyProvider>(context, listen: false);
+    // print('Quaterly BarChart Data Extracting');
+    return List.generate(
+      4,
+      (index) {
+        return BarChartGroupData(
+          x: index,
+          barRods: [
+            BarChartRodData(
+              borderSide: BorderSide(color: blue),
+              // backDrawRodData: BackgroundBarChartRodData(
+              //   toY: 5000,
+              //   fromY: 0,
+              //   show: true,
+              //   gradient: const LinearGradient(
+              //     colors: [
+              //       Color.fromARGB(255, 200, 255, 247),
+              //       Color.fromARGB(255, 151, 255, 226)
+              //     ],
+              //   ),
+              // ),
+              gradient: const LinearGradient(
+                colors: [
+                  Color.fromARGB(255, 16, 81, 231),
+                  Color.fromARGB(255, 111, 150, 249)
+                ],
+              ),
+              width: candleWidth,
+              borderRadius: BorderRadius.circular(2),
+              toY: provider.quaterlyEnergyConsumedList?[index] ?? 0.0,
+            ),
+          ],
+        );
+      },
+    ).toList();
+  }
+
+  List<BarChartGroupData> getYearlyBarData() {
+    final provider = Provider.of<DemandEnergyProvider>(context, listen: false);
+
+    // print('Yearly BarChart Data Extracting');
+    return List.generate(
+      12,
+      (index) {
+        return BarChartGroupData(
+          x: index,
+          barRods: [
+            BarChartRodData(
+              borderSide: BorderSide(color: blue),
+              // backDrawRodData: BackgroundBarChartRodData(
+              //   toY: 5000,
+              //   fromY: 0,
+              //   show: true,
+              //   gradient: const LinearGradient(
+              //     colors: [
+              //       Color.fromARGB(
+              //         255,
+              //         200,
+              //         255,
+              //         247,
+              //       ),
+              //       Color.fromARGB(
+              //         255,
+              //         151,
+              //         255,
+              //         226,
+              //       )
+              //     ],
+              //   ),
+              // ),
+              gradient: const LinearGradient(
+                colors: [
+                  Color.fromARGB(255, 62, 116, 240),
+                  Color.fromARGB(255, 111, 150, 249)
+                ],
+              ),
+              width: candleWidth,
+              borderRadius: BorderRadius.circular(2),
+              toY: provider.yearlyEnergyConsumedList?[index] ?? 0.0,
             ),
           ],
         );

@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:web_appllication/MenuPage/project_planning.dart';
 import 'package:web_appllication/MenuPage/user.dart';
 import 'package:web_appllication/OverviewPages/ev_dashboard/ev_dashboard.dart';
-import 'package:web_appllication/OverviewPages/o&m_dashboard/o&m_dashboard_screen.dart';
 import 'package:web_appllication/OverviewPages/sidebar_nav/drawer_header.dart';
 import 'package:web_appllication/Planning/cities.dart';
-import 'package:web_appllication/screen/demand%20energy%20management/demand%20energy%20management/demandScreen.dart';
+import 'package:web_appllication/screen/demand%20energy%20management/demandScreen.dart';
 import 'package:web_appllication/style.dart';
 
 class NavigationPage extends StatefulWidget {
@@ -24,7 +21,7 @@ class _NavigationPageState extends State<NavigationPage> {
 
   List<String> pageNames = [
     'EV Dashboard Project',
-    'Demand Energy Dashboard',
+    'EV Bus Depot Management System',
     'Cities',
     'User'
   ];
@@ -46,7 +43,7 @@ class _NavigationPageState extends State<NavigationPage> {
             container = const EVDashboardScreen();
             break;
           case DrawerSection.oandmDashboard:
-            title = 'Demand Energy Dashboard';
+            title = 'EV Bus Depot Management System';
             container = const DemandEnergyScreen();
             break;
           case DrawerSection.cities:

@@ -11,7 +11,7 @@ class MyDrawerList extends StatefulWidget {
 class _MyDrawerListState extends State<MyDrawerList> {
   List<String> pageNames = [
     'EV Dashboard Project',
-    'Demand Energy Dashboard',
+    'EV Bus Depot Demand Energy Management',
     'Cities',
     'User'
   ];
