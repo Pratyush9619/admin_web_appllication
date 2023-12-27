@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
@@ -419,7 +420,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                     child: TextButton(
                                       onPressed: () {},
                                       child: Text(
-                                          'Project Duration \n ${value.duration} Days',
+                                          'Project Duration \n ${durationParse(value.startdate, value.endDate)} Days',
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                               fontWeight: FontWeight.w700,
@@ -434,7 +435,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                     child: TextButton(
                                       onPressed: () {},
                                       child: Text(
-                                          'Project Delay \n ${value.delay} Days ',
+                                          'Project Delay \n ${durationParse(value.actualDate, value.endDate)} Days ',
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                               fontWeight: FontWeight.w700,
@@ -454,10 +455,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
                                       radius: 20.0,
                                       lineWidth: 5.0,
                                       percent:
-                                          (value.perProgress.toInt()) / 100,
+                                          (value.perProgress.roundToDouble()) /
+                                              100,
                                       center: Text(
                                         // value.getName.toString(),
-                                        "${(value.perProgress.toInt())}% ",
+                                        "${(value.perProgress.roundToDouble())}% ",
 
                                         textAlign: TextAlign.center,
                                         style: captionWhite,
@@ -736,4 +738,10 @@ legends(Color color, String title, Color textColor) {
       ],
     ),
   );
+}
+
+int durationParse(String fromtime, String todate) {
+  DateTime startdate = DateFormat('dd-MM-yyyy').parse(fromtime);
+  DateTime enddate = DateFormat('dd-MM-yyyy').parse(todate);
+  return enddate.add(Duration(days: 1)).difference(startdate).inDays;
 }

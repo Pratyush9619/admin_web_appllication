@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:web_appllication/KeyEvents/upload.dart';
 import 'package:web_appllication/KeyEvents/view_AllFiles.dart';
 import '../components/loading_page.dart';
@@ -33,11 +35,12 @@ class KeyEvents2 extends StatefulWidget {
 }
 
 class _KeyEvents2State extends State<KeyEvents2> {
+  // ignore: non_constant_identifier_names
   late KeyDataSourceKeyEvents _KeyDataSourceKeyEvents;
   List<Employee> _employees = <Employee>[];
   late DataGridController _dataGridController;
-  ScrollController _verticalGridController = ScrollController();
-  ScrollController _dataGridScrollController = ScrollController();
+  final ScrollController _verticalGridController = ScrollController();
+  final ScrollController _dataGridScrollController = ScrollController();
 
   //  List<DataGridRow> dataGridRows = [];
   DataGridRow? dataGridRow;
@@ -60,10 +63,12 @@ class _KeyEvents2State extends State<KeyEvents2> {
   String? edate;
   String? asdate;
   String? aedate;
+  // ignore: prefer_typing_uninitialized_variables
   var alldata;
   bool _isLoading = true;
-  bool _isInit = true;
+
   int? length;
+  DateTime? closureDate = DateTime.now();
   List<GanttEventBase> ganttdata = [];
   List<String> startDate = [];
   List<String> endDate = [];
@@ -240,11 +245,13 @@ class _KeyEvents2State extends State<KeyEvents2> {
   List<String> allactualstart = [];
   List<String> allactualEnd = [];
   List<String> allsrNo = [];
+  DateTime? rangestartDate;
   double? totalPecProgress = 0.0;
   List<int> indicesToSkip = [0, 2, 6, 13, 18, 28, 32, 38, 64, 76];
   //[0, 2, 8, 12, 16, 27, 33, 39, 65, 76];
   ScrollController _scrollController = ScrollController();
-  final ScrollController _ganttChartController = ScrollController();
+  ScrollController _horizontalscrollController = ScrollController();
+
   double totalperc = 0.0;
   KeyProvider? _keyProvider;
 
@@ -254,6 +261,20 @@ class _KeyEvents2State extends State<KeyEvents2> {
 
     _KeyDataSourceKeyEvents = KeyDataSourceKeyEvents(_employees, context);
     _dataGridController = DataGridController();
+    FirebaseFirestore.instance
+        .collection('KeyEventsTable')
+        .doc(widget.depoName!)
+        .collection('KeyDataTable')
+        .doc(widget.userId)
+        .collection('ClosureDates')
+        .doc('keyEvents')
+        .get()
+        .then((value) {
+      String? date = value.data()!['ClosureDate'];
+      closureDate = DateFormat('dd-MM-yyyy').parse(date!);
+
+      setState(() {});
+    });
 
     yourstream = FirebaseFirestore.instance
         .collection('KeyEventsTable')
@@ -268,9 +289,6 @@ class _KeyEvents2State extends State<KeyEvents2> {
     _isLoading = false;
     _verticalGridController.addListener(() {
       _dataGridScrollController.jumpTo(_verticalGridController.offset);
-    });
-    _dataGridScrollController.addListener(() {
-      _verticalGridController.jumpTo(_dataGridScrollController.offset);
     });
     setState(() {});
 
@@ -418,6 +436,8 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                         )),
                                     child: SfDataGrid(
                                       source: _KeyDataSourceKeyEvents,
+                                      verticalScrollController:
+                                          _verticalGridController,
                                       onSelectionChanged:
                                           (addedRows, removedRows) {
                                         if (addedRows.first
@@ -473,7 +493,7 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                         ),
                                         GridColumn(
                                           columnName: 'Activity',
-                                          allowEditing: false,
+                                          allowEditing: true,
                                           width: 250,
                                           label: Container(
                                             padding: const EdgeInsets.symmetric(
@@ -676,7 +696,7 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                         ),
                                         GridColumn(
                                           columnName: 'Weightage',
-                                          allowEditing: false,
+                                          allowEditing: true,
                                           label: Container(
                                             alignment: Alignment.center,
                                             child: Text(
@@ -742,6 +762,8 @@ class _KeyEvents2State extends State<KeyEvents2> {
                           // int totalExecuted = 0;
 
                           double perc = 0.0;
+                          double percValue = 0.0;
+                          double progressValue = 0.0;
                           graphStartDate!.clear();
                           graphEndDate!.clear();
                           graphactualStartDate!.clear();
@@ -756,15 +778,17 @@ class _KeyEvents2State extends State<KeyEvents2> {
                             graphactualEndDate!
                                 .add(alldata[index]['ActualEnd']);
 
-                            if (indicesToSkip.contains(index)) {
+                            if (!indicesToSkip.contains(index)) {
                               int qtyExecuted = alldata[index]['QtyExecuted'];
                               double weightage = alldata[index]['Weightage'];
                               int scope = alldata[index]['QtyScope'];
                               allsrNo.add(alldata[index]['srNo']);
 
                               perc = ((qtyExecuted / scope) * weightage);
+                              // print('$index$perc');
                               double value = perc.isNaN ? 0.0 : perc;
                               totalperc = totalperc + value;
+                              // print(totalperc);
                             }
 
                             if (!indicesToSkip.contains(index)) {
@@ -893,6 +917,17 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                 allendDate.add(edate1!);
                                 allactualstart.add(asdate1!);
                                 allactualEnd.add(aedate1!);
+                                percValue = 1 /
+                                    100 *
+                                    ((executed / scope) * weightage * 100);
+
+                                // print(percValue);
+                                percValue = percValue.isNaN ? 0.0 : percValue;
+                                // progressValue = percValue.isNaN
+                                //     ? 0.0
+                                //     : percValue + progressValue;
+                                progressValue = progressValue + percValue;
+                                // print(progressValue);
                               }
 
                               List<DateTime> startDates = allstartDate
@@ -931,11 +966,12 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                   scope: totalScope,
                                   qtyExecuted: totalExecuted,
                                   balanceQty: totalbalanceQty,
-                                  percProgress: 0.5,
+                                  percProgress: progressValue,
                                   weightage: totalweightage));
                               allstartDate.clear();
                               allendDate.clear();
                               dates.clear();
+                              progressValue = 0.0;
                             } else if (index == 6) {
                               dynamic srNo = alldata[index]['srNo'];
                               // sdate1 = alldata[7]['StartDate'];
@@ -970,6 +1006,14 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                 allendDate.add(edate1!);
                                 allactualstart.add(asdate1!);
                                 allactualEnd.add(aedate1!);
+                                percValue = 1 /
+                                    100 *
+                                    ((executed / scope) * weightage * 100);
+
+                                // print(percValue);
+                                percValue = percValue.isNaN ? 0.0 : percValue;
+
+                                progressValue = progressValue + percValue;
                               }
                               List<DateTime> startDates = allstartDate
                                   .map((dateString) => DateFormat('dd-MM-yyyy')
@@ -1008,11 +1052,12 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                   scope: totalScope,
                                   qtyExecuted: totalExecuted,
                                   balanceQty: totalbalanceQty,
-                                  percProgress: 0.5,
+                                  percProgress: progressValue,
                                   weightage: totalweightage));
                               allstartDate.clear();
                               allendDate.clear();
                               dates.clear();
+                              progressValue = 0.0;
                             } else if (index == 13) {
                               dynamic srNo = alldata[index]['srNo'];
                               // sdate1 = alldata[13]['StartDate'];
@@ -1048,6 +1093,14 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                 allendDate.add(edate1!);
                                 allactualstart.add(asdate1!);
                                 allactualEnd.add(aedate1!);
+                                percValue = 1 /
+                                    100 *
+                                    ((executed / scope) * weightage * 100);
+
+                                // print(percValue);
+                                percValue = percValue.isNaN ? 0.0 : percValue;
+
+                                progressValue = progressValue + percValue;
                               }
                               List<DateTime> startDates = allstartDate
                                   .map((dateString) => DateFormat('dd-MM-yyyy')
@@ -1086,11 +1139,12 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                   scope: totalScope,
                                   qtyExecuted: totalExecuted,
                                   balanceQty: totalbalanceQty,
-                                  percProgress: 0.5,
+                                  percProgress: progressValue,
                                   weightage: totalweightage));
                               allstartDate.clear();
                               allendDate.clear();
                               dates.clear();
+                              progressValue = 0.0;
                             } else if (index == 18) {
                               dynamic srNo = alldata[index]['srNo'];
                               // sdate1 = alldata[17]['StartDate'];
@@ -1125,6 +1179,14 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                 allendDate.add(edate1!);
                                 allactualstart.add(asdate1!);
                                 allactualEnd.add(aedate1!);
+                                percValue = 1 /
+                                    100 *
+                                    ((executed / scope) * weightage * 100);
+
+                                // print(percValue);
+                                percValue = percValue.isNaN ? 0.0 : percValue;
+
+                                progressValue = progressValue + percValue;
                               }
                               List<DateTime> startDates = allstartDate
                                   .map((dateString) => DateFormat('dd-MM-yyyy')
@@ -1162,11 +1224,12 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                   scope: totalScope,
                                   qtyExecuted: totalExecuted,
                                   balanceQty: totalbalanceQty,
-                                  percProgress: 0.5,
+                                  percProgress: progressValue,
                                   weightage: totalweightage));
                               allstartDate.clear();
                               allendDate.clear();
                               dates.clear();
+                              progressValue = 0.0;
                             } else if (index == 28) {
                               dynamic srNo = alldata[index]['srNo'];
                               // sdate1 = alldata[28]['StartDate'];
@@ -1201,6 +1264,14 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                 totalScope = totalScope + scope;
                                 totalExecuted = totalExecuted + executed;
                                 totalbalanceQty = totalScope - totalExecuted;
+                                percValue = 1 /
+                                    100 *
+                                    ((executed / scope) * weightage * 100);
+
+                                // print(percValue);
+                                percValue = percValue.isNaN ? 0.0 : percValue;
+
+                                progressValue = progressValue + percValue;
                               }
                               List<DateTime> startDates = allstartDate
                                   .map((dateString) => DateFormat('dd-MM-yyyy')
@@ -1238,11 +1309,12 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                   scope: totalScope,
                                   qtyExecuted: totalExecuted,
                                   balanceQty: totalbalanceQty,
-                                  percProgress: 0.5,
+                                  percProgress: progressValue,
                                   weightage: totalweightage));
                               allstartDate.clear();
                               allendDate.clear();
                               dates.clear();
+                              progressValue = 0.0;
                             } else if (index == 32) {
                               dynamic srNo = alldata[index]['srNo'];
                               // sdate1 = alldata[34]['StartDate'];
@@ -1260,7 +1332,7 @@ class _KeyEvents2State extends State<KeyEvents2> {
                               int totalScope = 0;
                               int totalExecuted = 0;
                               int totalbalanceQty = 0;
-                              for (int i = 33; i < 37; i++) {
+                              for (int i = 33; i < 38; i++) {
                                 sdate1 = alldata[i]['StartDate'];
                                 edate1 = alldata[i]['EndDate'];
                                 asdate1 = alldata[i]['ActualStart'];
@@ -1278,6 +1350,14 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                 totalScope = totalScope + scope;
                                 totalExecuted = totalExecuted + executed;
                                 totalbalanceQty = totalScope - totalExecuted;
+                                percValue = 1 /
+                                    100 *
+                                    ((executed / scope) * weightage * 100);
+
+                                print(percValue);
+                                percValue = percValue.isNaN ? 0.0 : percValue;
+
+                                progressValue = progressValue + percValue;
                               }
                               List<DateTime> startDates = allstartDate
                                   .map((dateString) => DateFormat('dd-MM-yyyy')
@@ -1314,11 +1394,12 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                   scope: totalScope,
                                   qtyExecuted: totalExecuted,
                                   balanceQty: totalbalanceQty,
-                                  percProgress: 0.5,
+                                  percProgress: progressValue,
                                   weightage: totalweightage));
                               allstartDate.clear();
                               allendDate.clear();
                               dates.clear();
+                              progressValue = 0.0;
                             } else if (index == 38) {
                               dynamic srNo = alldata[index]['srNo'];
                               // sdate1 = alldata[40]['StartDate'];
@@ -1354,6 +1435,14 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                 totalScope = totalScope + scope;
                                 totalExecuted = totalExecuted + executed;
                                 totalbalanceQty = totalScope - totalExecuted;
+                                percValue = 1 /
+                                    100 *
+                                    ((executed / scope) * weightage * 100);
+
+                                print(percValue);
+                                percValue = percValue.isNaN ? 0.0 : percValue;
+
+                                progressValue = progressValue + percValue;
                               }
                               List<DateTime> startDates = allstartDate
                                   .map((dateString) => DateFormat('dd-MM-yyyy')
@@ -1391,11 +1480,12 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                   scope: totalScope,
                                   qtyExecuted: totalExecuted,
                                   balanceQty: totalbalanceQty,
-                                  percProgress: 0.5,
+                                  percProgress: progressValue,
                                   weightage: totalweightage));
                               allstartDate.clear();
                               allendDate.clear();
                               dates.clear();
+                              progressValue = 0.0;
                             } else if (index == 64) {
                               dynamic srNo = alldata[index]['srNo'];
                               // sdate1 = alldata[66]['StartDate'];
@@ -1430,6 +1520,14 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                 totalScope = totalScope + scope;
                                 totalExecuted = totalExecuted + executed;
                                 totalbalanceQty = totalScope - totalExecuted;
+                                percValue = 1 /
+                                    100 *
+                                    ((executed / scope) * weightage * 100);
+
+                                print(percValue);
+                                percValue = percValue.isNaN ? 0.0 : percValue;
+
+                                progressValue = progressValue + percValue;
                               }
                               List<DateTime> startDates = allstartDate
                                   .map((dateString) => DateFormat('dd-MM-yyyy')
@@ -1467,11 +1565,12 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                   scope: totalScope,
                                   qtyExecuted: totalExecuted,
                                   balanceQty: totalbalanceQty,
-                                  percProgress: 0.5,
+                                  percProgress: progressValue,
                                   weightage: totalweightage));
                               allstartDate.clear();
                               allendDate.clear();
                               dates.clear();
+                              progressValue = 0.0;
                             } else if (index == 76) {
                               dynamic srNo = alldata[index]['srNo'];
                               // sdate1 = alldata[77]['StartDate'];
@@ -1507,6 +1606,14 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                 totalScope = totalScope + scope;
                                 totalExecuted = totalExecuted + executed;
                                 totalbalanceQty = totalScope - totalExecuted;
+                                percValue = 1 /
+                                    100 *
+                                    ((executed / scope) * weightage * 100);
+
+                                print(percValue);
+                                percValue = percValue.isNaN ? 0.0 : percValue;
+
+                                progressValue = progressValue + percValue;
                               }
                               List<DateTime> startDates = allstartDate
                                   .map((dateString) => DateFormat('dd-MM-yyyy')
@@ -1544,11 +1651,12 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                   scope: totalScope,
                                   qtyExecuted: totalExecuted,
                                   balanceQty: totalbalanceQty,
-                                  percProgress: 0.5,
+                                  percProgress: progressValue,
                                   weightage: totalweightage));
                               allstartDate.clear();
                               allendDate.clear();
                               dates.clear();
+                              progressValue = 0.0;
                             }
                           });
                         }
@@ -1631,10 +1739,9 @@ class _KeyEvents2State extends State<KeyEvents2> {
                           } else {
                             ganttdata.add(GanttAbsoluteEvent(
                               suggestedColor: DateFormat('dd-MM-yyyy')
-                                      .parse(graphactualEndDate![i])
+                                      .parse(graphactualEndDate![k])
                                       .isBefore(DateFormat('dd-MM-yyyy')
-                                          .parse(graphEndDate![i])
-                                          .add(const Duration(days: 1)))
+                                          .parse(graphEndDate![k]))
                                   ? green
                                   : red,
                               displayNameBuilder: (context) {
@@ -1648,347 +1755,493 @@ class _KeyEvents2State extends State<KeyEvents2> {
                               //displayName: yAxis[i].toString()
                             ));
                           }
+                          k++;
                         }
 
-                        return SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.93,
-                            child: Row(children: [
-                              Expanded(
-                                child: SfDataGridTheme(
-                                  data: SfDataGridThemeData(
-                                      rowHoverColor: yellow,
-                                      rowHoverTextStyle: const TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 14,
-                                      )),
-                                  child: SfDataGrid(
-                                    source: _KeyDataSourceKeyEvents,
-                                    onSelectionChanged:
-                                        (addedRows, removedRows) {
-                                      if (addedRows.first
-                                              .getCells()
-                                              .first
-                                              .value ==
-                                          'A1') {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) {
-                                          return UploadDocument(
-                                            title: 'Key Events',
-                                            activity: addedRows.first
-                                                .getCells()[1]
-                                                .value,
-                                            cityName: widget.cityName,
-                                            depoName: widget.depoName,
-                                            userId: widget.userId,
-                                          );
-                                          //  ViewAllPdf(
-                                          //     userId: widget.userId,
-                                          //     cityName: widget.cityName!,
-                                          //     depoName: widget.depoName!,
-                                          //     title: 'Key Events',
-                                          //     docId: addedRows.first
-                                          //         .getCells()[1]
-                                          //         .value);
-                                        }));
-                                      }
-                                    },
-                                    // onCellTap:
-                                    //     (DataGridCellTapDetails details) {
-                                    //   final DataGridRow row =
-                                    //       _KeyDataSourceKeyEvents
-                                    //           .effectiveRows[details
-                                    //               .rowColumnIndex.rowIndex -
-                                    //           1];
+                        return Column(
+                          children: [
+                            SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.85,
+                                child: Row(children: [
+                                  Expanded(
+                                    child: SfDataGridTheme(
+                                      data: SfDataGridThemeData(
+                                          rowHoverColor: yellow,
+                                          rowHoverTextStyle: const TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 14,
+                                          )),
+                                      child: SfDataGrid(
+                                        source: _KeyDataSourceKeyEvents,
+                                        onSelectionChanged:
+                                            (addedRows, removedRows) {
+                                          if (addedRows.first
+                                                  .getCells()
+                                                  .first
+                                                  .value ==
+                                              'A1') {
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                    builder: (context) {
+                                              return UploadDocument(
+                                                title: 'Key Events',
+                                                activity: addedRows.first
+                                                    .getCells()[1]
+                                                    .value,
+                                                cityName: widget.cityName,
+                                                depoName: widget.depoName,
+                                                userId: widget.userId,
+                                              );
+                                              //  ViewAllPdf(
+                                              //     userId: widget.userId,
+                                              //     cityName: widget.cityName!,
+                                              //     depoName: widget.depoName!,
+                                              //     title: 'Key Events',
+                                              //     docId: addedRows.first
+                                              //         .getCells()[1]
+                                              //         .value);
+                                            }));
+                                          }
+                                        },
+                                        // onCellTap:
+                                        //     (DataGridCellTapDetails details) {
+                                        //   final DataGridRow row =
+                                        //       _KeyDataSourceKeyEvents
+                                        //           .effectiveRows[details
+                                        //               .rowColumnIndex.rowIndex -
+                                        //           1];
 
-                                    //   Navigator.of(context).push(
-                                    //       MaterialPageRoute(
-                                    //           builder: (context) {
-                                    //     if (row.getCells().first.value ==
-                                    //         'A1') {
-                                    //       return
-                                    //     }
-                                    //     // ignore: null_check_always_fails
-                                    //     return null!;
-                                    //   }));
-                                    // },
-                                    allowEditing: true,
-                                    frozenColumnsCount: 2,
-                                    editingGestureType: EditingGestureType.tap,
-                                    headerGridLinesVisibility:
-                                        GridLinesVisibility.both,
-                                    gridLinesVisibility:
-                                        GridLinesVisibility.both,
-                                    selectionMode: SelectionMode.single,
-                                    navigationMode: GridNavigationMode.cell,
-                                    columnWidthMode: ColumnWidthMode.auto,
-                                    controller: _dataGridController,
-                                    verticalScrollController:
-                                        _verticalGridController,
-                                    verticalScrollPhysics:
-                                        AlwaysScrollableScrollPhysics(),
-                                    rowHeight: 55,
-                                    columns: [
-                                      GridColumn(
-                                        columnName: 'srNo',
-                                        autoFitPadding:
-                                            const EdgeInsets.symmetric(
-                                                horizontal: 16),
-                                        allowEditing: false,
-                                        width: 60,
-                                        label: Container(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            'Sr No',
-                                            overflow: TextOverflow.values.first,
-                                            style: tableheader,
+                                        //   Navigator.of(context).push(
+                                        //       MaterialPageRoute(
+                                        //           builder: (context) {
+                                        //     if (row.getCells().first.value ==
+                                        //         'A1') {
+                                        //       return
+                                        //     }
+                                        //     // ignore: null_check_always_fails
+                                        //     return null!;
+                                        //   }));
+                                        // },
+                                        allowEditing: true,
+                                        frozenColumnsCount: 2,
+                                        editingGestureType:
+                                            EditingGestureType.tap,
+                                        headerGridLinesVisibility:
+                                            GridLinesVisibility.both,
+                                        gridLinesVisibility:
+                                            GridLinesVisibility.both,
+                                        selectionMode: SelectionMode.single,
+                                        navigationMode: GridNavigationMode.cell,
+                                        columnWidthMode: ColumnWidthMode.auto,
+                                        controller: _dataGridController,
+                                        verticalScrollController:
+                                            _verticalGridController,
 
-                                            //    textAlign: TextAlign.center,
+                                        rowHeight: 55,
+                                        columns: [
+                                          GridColumn(
+                                            columnName: 'srNo',
+                                            autoFitPadding:
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 16),
+                                            allowEditing: false,
+                                            width: 60,
+                                            label: Container(
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                'Sr No',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                style: tableheader,
+
+                                                //    textAlign: TextAlign.center,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      GridColumn(
-                                        columnName: 'Activity',
-                                        width: 250,
-                                        allowEditing: false,
-                                        label: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16.0),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            'Activity',
-                                            overflow: TextOverflow.values.first,
-                                            textAlign: TextAlign.center,
-                                            style: tableheader,
+                                          GridColumn(
+                                            columnName: 'Activity',
+                                            width: 250,
+                                            allowEditing: false,
+                                            label: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16.0),
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                'Activity',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                textAlign: TextAlign.center,
+                                                style: tableheader,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      GridColumn(
-                                        columnName: 'OriginalDuration',
-                                        width: 80,
-                                        allowEditing: false,
-                                        label: Container(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            'Original Duration',
-                                            overflow: TextOverflow.values.first,
-                                            textAlign: TextAlign.center,
-                                            style: tableheader,
+                                          GridColumn(
+                                            columnName: 'OriginalDuration',
+                                            width: 80,
+                                            allowEditing: false,
+                                            label: Container(
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                'Original Duration',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                textAlign: TextAlign.center,
+                                                style: tableheader,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      GridColumn(
-                                        columnName: 'StartDate',
-                                        allowEditing: false,
-                                        width: 150,
-                                        label: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16.0),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            'Start Date',
-                                            overflow: TextOverflow.values.first,
-                                            textAlign: TextAlign.center,
-                                            style: tableheader,
+                                          GridColumn(
+                                            columnName: 'StartDate',
+                                            allowEditing: false,
+                                            width: 150,
+                                            label: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16.0),
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                'Start Date',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                textAlign: TextAlign.center,
+                                                style: tableheader,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      GridColumn(
-                                        columnName: 'EndDate',
-                                        allowEditing: false,
-                                        label: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16.0),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            textAlign: TextAlign.center,
-                                            'End  Date',
-                                            overflow: TextOverflow.values.first,
-                                            style: tableheader,
+                                          GridColumn(
+                                            columnName: 'EndDate',
+                                            allowEditing: false,
+                                            label: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16.0),
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                textAlign: TextAlign.center,
+                                                'End  Date',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                style: tableheader,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      GridColumn(
-                                        columnName: 'ActualStart',
-                                        allowEditing: false,
-                                        label: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16.0),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            'Actual Start',
-                                            overflow: TextOverflow.values.first,
-                                            textAlign: TextAlign.center,
-                                            style: tableheader,
+                                          GridColumn(
+                                            columnName: 'ActualStart',
+                                            allowEditing: false,
+                                            label: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16.0),
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                'Actual Start',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                textAlign: TextAlign.center,
+                                                style: tableheader,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      GridColumn(
-                                        columnName: 'ActualEnd',
-                                        allowEditing: false,
-                                        label: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16.0),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            textAlign: TextAlign.center,
-                                            'Actual End',
-                                            overflow: TextOverflow.values.first,
-                                            style: tableheader,
+                                          GridColumn(
+                                            columnName: 'ActualEnd',
+                                            allowEditing: false,
+                                            label: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16.0),
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                textAlign: TextAlign.center,
+                                                'Actual End',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                style: tableheader,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      GridColumn(
-                                        columnName: 'ActualDuration',
-                                        allowEditing: false,
-                                        width: 80,
-                                        label: Container(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            'Actual Duration',
-                                            overflow: TextOverflow.values.first,
-                                            textAlign: TextAlign.center,
-                                            style: tableheader,
+                                          GridColumn(
+                                            columnName: 'ActualDuration',
+                                            allowEditing: false,
+                                            width: 80,
+                                            label: Container(
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                'Actual Duration',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                textAlign: TextAlign.center,
+                                                style: tableheader,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      GridColumn(
-                                        columnName: 'Delay',
-                                        allowEditing: false,
-                                        label: Container(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            'Delay',
-                                            overflow: TextOverflow.values.first,
-                                            textAlign: TextAlign.center,
-                                            style: tableheader,
+                                          GridColumn(
+                                            columnName: 'Delay',
+                                            allowEditing: false,
+                                            label: Container(
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                'Delay',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                textAlign: TextAlign.center,
+                                                style: tableheader,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      // GridColumn(
-                                      //   columnName: 'ReasonDelay',
-                                      //   label: Container(
-                                      //     alignment: Alignment.center,
-                                      //     child: Text(
-                                      //       'ReasonDelay',
-                                      //       overflow:
-                                      //           TextOverflow.values.first,
-                                      //       style: tableheader,
-                                      //     ),
-                                      //   ),
-                                      // ),
-                                      GridColumn(
-                                        columnName: 'Unit',
-                                        label: Container(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            'Unit',
-                                            overflow: TextOverflow.values.first,
-                                            style: tableheader,
+                                          // GridColumn(
+                                          //   columnName: 'ReasonDelay',
+                                          //   label: Container(
+                                          //     alignment: Alignment.center,
+                                          //     child: Text(
+                                          //       'ReasonDelay',
+                                          //       overflow:
+                                          //           TextOverflow.values.first,
+                                          //       style: tableheader,
+                                          //     ),
+                                          //   ),
+                                          // ),
+                                          GridColumn(
+                                            columnName: 'Unit',
+                                            label: Container(
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                'Unit',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                style: tableheader,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      GridColumn(
-                                        columnName: 'QtyScope',
-                                        label: Container(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            'Oty as per scope',
-                                            textAlign: TextAlign.center,
-                                            overflow: TextOverflow.values.first,
-                                            style: tableheader,
+                                          GridColumn(
+                                            columnName: 'QtyScope',
+                                            label: Container(
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                'Oty as per scope',
+                                                textAlign: TextAlign.center,
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                style: tableheader,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      GridColumn(
-                                        columnName: 'QtyExecuted',
-                                        label: Container(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            'Qty executed',
-                                            overflow: TextOverflow.values.first,
-                                            style: tableheader,
+                                          GridColumn(
+                                            columnName: 'QtyExecuted',
+                                            label: Container(
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                'Qty executed',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                style: tableheader,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      GridColumn(
-                                        columnName: 'BalancedQty',
-                                        allowEditing: false,
-                                        label: Container(
-                                          width: 150,
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            'Balanced Qty',
-                                            overflow: TextOverflow.values.first,
-                                            style: tableheader,
+                                          GridColumn(
+                                            columnName: 'BalancedQty',
+                                            allowEditing: false,
+                                            label: Container(
+                                              width: 150,
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                'Balanced Qty',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                style: tableheader,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      GridColumn(
-                                        columnName: 'Progress',
-                                        allowEditing: false,
-                                        label: Container(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            '% of Progress',
-                                            overflow: TextOverflow.values.first,
-                                            textAlign: TextAlign.center,
-                                            style: tableheader,
+                                          GridColumn(
+                                            columnName: 'Progress',
+                                            allowEditing: false,
+                                            label: Container(
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                '% of Progress',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                textAlign: TextAlign.center,
+                                                style: tableheader,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      GridColumn(
-                                        columnName: 'Weightage',
-                                        allowEditing: false,
-                                        label: Container(
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            'Weightage',
-                                            overflow: TextOverflow.values.first,
-                                            textAlign: TextAlign.center,
-                                            style: tableheader,
+                                          GridColumn(
+                                            columnName: 'Weightage',
+                                            allowEditing: false,
+                                            label: Container(
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                'Weightage',
+                                                overflow:
+                                                    TextOverflow.values.first,
+                                                textAlign: TextAlign.center,
+                                                style: tableheader,
+                                              ),
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       ),
+                                    ),
+                                  ),
+                                  Column(
+                                    children: [
+                                      SizedBox(
+                                          width: 450,
+                                          height: 63,
+                                          child: SingleChildScrollView(
+                                            child: GanttChartView(
+                                                scrollController:
+                                                    _horizontalscrollController,
+                                                maxDuration: null,
+
+                                                // const Duration(days: 30 * 2),
+                                                // optional, set to null for infinite horizontal scroll
+                                                startDate: dateTime, //required
+                                                dayWidth:
+                                                    35, //column width for each day
+                                                dayHeaderHeight: 37,
+                                                eventHeight:
+                                                    55, //row height for events
+                                                stickyAreaWidth:
+                                                    70, //sticky area width
+                                                showStickyArea:
+                                                    false, //show sticky area or not
+                                                showDays:
+                                                    true, //show days or not
+                                                startOfTheWeek: WeekDay
+                                                    .monday, //custom start of the week
+                                                weekHeaderHeight: 25,
+                                                weekEnds: const {
+                                                  // WeekDay.saturday,
+                                                  // WeekDay.sunday
+                                                }, //custom weekends
+                                                // isExtraHoliday: (context, day) {
+                                                //   //define custom holiday logic for each day
+                                                //   return DateUtils.isSameDay(
+                                                //       DateTime(2023, 7, 1), day);
+                                                // },
+                                                events: []),
+                                          )),
+                                      SizedBox(
+                                          width: 450,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.75,
+                                          child: SingleChildScrollView(
+                                            controller:
+                                                _dataGridScrollController,
+                                            child: GanttChartView(
+                                                scrollController:
+                                                    _scrollController,
+                                                maxDuration: null,
+
+                                                // const Duration(days: 30 * 2),
+                                                // optional, set to null for infinite horizontal scroll
+                                                startDate: dateTime, //required
+                                                dayWidth:
+                                                    35, //column width for each day
+                                                dayHeaderHeight: 0,
+                                                eventHeight:
+                                                    55, //row height for events
+                                                stickyAreaWidth:
+                                                    70, //sticky area width
+                                                showStickyArea:
+                                                    false, //show sticky area or not
+                                                showDays:
+                                                    false, //show days or not
+                                                startOfTheWeek: WeekDay
+                                                    .monday, //custom start of the week
+                                                weekHeaderHeight: 0,
+                                                weekEnds: const {
+                                                  // WeekDay.saturday,
+                                                  // WeekDay.sunday
+                                                }, //custom weekends
+                                                // isExtraHoliday: (context, day) {
+                                                //   //define custom holiday logic for each day
+                                                //   return DateUtils.isSameDay(
+                                                //       DateTime(2023, 7, 1), day);
+                                                // },
+                                                events: ganttdata),
+                                          )),
                                     ],
                                   ),
-                                ),
+                                ])),
+                            Container(
+                              width: 450,
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                    top: BorderSide(width: 2.0, color: blue),
+                                    right: BorderSide(width: 2.0, color: blue),
+                                    bottom: BorderSide(width: 2.0, color: blue),
+                                    left: BorderSide(width: 2.0, color: blue),
+                                  ),
+                                  shape: BoxShape.rectangle),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    'Select Project Closure Date :',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  IconButton(
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: const Text('choose Date'),
+                                            content: SizedBox(
+                                              width: 400,
+                                              height: 500,
+                                              child: SfDateRangePicker(
+                                                view: DateRangePickerView.month,
+                                                showTodayButton: false,
+                                                showActionButtons: true,
+                                                selectionMode:
+                                                    DateRangePickerSelectionMode
+                                                        .single,
+                                                onSelectionChanged:
+                                                    (DateRangePickerSelectionChangedArgs
+                                                        args) {
+                                                  if (args.value
+                                                      is PickerDateRange) {
+                                                    rangestartDate =
+                                                        args.value.startDate;
+                                                  }
+                                                },
+                                                onSubmit: (value) {
+                                                  setState(() {
+                                                    closureDate =
+                                                        DateTime.parse(
+                                                            value.toString());
+                                                    print(closureDate);
+                                                  });
+                                                  Navigator.pop(context);
+                                                },
+                                                onCancel: () {},
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      icon: const Icon(Icons.today)),
+                                  Text(
+                                    DateFormat('dd-MM-yyyy')
+                                        .format(closureDate!),
+                                    //  DateFormat.yMMMMd().format(closureDate!),
+                                    style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
                               ),
-                              SizedBox(
-                                  width: 450,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.93,
-                                  child: SingleChildScrollView(
-                                    controller: _dataGridScrollController,
-                                    child: GanttChartView(
-                                        // scrollController: _scrollController,
-                                        maxDuration: null,
-                                        // const Duration(days: 30 * 2),
-                                        // optional, set to null for infinite horizontal scroll
-                                        startDate: dateTime, //required
-                                        dayWidth:
-                                            35, //column width for each day
-                                        dayHeaderHeight: 35,
-                                        eventHeight: 55, //row height for events
-                                        stickyAreaWidth: 70, //sticky area width
-                                        showStickyArea:
-                                            true, //show sticky area or not
-                                        showDays: true, //show days or not
-                                        startOfTheWeek: WeekDay
-                                            .monday, //custom start of the week
-                                        weekHeaderHeight: 22,
-                                        weekEnds: const {
-                                          // WeekDay.saturday,
-                                          // WeekDay.sunday
-                                        }, //custom weekends
-                                        // isExtraHoliday: (context, day) {
-                                        //   //define custom holiday logic for each day
-                                        //   return DateUtils.isSameDay(
-                                        //       DateTime(2023, 7, 1), day);
-                                        // },
-                                        events: ganttdata),
-                                  ))
-                            ]));
+                            ),
+                          ],
+                        );
                       }
                     })));
 
@@ -2503,6 +2756,16 @@ class _KeyEvents2State extends State<KeyEvents2> {
   }
 
   void storeData() {
+    FirebaseFirestore.instance
+        .collection('KeyEventsTable')
+        .doc(widget.depoName!)
+        .collection('KeyDataTable')
+        .doc(widget.userId)
+        .collection('ClosureDates')
+        .doc('keyEvents')
+        // .collection(widget.userid!)
+        // .doc('${widget.depoName}${widget.keyEvents}')
+        .set({'ClosureDate': DateFormat('dd-MM-yyyy').format(closureDate!)});
     Map<String, dynamic> tableData = {};
     for (var i in _KeyDataSourceKeyEvents.dataGridRows) {
       for (var data in i.getCells()) {
@@ -2553,7 +2816,6 @@ class _KeyEvents2State extends State<KeyEvents2> {
           backgroundColor: blue,
         ));
       });
-
       tabledata2.clear();
     });
   }

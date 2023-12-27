@@ -275,10 +275,7 @@ class _DailyProjectState extends State<DailyProject> {
                                       child: Text('Date',
                                           overflow: TextOverflow.values.first,
                                           textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                              color: white)
+                                          style: columnStyle
                                           //    textAlign: TextAlign.center,
                                           ),
                                     ),
@@ -297,10 +294,7 @@ class _DailyProjectState extends State<DailyProject> {
                                       child: Text('SI No.',
                                           overflow: TextOverflow.values.first,
                                           textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                              color: white)
+                                          style: columnStyle
                                           //    textAlign: TextAlign.center,
                                           ),
                                     ),
@@ -378,10 +372,7 @@ class _DailyProjectState extends State<DailyProject> {
                                       alignment: Alignment.center,
                                       child: Text('Type of Activity',
                                           overflow: TextOverflow.values.first,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                              color: white)
+                                          style: columnStyle
                                           //    textAlign: TextAlign.center,
                                           ),
                                     ),
@@ -398,10 +389,7 @@ class _DailyProjectState extends State<DailyProject> {
                                       alignment: Alignment.center,
                                       child: Text('Activity Details',
                                           overflow: TextOverflow.values.first,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                              color: white)
+                                          style: columnStyle
                                           //    textAlign: TextAlign.center,
                                           ),
                                     ),
@@ -418,10 +406,7 @@ class _DailyProjectState extends State<DailyProject> {
                                       alignment: Alignment.center,
                                       child: Text('Progress',
                                           overflow: TextOverflow.values.first,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                              color: white)
+                                          style: columnStyle
                                           //    textAlign: TextAlign.center,
                                           ),
                                     ),
@@ -438,10 +423,7 @@ class _DailyProjectState extends State<DailyProject> {
                                       alignment: Alignment.center,
                                       child: Text('Remark / Status',
                                           overflow: TextOverflow.values.first,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                              color: white)
+                                          style: columnStyle
                                           //    textAlign: TextAlign.center,
                                           ),
                                     ),
@@ -458,10 +440,7 @@ class _DailyProjectState extends State<DailyProject> {
                                       alignment: Alignment.center,
                                       child: Text('View Image',
                                           overflow: TextOverflow.values.first,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                              color: white)
+                                          style: columnStyle
                                           //    textAlign: TextAlign.center,
                                           ),
                                     ),

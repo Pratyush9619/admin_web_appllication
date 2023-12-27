@@ -117,7 +117,7 @@ class DetailedEngSource extends DataGridSource {
       return Container(
         // color: getcolor(),
         alignment: Alignment.center,
-        padding: EdgeInsets.symmetric(horizontal: 20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: (dataGridCell.columnName == 'Delete')
             ? IconButton(
                 onPressed: () {
@@ -160,7 +160,10 @@ class DetailedEngSource extends DataGridSource {
                           //               ],
                           //             ))));
                         },
-                        child: const Text('Upload'));
+                        child: Text(
+                          'Upload',
+                          style: columnText,
+                        ));
                   })
                 : dataGridCell.columnName == 'ViewDrawing'
                     ? LayoutBuilder(builder:
@@ -390,7 +393,10 @@ class DetailedEngSource extends DataGridSource {
                                         },
                                         icon: const Icon(Icons.calendar_today),
                                       ),
-                                      Text(dataGridCell.value.toString()),
+                                      Text(
+                                        dataGridCell.value.toString(),
+                                        style: columnText,
+                                      ),
                                     ],
                                   )
                                 : (dataGridCell.columnName == 'ApproveDate') &&
@@ -484,7 +490,10 @@ class DetailedEngSource extends DataGridSource {
                                             icon: const Icon(
                                                 Icons.calendar_today),
                                           ),
-                                          Text(dataGridCell.value.toString()),
+                                          Text(
+                                            dataGridCell.value.toString(),
+                                            style: columnText,
+                                          ),
                                         ],
                                       )
                                     : (dataGridCell.columnName ==
@@ -555,8 +564,10 @@ class DetailedEngSource extends DataGridSource {
                                                 icon: const Icon(
                                                     Icons.calendar_today),
                                               ),
-                                              Text(dataGridCell.value
-                                                  .toString()),
+                                              Text(
+                                                dataGridCell.value.toString(),
+                                                style: columnText,
+                                              ),
                                             ],
                                           )
                                         // : dataGridCell.columnName == 'Title' &&
@@ -706,10 +717,9 @@ class DetailedEngSource extends DataGridSource {
                                         //                     child: Text(value),
                                         //                   );
                                         //                 }).toList())
-                                        : Text(
-                                            dataGridCell.value.toString(),
+                                        : Text(dataGridCell.value.toString(),
                                             textAlign: TextAlign.center,
-                                          ),
+                                            style: columnText),
       );
     }).toList());
   }

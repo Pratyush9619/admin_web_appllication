@@ -218,7 +218,7 @@ class _KeyEventsUserState extends State<KeyEventsUser> {
           for (int i = 0; i < alldata.length; i++) {
             print('skipe${indicesToSkip.contains(i)}');
 
-            if (indicesToSkip.contains(i)) {
+            if (!indicesToSkip.contains(i)) {
               qtyExecuted = alldata[i]['QtyExecuted'];
               weightage = alldata[i]['Weightage'];
               int scope = alldata[i]['QtyScope'];

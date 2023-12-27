@@ -737,10 +737,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         child: Text('SI No.',
                             overflow: TextOverflow.values.first,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)
+                            style: columnStyle
                             //    textAlign: TextAlign.center,
                             ),
                       ),
@@ -754,11 +751,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         padding: const EdgeInsets.all(8.0),
                         alignment: Alignment.center,
                         child: Text('Upload Drawing ',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)),
+                            textAlign: TextAlign.center, style: columnStyle),
                       ),
                     ),
                     GridColumn(
@@ -769,11 +762,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         padding: const EdgeInsets.all(8.0),
                         alignment: Alignment.center,
                         child: Text('View Drawing ',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)),
+                            textAlign: TextAlign.center, style: columnStyle),
                       ),
                     ),
                     GridColumn(
@@ -788,10 +777,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         child: Text('Description',
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.values.first,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)),
+                            style: columnStyle),
                       ),
                     ),
                     GridColumn(
@@ -806,10 +792,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         child: Text('Drawing Number',
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.values.first,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)
+                            style: columnStyle
                             //    textAlign: TextAlign.center,
                             ),
                       ),
@@ -825,10 +808,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         alignment: Alignment.center,
                         child: Text('Preparation Date',
                             overflow: TextOverflow.values.first,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)
+                            style: columnStyle
                             //    textAlign: TextAlign.center,
                             ),
                       ),
@@ -844,10 +824,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         alignment: Alignment.center,
                         child: Text('Submission Date',
                             overflow: TextOverflow.values.first,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)
+                            style: columnStyle
                             //    textAlign: TextAlign.center,
                             ),
                       ),
@@ -863,10 +840,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         alignment: Alignment.center,
                         child: Text('Approve Date',
                             overflow: TextOverflow.values.first,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)
+                            style: columnStyle
                             //    textAlign: TextAlign.center,
                             ),
                       ),
@@ -882,10 +856,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         alignment: Alignment.center,
                         child: Text('Release Date',
                             overflow: TextOverflow.values.first,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)
+                            style: columnStyle
                             //    textAlign: TextAlign.center,
                             ),
                       ),
@@ -902,10 +873,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         alignment: Alignment.center,
                         child: Text('Delete Row',
                             overflow: TextOverflow.values.first,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)
+                            style: columnStyle
                             //    textAlign: TextAlign.center,
                             ),
                       ),
@@ -1193,10 +1161,7 @@ class _DetailedEngtState extends State<DetailedEng>
                           child: Text('SI No.',
                               overflow: TextOverflow.values.first,
                               textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: white)
+                              style: columnStyle
                               //    textAlign: TextAlign.center,
                               ),
                         ),
@@ -1210,11 +1175,7 @@ class _DetailedEngtState extends State<DetailedEng>
                           padding: const EdgeInsets.all(8.0),
                           alignment: Alignment.center,
                           child: Text('Upload Drawing ',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: white)),
+                              textAlign: TextAlign.center, style: columnStyle),
                         ),
                       ),
                       GridColumn(
@@ -1225,11 +1186,7 @@ class _DetailedEngtState extends State<DetailedEng>
                           padding: const EdgeInsets.all(8.0),
                           alignment: Alignment.center,
                           child: Text('View Drawing ',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: white)),
+                              textAlign: TextAlign.center, style: columnStyle),
                         ),
                       ),
                       GridColumn(
@@ -1244,10 +1201,7 @@ class _DetailedEngtState extends State<DetailedEng>
                           child: Text('Description',
                               textAlign: TextAlign.center,
                               overflow: TextOverflow.values.first,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: white)),
+                              style: columnStyle),
                         ),
                       ),
                       GridColumn(
@@ -1262,10 +1216,7 @@ class _DetailedEngtState extends State<DetailedEng>
                           child: Text('Drawing Number',
                               textAlign: TextAlign.center,
                               overflow: TextOverflow.values.first,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: white)
+                              style: columnStyle
                               //    textAlign: TextAlign.center,
                               ),
                         ),
@@ -1281,10 +1232,7 @@ class _DetailedEngtState extends State<DetailedEng>
                           alignment: Alignment.center,
                           child: Text('Preparation Date',
                               overflow: TextOverflow.values.first,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: white)
+                              style: columnStyle
                               //    textAlign: TextAlign.center,
                               ),
                         ),
@@ -1300,10 +1248,7 @@ class _DetailedEngtState extends State<DetailedEng>
                           alignment: Alignment.center,
                           child: Text('Submission Date',
                               overflow: TextOverflow.values.first,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: white)
+                              style: columnStyle
                               //    textAlign: TextAlign.center,
                               ),
                         ),
@@ -1319,10 +1264,7 @@ class _DetailedEngtState extends State<DetailedEng>
                           alignment: Alignment.center,
                           child: Text('Approve Date',
                               overflow: TextOverflow.values.first,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: white)
+                              style: columnStyle
                               //    textAlign: TextAlign.center,
                               ),
                         ),
@@ -1338,10 +1280,7 @@ class _DetailedEngtState extends State<DetailedEng>
                           alignment: Alignment.center,
                           child: Text('Release Date',
                               overflow: TextOverflow.values.first,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: white)
+                              style: columnStyle
                               //    textAlign: TextAlign.center,
                               ),
                         ),
@@ -1358,10 +1297,7 @@ class _DetailedEngtState extends State<DetailedEng>
                           alignment: Alignment.center,
                           child: Text('Delete Row',
                               overflow: TextOverflow.values.first,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: white)
+                              style: columnStyle
                               //    textAlign: TextAlign.center,
                               ),
                         ),
@@ -1670,10 +1606,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         child: Text('SI No.',
                             overflow: TextOverflow.values.first,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)
+                            style: columnStyle
                             //    textAlign: TextAlign.center,
                             ),
                       ),
@@ -1687,11 +1620,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         padding: const EdgeInsets.all(8.0),
                         alignment: Alignment.center,
                         child: Text('Upload Drawing ',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)),
+                            textAlign: TextAlign.center, style: columnStyle),
                       ),
                     ),
                     GridColumn(
@@ -1702,11 +1631,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         padding: const EdgeInsets.all(8.0),
                         alignment: Alignment.center,
                         child: Text('View Drawing ',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)),
+                            textAlign: TextAlign.center, style: columnStyle),
                       ),
                     ),
                     GridColumn(
@@ -1721,10 +1646,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         child: Text('Description',
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.values.first,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)),
+                            style: columnStyle),
                       ),
                     ),
                     GridColumn(
@@ -1739,10 +1661,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         child: Text('Drawing Number',
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.values.first,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)
+                            style: columnStyle
                             //    textAlign: TextAlign.center,
                             ),
                       ),
@@ -1758,10 +1677,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         alignment: Alignment.center,
                         child: Text('Preparation Date',
                             overflow: TextOverflow.values.first,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)
+                            style: columnStyle
                             //    textAlign: TextAlign.center,
                             ),
                       ),
@@ -1777,10 +1693,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         alignment: Alignment.center,
                         child: Text('Submission Date',
                             overflow: TextOverflow.values.first,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)
+                            style: columnStyle
                             //    textAlign: TextAlign.center,
                             ),
                       ),
@@ -1796,10 +1709,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         alignment: Alignment.center,
                         child: Text('Approve Date',
                             overflow: TextOverflow.values.first,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)
+                            style: columnStyle
                             //    textAlign: TextAlign.center,
                             ),
                       ),
@@ -1815,10 +1725,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         alignment: Alignment.center,
                         child: Text('Release Date',
                             overflow: TextOverflow.values.first,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)
+                            style: columnStyle
                             //    textAlign: TextAlign.center,
                             ),
                       ),
@@ -1835,10 +1742,7 @@ class _DetailedEngtState extends State<DetailedEng>
                         alignment: Alignment.center,
                         child: Text('Delete Row',
                             overflow: TextOverflow.values.first,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: white)
+                            style: columnStyle
                             //    textAlign: TextAlign.center,
                             ),
                       ),

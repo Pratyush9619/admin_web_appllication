@@ -44,7 +44,7 @@ class _MyOverviewState extends State<MyOverview> {
     Icons.list_alt_outlined,
     Icons.electric_bike_rounded,
     Icons.text_snippet_outlined,
-    Icons.monitor_outlined,
+    // Icons.monitor_outlined,
   ];
   List imagedata = [
     'assets/overview_image/overview.png',
@@ -60,7 +60,7 @@ class _MyOverviewState extends State<MyOverview> {
     // 'assets/overview_image/testing_commissioning.png',
     'assets/overview_image/testing_commissioning.png',
     'assets/overview_image/closure_report.png',
-    'assets/overview_image/easy_monitoring.jpg',
+    // 'assets/overview_image/easy_monitoring.jpg',
     // 'assets/overview_image/overview.png',
     // 'assets/overview_image/project_planning.png',
     // 'assets/overview_image/resource.png',
@@ -89,7 +89,7 @@ class _MyOverviewState extends State<MyOverview> {
       'FQP Checklist for Civil,Electrical work & Quality Checklist',
       'Depot Insides',
       'Closure Report',
-      'Easy monitoring of O & M schedule for all the equipment of depots.',
+      // 'Easy monitoring of O & M schedule for all the equipment of depots.',
     ];
     pages = [
       DepotOverview(
