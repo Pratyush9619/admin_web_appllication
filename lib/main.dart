@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
         onGenerateRoute: RouteGenerator.generateRoute,
         debugShowCheckedModeBanner: false,
         title: 'TATA POWER CONTROL PANEL',
-        initialRoute: '/demand',
+        // initialRoute: '/demand',
         // routes: {
         //   // DashBoardScreen.id: (context) => SmallScreen(),
         //   MenuUserPage.id: (context) => const MenuUserPage(),
@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
         //   // "/user": (context) => User(),
         //   // "/shop": (context) => Shop(),
         //   // "/statistics": (context) => Stats(),
-        //   // "/settings": (context) => Settings()
+        //   // "/settings": (context) => Settings() .
         // },
 
         theme: ThemeData(

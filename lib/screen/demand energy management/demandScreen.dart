@@ -10,20 +10,21 @@ import 'package:web_appllication/screen/demand%20energy%20management/demand_tabl
 import 'package:web_appllication/style.dart';
 
 class DemandEnergyScreen extends StatefulWidget {
-  const DemandEnergyScreen({super.key});
+  bool showStartEndDatePanel;
+  DemandEnergyScreen({super.key, this.showStartEndDatePanel = false});
 
   @override
   State<DemandEnergyScreen> createState() => _DemandEnergyScreenState();
 }
 
 class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
-  double totalConsumedEnergy = 0;
   List<double> energyConsumedList = [];
   List<dynamic> timeIntervalList = [];
   List<dynamic> monthList = [];
   List<dynamic> dateList = [];
-  List<double> quaterlyEnergyConsumed = [];
-  List<double> yearlyEnergyConsumed = [];
+  List<double> quaterlyEnergyConsumedList = [];
+  List<double> yearlyEnergyConsumedList = [];
+  double totalEnergyConsumedQuaterly = 0;
 
   //Data table columns & rows
   List<String> columns = [
@@ -61,7 +62,6 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
     provider.setCurrentMonthFunction(getCurrentMonthData);
     provider.setQuaterlyFunction(getQuaterlyData);
     provider.setYearlyFunction(getYearlyData);
-    provider.setShowAlertWidget(showCustomAlert);
 
     return Scaffold(
       body: Row(
@@ -81,11 +81,9 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
           ),
           Expanded(
             child: BarGraphScreen(
-              energyConsumedQuaterlyList: quaterlyEnergyConsumed,
-              totalConsumedEnergy: totalConsumedEnergy,
+              // energyConsumedQuaterlyList: quaterlyEnergyConsumedList,
               monthList: monthList,
-              // totalConsumedEnergy: totalConsumedEnergy,
-              energyConsumedList: energyConsumedList,
+              // energyConsumedList: energyConsumedList,
               timeIntervalList: timeIntervalList,
             ),
           )
@@ -106,6 +104,8 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
       energyConsumedList.clear();
       dateList.clear();
       print('Callback Called');
+
+      double maxEnergyConsumed = 0;
 
       final provider =
           Provider.of<DemandEnergyProvider>(context, listen: false);
@@ -142,16 +142,19 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
         for (var user in userData) {
           List<dynamic> row = [];
           timeIntervalList.add(user['timeInterval']);
-          energyConsumedList.add(user['enrgyConsumed']);
+          energyConsumedList.add(user['energyConsumed']);
+          maxEnergyConsumed = maxEnergyConsumed +
+              double.parse(user['energyConsumed'].toString());
           row.add(user['srNo']);
           row.add(selectedCityName);
           row.add(selectedDepoName);
-          row.add(user['enrgyConsumed']);
+          row.add(user['energyConsumed']);
           rows.add(row);
         }
       }
 
       provider.setDailyConsumedList(energyConsumedList);
+      provider.setMaxEnergyConsumed(maxEnergyConsumed);
 
       print('Rows - $rows');
 
@@ -169,7 +172,9 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
       timeIntervalList.clear();
       energyConsumedList.clear();
       dateList.clear();
-      totalConsumedEnergy = 0;
+
+      double totalConsumedEnergyMonthly = 0;
+
       final selectedDepoName =
           Provider.of<DemandEnergyProvider>(context, listen: false)
               .selectedDepo;
@@ -220,28 +225,29 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
             timeIntervalList
                 .add(userData[j]['timeInterval']); // Adding Time interval
             energyConsumedList
-                .add(userData[j]['enrgyConsumed']); // Adding Energy Consumed
+                .add(userData[j]['energyConsumed']); // Adding Energy Consumed
             row.add(userData[j]['srNo']); // Adding Serial Numbers for table
             row.add(selectedCityName);
             row.add(selectedDepoName);
-            row.add(userData[j]['enrgyConsumed']); //Adding energy consumed
-            totalConsumedEnergy = totalConsumedEnergy +
-                double.parse(userData[j]['enrgyConsumed'].toString());
+            row.add(userData[j]['energyConsumed']); //Adding energy consumed
+            totalConsumedEnergyMonthly = totalConsumedEnergyMonthly +
+                double.parse(userData[j]['energyConsumed'].toString());
             rows.add(row);
           }
 
+          // ignore: use_build_context_synchronously
           Provider.of<DemandEnergyProvider>(context, listen: false)
-              .setMonthlyEnergyConsumed(totalConsumedEnergy);
+              .setMonthlyEnergyConsumed(totalConsumedEnergyMonthly);
 
           // print('monthly rows - $rows');
           // for (var user in userData) {
           //   List<dynamic> row = [];
           //   timeIntervalList.add(user['timeInterval']);
-          //   energyConsumedList.add(user['enrgyConsumed']);
+          //   energyConsumedList.add(user['energyConsumed']);
           //   row.add(user['srNo']);
           //   row.add(selectedCityName);
           //   row.add(selectedDepoName);
-          //   row.add(user['enrgyConsumed']);
+          //   row.add(user['energyConsumed']);
           //   rows.add(row);
           // }
         }
@@ -262,7 +268,6 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
       timeIntervalList.clear();
       energyConsumedList.clear();
       dateList.clear();
-      totalConsumedEnergy = 0;
       final provider =
           Provider.of<DemandEnergyProvider>(context, listen: false);
 
@@ -327,12 +332,22 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
       energyConsumedInDecember = await fetchMonthlyData(collectionReference,
           decemberDates, energyConsumedInDecember, 'December');
 
-      quaterlyEnergyConsumed.add(energyConsumedInMarch);
-      quaterlyEnergyConsumed.add(energyConsumedInJune);
-      quaterlyEnergyConsumed.add(energyConsumedInSeptember);
-      quaterlyEnergyConsumed.add(energyConsumedInDecember);
+      dateList = marchDates + juneDates + septemberDates + decemberDates;
 
-      provider.setQuaterlyConsumedList(quaterlyEnergyConsumed);
+      quaterlyEnergyConsumedList.add(energyConsumedInMarch);
+      quaterlyEnergyConsumedList.add(energyConsumedInJune);
+      quaterlyEnergyConsumedList.add(energyConsumedInSeptember);
+      quaterlyEnergyConsumedList.add(energyConsumedInDecember);
+
+      provider.setQuaterlyConsumedList(quaterlyEnergyConsumedList);
+
+      totalEnergyConsumedQuaterly = energyConsumedInMarch +
+          energyConsumedInJune +
+          energyConsumedInSeptember +
+          energyConsumedInDecember;
+
+//Setting Maximum energy consumed quaterly
+      provider.setMaxEnergyConsumed(totalEnergyConsumedQuaterly);
 
       print(
           'QuaterlyData - $energyConsumedInMarch, $energyConsumedInJune, $energyConsumedInSeptember, $energyConsumedInDecember');
@@ -341,11 +356,8 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
     }
   }
 
-  Future<double> fetchMonthlyData(
-      CollectionReference collectionReference,
-      List<dynamic> dates,
-      double totalEnergyConsumedInMonth,
-      String month) async {
+  Future<double> fetchMonthlyData(CollectionReference collectionReference,
+      List<dynamic> dates, double totalEnergyConsumed, String month) async {
     for (int i = 0; i < dates.length; i++) {
       final provider =
           Provider.of<DemandEnergyProvider>(context, listen: false);
@@ -380,8 +392,8 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
         List<dynamic> userData = mapData['data'];
 
         for (var map in userData) {
-          totalEnergyConsumedInMonth = totalEnergyConsumedInMonth +
-              double.parse(map['enrgyConsumed'].toString());
+          totalEnergyConsumed = totalEnergyConsumed +
+              double.parse(map['energyConsumed'].toString());
 
           List<dynamic> row = [];
 
@@ -389,14 +401,12 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
           row.add(map['srNo']); // Adding Serial Numbers for table
           row.add(selectedCityName);
           row.add(selectedDepoName);
-          row.add(map['enrgyConsumed']); //Adding energy consumed
-          totalConsumedEnergy = totalConsumedEnergy +
-              double.parse(map['enrgyConsumed'].toString());
+          row.add(map['energyConsumed']); //Adding energy consumed
           rows.add(row);
         }
       }
     }
-    return totalEnergyConsumedInMonth;
+    return totalEnergyConsumed;
   }
 
   Future<void> getYearlyData() async {
@@ -406,11 +416,12 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
       timeIntervalList.clear();
       energyConsumedList.clear();
       dateList.clear();
-      totalConsumedEnergy = 0;
       final provider =
           Provider.of<DemandEnergyProvider>(context, listen: false);
 
       final selectedDepoName = provider.selectedDepo;
+
+      double totalEnergyConsumedYearly = 0;
 
       CollectionReference collectionReference = FirebaseFirestore.instance
           .collection('EnergyManagementTable')
@@ -448,63 +459,16 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
         energyConsumed = await fetchMonthlyData(
             collectionReference, marchDates, energyConsumed, yearlyMonths[i]);
 
-        yearlyEnergyConsumed.add(energyConsumed);
+        totalEnergyConsumedYearly = totalEnergyConsumedYearly + energyConsumed;
+
+        yearlyEnergyConsumedList.add(energyConsumed);
       }
 
-      provider.setYearlyConsumedList(yearlyEnergyConsumed);
+      provider.setYearlyConsumedList(yearlyEnergyConsumedList);
+      provider.setMaxEnergyConsumed(totalEnergyConsumedYearly);
     } catch (error) {
       print('Error Occured in Fetching Yearly Data - $error');
     }
-  }
-
-  Future<void> showCustomAlert() async {
-    await showDialog(
-        context: context,
-        builder: (context) {
-          return Dialog(
-            child: Container(
-              width: 300,
-              height: 170,
-              child: Column(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    child: const Icon(
-                      Icons.warning,
-                      color: Color.fromARGB(255, 240, 222, 67),
-                      size: 80,
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 20),
-                    child: const Text(
-                      'Please Select a Depot First',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 80,
-                    height: 30,
-                    margin: const EdgeInsets.all(5),
-                    child: ElevatedButton(
-                        style: ButtonStyle(
-                            backgroundColor: MaterialStatePropertyAll(blue)),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text(
-                          'OK',
-                          style: TextStyle(fontSize: 10),
-                        )),
-                  )
-                ],
-              ),
-            ),
-          );
-        });
   }
 
   void getStartEndDate() {

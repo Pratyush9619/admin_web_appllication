@@ -43,7 +43,7 @@ class RouteGenerator {
 
       case '/demand':
         return MaterialPageRoute(
-          builder: (_) => const DemandEnergyScreen(),
+          builder: (_) => DemandEnergyScreen(),
         );
 
       case '/cities':

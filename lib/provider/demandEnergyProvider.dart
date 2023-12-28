@@ -32,6 +32,9 @@ class DemandEnergyProvider extends ChangeNotifier {
   List<double>? _yearlyEnergyConsumedList;
   List<double>? get yearlyEnergyConsumedList => _yearlyEnergyConsumedList;
 
+  double? _maxEnergyConsumed;
+  double? get maxEnergyConsumed => _maxEnergyConsumed;
+
   Future<dynamic> Function()? _getCurrentDayData;
   Future<dynamic> Function()? get getCurrentDayData => _getCurrentDayData;
 
@@ -49,6 +52,10 @@ class DemandEnergyProvider extends ChangeNotifier {
 
   bool _isLoadingBarCandle = false;
   bool get isLoadingBarCandle => _isLoadingBarCandle;
+
+  void setMaxEnergyConsumed(double value) {
+    _maxEnergyConsumed = value;
+  }
 
   void reloadWidget(bool value) {
     _loadWidget = value;
@@ -88,45 +95,41 @@ class DemandEnergyProvider extends ChangeNotifier {
   }
 
   void setSelectedIndex(int value) async {
-    if (selectedDepo.isNotEmpty) {
-      _selectedIndex = value;
-      print('Provider Selected Index: $value');
+    _selectedIndex = value;
+    print('Provider Selected Index: $value');
 
-      switch (value) {
-        case 0:
-          await getCurrentDayData!();
-          _isLoadingBarCandle = false;
+    switch (value) {
+      case 0:
+        await getCurrentDayData!();
+        _isLoadingBarCandle = false;
 
-          print('Current Day Data fetched from provider');
-          break;
-        case 1:
-          await getCurrentMonthData!();
-          _isLoadingBarCandle = false;
+        print('Current Day Data fetched from provider');
+        break;
+      case 1:
+        await getCurrentMonthData!();
+        _isLoadingBarCandle = false;
 
-          print('Current Month Data fetched from provider');
+        print('Current Month Data fetched from provider');
 
-          break;
-        case 2:
-          await getQuaterlyData!();
-          _isLoadingBarCandle = false;
+        break;
+      case 2:
+        await getQuaterlyData!();
+        _isLoadingBarCandle = false;
 
-          print('Quaterly Data fetched from provider');
+        print('Quaterly Data fetched from provider');
 
-          break;
-        case 3:
-          await getYearlyData!();
-          _isLoadingBarCandle = false;
+        break;
+      case 3:
+        await getYearlyData!();
+        _isLoadingBarCandle = false;
 
-          print('Yearly Day Data fetched from provider');
-          break;
+        print('Yearly Day Data fetched from provider');
+        break;
 
-        default:
-          break;
-      }
-      notifyListeners();
-    } else {
-      showAlertWidget();
+      default:
+        break;
     }
+    notifyListeners();
   }
 
   void setCurrentDayFunction(Future<dynamic> Function()? value) {
