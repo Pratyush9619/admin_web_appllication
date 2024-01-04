@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:web_appllication/provider/All_Depo_Select_Provider.dart';
 import 'package:web_appllication/provider/demandEnergyProvider.dart';
 import 'package:web_appllication/style.dart';
 
@@ -33,7 +34,12 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
   );
 
   List<String> choiceChipLabels = ['Day', 'Monthly', 'Quaterly', 'Yearly'];
-  List<String> quaterlyMonths = ['Mar', 'Jun', 'Sep', 'Dec'];
+  List<String> quaterlyMonths = [
+    'Jan - Mar',
+    'Apr - Jun',
+    'Jul - Sep',
+    'Oct - Dec'
+  ];
   List<String> yearlyMonths = [
     'Jan',
     'Feb',
@@ -49,11 +55,13 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
     'Dec'
   ];
 
-  final double candleWidth = 25;
+  final double candleWidth = 20;
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<DemandEnergyProvider>(context, listen: false);
+    final allDepoProvider =
+        Provider.of<AllDepoSelectProvider>(context, listen: false);
 
     return Material(
       child: Column(
@@ -105,7 +113,9 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                                       ? (_) {}
                                       : (value) {
                                           if (provider
-                                              .selectedDepo.isNotEmpty) {
+                                                  .selectedDepo.isNotEmpty ||
+                                              allDepoProvider.isChecked ==
+                                                  true) {
                                             switch (index) {
                                               case 0:
                                                 _selectedIndex = 0;
@@ -134,7 +144,8 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                                             resetChoiceChip(index);
                                             providerValue.reloadWidget(true);
                                             providerValue.setSelectedIndex(
-                                                _selectedIndex);
+                                                _selectedIndex,
+                                                allDepoProvider.isChecked);
                                           } else {
                                             showCustomAlert();
                                           }
@@ -168,7 +179,7 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                     //   255,
                     // ),
                     barTouchData: BarTouchData(
-                      enabled: false,
+                      enabled: true,
                       touchTooltipData: BarTouchTooltipData(
                         tooltipRoundedRadius: 5,
                         tooltipBgColor: Colors.transparent,
@@ -177,24 +188,49 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                     ),
                     maxY: (provider.maxEnergyConsumed ?? 0.0) + 5000,
                     minY: 0,
-
                     titlesData: FlTitlesData(
                       bottomTitles: AxisTitles(
                         sideTitles: SideTitles(
+                          reservedSize: 80,
                           showTitles: true,
                           getTitlesWidget: (value, meta) {
-                            return Text(
-                              provider.selectedIndex == 1
-                                  ? widget.monthList[value.toInt()]
-                                  : provider.selectedIndex == 2
-                                      ? quaterlyMonths[value.toInt()]
-                                      : provider.selectedIndex == 3
-                                          ? yearlyMonths[value.toInt()]
-                                          : widget
-                                              .timeIntervalList[value.toInt()],
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
+                            return Container(
+                              margin: EdgeInsets.only(top: 40),
+                              padding:
+                                  const EdgeInsets.only(right: 20.0, top: 20),
+                              child: Transform.rotate(
+                                alignment: Alignment.center,
+                                angle: 30.2,
+                                child: Container(
+                                  // margin:
+                                  // const EdgeInsets.only(right: 80, top: 50),
+                                  child: Text(
+                                    allDepoProvider.isChecked == false
+                                        ? provider.selectedIndex == 1
+                                            ? widget.monthList[value.toInt()]
+                                            : provider.selectedIndex == 2
+                                                ? quaterlyMonths[value.toInt()]
+                                                : provider.selectedIndex == 3
+                                                    ? yearlyMonths[
+                                                        value.toInt()]
+                                                    : widget.timeIntervalList[
+                                                        value.toInt()]
+                                        : provider.selectedIndex == 0
+                                            ? provider.depoList![value.toInt()]
+                                            : provider.selectedIndex == 2
+                                                ? quaterlyMonths[value.toInt()]
+                                                : provider.selectedIndex == 3
+                                                    ? yearlyMonths[
+                                                        value.toInt()]
+                                                    : widget.monthList[
+                                                        value.toInt()],
+                                    textAlign: TextAlign.end,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ),
                               ),
                             );
                           },
@@ -210,7 +246,7 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                       ),
                     ),
                     gridData: FlGridData(
-                      show: false,
+                      show: true,
                       drawVerticalLine: false,
                       drawHorizontalLine: true,
                       checkToShowHorizontalLine: (value) => value % 1 == 0,
@@ -227,13 +263,22 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                         bottom: BorderSide(),
                       ),
                     ),
-                    barGroups: provider.selectedIndex == 1
-                        ? getMonthlyBarGroups()
-                        : provider.selectedIndex == 2
-                            ? getQuaterlyBarData()
-                            : provider.selectedIndex == 3
-                                ? getYearlyBarData()
-                                : getBarGroups(),
+                    barGroups: allDepoProvider.isChecked == false
+                        ? provider.selectedIndex == 1
+                            ? getMonthlyBarGroups()
+                            : provider.selectedIndex == 2
+                                ? getQuaterlyBarData()
+                                : provider.selectedIndex == 3
+                                    ? getYearlyBarData()
+                                    : getBarGroups()
+                        : provider.selectedIndex == 0
+                            ? getAllDepoDailyBarGroupData()
+                            : provider.selectedIndex == 1
+                                ? getAllDepoMonthlyBarGroupData(
+                                    provider.maxEnergyConsumed ?? 0)
+                                : provider.selectedIndex == 2
+                                    ? getAllDepoQuarterlyBarGroupData()
+                                    : getAllDepoYearlyBarGroupData(),
                   ),
                 );
               },
@@ -327,6 +372,100 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
               width: candleWidth,
               borderRadius: BorderRadius.circular(2),
               toY: provider.yearlyEnergyConsumedList?[index] ?? 0.0,
+            ),
+          ],
+        );
+      },
+    ).toList();
+  }
+
+  List<BarChartGroupData> getAllDepoDailyBarGroupData() {
+    final provider = Provider.of<DemandEnergyProvider>(context, listen: false);
+    // print('Daily BarChart Data Extracting');
+    return List.generate(
+      provider.allDepoDailyEnergyConsumedList!.isNotEmpty
+          ? provider.depoList?.length ?? 0
+          : 0,
+      (index) {
+        return BarChartGroupData(
+          // groupVertically: true,
+          showingTooltipIndicators: [0],
+          x: index,
+          barRods: [
+            BarChartRodData(
+              gradient: _barRodGradient,
+              width: candleWidth,
+              borderRadius: BorderRadius.circular(2),
+              toY: provider.allDepoDailyEnergyConsumedList?[index] ?? 0.0,
+            ),
+          ],
+        );
+      },
+    ).toList();
+  }
+
+  List<BarChartGroupData> getAllDepoMonthlyBarGroupData(
+      double? energyConsumed) {
+    return List.generate(
+      1,
+      (index) {
+        return BarChartGroupData(
+          // groupVertically: true,
+          showingTooltipIndicators: [0],
+          x: index,
+          barRods: [
+            BarChartRodData(
+              gradient: _barRodGradient,
+              width: candleWidth,
+              borderRadius: BorderRadius.circular(2),
+              toY: energyConsumed ?? 0.0,
+            ),
+          ],
+        );
+      },
+    ).toList();
+  }
+
+  List<BarChartGroupData> getAllDepoQuarterlyBarGroupData() {
+    final provider = Provider.of<DemandEnergyProvider>(context, listen: false);
+    // print('Daily BarChart Data Extracting');
+    return List.generate(
+      4,
+      (index) {
+        return BarChartGroupData(
+          // groupVertically: true,
+          showingTooltipIndicators: [0],
+          x: index,
+          barRods: [
+            BarChartRodData(
+              gradient: _barRodGradient,
+              width: candleWidth,
+              borderRadius: BorderRadius.circular(2),
+              toY: provider.allDepoQuaterlyEnergyConsumedList?[index] ?? 0.0,
+            ),
+          ],
+        );
+      },
+    ).toList();
+  }
+
+  List<BarChartGroupData> getAllDepoYearlyBarGroupData() {
+    final provider = Provider.of<DemandEnergyProvider>(context, listen: false);
+
+    // print('Daily BarChart Data Extracting');
+    return List.generate(
+      12,
+      (index) {
+        return BarChartGroupData(
+          // groupVertically: true,
+          showingTooltipIndicators: [0],
+          x: index,
+          barRods: [
+            BarChartRodData(
+              gradient: _barRodGradient,
+              width: candleWidth,
+              borderRadius: BorderRadius.circular(2),
+              toY: provider.allDepoYearlyEnergyConsumedList?[index] ?? 0.0,
             ),
           ],
         );

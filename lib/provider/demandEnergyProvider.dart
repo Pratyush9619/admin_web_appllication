@@ -32,8 +32,27 @@ class DemandEnergyProvider extends ChangeNotifier {
   List<double>? _yearlyEnergyConsumedList;
   List<double>? get yearlyEnergyConsumedList => _yearlyEnergyConsumedList;
 
+  List<double>? _allDepoDailyEnergyConsumedList;
+  List<double>? get allDepoDailyEnergyConsumedList =>
+      _allDepoDailyEnergyConsumedList;
+
+  List<double>? _allDepoMonthlyEnergyConsumedList;
+  List<double>? get allDepoMonthlyEnergyConsumedList =>
+      _allDepoMonthlyEnergyConsumedList;
+
+  List<double>? _allDepoQuaterlyEnergyConsumedList;
+  List<double>? get allDepoQuaterlyEnergyConsumedList =>
+      _allDepoQuaterlyEnergyConsumedList;
+
+  List<double>? _allDepoYearlyEnergyConsumedList;
+  List<double>? get allDepoYearlyEnergyConsumedList =>
+      _allDepoYearlyEnergyConsumedList;
+
   double? _maxEnergyConsumed;
   double? get maxEnergyConsumed => _maxEnergyConsumed;
+
+  List<dynamic>? _depoList;
+  List<dynamic>? get depoList => _depoList;
 
   Future<dynamic> Function()? _getCurrentDayData;
   Future<dynamic> Function()? get getCurrentDayData => _getCurrentDayData;
@@ -52,6 +71,79 @@ class DemandEnergyProvider extends ChangeNotifier {
 
   bool _isLoadingBarCandle = false;
   bool get isLoadingBarCandle => _isLoadingBarCandle;
+
+  Future<dynamic> Function()? _getAllDepoDailyData;
+  Future<dynamic> Function()? get getAllDepoDailyData => _getAllDepoDailyData;
+
+  Future<dynamic> Function()? _getAllDepoMonthlyData;
+  Future<dynamic> Function()? get getAllDepoMonthlyData =>
+      _getAllDepoMonthlyData;
+
+  Future<dynamic> Function()? _getAllDepoQuaterlyData;
+  Future<dynamic> Function()? get getAllDepoQuaterlyData =>
+      _getAllDepoQuaterlyData;
+
+  Future<dynamic> Function()? _getAllDepoYearlyData;
+  Future<dynamic> Function()? get getAllDepoYearlyData => _getAllDepoYearlyData;
+
+  void setAllDepoDailyData(Future<dynamic> Function()? value) {
+    _getAllDepoDailyData = value;
+  }
+
+  void setAllDepoMonthlyData(Future<dynamic> Function()? value) {
+    _getAllDepoMonthlyData = value;
+  }
+
+  void setAllDepoQuaterlyData(Future<dynamic> Function()? value) {
+    _getAllDepoQuaterlyData = value;
+  }
+
+  void setAllDepoYearlyData(Future<dynamic> Function()? value) {
+    _getAllDepoYearlyData = value;
+  }
+
+  // GlobalKey<AnimatedListState>? _globalKey;
+
+  // GlobalKey<AnimatedListState>? get globalKey => _globalKey;
+
+  // List<List<dynamic>>? _rows;
+
+  // List<List<dynamic>>? get rows => _rows;
+
+  // int _rowLength = 0;
+
+  // int get rowLength => _rowLength;
+
+  // void resetRowData() {
+  //   _rows!.clear();
+  //   _rows!.add(['SrNo.', 'CityName', 'DepoName', 'Energy\nConsumed']);
+  //   for (int i = 0; i < _rows!.length; i++) {
+  //     _globalKey!.currentState!.removeItem(
+  //       i,
+  //       (context, animation) => Container(),
+  //     );
+  //     print('itemRemoved - $i');
+  //   }
+  //   _rowLength = 1;
+  // }
+
+  // void setRowHeaders() {
+  //   _rows = [
+  //     ['SrNo.', 'CityName', 'DepoName', 'Energy\nConsumed'],
+  //   ];
+  // }
+
+  // void setRowLength(int value) {
+  //   _rowLength = value;
+  // }
+
+  // void setGlobalKey(GlobalKey<AnimatedListState> value) {
+  //   _globalKey = value;
+  // }
+
+  void setDepoList(List<dynamic> value) {
+    _depoList = value;
+  }
 
   void setMaxEnergyConsumed(double value) {
     _maxEnergyConsumed = value;
@@ -74,6 +166,22 @@ class DemandEnergyProvider extends ChangeNotifier {
     _yearlyEnergyConsumedList = value;
   }
 
+  void setAllDepoDailyConsumedList(List<double> value) {
+    _allDepoDailyEnergyConsumedList = value;
+  }
+
+  void setAllDepoMonthlyConsumedList(List<double> value) {
+    _allDepoMonthlyEnergyConsumedList = value;
+  }
+
+  void setAllDepoQuaterlyConsumedList(List<double> value) {
+    _allDepoQuaterlyEnergyConsumedList = value;
+  }
+
+  void setAllDepoYearlyConsumedList(List<double> value) {
+    _allDepoYearlyEnergyConsumedList = value;
+  }
+
   void setLoadingBarCandle(bool value) {
     _isLoadingBarCandle = value;
   }
@@ -94,41 +202,69 @@ class DemandEnergyProvider extends ChangeNotifier {
     _endDate = value;
   }
 
-  void setSelectedIndex(int value) async {
+  void setSelectedIndex(int value, bool isAllDepoChecked) async {
     _selectedIndex = value;
-    print('Provider Selected Index: $value');
 
-    switch (value) {
-      case 0:
-        await getCurrentDayData!();
-        _isLoadingBarCandle = false;
+    if (isAllDepoChecked) {
+      switch (value) {
+        case 0:
+          await getAllDepoDailyData!();
+          _isLoadingBarCandle = false;
+          print('All Depo Daily Data fetched from provider');
 
-        print('Current Day Data fetched from provider');
-        break;
-      case 1:
-        await getCurrentMonthData!();
-        _isLoadingBarCandle = false;
+          break;
+        case 1:
+          await getAllDepoMonthlyData!();
+          _isLoadingBarCandle = false;
+          print('All Depo Monthly Day Data fetched from provider');
 
-        print('Current Month Data fetched from provider');
+          break;
+        case 2:
+          await getAllDepoQuaterlyData!();
+          _isLoadingBarCandle = false;
+          print('All Depo Quaterly Data fetched from provider');
 
-        break;
-      case 2:
-        await getQuaterlyData!();
-        _isLoadingBarCandle = false;
+          break;
+        case 3:
+          await getAllDepoYearlyData!();
+          _isLoadingBarCandle = false;
+          print('All Depo Yearly Data fetched from provider');
 
-        print('Quaterly Data fetched from provider');
+          break;
+      }
+    } else {
+      switch (value) {
+        case 0:
+          await getCurrentDayData!();
+          _isLoadingBarCandle = false;
 
-        break;
-      case 3:
-        await getYearlyData!();
-        _isLoadingBarCandle = false;
+          print('Current Day Data fetched from provider');
+          break;
+        case 1:
+          await getCurrentMonthData!();
+          _isLoadingBarCandle = false;
 
-        print('Yearly Day Data fetched from provider');
-        break;
+          print('Current Month Data fetched from provider');
 
-      default:
-        break;
+          break;
+        case 2:
+          await getQuaterlyData!();
+          _isLoadingBarCandle = false;
+
+          print('Quaterly Data fetched from provider');
+
+          break;
+        case 3:
+          await getYearlyData!();
+          _isLoadingBarCandle = false;
+
+          print('Yearly Day Data fetched from provider');
+          break;
+        default:
+          break;
+      }
     }
+
     notifyListeners();
   }
 

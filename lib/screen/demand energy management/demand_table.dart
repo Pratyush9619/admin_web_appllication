@@ -5,7 +5,9 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:provider/provider.dart';
+import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 import 'package:web_appllication/components/loading_page.dart';
+import 'package:web_appllication/provider/All_Depo_Select_Provider.dart';
 import 'package:web_appllication/provider/demandEnergyProvider.dart';
 import 'package:web_appllication/style.dart';
 
@@ -33,6 +35,7 @@ class DemandTable extends StatefulWidget {
 
 class _DemandTableState extends State<DemandTable>
     with SingleTickerProviderStateMixin {
+  List<dynamic> depoList = [];
   List<String> citiesList = [];
   List<dynamic> searchedList = [];
   List<dynamic> searchedDepoList = [];
@@ -40,6 +43,8 @@ class _DemandTableState extends State<DemandTable>
   TextEditingController selectedDepo = TextEditingController();
   final tableHeadingColor = Colors.blue;
   final tableRowColor = Colors.white;
+  bool isDepoSelected = false;
+  bool isCitySelected = false;
 
   @override
   void initState() {
@@ -49,7 +54,10 @@ class _DemandTableState extends State<DemandTable>
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<DemandEnergyProvider>(context, listen: false);
+    final demandEnergyProvider =
+        Provider.of<DemandEnergyProvider>(context, listen: false);
+    final allDepoProvider =
+        Provider.of<AllDepoSelectProvider>(context, listen: false);
     return Material(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -98,8 +106,11 @@ class _DemandTableState extends State<DemandTable>
                     );
                   },
                   onSuggestionSelected: (suggestion) async {
+                    isCitySelected = true;
                     cityController.text = suggestion.toString();
-                    provider.setCityName(suggestion.toString());
+                    demandEnergyProvider.setCityName(suggestion.toString());
+                    await getDepoData(suggestion.toString());
+                    demandEnergyProvider.setDepoList(depoList);
                   },
                   suggestionsCallback: (String pattern) async {
                     return await getUserdata(pattern);
@@ -112,7 +123,7 @@ class _DemandTableState extends State<DemandTable>
               Container(
                 margin: const EdgeInsets.all(5),
                 height: 40,
-                width: 300,
+                width: 260,
                 child: TypeAheadField(
                   hideOnLoading: true,
                   animationDuration: const Duration(milliseconds: 1000),
@@ -135,72 +146,125 @@ class _DemandTableState extends State<DemandTable>
                     );
                   },
                   onSuggestionSelected: (suggestion) async {
+                    isDepoSelected = true;
+                    allDepoProvider.setCheckedBool(false);
                     selectedDepo.text = suggestion.toString();
-                    provider.setDepoName(suggestion.toString());
+                    demandEnergyProvider.setDepoName(suggestion.toString());
                     await widget.getDailyData();
-                    provider.reloadWidget(true);
-                    print('Hello World');
+                    demandEnergyProvider.reloadWidget(true);
                   },
                   suggestionsCallback: (String pattern) async {
-                    return await getDepoData(pattern);
+                    if (pattern.isEmpty) {
+                      isDepoSelected = false;
+                      allDepoProvider.reloadCheckbox();
+                    }
+                    return depoList;
+                    // return await getDepoData(pattern);
                   },
                 ),
               ),
+              Consumer<AllDepoSelectProvider>(
+                builder: (context, providerValue, child) {
+                  return Container(
+                      height: 40,
+                      width: 150,
+                      child: CheckboxListTile(
+                        title: const Text(
+                          'All Depots',
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                        value: providerValue.isChecked,
+                        onChanged: isDepoSelected
+                            ? null
+                            : demandEnergyProvider.isLoadingBarCandle
+                                ? null
+                                : (value) async {
+                                    if (providerValue.isChecked == false &&
+                                        isCitySelected == true) {
+                                      providerValue
+                                          .setCheckedBool(value ?? false);
+                                      demandEnergyProvider.setLoadingBarCandle(
+                                          true); //Show loading bar
+                                      providerValue.reloadCheckbox();
+                                      // demandEnergyProvider
+                                      //     .setDepoList(depoList);
+                                      await demandEnergyProvider
+                                          .getAllDepoDailyData!();
+                                      demandEnergyProvider.setLoadingBarCandle(
+                                          false); //Stop loading bar
+                                      providerValue.reloadCheckbox();
+                                      demandEnergyProvider.reloadWidget(true);
+                                    } else if (isCitySelected == false) {
+                                      showCustomAlert();
+                                    } else {
+                                      providerValue
+                                          .setCheckedBool(value ?? false);
+                                    }
+                                  },
+                      ));
+                },
+              )
             ],
           ),
           Flexible(
             child: Container(
               margin: const EdgeInsets.only(left: 30),
               height: 400,
-              child: Consumer<DemandEnergyProvider>(
-                builder: (context, providerValue, child) {
-                  return provider.isLoadingBarCandle
-                      ? LoadingPage()
-                      : DataTable2(
-                          columnSpacing: 15,
-                          headingRowColor:
-                              MaterialStatePropertyAll(tableHeadingColor),
-                          dataRowColor: MaterialStatePropertyAll(tableRowColor),
-                          border: TableBorder.all(),
-                          dividerThickness: 0,
-                          dataRowHeight: 40,
-                          headingRowHeight: 50,
-                          headingTextStyle: TextStyle(
-                              color: white, fontWeight: FontWeight.bold),
-                          dataTextStyle: TextStyle(
-                              fontWeight: FontWeight.bold, color: black),
-                          columns: List.generate(
-                            widget.columns.length,
-                            (index) => DataColumn2(
-                              fixedWidth: index == 0
-                                  ? 50
-                                  : index == 1
-                                      ? 170
-                                      : index == 3
-                                          ? 140
-                                          : null,
-                              label: Text(
-                                widget.columns[index],
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                          rows: List.generate(
-                            widget.rows.length,
-                            (rowNo) {
-                              return DataRow2(
-                                cells: List.generate(
-                                  widget.rows[0].length,
-                                  (cellNo) => DataCell(
-                                    Text(
-                                      widget.rows[rowNo][cellNo].toString(),
-                                    ),
+              child: Consumer<AllDepoSelectProvider>(
+                builder: (context, value, child) {
+                  return Consumer<DemandEnergyProvider>(
+                    builder: (context, providerValue, child) {
+                      return demandEnergyProvider.isLoadingBarCandle
+                          ? LoadingPage()
+                          : DataTable2(
+                              columnSpacing: 15,
+                              headingRowColor:
+                                  MaterialStatePropertyAll(tableHeadingColor),
+                              dataRowColor:
+                                  MaterialStatePropertyAll(tableRowColor),
+                              border: TableBorder.all(),
+                              dividerThickness: 0,
+                              dataRowHeight: 40,
+                              headingRowHeight: 45,
+                              headingTextStyle: TextStyle(
+                                  color: white, fontWeight: FontWeight.bold),
+                              dataTextStyle: TextStyle(
+                                  fontWeight: FontWeight.bold, color: black),
+                              columns: List.generate(
+                                widget.columns.length,
+                                (index) => DataColumn2(
+                                  fixedWidth: index == 0
+                                      ? 50
+                                      : index == 1
+                                          ? 170
+                                          : index == 3
+                                              ? 140
+                                              : null,
+                                  label: Text(
+                                    widget.columns[index],
+                                    textAlign: TextAlign.center,
                                   ),
                                 ),
-                              );
-                            },
-                          ),
-                        );
+                              ),
+                              rows: List.generate(
+                                widget.rows.length,
+                                (rowNo) {
+                                  return DataRow2(
+                                    cells: List.generate(
+                                      widget.rows[0].length,
+                                      (cellNo) => DataCell(
+                                        Text(
+                                          widget.rows[rowNo][cellNo].toString(),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                    },
+                  );
                 },
               ),
             ),
@@ -210,13 +274,59 @@ class _DemandTableState extends State<DemandTable>
     );
   }
 
+  showCustomAlert() async {
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: Container(
+              height: 120,
+              width: 100,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.warning_amber,
+                    size: 60,
+                    color: blue,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(5.0),
+                    child: const Text(
+                      'Please select a city first !',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  ElevatedButton(
+                    style: const ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll(Colors.green)),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'OK',
+                      style: TextStyle(color: white),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
   getUserdata(String input) async {
     searchedList.clear();
+    print(citiesList);
 
     for (int i = 0; i < citiesList.length; i++) {
       if (citiesList[i].toUpperCase().contains(input.trim().toUpperCase())) {
         searchedList.add(citiesList[i]);
       }
+    }
+    if (cityController.text.isEmpty) {
+      isCitySelected = false;
     }
     // citiesList.clear();
     return searchedList;
@@ -230,6 +340,10 @@ class _DemandTableState extends State<DemandTable>
 
   getDepoData(String input) async {
     searchedDepoList.clear();
+    depoList.clear();
+
+    final allCheckboxProvider =
+        Provider.of<AllDepoSelectProvider>(context, listen: false);
 
     if (cityController.text.isNotEmpty) {
       QuerySnapshot depoSnap = await FirebaseFirestore.instance
@@ -240,8 +354,13 @@ class _DemandTableState extends State<DemandTable>
 
       List<String> depoNameList = depoSnap.docs.map((depo) => depo.id).toList();
       searchedDepoList = depoNameList;
+      depoList = depoNameList;
     } else {
       searchedDepoList.add('Please Select a City');
+    }
+    if (selectedDepo.text.isEmpty) {
+      isDepoSelected = false;
+      allCheckboxProvider.reloadCheckbox();
     }
 
     return searchedDepoList;
