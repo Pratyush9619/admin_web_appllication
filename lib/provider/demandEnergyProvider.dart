@@ -232,7 +232,7 @@ class DemandEnergyProvider extends ChangeNotifier {
 
           break;
       }
-    } else {
+    } else if (isAllDepoChecked == false && selectedDepo.isNotEmpty) {
       switch (value) {
         case 0:
           await getCurrentDayData!();
@@ -263,6 +263,8 @@ class DemandEnergyProvider extends ChangeNotifier {
         default:
           break;
       }
+    } else {
+      showAlertWidget();
     }
 
     notifyListeners();

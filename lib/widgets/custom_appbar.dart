@@ -477,12 +477,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     )
                   : Container(),
               widget.isdownload
-                  ? ElevatedButton(
-                      onPressed: widget.donwloadFun,
-                      child: const Icon(
-                        Icons.download,
-                        color: Colors.white,
-                      ))
+                  ? Container(
+                      padding: const EdgeInsets.only(top: 5, bottom: 5),
+                      child: ElevatedButton(
+                          onPressed: widget.donwloadFun,
+                          child: const Icon(
+                            Icons.download,
+                            color: Colors.white,
+                          )),
+                    )
                   : widget.haveSummary
                       ? Padding(
                           padding: const EdgeInsets.only(

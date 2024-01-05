@@ -10,10 +10,7 @@ import 'package:web_appllication/style.dart';
 
 class NavigationPage extends StatefulWidget {
   String userId;
-  NavigationPage({
-    super.key,
-    required this.userId,
-  });
+  NavigationPage({super.key, required this.userId});
 
   @override
   State<NavigationPage> createState() => _NavigationPageState();
@@ -46,11 +43,10 @@ class _NavigationPageState extends State<NavigationPage> {
         switch (currentPage) {
           case DrawerSection.evDashboard:
             showStartEndDatePanel = false;
-
             title = 'EV BUS Project Performance Analysis Dashboard';
             container = const EVDashboardScreen();
             break;
-          case DrawerSection.oandmDashboard:
+          case DrawerSection.demandEnergy:
             showStartEndDatePanel = true;
             title = 'EV Bus Depot Management System';
             container = DemandEnergyScreen();
@@ -166,7 +162,7 @@ class _NavigationPageState extends State<NavigationPage> {
           menuItems(1, pageNames[0], Icons.dashboard_outlined,
               currentPage == DrawerSection.evDashboard ? true : false),
           menuItems(2, pageNames[1], Icons.dashboard_sharp,
-              currentPage == DrawerSection.oandmDashboard ? true : false),
+              currentPage == DrawerSection.demandEnergy ? true : false),
           menuItems(3, pageNames[2], Icons.house_outlined,
               currentPage == DrawerSection.cities ? true : false),
           menuItems(4, pageNames[3], Icons.person_2_outlined,
@@ -191,7 +187,7 @@ class _NavigationPageState extends State<NavigationPage> {
                   currentPage = DrawerSection.evDashboard;
                   break;
                 case 2:
-                  currentPage = DrawerSection.oandmDashboard;
+                  currentPage = DrawerSection.demandEnergy;
                   break;
                 case 3:
                   currentPage = DrawerSection.cities;
@@ -227,4 +223,4 @@ class _NavigationPageState extends State<NavigationPage> {
   }
 }
 
-enum DrawerSection { evDashboard, oandmDashboard, cities, users }
+enum DrawerSection { evDashboard, demandEnergy, cities, users }

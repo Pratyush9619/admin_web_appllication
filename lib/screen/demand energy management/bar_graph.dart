@@ -293,7 +293,9 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
     final provider = Provider.of<DemandEnergyProvider>(context, listen: false);
     // print('Daily BarChart Data Extracting');
     return List.generate(
-      widget.timeIntervalList.length,
+      provider.dailyEnergyConsumed?.length == null
+          ? widget.timeIntervalList.length
+          : 0,
       (index) {
         return BarChartGroupData(
           // groupVertically: true,

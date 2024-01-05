@@ -35,7 +35,7 @@ class _MyDrawerListState extends State<MyDrawerList> {
     return InkWell(
       onTap: () {},
       child: Container(
-        height: 40,
+        height: 100,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

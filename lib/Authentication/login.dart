@@ -8,6 +8,7 @@ import 'package:web_appllication/Authentication/reset_password.dart';
 import 'package:web_appllication/OverviewPages/sidebar_nav/nav_screen.dart';
 import 'package:web_appllication/Planning/cities.dart';
 import 'package:web_appllication/components/loading_page.dart';
+import 'package:web_appllication/screen/split_dashboard/split_dashboard.dart';
 import '../style.dart';
 
 class SignInPage extends StatefulWidget {

@@ -14,6 +14,7 @@ import 'package:web_appllication/routeBuilder/route_generator.dart';
 import 'package:web_appllication/screen/demand%20energy%20management/animated_table.dart';
 import 'package:web_appllication/screen/demand%20energy%20management/demandScreen.dart';
 import 'package:web_appllication/screen/demand%20energy%20management/experimental_Table.dart';
+import 'package:web_appllication/screen/split_dashboard/split_dashboard.dart';
 import 'package:web_appllication/style.dart';
 
 void main() async {
@@ -106,6 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return
+        //  SplitDashboard();
         //  DemandEnergyScreen();
         // ExperimentalTable();
         // AnimatedDataTable();

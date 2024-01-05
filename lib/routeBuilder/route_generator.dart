@@ -12,7 +12,7 @@ import 'package:web_appllication/screen/split_dashboard/split_dashboard.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    print(settings.name);
+    // print(settings.name);
     switch (settings.name) {
       case 'project-panning':
         return MaterialPageRoute(
@@ -26,13 +26,13 @@ class RouteGenerator {
 
       case '/dashboard':
         return MaterialPageRoute(
-          builder: (_) => const SplitDashboard(),
+          builder: (_) => SplitDashboard(),
         );
 
       case '/evDashboard':
         bool args = settings.arguments as bool;
-        return MaterialPageRoute(
-          builder: (_) => EVDashboardScreen(showAppBar: args),
+        return CustomPageRoute(
+          page: EVDashboardScreen(showAppBar: args),
         );
 
       case '/o&mDashboard':
@@ -42,8 +42,8 @@ class RouteGenerator {
         );
 
       case '/demand':
-        return MaterialPageRoute(
-          builder: (_) => DemandEnergyScreen(),
+        return CustomPageRoute(
+          page: DemandEnergyScreen(),
         );
 
       case '/cities':
@@ -57,9 +57,12 @@ class RouteGenerator {
         );
 
       case '/nav':
-        final userId = settings.arguments as String;
+        // final userId = settings.arguments as String;
+        Map<String, dynamic> args = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-          builder: (_) => NavigationPage(userId: userId),
+          builder: (_) => NavigationPage(
+            userId: args['userId'],
+          ),
         );
 
       // Add more cases for additional routes

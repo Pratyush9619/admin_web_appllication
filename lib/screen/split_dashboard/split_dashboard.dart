@@ -5,13 +5,14 @@ import 'package:web_appllication/components/page_routeBuilder.dart';
 import 'package:web_appllication/style.dart';
 
 class SplitDashboard extends StatelessWidget {
-  const SplitDashboard({super.key});
+  String? userId;
+  SplitDashboard({super.key, this.userId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(45),
+        preferredSize: const Size.fromHeight(45),
         child: AppBar(
           backgroundColor: blue,
           centerTitle: true,
@@ -33,8 +34,10 @@ class SplitDashboard extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          Navigator.pushNamed(context, '/evDashboard',
-                              arguments: true);
+                          Navigator.pushNamed(context, '/nav', arguments: {
+                            'userId': userId,
+                            'navigationPage': 'evDashBoard'
+                          });
                         },
                         child: Card(
                           elevation: 15,
@@ -42,23 +45,26 @@ class SplitDashboard extends StatelessWidget {
                             height: 300,
                             width: 600,
                             decoration: const BoxDecoration(
-                                image: DecorationImage(
-                                    image:
-                                        AssetImage('assets/ev_dashboard.png'))),
+                              image: DecorationImage(
+                                image: AssetImage('assets/ev_dashboard.png'),
+                              ),
+                            ),
                           ),
                         ),
                       ),
                       const SizedBox(height: 10),
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.44,
-                        height: 35,
+                        height: 45,
                         child: ElevatedButton(
                             style: ButtonStyle(
                                 backgroundColor:
                                     MaterialStatePropertyAll(blue)),
                             onPressed: () {
-                              Navigator.pushNamed(context, '/evDashboard',
-                                  arguments: true);
+                              Navigator.pushNamed(context, '/nav', arguments: {
+                                'userId': userId,
+                                'navigationPage': 'evDashBoard'
+                              });
                             },
                             child: const Text(
                                 'EV Bus Project Analysis Dashboard')),
@@ -75,8 +81,10 @@ class SplitDashboard extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          Navigator.pushNamed(context, '/o&mDashboard',
-                              arguments: true);
+                          Navigator.pushNamed(context, '/nav', arguments: {
+                            'userId': userId,
+                            'navigationPage': DrawerSection.oandmDashboard
+                          });
                         },
                         child: Card(
                           elevation: 15,
@@ -86,22 +94,22 @@ class SplitDashboard extends StatelessWidget {
                             decoration: const BoxDecoration(
                                 image: DecorationImage(
                                     image: AssetImage(
-                                        'assets/onm_dashboard.png'))),
+                                        'assets/demand_energy.png'))),
                           ),
                         ),
                       ),
                       const SizedBox(height: 10),
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.44,
-                        height: 35,
+                        height: 45,
                         child: ElevatedButton(
                           style: ButtonStyle(
                               backgroundColor: MaterialStatePropertyAll(blue)),
                           onPressed: () {
-                            Navigator.pushNamed(context, '/o&mDashboard',
+                            Navigator.pushNamed(context, '/demand',
                                 arguments: true);
                           },
-                          child: const Text('O & M Analysis Dashboard'),
+                          child: const Text('EV Bus Depot Management System'),
                         ),
                       )
                     ],
