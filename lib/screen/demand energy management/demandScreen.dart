@@ -24,6 +24,7 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
   List<double> yearlyEnergyConsumedList = [];
   List<double> allDepoDailyEnergyConsumedList = [];
   double totalEnergyConsumedQuaterly = 0;
+  int serialNumber = 0;
 
   //Data table columns & rows
   List<String> columns = [
@@ -68,7 +69,7 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
     provider.setAllDepoDailyData(getAllDepoDailyData);
     provider.setAllDepoMonthlyData(getAllDepoMonthlyData);
     provider.setAllDepoQuaterlyData(getAllDepoQuarterData);
-    provider.setAllDepoYearlyData(gettAllDepoYearlyData);
+    provider.setAllDepoYearlyData(getAllDepoYearlyData);
 
     return Scaffold(
       body: Row(
@@ -203,6 +204,8 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
 
       dateList.clear();
 
+      int srNo = 0;
+
       double energyConsumedInEachDepo = 0.0;
 
       final provider = Provider.of<DemandEnergyProvider>(
@@ -254,7 +257,6 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
               querySnapshot.docs.map((userid) => userid.id).toList();
 
           if (allUsers.isNotEmpty) {
-            int srNo = 0;
             DocumentSnapshot daySnap = await collectionReference
                 .doc(monthlyDateList[i])
                 .collection('UserId')
@@ -305,6 +307,7 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
 
   Future<void> getAllDepoQuarterData() async {
     try {
+      serialNumber = 0;
       List<String> firstQuarter = ['January', 'February', 'March'];
       List<String> secondQuarter = ['April', 'May', 'June'];
       List<String> thirdQuarter = ['July', 'August', 'September'];
@@ -355,6 +358,8 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
 
           marchDates = marchQuerySnap.docs.map((data) => data.id).toList();
 
+          dateList = dateList + marchDates;
+
           if (marchDates.isNotEmpty) {
             energyConsumedInJanToMarchInEachDepo =
                 energyConsumedInJanToMarchInEachDepo +
@@ -377,6 +382,8 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
 
           juneDates = juneQuerySnap.docs.map((data) => data.id).toList();
 
+          dateList = dateList + juneDates;
+
           if (juneDates.isNotEmpty) {
             energyConsumedInAprToJuneInEachDepo = await fetchMonthlyData(
                 collectionReference,
@@ -397,6 +404,8 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
 
           septemberDates =
               septemberQuerySnap.docs.map((data) => data.id).toList();
+
+          dateList = dateList + septemberDates;
 
           if (septemberDates.isNotEmpty) {
             energyConsumedInJulToSeptemberInEachDepo = await fetchMonthlyData(
@@ -419,6 +428,8 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
           decemberDates =
               decemberQuerySnap.docs.map((data) => data.id).toList();
 
+          dateList = dateList + decemberDates;
+
           if (decemberDates.isNotEmpty) {
             energyConsumedInOctToDecemberInEachDepo = await fetchMonthlyData(
                 collectionReference,
@@ -428,9 +439,6 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
                 provider.depoList![m]);
           }
         }
-
-        dateList =
-            dateList + marchDates + juneDates + septemberDates + decemberDates;
 
         totalEnergyConsumedInJanToMarch = totalEnergyConsumedInJanToMarch +
             energyConsumedInJanToMarchInEachDepo;
@@ -466,13 +474,15 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
 
 //Setting Maximum energy consumed quaterly
       provider.setMaxEnergyConsumed(totalEnergyConsumedQuaterly);
+      getStartEndDate();
     } catch (error) {
       print('Error Occured in Fetching All Depo Quaterly Data - $error');
     }
   }
 
-  Future<void> gettAllDepoYearlyData() async {
+  Future<void> getAllDepoYearlyData() async {
     try {
+      serialNumber = 0;
       rows.clear();
       monthList.clear();
       timeIntervalList.clear();
@@ -544,6 +554,7 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
 
       provider.setAllDepoYearlyConsumedList(yearlyEnergyConsumedList);
       provider.setMaxEnergyConsumed(totalEnergyConsumed);
+      getStartEndDate();
     } catch (error) {
       print('Error Occured in Fetching All Depo Yearly Data - $error');
     }
@@ -645,6 +656,8 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
       energyConsumedList.clear();
       dateList.clear();
 
+      int srNo = 0;
+
       final provider =
           Provider.of<DemandEnergyProvider>(context, listen: false);
 
@@ -694,12 +707,13 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
           print('mapData - $userData');
 
           for (int j = 0; j < userData.length; j++) {
+            srNo = srNo + 1;
             List<dynamic> row = [];
             timeIntervalList
                 .add(userData[j]['timeInterval']); // Adding Time interval
             energyConsumedList
                 .add(userData[j]['energyConsumed']); // Adding Energy Consumed
-            row.add(userData[j]['srNo']); // Adding Serial Numbers for table
+            row.add(srNo); // Adding Serial Numbers for table
             row.add(selectedCityName);
             row.add(selectedDepoName);
             row.add(userData[j]['energyConsumed']); //Adding energy consumed
@@ -738,6 +752,7 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
 
   Future<void> getQuaterlyData() async {
     try {
+      serialNumber = 0;
       List<String> firstQuarter = ['January', 'February', 'March'];
       List<String> secondQuarter = ['April', 'May', 'June'];
       List<String> thirdQuarter = ['July', 'August', 'September'];
@@ -748,6 +763,7 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
       timeIntervalList.clear();
       energyConsumedList.clear();
       dateList.clear();
+
       final provider =
           Provider.of<DemandEnergyProvider>(context, listen: false);
 
@@ -783,6 +799,8 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
 
         marchDates = marchQuerySnap.docs.map((data) => data.id).toList();
 
+        dateList = dateList + marchDates;
+
         if (marchDates.isNotEmpty) {
           energyConsumedInJanToMarch = energyConsumedInJanToMarch +
               await fetchMonthlyData(
@@ -803,6 +821,8 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
             .get();
 
         juneDates = juneQuerySnap.docs.map((data) => data.id).toList();
+
+        dateList = dateList + juneDates;
 
         if (juneDates.isNotEmpty) {
           energyConsumedInAprToJune = await fetchMonthlyData(
@@ -825,6 +845,8 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
         septemberDates =
             septemberQuerySnap.docs.map((data) => data.id).toList();
 
+        dateList = dateList + septemberDates;
+
         if (septemberDates.isNotEmpty) {
           energyConsumedInJulToSeptember = await fetchMonthlyData(
               collectionReference,
@@ -845,6 +867,8 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
 
         decemberDates = decemberQuerySnap.docs.map((data) => data.id).toList();
 
+        dateList = dateList + decemberDates;
+
         if (decemberDates.isNotEmpty) {
           energyConsumedInOctToDecember = await fetchMonthlyData(
               collectionReference,
@@ -854,8 +878,6 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
               selectedDepoName);
         }
       }
-
-      dateList = marchDates + juneDates + septemberDates + decemberDates;
 
       quaterlyEnergyConsumedList
           .add(energyConsumedInJanToMarch); // Total consumed energy in march
@@ -875,6 +897,7 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
 
 //Setting Maximum energy consumed quaterly
       provider.setMaxEnergyConsumed(totalEnergyConsumedQuaterly);
+      getStartEndDate();
     } catch (error) {
       print('Error Occured in Fetching Quaterly Data - $error');
     }
@@ -906,7 +929,6 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
       print('SM UserId - $userIdList');
 
       if (userIdList.isNotEmpty) {
-        int srNo = 0;
         DocumentSnapshot documentSnapshot = await collectionReference
             .doc(month)
             .collection('Date')
@@ -921,7 +943,7 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
         List<dynamic> userData = mapData['data'];
 
         for (int z = 0; z < userData.length; z++) {
-          srNo = srNo + 1;
+          serialNumber = serialNumber + 1;
 
           totalEnergyConsumed = totalEnergyConsumed +
               double.parse(userData[z]['energyConsumed'].toString());
@@ -930,7 +952,7 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
 
           timeIntervalList
               .add(userData[z]['timeInterval']); // Adding Time interval
-          row.add(srNo); // Adding Serial Numbers for table
+          row.add(serialNumber); // Adding Serial Numbers for table
           row.add(selectedCityName);
           row.add(currentDepoName);
           row.add(userData[z]['energyConsumed']); //Adding energy consumed
@@ -989,6 +1011,8 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
         List<dynamic> marchDates =
             marchQuerySnap.docs.map((data) => data.id).toList();
 
+        dateList = dateList + marchDates;
+
         double energyConsumed = 0.0;
 
         energyConsumed = await fetchMonthlyData(collectionReference, marchDates,
@@ -1001,12 +1025,14 @@ class _DemandEnergyScreenState extends State<DemandEnergyScreen> {
 
       provider.setYearlyConsumedList(yearlyEnergyConsumedList);
       provider.setMaxEnergyConsumed(totalEnergyConsumedYearly);
+      getStartEndDate();
     } catch (error) {
       print('Error Occured in Fetching Yearly Data - $error');
     }
   }
 
   void getStartEndDate() {
+    serialNumber = 0;
     dateList.sort();
     final provider = Provider.of<DemandEnergyProvider>(context, listen: false);
     final startDate = dateList.first;

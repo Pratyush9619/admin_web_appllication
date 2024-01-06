@@ -229,7 +229,6 @@ class DemandEnergyProvider extends ChangeNotifier {
           await getAllDepoYearlyData!();
           _isLoadingBarCandle = false;
           print('All Depo Yearly Data fetched from provider');
-
           break;
       }
     } else if (isAllDepoChecked == false && selectedDepo.isNotEmpty) {

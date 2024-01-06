@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 import 'package:web_appllication/provider/All_Depo_Select_Provider.dart';
 import 'package:web_appllication/provider/demandEnergyProvider.dart';
 import 'package:web_appllication/style.dart';
@@ -142,8 +143,9 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                                             }
                                             choiceChipBoolList[index] = value;
                                             resetChoiceChip(index);
-                                            providerValue.reloadWidget(true);
-                                            providerValue.setSelectedIndex(
+
+                                            provider.reloadWidget(value);
+                                            provider.setSelectedIndex(
                                                 _selectedIndex,
                                                 allDepoProvider.isChecked);
                                           } else {
@@ -205,7 +207,8 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                                   // margin:
                                   // const EdgeInsets.only(right: 80, top: 50),
                                   child: Text(
-                                    allDepoProvider.isChecked == false
+                                    allDepoProvider.isChecked == false &&
+                                            provider.selectedDepo.isNotEmpty
                                         ? provider.selectedIndex == 1
                                             ? widget.monthList[value.toInt()]
                                             : provider.selectedIndex == 2
@@ -246,7 +249,7 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
                       ),
                     ),
                     gridData: FlGridData(
-                      show: true,
+                      show: false,
                       drawVerticalLine: false,
                       drawHorizontalLine: true,
                       checkToShowHorizontalLine: (value) => value % 1 == 0,
@@ -291,7 +294,7 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
 
   List<BarChartGroupData> getBarGroups() {
     final provider = Provider.of<DemandEnergyProvider>(context, listen: false);
-    // print('Daily BarChart Data Extracting');
+    print('Daily BarChart Data Extracting');
     return List.generate(
       provider.dailyEnergyConsumed?.length == null
           ? widget.timeIntervalList.length
@@ -316,7 +319,8 @@ class _BarGraphScreenState extends State<BarGraphScreen> {
 
   List<BarChartGroupData> getMonthlyBarGroups() {
     final provider = Provider.of<DemandEnergyProvider>(context, listen: false);
-    // print('Monthly BarChart Data Extracting');
+    print('Monthly BarChart Data Extracting');
+
     return List.generate(
       1,
       (index) {

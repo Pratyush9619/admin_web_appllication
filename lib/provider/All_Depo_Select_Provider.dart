@@ -12,4 +12,5 @@ class AllDepoSelectProvider with ChangeNotifier {
   void reloadCheckbox() {
     notifyListeners();
   }
+  
 }

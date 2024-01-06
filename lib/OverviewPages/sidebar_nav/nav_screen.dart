@@ -200,7 +200,7 @@ class _NavigationPageState extends State<NavigationPage> {
           }
         },
         child: Container(
-          height: 40,
+          height: 50,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [

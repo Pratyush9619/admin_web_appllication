@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<KeyProvider>(create: (context) => KeyProvider()),
         ChangeNotifierProvider(create: (context) => SelectedRowIndexModel()),
-        ChangeNotifierProvider(create: (context) => AllDepoSelectProvider())
+        ChangeNotifierProvider(create: (context) => AllDepoSelectProvider()),
       ],
       child: MaterialApp(
         onGenerateRoute: RouteGenerator.generateRoute,
