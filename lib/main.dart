@@ -1,18 +1,18 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:web_appllication/OverviewPages/ev_dashboard/dashboard.dart';
-import 'package:web_appllication/MenuPage/home.dart';
-import 'package:web_appllication/MenuPage/project_planning.dart';
-import 'package:web_appllication/MenuPage/user.dart';
+import 'package:web_appllication/Authentication/login_register.dart';
+import 'package:web_appllication/provider/All_Depo_Select_Provider.dart';
 import 'package:web_appllication/provider/assigned_user_provider.dart';
+import 'package:web_appllication/provider/demandEnergyProvider.dart';
+import 'package:web_appllication/provider/energy_provider.dart';
 import 'package:web_appllication/provider/key_provider.dart';
 import 'package:web_appllication/provider/menuUserPageProvider.dart';
 import 'package:web_appllication/provider/selected_row_index.dart';
 import 'package:web_appllication/provider/text_provider.dart';
+import 'package:web_appllication/routeBuilder/route_generator.dart';
 import 'package:web_appllication/small_screen.dart';
 import 'package:web_appllication/style.dart';
-import 'Authentication/login_register.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,49 +33,64 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => MenuUserPageProvider()),
-          ChangeNotifierProvider<AssignedUserProvider>(
-              create: (_) => AssignedUserProvider()),
-          ChangeNotifierProvider<textprovider>(
-            create: (context) => textprovider(),
-          ),
-          ChangeNotifierProvider<KeyProvider>(
-              create: (context) => KeyProvider()),
-          ChangeNotifierProvider(create: (context) => SelectedRowIndexModel())
-        ],
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'TATA POWER CONTROL PANEL',
-          initialRoute: MenuHomePage.id,
-          routes: {
-            DashBoardScreen.id: (context) => SmallScreen(),
-            MenuUserPage.id: (context) => const MenuUserPage(),
-            ProjectPanning.id: (context) => const ProjectPanning(),
+      providers: [
+        ChangeNotifierProvider(create: (_) => DemandEnergyProvider()),
+        ChangeNotifierProvider(create: (_) => MenuUserPageProvider()),
+        ChangeNotifierProvider<AssignedUserProvider>(
+            create: (_) => AssignedUserProvider()),
+        ChangeNotifierProvider<textprovider>(
+          create: (context) => textprovider(),
+        ),
+        ChangeNotifierProvider<KeyProvider>(create: (context) => KeyProvider()),
+        ChangeNotifierProvider(create: (context) => SelectedRowIndexModel()),
+        ChangeNotifierProvider(create: (context) => AllDepoSelectProvider()),
+        ChangeNotifierProvider(create: (context) => EnergyProvider())
+      ],
+      child: MaterialApp(
+        onGenerateRoute: RouteGenerator.generateRoute,
+        debugShowCheckedModeBanner: false,
+        title: 'TATA POWER CONTROL PANEL',
+        // initialRoute: '/demand',
+        // routes: {
+        //   // DashBoardScreen.id: (context) => SmallScreen(),
+        //   MenuUserPage.id: (context) => const MenuUserPage(),
+        //   ProjectPanning.id: (context) => const ProjectPanning(),
 
-            // "/menu": (context) => Menu(),
-            // "/user": (context) => User(),
-            // "/shop": (context) => Shop(),
-            // "/statistics": (context) => Stats(),
-            // "/settings": (context) => Settings()
-          },
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-            dividerColor: grey,
-            inputDecorationTheme: InputDecorationTheme(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(6),
-                  borderSide: BorderSide(color: grey),
-                ),
-                focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(6),
-                    borderSide: BorderSide(color: blue)),
-                floatingLabelBehavior: FloatingLabelBehavior.auto,
-                focusColor: almostWhite,
-                labelStyle: bodyText2White60),
+        //   // "/menu": (context) => Menu(),
+        //   // "/user": (context) => User(),
+        //   // "/shop": (context) => Shop(),
+        //   // "/statistics": (context) => Stats(),
+        //   // "/settings": (context) => Settings() .
+        // },
+
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          dividerColor: grey,
+          inputDecorationTheme: InputDecorationTheme(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(
+                6,
+              ),
+              borderSide: BorderSide(
+                color: grey,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(
+                6,
+              ),
+              borderSide: BorderSide(
+                color: blue,
+              ),
+            ),
+            floatingLabelBehavior: FloatingLabelBehavior.auto,
+            focusColor: almostWhite,
+            labelStyle: bodyText2White60,
           ),
-          home: const MyHomePage(),
-        ));
+        ),
+        home: const MyHomePage(),
+      ),
+    );
   }
 }
 
@@ -90,9 +105,19 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return
-        //  NavigationPage();
-        // DashBoardScreen();
-        SmallScreen();
+        //  SplitDashboard();
+        //  DemandEnergyScreen();
+        // ExperimentalTable();
+        // AnimatedDataTable();
+        LoginRegister();
+    //  DemandEnergyScreen();
+    // NavigationPage(
+    //   userId: '',
+    // );
+    //  SplitDashboard();
+    //  NavigationPage();
+    // DashBoardScreen();
+    // SmallScreen();
     // MenuUserPage();
     // DepotOverview();
     // ResourceAllocation();

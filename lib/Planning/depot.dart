@@ -5,12 +5,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 import 'package:web_appllication/Planning/overview.dart';
 import 'package:web_appllication/components/loading_page.dart';
+import 'package:web_appllication/components/page_routeBuilder.dart';
 import 'package:web_appllication/style.dart';
 import '../Authentication/auth_service.dart';
 import '../widgets/custom_appbar.dart';
+import '../widgets/custom_container.dart';
 
 class Mydepots extends StatefulWidget {
   String? cityName;
@@ -254,7 +255,6 @@ class _MydepotsState extends State<Mydepots> {
             .collection('AllDepots')
             .snapshots(),
         builder: (context, snapshot) {
-        
           if (snapshot.hasData) {
             if (snapshot.data != null) {
               if (snapshot.data!.docs.isNotEmpty) {
@@ -262,73 +262,75 @@ class _MydepotsState extends State<Mydepots> {
                     itemCount: snapshot.data!.docs.length,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4),
+                            crossAxisCount: 4, childAspectRatio: 1.5),
                     itemBuilder: (context, index) {
                       return Padding(
-                        padding: const EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.all(15),
                         child: GestureDetector(
-                          // onTap: () => onToScreen(index),
-                          child: Stack(children: [
-                            Column(
-                              children: [
-                                Container(
-                                  height: 150,
-                                  width: 150,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: blue,
-                                    image: DecorationImage(
-                                        image: NetworkImage(snapshot
-                                            .data!.docs[index]['DepoUrl']),
-                                        fit: BoxFit.cover),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                CustomPageRoute(
+                                  page: MyOverview(
+                                    userId: widget.userId,
+                                    cityName: widget.cityName!,
+                                    depoName: snapshot.data!.docs[index]
+                                        ['DepoName'],
                                   ),
                                 ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                // Text(snapshot.data!.docs[index]['DepoName']),
-                                const SizedBox(height: 5),
-                                ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        backgroundColor: blue),
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  //  DailyProject(
-                                                  //   // userId: widget.userid,
-                                                  //   cityName: widget.cityName,
-                                                  //   depoName: widget.depoName,
-                                                  // ),
-                                                  //  UserId(
-                                                  //       cityName: widget.cityName!,
-                                                  //       depoName: snapshot
-                                                  //               .data!.docs[index]
-                                                  //           ['DepoName'],
-                                                  //     )
-                                                  MyOverview(
-                                                    userId: widget.userId,
-                                                    cityName: widget.cityName!,
-                                                    depoName: snapshot
-                                                            .data!.docs[index]
-                                                        ['DepoName'],
-                                                  )
-                                              // Mydepots(
-                                              //       cityName: snapshot.data!
-                                              //           .docs[index]['cityName'],
-                                              //     )
-                                              ));
-                                    },
-                                    child: Text(
-                                        snapshot.data!.docs[index]['DepoName']))
-                              ],
+                              );
+                            },
+                            child: cards(
+                                context,
+                                snapshot.data!.docs[index]['DepoName'],
+                                snapshot.data!.docs[index]['DepoUrl'],
+                                index)
+                            //  Stack(children: [
+                            //   Column(
+                            //     children: [
+                            //       Container(
+                            //         height: 150,
+                            //         width: 150,
+                            //         decoration: BoxDecoration(
+                            //           borderRadius: BorderRadius.circular(20),
+                            //           color: blue,
+                            //           image: DecorationImage(
+                            //               image: NetworkImage(snapshot
+                            //                   .data!.docs[index]['DepoUrl']),
+                            //               fit: BoxFit.cover),
+                            //         ),
+                            //       ),
+                            //       const SizedBox(
+                            //         height: 10,
+                            //       ),
+                            //       // Text(snapshot.data!.docs[index]['DepoName']),
+                            //       const SizedBox(height: 5),
+                            //       ElevatedButton(
+                            //           style: ElevatedButton.styleFrom(
+                            //               shape: RoundedRectangleBorder(
+                            //                   borderRadius:
+                            //                       BorderRadius.circular(10)),
+                            //               backgroundColor: blue),
+                            //           onPressed: () {
+                            //             Navigator.push(
+                            //               context,
+                            //               CustomPageRoute(
+                            //                 page: MyOverview(
+                            //                   userId: widget.userId,
+                            //                   cityName: widget.cityName!,
+                            //                   depoName: snapshot.data!.docs[index]
+                            //                       ['DepoName'],
+                            //                 ),
+                            //               ),
+                            //             );
+                            //           },
+                            //           child: Text(
+                            //               snapshot.data!.docs[index]['DepoName']))
+                            //     ],
+                            //   ),
+                            // ]),
+
                             ),
-                          ]),
-                        ),
                       );
                     });
               } else {

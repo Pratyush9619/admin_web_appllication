@@ -1,10 +1,16 @@
-import 'dart:html';
+import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'dart:html' as html;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 import '../../components/Loading_page.dart';
 import '../../datasource/jmr_datasource.dart';
 import '../../model/jmr.dart';
@@ -117,6 +123,8 @@ class _JMRPageState extends State<JMRPage> {
               appBar: PreferredSize(
                 // ignore: sort_child_properties_last
                 child: CustomAppBar(
+                  isdownload: true,
+                  donwloadFun: _generatePDF,
                   depoName: widget.depoName,
                   userId: widget.userId,
                   text:
@@ -655,7 +663,7 @@ class _JMRPageState extends State<JMRPage> {
   }
 
   Future<List<List<dynamic>>> selectExcelFile() async {
-    final input = FileUploadInputElement()..accept = '.xlsx';
+    final input = html.FileUploadInputElement()..accept = '.xlsx';
     input.click();
 
     await input.onChange.first;
@@ -663,7 +671,7 @@ class _JMRPageState extends State<JMRPage> {
 
     if (files?.length == 1) {
       final file = files?[0];
-      final reader = FileReader();
+      final reader = html.FileReader();
 
       reader.readAsArrayBuffer(file!);
 
@@ -957,6 +965,372 @@ class _JMRPageState extends State<JMRPage> {
       startDate.text = fieldData['startDate'];
       endDate.text = fieldData['endDate'];
     }
+  }
+
+  Future<void> _generatePDF() async {
+    setState(() {
+      _isLoading = true;
+    });
+    final headerStyle =
+        pw.TextStyle(fontSize: 15, fontWeight: pw.FontWeight.bold);
+
+    final fontData1 = await rootBundle.load('fonts/IBMPlexSans-Medium.ttf');
+    final fontData2 = await rootBundle.load('fonts/IBMPlexSans-Bold.ttf');
+
+    const cellStyle = pw.TextStyle(
+      color: PdfColors.black,
+      fontSize: 14,
+    );
+
+    final profileImage = pw.MemoryImage(
+      (await rootBundle.load('assets/Tata-Power.jpeg')).buffer.asUint8List(),
+    );
+
+    List<List<dynamic>> fieldData = [
+      ['Project :', projectName.text],
+      ['Ref Number :', refNo.text],
+      ['LOI Ref Number :', loiRefNum.text],
+      ['Date :', date.text],
+      ['Site Location :', siteLocation.text],
+      ['Note :', note.text],
+      ['Start Date :', startDate.text],
+      ['End Date :', endDate.text],
+    ];
+
+    List<pw.TableRow> rows = [];
+
+    rows.add(pw.TableRow(children: [
+      pw.Container(
+          padding: const pw.EdgeInsets.all(2.0),
+          child: pw.Center(
+              child: pw.Text('Sr No',
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold)))),
+      pw.Container(
+          padding:
+              const pw.EdgeInsets.only(top: 4, bottom: 4, left: 2, right: 2),
+          child: pw.Center(
+              child: pw.Text('Description',
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold)))),
+      pw.Container(
+          padding: const pw.EdgeInsets.all(2.0),
+          child: pw.Center(
+              child: pw.Text('Activity Details',
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold)))),
+      pw.Container(
+          padding: const pw.EdgeInsets.all(2.0),
+          child: pw.Center(
+              child: pw.Text('BOQ RefNo',
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold)))),
+      pw.Container(
+          padding: const pw.EdgeInsets.all(2.0),
+          child: pw.Center(
+              child: pw.Text(
+            'Abstract',
+          ))),
+      pw.Container(
+          padding: const pw.EdgeInsets.all(2.0),
+          child: pw.Center(
+              child: pw.Text(
+            'UOM',
+          ))),
+      pw.Container(
+          padding: const pw.EdgeInsets.all(2.0),
+          child: pw.Center(
+              child: pw.Text(
+            'Rate',
+          ))),
+      pw.Container(
+          padding: const pw.EdgeInsets.all(2.0),
+          child: pw.Center(
+              child: pw.Text(
+            'Total Qty',
+          ))),
+      pw.Container(
+          padding: const pw.EdgeInsets.all(2.0),
+          child: pw.Center(
+              child: pw.Text(
+            'Amount',
+          ))),
+    ]));
+
+    List<dynamic> userData = [];
+
+    if (jmrSyncList.isNotEmpty) {
+      userData = jmrSyncList[0];
+      List<pw.Widget> imageUrls = [];
+
+      for (Map<String, dynamic> mapData in userData) {
+        //Text Rows of PDF Table
+        rows.add(pw.TableRow(children: [
+          pw.Container(
+              padding: const pw.EdgeInsets.all(3.0),
+              child: pw.Center(
+                  child: pw.Text(mapData['srNo'].toString(),
+                      style: const pw.TextStyle(fontSize: 13)))),
+          pw.Container(
+              padding: const pw.EdgeInsets.all(5.0),
+              child: pw.Center(
+                  child: pw.Text(mapData['Description'],
+                      textAlign: pw.TextAlign.center,
+                      style: const pw.TextStyle(
+                        fontSize: 13,
+                      )))),
+          pw.Container(
+              padding: const pw.EdgeInsets.all(2.0),
+              child: pw.Center(
+                  child: pw.Text(mapData['Activity'],
+                      textAlign: pw.TextAlign.center,
+                      style: const pw.TextStyle(fontSize: 13)))),
+          pw.Container(
+              padding: const pw.EdgeInsets.all(2.0),
+              child: pw.Center(
+                  child: pw.Text(mapData['RefNo'].toString(),
+                      textAlign: pw.TextAlign.center,
+                      style: const pw.TextStyle(fontSize: 13)))),
+          pw.Container(
+              padding: const pw.EdgeInsets.all(2.0),
+              child: pw.Center(
+                  child: pw.Text(mapData['Abstract'].toString(),
+                      textAlign: pw.TextAlign.center,
+                      style: const pw.TextStyle(fontSize: 13)))),
+          pw.Container(
+              padding: const pw.EdgeInsets.all(2.0),
+              child: pw.Center(
+                  child: pw.Text(mapData['Uom'].toString(),
+                      textAlign: pw.TextAlign.center,
+                      style: const pw.TextStyle(fontSize: 13)))),
+          pw.Container(
+              padding: const pw.EdgeInsets.all(2.0),
+              child: pw.Center(
+                  child: pw.Text(mapData['Rate'].toString(),
+                      textAlign: pw.TextAlign.center,
+                      style: const pw.TextStyle(fontSize: 13)))),
+          pw.Container(
+              padding: const pw.EdgeInsets.all(2.0),
+              child: pw.Center(
+                  child: pw.Text(mapData['TotalQty'].toString(),
+                      textAlign: pw.TextAlign.center,
+                      style: const pw.TextStyle(fontSize: 13)))),
+          pw.Container(
+              padding: const pw.EdgeInsets.all(2.0),
+              child: pw.Center(
+                  child: pw.Text(mapData['TotalAmount'].toString(),
+                      textAlign: pw.TextAlign.center,
+                      style: const pw.TextStyle(fontSize: 13)))),
+        ]));
+      }
+    }
+
+    final pdf = pw.Document(
+      pageMode: PdfPageMode.outlines,
+    );
+
+    pdf.addPage(
+      pw.MultiPage(
+        theme: pw.ThemeData.withFont(
+            base: pw.Font.ttf(fontData1), bold: pw.Font.ttf(fontData2)),
+        pageFormat: const PdfPageFormat(1300, 900,
+            marginLeft: 70, marginRight: 70, marginBottom: 80, marginTop: 40),
+        orientation: pw.PageOrientation.natural,
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        header: (pw.Context context) {
+          return pw.Container(
+              alignment: pw.Alignment.centerRight,
+              margin: const pw.EdgeInsets.only(bottom: 3.0 * PdfPageFormat.mm),
+              padding: const pw.EdgeInsets.only(bottom: 3.0 * PdfPageFormat.mm),
+              decoration: const pw.BoxDecoration(
+                  border: pw.Border(
+                      bottom:
+                          pw.BorderSide(width: 0.5, color: PdfColors.grey))),
+              child: pw.Column(children: [
+                pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text('Jmr Report',
+                          textScaleFactor: 2,
+                          style: const pw.TextStyle(color: PdfColors.blue700)),
+                      pw.Container(
+                        width: 120,
+                        height: 120,
+                        child: pw.Image(profileImage),
+                      ),
+                    ]),
+              ]));
+        },
+        footer: (pw.Context context) {
+          return pw.Container(
+              alignment: pw.Alignment.centerRight,
+              margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
+              child: pw.Text('UserID - $userId',
+                  textScaleFactor: 1.5,
+                  // 'Page ${context.pageNumber} of ${context.pagesCount}',
+                  style: pw.Theme.of(context)
+                      .defaultTextStyle
+                      .copyWith(color: PdfColors.black)));
+        },
+        build: (pw.Context context) => <pw.Widget>[
+          pw.Column(children: [
+            pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.RichText(
+                      text: pw.TextSpan(children: [
+                    const pw.TextSpan(
+                        text: 'Place : ',
+                        style:
+                            pw.TextStyle(color: PdfColors.black, fontSize: 17)),
+                    pw.TextSpan(
+                        text: '${widget.cityName} / ${widget.depoName}',
+                        style: const pw.TextStyle(
+                            color: PdfColors.blue700, fontSize: 15))
+                  ])),
+                  // pw.RichText(
+                  //     text: pw.TextSpan(children: [
+                  //   const pw.TextSpan(
+                  //       text: 'Date : ',
+                  //       style:
+                  //           pw.TextStyle(color: PdfColors.black, fontSize: 17)),
+                  //   pw.TextSpan(
+                  //       text: date.text,
+                  //       style: const pw.TextStyle(
+                  //           color: PdfColors.blue700, fontSize: 15))
+                  // ])),
+                  pw.RichText(
+                      text: pw.TextSpan(children: [
+                    const pw.TextSpan(
+                        text: 'UserID : ',
+                        style:
+                            pw.TextStyle(color: PdfColors.black, fontSize: 15)),
+                    pw.TextSpan(
+                        text: '$userId',
+                        style: const pw.TextStyle(
+                            color: PdfColors.blue700, fontSize: 15))
+                  ])),
+                ]),
+            pw.SizedBox(height: 20)
+          ]),
+          pw.SizedBox(height: 10),
+          pw.Table.fromTextArray(
+            columnWidths: {
+              0: const pw.FixedColumnWidth(100),
+              1: const pw.FixedColumnWidth(100),
+            },
+            headers: ['Details', 'Values'],
+            headerStyle: headerStyle,
+            headerPadding: const pw.EdgeInsets.all(10.0),
+            data: fieldData,
+            cellHeight: 35,
+            cellStyle: cellStyle,
+          )
+        ],
+      ),
+    );
+
+    pdf.addPage(
+      pw.MultiPage(
+        theme: pw.ThemeData.withFont(
+            base: pw.Font.ttf(fontData1), bold: pw.Font.ttf(fontData2)),
+        pageFormat: const PdfPageFormat(1300, 900,
+            marginLeft: 70, marginRight: 70, marginBottom: 80, marginTop: 40),
+        orientation: pw.PageOrientation.natural,
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        header: (pw.Context context) {
+          return pw.Container(
+              alignment: pw.Alignment.centerRight,
+              margin: const pw.EdgeInsets.only(bottom: 3.0 * PdfPageFormat.mm),
+              padding: const pw.EdgeInsets.only(bottom: 3.0 * PdfPageFormat.mm),
+              decoration: const pw.BoxDecoration(
+                  border: pw.Border(
+                      bottom:
+                          pw.BorderSide(width: 0.5, color: PdfColors.grey))),
+              child: pw.Column(children: [
+                pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text('JMR Report',
+                          textScaleFactor: 2,
+                          style: const pw.TextStyle(color: PdfColors.blue700)),
+                      pw.Container(
+                        width: 120,
+                        height: 120,
+                        child: pw.Image(profileImage),
+                      ),
+                    ]),
+              ]));
+        },
+        footer: (pw.Context context) {
+          return pw.Container(
+              alignment: pw.Alignment.centerRight,
+              margin: const pw.EdgeInsets.only(top: 1.0 * PdfPageFormat.cm),
+              child: pw.Text('User ID - $userId',
+                  // 'Page ${context.pageNumber} of ${context.pagesCount}',
+                  style: pw.Theme.of(context)
+                      .defaultTextStyle
+                      .copyWith(color: PdfColors.black)));
+        },
+        build: (pw.Context context) => <pw.Widget>[
+          pw.Column(children: [
+            pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.RichText(
+                      text: pw.TextSpan(children: [
+                    const pw.TextSpan(
+                        text: 'Place : ',
+                        style:
+                            pw.TextStyle(color: PdfColors.black, fontSize: 17)),
+                    pw.TextSpan(
+                        text: '${widget.cityName} / ${widget.depoName}',
+                        style: const pw.TextStyle(
+                            color: PdfColors.blue700, fontSize: 15))
+                  ])),
+                ]),
+            pw.SizedBox(height: 20)
+          ]),
+          pw.SizedBox(height: 10),
+          pw.Table(
+              columnWidths: {
+                0: const pw.FixedColumnWidth(30),
+                1: const pw.FixedColumnWidth(120),
+                2: const pw.FixedColumnWidth(120),
+                3: const pw.FixedColumnWidth(120),
+                4: const pw.FixedColumnWidth(120),
+                5: const pw.FixedColumnWidth(120),
+                6: const pw.FixedColumnWidth(70),
+                7: const pw.FixedColumnWidth(50),
+                8: const pw.FixedColumnWidth(50),
+              },
+              defaultVerticalAlignment: pw.TableCellVerticalAlignment.middle,
+              tableWidth: pw.TableWidth.max,
+              border: pw.TableBorder.all(),
+              children: rows)
+        ],
+      ),
+    );
+
+    final List<int> pdfData = await pdf.save();
+    const String pdfPath = 'JmrReport.pdf';
+
+    // Save the PDF file to device storage
+    if (kIsWeb) {
+      html.AnchorElement(
+          href: "data:application/octet-stream;base64,${base64Encode(pdfData)}")
+        ..setAttribute("download", pdfPath)
+        ..click();
+    } else {
+      const Text('Sorry it is not ready for mobile platform');
+    }
+    setState(() {
+      _isLoading = false;
+    });
+    // // For mobile platforms
+    // final String dir = (await getApplicationDocumentsDirectory()).path;
+    // final String path = '$dir/$pdfPath';
+    // final File file = File(path);
+    // await file.writeAsBytes(pdfData);
+    //
+    // // Open the PDF file for preview or download
+    // OpenFile.open(file.path);
   }
 }
 

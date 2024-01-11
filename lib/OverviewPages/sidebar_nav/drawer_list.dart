@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:web_appllication/style.dart';
 
 class MyDrawerList extends StatefulWidget {
@@ -13,7 +11,7 @@ class MyDrawerList extends StatefulWidget {
 class _MyDrawerListState extends State<MyDrawerList> {
   List<String> pageNames = [
     'EV Dashboard Project',
-    'O & M Dashboard',
+    'EV Bus Depot Demand Energy Management',
     'Cities',
     'User'
   ];
@@ -37,7 +35,7 @@ class _MyDrawerListState extends State<MyDrawerList> {
     return InkWell(
       onTap: () {},
       child: Container(
-        height: 40,
+        height: 100,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

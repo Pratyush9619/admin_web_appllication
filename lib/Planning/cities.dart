@@ -8,8 +8,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:web_appllication/Planning/depot.dart';
 import 'package:web_appllication/Service/database_service.dart';
 import 'package:web_appllication/components/loading_page.dart';
+import 'package:web_appllication/components/page_routeBuilder.dart';
 import 'package:web_appllication/style.dart';
+import 'package:web_appllication/widgets/custom_appbar.dart';
 import '../Authentication/auth_service.dart';
+import '../widgets/custom_container.dart';
 
 class CitiesPage extends StatefulWidget {
   const CitiesPage({super.key});
@@ -39,13 +42,19 @@ class _CitiesPageState extends State<CitiesPage> {
     return _isLoading
         ? LoadingPage()
         : Scaffold(
+            // appBar: PreferredSize(
+            //     preferredSize: Size.fromHeight(50),
+            //     child: CustomAppBar(
+            //       text: 'Cities Page',
+            //       cityName: '',
+            //     )),
             floatingActionButton: companyName == 'TATA POWER'
                 ? FloatingActionButton(
                     onPressed: () {
                       PopupDialog(context);
                     },
-                    child: const Icon(Icons.add),
                     backgroundColor: blue,
+                    child: Icon(Icons.add),
                   )
                 : Container(),
             body: citylist(),
@@ -216,54 +225,68 @@ class _CitiesPageState extends State<CitiesPage> {
             return GridView.builder(
                 itemCount: snapshot.data!.docs.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4),
+                    crossAxisCount: 4, childAspectRatio: 1.5),
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(10),
                     child: GestureDetector(
-                      // onTap: () => onToScreen(index),
-                      child: Stack(children: [
-                        Column(
-                          children: [
-                            Container(
-                              height: 150,
-                              width: 150,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: blue,
-                                image: DecorationImage(
-                                    image: NetworkImage(
-                                        snapshot.data!.docs[index]['ImageUrl']),
-                                    fit: BoxFit.cover),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            // Text(snapshot.data!.docs[index]['CityName']),
-                            const SizedBox(height: 5),
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    backgroundColor: blue),
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Mydepots(
-                                                userId: userId,
-                                                cityName: snapshot.data!
-                                                    .docs[index]['CityName'],
-                                              )));
-                                },
-                                child: Text(
-                                    snapshot.data!.docs[index]['CityName']))
-                          ],
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              CustomPageRoute(
+                                  page: Mydepots(
+                                userId: userId,
+                                cityName: snapshot.data!.docs[index]
+                                    ['CityName'],
+                              )));
+                        },
+                        child: cards(
+                            context,
+                            snapshot.data!.docs[index]['CityName'],
+                            snapshot.data!.docs[index]['ImageUrl'],
+                            index)
+                        // Stack(children: [
+                        //   Column(
+                        //     children: [
+                        //       Container(
+                        //         height: 150,
+                        //         width: 150,
+                        //         decoration: BoxDecoration(
+                        //           borderRadius: BorderRadius.circular(20),
+                        //           color: blue,
+                        //           image: DecorationImage(
+                        //               image: NetworkImage(
+                        //                   snapshot.data!.docs[index]['ImageUrl']),
+                        //               fit: BoxFit.cover),
+                        //         ),
+                        //       ),
+                        //       const SizedBox(
+                        //         height: 10,
+                        //       ),
+                        //       // Text(snapshot.data!.docs[index]['CityName']),
+                        //       const SizedBox(height: 5),
+                        //       ElevatedButton(
+                        //           style: ElevatedButton.styleFrom(
+                        //               shape: RoundedRectangleBorder(
+                        //                   borderRadius:
+                        //                       BorderRadius.circular(10)),
+                        //               backgroundColor: blue),
+                        //           onPressed: () {
+                        //             Navigator.push(
+                        //                 context,
+                        //                 CustomPageRoute(
+                        //                     page: Mydepots(
+                        //                   userId: userId,
+                        //                   cityName: snapshot.data!.docs[index]
+                        //                       ['CityName'],
+                        //                 )));
+                        //           },
+                        //           child: Text(
+                        //               snapshot.data!.docs[index]['CityName']))
+                        //     ],
+                        //   ),
+                        // ]),
                         ),
-                      ]),
-                    ),
                   );
                 });
           } else {

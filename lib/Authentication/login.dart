@@ -5,14 +5,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_appllication/Authentication/reset_password.dart';
-import 'package:web_appllication/OverviewPages/ev_dashboard/dashboard.dart';
 import 'package:web_appllication/OverviewPages/sidebar_nav/nav_screen.dart';
-import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 import 'package:web_appllication/Planning/cities.dart';
 import 'package:web_appllication/components/loading_page.dart';
-import 'package:web_appllication/main.dart';
-import 'package:web_appllication/small_screen.dart';
-
+import 'package:web_appllication/screen/split_dashboard/split_dashboard.dart';
 import '../style.dart';
 
 class SignInPage extends StatefulWidget {
@@ -137,15 +133,17 @@ class _SignInPageState extends State<SignInPage> {
                                           text: ' Forget Password ?',
                                           recognizer: TapGestureRecognizer()
                                             ..onTap = (() => Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
+                                                  context,
+                                                  MaterialPageRoute(
                                                     builder: (context) =>
                                                         ResetPass(
                                                             // email: FirebaseAuth
                                                             //     .instance
                                                             //     .currentUser!
                                                             //     .email!,
-                                                            )))),
+                                                            ),
+                                                  ),
+                                                )),
                                           style: bodyText2White.copyWith(
                                               color: blue))
                                     ],

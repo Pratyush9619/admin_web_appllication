@@ -11,17 +11,21 @@ import 'package:web_appllication/provider/selected_row_index.dart';
 import 'package:web_appllication/style.dart';
 import 'package:web_appllication/widgets/table_loading.dart';
 
-class DashBoardScreen extends StatefulWidget {
+List<dynamic> cityList = [];
+
+class EVDashboardScreen extends StatefulWidget {
+  final bool showAppBar;
   final Function? callbackFun;
-  const DashBoardScreen({Key? key, this.callbackFun}) : super(key: key);
+  const EVDashboardScreen({Key? key, this.callbackFun, this.showAppBar = false})
+      : super(key: key);
 
   static const String id = 'admin-page';
 
   @override
-  State<DashBoardScreen> createState() => _DashBoardScreenState();
+  State<EVDashboardScreen> createState() => _EVDashboardScreenState();
 }
 
-class _DashBoardScreenState extends State<DashBoardScreen> {
+class _EVDashboardScreenState extends State<EVDashboardScreen> {
   List estimatedEndDate = [];
   var currentPage = DrawerSection.evDashboard;
 
@@ -53,7 +57,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   List<double> depotProgressList = [];
 
   List<String> selectedDepoList = [];
-  List<dynamic> cityList = [];
   List<List<dynamic>> rowList = [];
 
   String selectedCity = '';
@@ -262,6 +265,24 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       fontSize = 11;
     }
     return Scaffold(
+      appBar: widget.showAppBar
+          ? PreferredSize(
+              preferredSize: Size.fromHeight(45),
+              child: AppBar(
+                centerTitle: true,
+                backgroundColor: blue,
+                title: const Text('EV Bus Project Analysis Dashboard'),
+                actions: [
+                  IconButton(
+                      onPressed: () {
+                        showSearch(
+                            context: context, delegate: CustomSearchDelegate());
+                      },
+                      icon: Icon(Icons.search))
+                ],
+              ),
+            )
+          : null,
       body: isLoading
           ? LoadingPage()
           : Padding(
@@ -1829,37 +1850,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     //     ],
                     //   ),
                     // ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(
-                              top: 10, left: 10, bottom: 10, right: 20),
-                          color: blue,
-                          height: 35,
-                          width: 140,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(5),
-                            onTap: pickAndProcessFile,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Icon(
-                                    Icons.upload_file_outlined,
-                                    color: white,
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 3,
-                                  child: Text('Upload Excel',
-                                      style: TextStyle(color: white)),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+
                     const SizedBox(height: 30),
 
                     Row(
@@ -1893,12 +1884,17 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             child: Consumer<SelectedRowIndexModel>(
                               builder: (context, value, child) {
                                 return DataTable2(
+                                    columnSpacing: 16,
+                                    dataTextStyle: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: blue,
+                                        fontSize: 12),
                                     headingRowColor:
                                         MaterialStatePropertyAll(blue),
                                     dividerThickness: 0,
                                     minWidth: 900,
-                                    dataRowHeight: 40,
-                                    headingRowHeight: 40,
+                                    // dataRowHeight: 40,
+                                    headingRowHeight: 50,
                                     border: TableBorder.all(),
                                     headingTextStyle: TextStyle(
                                       fontSize: 13,
@@ -1921,10 +1917,26 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                         DataCell(Text(
                                             '${depotProgressList[index].toStringAsFixed(1)}%')),
                                         DataCell(Text(startDateList[index])),
-                                        DataCell(Text(endDateList[index])),
                                         DataCell(
-                                            Text(estimatedDateList[index])),
-                                        DataCell(Text(estimatedEndDate[index])),
+                                            Text(actualEndDateList[index])),
+                                        DataCell(
+                                          Text(
+                                            estimatedEndDate[index] == 'W.I.P'
+                                                ? actualEndDateList[index]
+                                                : 'Completed ✔',
+                                            style: TextStyle(
+                                                color:
+                                                    estimatedEndDate[index] !=
+                                                            'W.I.P'
+                                                        ? Colors.green
+                                                        : Colors.black),
+                                          ),
+                                        ),
+                                        DataCell(
+                                          Text(
+                                            estimatedEndDate[index],
+                                          ),
+                                        ),
                                         // DataCell(
                                         //     Text(actualEndDateList[index])),
                                       ]);
@@ -1936,6 +1948,67 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 ),
               ),
             ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          // Container(
+          //   decoration: BoxDecoration(
+          //     color: blue,
+          //     borderRadius: BorderRadius.circular(4),
+          //   ),
+          //   height: 35,
+          //   width: 100,
+          //   child: InkWell(
+          //     onTap: () {
+          //       Navigator.pushNamed(context, '/dashboard');
+          //     },
+          //     child: Row(
+          //       children: [
+          //         Expanded(
+          //           child: Icon(
+          //             Icons.arrow_back_ios_new,
+          //             color: white,
+          //           ),
+          //         ),
+          //         Expanded(
+          //           flex: 3,
+          //           child: Text('Back', style: TextStyle(color: white)),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          const SizedBox(
+            width: 10,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: blue,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            height: 35,
+            width: 140,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(5),
+              onTap: pickAndProcessFile,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Icon(
+                      Icons.upload_file_outlined,
+                      color: white,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Text('Upload Excel', style: TextStyle(color: white)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -1962,9 +2035,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     List<List<dynamic>> tempList2 = [];
 
     try {
-      setState(() {
-        isLoading = true;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = true;
+        });
+      }
 
       FilePickerResult? result = await FilePicker.platform
           .pickFiles(allowedExtensions: ['xlsx'], type: FileType.custom);
@@ -2176,9 +2251,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       //Storing Excel Data into Firestore Database
       await storeExcel();
 
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     } catch (e, stackTrace) {
       print('Error decoding Excel file: $e');
       print(stackTrace);
@@ -2333,9 +2410,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       budgetActualTotalList.add(actualTotalList);
     }
 
-    setState(() {
-      isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void showCustomAlert() {
@@ -2506,6 +2585,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       actualEndDate.clear();
       isDateStored = false;
       totalperc = 0.0;
+
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('KeyEventsTable')
           .doc(selectedDepoList[i])
@@ -2626,6 +2706,81 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     setState(() {
       isTableLoading = false;
     });
+  }
+}
+
+class CustomSearchDelegate extends SearchDelegate {
+  List<String> searchTerms = [
+    'Apple',
+    'Banana',
+    'Pear',
+    'Watermelons',
+    'Oranges',
+    'BlueBerries',
+    'Strawberries',
+    'Raspberries',
+  ];
+
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = "";
+        },
+      )
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    List<String> matchedList = [];
+    for (var fruit in cityList) {
+      if (fruit.toLowerCase().contains(query.toLowerCase())) {
+        matchedList.add(fruit);
+      }
+    }
+    return ListView.builder(
+        itemCount: matchedList.length,
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () {},
+            child: ListTile(
+              title: Text(matchedList[index]),
+            ),
+          );
+        });
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    List<String> matchedList = [];
+    for (var fruit in cityList) {
+      if (fruit.toLowerCase().contains(query.toLowerCase())) {
+        matchedList.add(fruit);
+      }
+    }
+    return ListView.builder(
+        itemCount: matchedList.length,
+        itemBuilder: (context, index) {
+          return InkWell(
+            onTap: () {},
+            child: ListTile(
+              title: Text(matchedList[index]),
+            ),
+          );
+        });
   }
 }
 
