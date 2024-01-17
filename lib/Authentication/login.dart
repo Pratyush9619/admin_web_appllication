@@ -268,6 +268,7 @@ class _SignInPageState extends State<SignInPage> {
           .collection('Admin')
           .where('Employee Id', isEqualTo: _id)
           .get();
+      print('Login Id: $_id');
 
       try {
         if (_pass == snap.docs[0]['Password'] &&

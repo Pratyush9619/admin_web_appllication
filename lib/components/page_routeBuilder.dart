@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class CustomPageRoute extends PageRouteBuilder {
   final Widget page;
@@ -16,10 +16,11 @@ class CustomPageRoute extends PageRouteBuilder {
               curve: Curves.easeInOut,
             );
 
-            return SlideTransition(
-              position: tween.animate(curvedAnimation),
-              child: child,
-            );
+            // return SlideTransition(
+            //   position: tween.animate(curvedAnimation),
+            //   child: child,
+            // );
+            return FadeTransition(opacity: curvedAnimation, child: child);
           },
         );
 }
