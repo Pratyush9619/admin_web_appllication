@@ -2,19 +2,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web_appllication/Authentication/login_register.dart';
-import 'package:web_appllication/OverviewPages/sidebar_nav/nav_screen.dart';
 import 'package:web_appllication/provider/All_Depo_Select_Provider.dart';
 import 'package:web_appllication/provider/assigned_user_provider.dart';
 import 'package:web_appllication/provider/demandEnergyProvider.dart';
+import 'package:web_appllication/provider/energy_provider.dart';
 import 'package:web_appllication/provider/key_provider.dart';
 import 'package:web_appllication/provider/menuUserPageProvider.dart';
 import 'package:web_appllication/provider/selected_row_index.dart';
 import 'package:web_appllication/provider/text_provider.dart';
 import 'package:web_appllication/routeBuilder/route_generator.dart';
-import 'package:web_appllication/screen/demand%20energy%20management/animated_table.dart';
-import 'package:web_appllication/screen/demand%20energy%20management/demandScreen.dart';
-import 'package:web_appllication/screen/demand%20energy%20management/experimental_Table.dart';
-import 'package:web_appllication/screen/split_dashboard/split_dashboard.dart';
+import 'package:web_appllication/small_screen.dart';
 import 'package:web_appllication/style.dart';
 
 void main() async {
@@ -47,6 +44,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<KeyProvider>(create: (context) => KeyProvider()),
         ChangeNotifierProvider(create: (context) => SelectedRowIndexModel()),
         ChangeNotifierProvider(create: (context) => AllDepoSelectProvider()),
+        ChangeNotifierProvider(create: (context) => EnergyProvider())
       ],
       child: MaterialApp(
         onGenerateRoute: RouteGenerator.generateRoute,

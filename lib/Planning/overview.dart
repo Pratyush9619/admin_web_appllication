@@ -15,6 +15,7 @@ import '../OverviewPages/detailed_Eng.dart';
 import '../KeyEvents/key_events.dart';
 import '../OverviewPages/easy_monitoring.dart';
 import '../OverviewPages/Jmr_screen/jmr.dart';
+import '../OverviewPages/energy_management.dart';
 import '../OverviewPages/material_vendor.dart';
 import '../OverviewPages/monthly_summary.dart';
 import '../OverviewPages/testing_report.dart';
@@ -60,7 +61,7 @@ class _MyOverviewState extends State<MyOverview> {
     // 'assets/overview_image/testing_commissioning.png',
     'assets/overview_image/testing_commissioning.png',
     'assets/overview_image/closure_report.png',
-    // 'assets/overview_image/easy_monitoring.jpg',
+    'assets/overview_image/easy_monitoring.jpg',
     // 'assets/overview_image/overview.png',
     // 'assets/overview_image/project_planning.png',
     // 'assets/overview_image/resource.png',
@@ -87,9 +88,9 @@ class _MyOverviewState extends State<MyOverview> {
       'Online JMR verification for projects',
       'Safety check list & observation',
       'FQP Checklist for Civil,Electrical work & Quality Checklist',
-      'Depot Insides',
+      'Depot Insightes',
       'Closure Report',
-      // 'Easy monitoring of O & M schedule for all the equipment of depots.',
+      'Depot Demand Energy Management',
     ];
     pages = [
       DepotOverview(
@@ -98,28 +99,16 @@ class _MyOverviewState extends State<MyOverview> {
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
-      // StatutoryAprovalA2(
-      //   depoName: widget.depoName,
-      //   cityName: widget.cityName,
-      // ),
       KeyEventsUser(
         userId: widget.userId,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
-      // KeyEvents(
-      //   depoName: widget.depoName,
-      //   cityName: widget.cityName,
-      // ),
       MaterialProcurement(
         userId: widget.userId,
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
-      // ResourceAllocation(
-      //   depoName: widget.depoName,
-      //   cityName: widget.cityName,
-      // ),
       DailyProject(
         userId: widget.userId,
         cityName: widget.cityName,
@@ -130,10 +119,6 @@ class _MyOverviewState extends State<MyOverview> {
         cityName: widget.cityName,
         depoName: widget.depoName,
       ),
-      // MonthlyProject(
-      //   cityName: widget.cityName,
-      //   depoName: widget.depoName,
-      // ),
       DetailedEng(
         userId: widget.userId,
         // userId: widget.userid,
@@ -151,14 +136,8 @@ class _MyOverviewState extends State<MyOverview> {
         cityName: widget.cityName,
         id: 'Safety Report',
       ),
-      // SafetyChecklist(
-      //   // userId: widget.userid,
-      //   cityName: widget.cityName,
-      //   depoName: widget.depoName,
-      // ),
       QualityChecklist(
         userId: widget.userId,
-
         // userId: widget.userid,
         cityName: widget.cityName,
         depoName: widget.depoName,
@@ -168,11 +147,6 @@ class _MyOverviewState extends State<MyOverview> {
           cityName: widget.cityName,
           depoName: widget.depoName,
           docId: 'OverviewepoImages'),
-      // TestingReport(
-      //   userId: widget.userId,
-      //   cityName: widget.cityName,
-      //   depoName: widget.depoName,
-      // ),
       ClosureSummaryTable(
         userId: widget.userId,
         // userId: widget.userid,
@@ -180,17 +154,16 @@ class _MyOverviewState extends State<MyOverview> {
         depoName: widget.depoName,
         id: 'Closure Report',
       ),
-
-      EasyMonitoring(
+      // EasyMonitoring(
+      //   userId: widget.userId,
+      //   cityName: widget.cityName,
+      //   depoName: widget.depoName,
+      // ),
+      EnergyManagement(
         userId: widget.userId,
         cityName: widget.cityName,
         depoName: widget.depoName,
       )
-      // KeyEvents(
-      //   // userId: widget.userid,
-      //   depoName: widget.depoName,
-      //   cityName: widget.cityName,
-      // ),
     ];
 
     return Scaffold(
@@ -201,62 +174,66 @@ class _MyOverviewState extends State<MyOverview> {
             toMainOverview: true,
             cityName: widget.cityName,
             userId: widget.userId,
-            text: 'Overview - ${widget.cityName} - ${widget.depoName}',
+            text: 'Overview/${widget.cityName}/${widget.depoName}',
             depoName: widget.depoName,
             // userid: widget.userid,
           ),
           preferredSize: const Size.fromHeight(50)),
-
-      // AppBar(
-      //   title: Text('Overview - ' + widget.cityName + ' - ' + widget.depoName),
-
-      //   backgroundColor: blue,
-      // ),
       body: GridView.count(
-        crossAxisCount: 6,
-        childAspectRatio: 0.99,
+        crossAxisCount: 4,
+        childAspectRatio: 1.5,
         children: List.generate(desription.length, (index) {
-          return cards(desription[index], imagedata[index], index);
+          return Padding(
+            padding: const EdgeInsets.all(15),
+            child: cards(desription[index], imagedata[index], index),
+          );
         }),
       ),
     );
   }
 
   Widget cards(String desc, String img, int index) {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: GestureDetector(
-        onTap: (() {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => pages[index],
-              ));
-        }),
-        child: Container(
-          height: 100,
-          width: 100,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: blue)),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 80,
-                width: 80,
-                child: Image.asset(img, fit: BoxFit.cover),
+    return GestureDetector(
+      onTap: (() {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => pages[index],
+            ));
+      }),
+      child: Container(
+        padding: const EdgeInsets.all(2),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: blue,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 5,
+                offset: const Offset(0, 2), // changes position of shadow
               ),
-              const SizedBox(height: 10),
-              Expanded(
-                child: Text(
-                  desc,
-                  textAlign: TextAlign.center,
-                ),
-              )
-            ],
-          ),
+            ]),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 10),
+            SizedBox(
+              height: 80,
+              width: 80,
+              child: Image.asset(img, fit: BoxFit.cover),
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: Text(
+                desc,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+            )
+          ],
         ),
       ),
     );
