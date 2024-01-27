@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  connectivity_plus
   pdfx
   printing
   syncfusion_pdfviewer_windows

@@ -1,24 +1,14 @@
 import 'dart:convert';
 import 'dart:html' as html;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-import 'package:pdf/pdf.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:web_appllication/KeyEvents/ChartData.dart';
-import 'package:web_appllication/KeyEvents/key_events.dart';
 import 'package:web_appllication/components/Loading_page.dart';
 import 'package:web_appllication/style.dart';
 import 'package:web_appllication/widgets/nodata_available.dart';
 import '../provider/key_provider.dart';
 import '../widgets/custom_appbar.dart';
-import 'package:pdf/widgets.dart' as pw;
 
 import 'key_events2.dart';
 

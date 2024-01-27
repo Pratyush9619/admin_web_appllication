@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:web_appllication/MenuPage/user.dart';
 import 'package:web_appllication/OverviewPages/ev_dashboard/ev_dashboard.dart';
+import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 import 'package:web_appllication/OverviewPages/sidebar_nav/drawer_header.dart';
 import 'package:web_appllication/Planning/cities.dart';
 import 'package:web_appllication/provider/demandEnergyProvider.dart';
 import 'package:web_appllication/screen/demand%20energy%20management/demandScreen.dart';
 import 'package:web_appllication/style.dart';
+
+
 
 class NavigationPage extends StatefulWidget {
   String userId;
@@ -38,13 +41,16 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {});
     if (mounted) {
       setState(() {
         switch (currentPage) {
           case DrawerSection.evDashboard:
             showStartEndDatePanel = false;
             title = 'EV BUS Project Performance Analysis Dashboard';
-            container = const EVDashboardScreen();
+            container = EVDashboardScreen();
+            //'login/EVDashboard';
+            // Navigator.pushNamed(context, 'login/EVDashboard');
             break;
           case DrawerSection.demandEnergy:
             showStartEndDatePanel = true;
@@ -55,7 +61,9 @@ class _NavigationPageState extends State<NavigationPage> {
             showStartEndDatePanel = false;
 
             title = 'Cities';
-            container = const CitiesPage();
+            container = CitiesPage();
+            // Navigator.pushNamed(
+            //     context, 'login/EVDashboard/EVBusDepot/Cities');
             break;
           case DrawerSection.users:
             showStartEndDatePanel = false;

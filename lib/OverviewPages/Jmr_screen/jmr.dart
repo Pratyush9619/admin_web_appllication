@@ -40,7 +40,10 @@ class _JmrState extends State<Jmr> {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            title: Text('${widget.cityName} / ${widget.depoName} / JMR'),
+            title: Text('${widget.cityName} / ${widget.depoName} / JMR',
+            style: appFontSize,
+            ),
+            
             backgroundColor: blue,
             actions: [
               Container(

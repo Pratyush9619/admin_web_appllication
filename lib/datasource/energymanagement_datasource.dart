@@ -9,12 +9,12 @@ import '../style.dart';
 
 class EnergyManagementDatasource extends DataGridSource {
   BuildContext mainContext;
-  String userId;
+  // String userId;
   String? cityName;
   String? depoName;
 
   EnergyManagementDatasource(this._energyManagement, this.mainContext,
-      this.userId, this.cityName, this.depoName) {
+      this.cityName, this.depoName) {
     buildDataGridRows();
   }
   void buildDataGridRows() {

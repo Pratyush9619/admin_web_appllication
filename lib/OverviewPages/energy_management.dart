@@ -26,12 +26,12 @@ import 'package:pdf/widgets.dart' as pw;
 import 'dart:html' as html;
 
 class EnergyManagement extends StatefulWidget {
-  String? userId;
+  // String? userId;
   String? cityName;
   String? depoName;
   EnergyManagement({
     super.key,
-    this.userId,
+    // this.userId,
     this.cityName,
     required this.depoName,
   });
@@ -79,8 +79,8 @@ class _EnergyManagementState extends State<EnergyManagement> {
     identifyUser();
     // getmonthlyReport();
     // EnergyManagement = getmonthlyReport();
-    _energydatasource = EnergyManagementDatasource(energyManagement, context,
-        widget.userId!, widget.cityName!, widget.depoName!);
+    _energydatasource = EnergyManagementDatasource(
+        energyManagement, context, widget.cityName!, widget.depoName!);
     // DailyDataSource(
     //     EnergyManagement, context, widget.cityName!, widget.depoName!);
     _dataGridController = DataGridController();
@@ -101,8 +101,8 @@ class _EnergyManagementState extends State<EnergyManagement> {
     id.clear();
     // getTableData().whenComplete(() {
     nestedTableData(id).whenComplete(() {
-      _energydatasource = EnergyManagementDatasource(energyManagement, context,
-          widget.userId!, widget.cityName!, widget.depoName!);
+      _energydatasource = EnergyManagementDatasource(
+          energyManagement, context, widget.cityName!, widget.depoName!);
       // DailyDataSource(
       //     EnergyManagement, context, widget.cityName!, widget.depoName!);
       _dataGridController = DataGridController();
@@ -125,10 +125,10 @@ class _EnergyManagementState extends State<EnergyManagement> {
             cityName: widget.cityName,
             text:
                 ' ${widget.cityName}/${widget.depoName}/Depot Energy Management',
-            userId: widget.userId,
+            // userId: widget.userId,
             haveSynced: false,
             //specificUser ? true : false,
-            isdownload: true,
+            isdownload: false,
             haveSummary: false,
             onTap: () => Navigator.push(
                 context,
@@ -137,12 +137,12 @@ class _EnergyManagementState extends State<EnergyManagement> {
                     cityName: widget.cityName.toString(),
                     depoName: widget.depoName.toString(),
                     id: 'Energy Management',
-                    userId: widget.userId,
+                    // userId: widget.userId,
                   ),
                 )),
-            store: () {
-              storeData();
-            },
+            // store: () {
+            //   storeData();
+            // },
           ),
           preferredSize: const Size.fromHeight(50)),
       body: _isLoading
@@ -497,7 +497,7 @@ class _EnergyManagementState extends State<EnergyManagement> {
                   padding: const EdgeInsets.only(top: 25),
                   child: BarChart(
                     swapAnimationCurve: Curves.linear,
-                    swapAnimationDuration: const Duration(milliseconds: 1000),
+                     swapAnimationDuration: const Duration(milliseconds: 1000),
                     BarChartData(
                       backgroundColor: white,
                       barTouchData: BarTouchData(
@@ -563,35 +563,35 @@ class _EnergyManagementState extends State<EnergyManagement> {
     );
   }
 
-  void storeData() {
-    Map<String, dynamic> table_data = Map();
-    for (var i in _energydatasource.dataGridRows) {
-      for (var data in i.getCells()) {
-        if (data.columnName != 'button') {
-          table_data[data.columnName] = data.value;
-        }
-      }
+  // void storeData() {
+  //   Map<String, dynamic> table_data = Map();
+  //   for (var i in _energydatasource.dataGridRows) {
+  //     for (var data in i.getCells()) {
+  //       if (data.columnName != 'button') {
+  //         table_data[data.columnName] = data.value;
+  //       }
+  //     }
 
-      tabledata2.add(table_data);
-      table_data = {};
-    }
+  //     tabledata2.add(table_data);
+  //     table_data = {};
+  //   }
 
-    FirebaseFirestore.instance
-        .collection('EnergyManagementReport')
-        .doc('${widget.depoName}')
-        .collection(widget.userId!)
-        .doc(DateFormat.yMMMMd().format(DateTime.now()))
-        .set({
-      'data': tabledata2,
-    }).whenComplete(() {
-      tabledata2.clear();
-      // Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text('Data are synced'),
-        backgroundColor: blue,
-      ));
-    });
-  }
+  //   FirebaseFirestore.instance
+  //       .collection('EnergyManagementReport')
+  //       .doc('${widget.depoName}')
+  //       .collection(widget.userId!)
+  //       .doc(DateFormat.yMMMMd().format(DateTime.now()))
+  //       .set({
+  //     'data': tabledata2,
+  //   }).whenComplete(() {
+  //     tabledata2.clear();
+  //     // Navigator.pop(context);
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       content: const Text('Data are synced'),
+  //       backgroundColor: blue,
+  //     ));
+  //   });
+  // }
 
   Future<void> getUserId() async {
     await AuthService().getCurrentUserId().then((value) {

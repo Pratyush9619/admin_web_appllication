@@ -4,11 +4,13 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tab_indicator_styler/tab_indicator_styler.dart';
 import 'package:web_appllication/KeyEvents/key_eventsUser.dart';
 import 'package:web_appllication/OverviewPages/closure_summary_table.dart';
 import 'package:web_appllication/OverviewPages/monthly_summary.dart';
 import 'package:web_appllication/Planning/overview.dart';
+import '../Authentication/auth_service.dart';
 import '../Authentication/login_register.dart';
 import '../KeyEvents/key_events.dart';
 import '../OverviewPages/Jmr_screen/jmr.dart';
@@ -100,9 +102,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
   TextEditingController selectedDepoController = TextEditingController();
   TextEditingController selectedCityController = TextEditingController();
   KeyProvider? _keyProvider;
+  String? companyName;
+  bool isLoading = true;
 
   @override
   void initState() {
+    getcompany();
     super.initState();
   }
 
@@ -505,30 +510,35 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         )
                       : Container(),
               widget.haveSynced
-                  ? Padding(
-                      padding:
-                          const EdgeInsets.only(right: 20, top: 10, bottom: 10),
-                      child: Container(
-                        height: 15,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.blue),
-                        child: TextButton(
-                            onPressed: () {
-                              widget.store!();
-                            },
-                            child: Text(
-                              'Sync Data',
-                              style: TextStyle(color: white, fontSize: 14),
-                            )),
-                      ),
-                    )
+                  ? companyName == 'TATA POWER'
+                      ? Padding(
+                          padding: const EdgeInsets.only(
+                              right: 20, top: 10, bottom: 10),
+                          child: Container(
+                            height: 15,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.blue),
+                            child: TextButton(
+                                onPressed: () {
+                                  widget.store!();
+                                },
+                                child: Text(
+                                  'Sync Data',
+                                  style: TextStyle(color: white, fontSize: 14),
+                                )),
+                          ),
+                        )
+                      : Container()
                   : Container(),
               Padding(
                   padding: const EdgeInsets.only(right: 15, left: 15),
                   child: GestureDetector(
-                      onTap: () {
+                      onTap: () async {
                         onWillPop(context);
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        prefs.remove('employeeId');
                       },
                       child: Row(
                         children: [
@@ -719,6 +729,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
     }
 
     return cityList;
+  }
+
+  Future<void> getcompany() async {
+    await AuthService().getCurrentCompanyName().then((value) {
+      companyName = value;
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 }
 

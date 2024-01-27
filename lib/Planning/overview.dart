@@ -1,24 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:web_appllication/KeyEvents/Grid_DataTableA2.dart';
-import 'package:web_appllication/OverviewPages/closure_report.dart';
-import 'package:web_appllication/OverviewPages/daily_project.dart';
-import 'package:web_appllication/OverviewPages/depot_overview.dart';
-import 'package:web_appllication/OverviewPages/quality_checklist.dart';
-import 'package:web_appllication/OverviewPages/resource_allocation.dart';
-import 'package:web_appllication/OverviewPages/safety_summary.dart';
-import 'package:web_appllication/style.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:web_appllication/widgets/custom_appbar.dart';
-import '../KeyEvents/key_eventsUser.dart';
-import '../KeyEvents/view_AllFiles.dart';
-import '../OverviewPages/closure_summary_table.dart';
-import '../OverviewPages/detailed_Eng.dart';
-import '../KeyEvents/key_events.dart';
-import '../OverviewPages/easy_monitoring.dart';
-import '../OverviewPages/Jmr_screen/jmr.dart';
-import '../OverviewPages/energy_management.dart';
-import '../OverviewPages/material_vendor.dart';
-import '../OverviewPages/monthly_summary.dart';
-import '../OverviewPages/testing_report.dart';
+
+import '../Authentication/auth_service.dart';
 
 class MyOverview extends StatefulWidget {
   String? userId;
@@ -33,7 +18,9 @@ class MyOverview extends StatefulWidget {
 
 class _MyOverviewState extends State<MyOverview> {
   @override
-  List<Widget> pages = [];
+  List<String> pages = [];
+  late SharedPreferences _sharedPreferences;
+  // List<void Function(BuildContext)> pages = [];
   List<IconData> icondata = [
     Icons.search_off_outlined,
     Icons.play_lesson_rounded,
@@ -77,6 +64,12 @@ class _MyOverviewState extends State<MyOverview> {
   ];
 
   @override
+  void initState() {
+    setSharePrefence();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<String> desription = [
       'Overview of Project Progress Status of ${widget.depoName} EV Bus Charging Infra',
@@ -93,78 +86,129 @@ class _MyOverviewState extends State<MyOverview> {
       'Depot Demand Energy Management',
     ];
     pages = [
-      DepotOverview(
-        userid: widget.userId,
-        // userid: widget.userid,
-        cityName: widget.cityName,
-        depoName: widget.depoName,
-      ),
-      KeyEventsUser(
-        userId: widget.userId,
-        cityName: widget.cityName,
-        depoName: widget.depoName,
-      ),
-      MaterialProcurement(
-        userId: widget.userId,
-        cityName: widget.cityName,
-        depoName: widget.depoName,
-      ),
-      DailyProject(
-        userId: widget.userId,
-        cityName: widget.cityName,
-        depoName: widget.depoName,
-      ),
-      MonthlySummary(
-        userId: widget.userId,
-        cityName: widget.cityName,
-        depoName: widget.depoName,
-      ),
-      DetailedEng(
-        userId: widget.userId,
-        // userId: widget.userid,
-        cityName: widget.cityName,
-        depoName: widget.depoName,
-      ),
-      Jmr(
-        userId: widget.userId,
-        cityName: widget.cityName,
-        depoName: widget.depoName,
-      ),
-      SafetySummary(
-        userId: widget.userId,
-        depoName: widget.depoName,
-        cityName: widget.cityName,
-        id: 'Safety Report',
-      ),
-      QualityChecklist(
-        userId: widget.userId,
-        // userId: widget.userid,
-        cityName: widget.cityName,
-        depoName: widget.depoName,
-      ),
-      ViewAllPdf(
-          title: 'Overview Page',
-          cityName: widget.cityName,
-          depoName: widget.depoName,
-          docId: 'OverviewepoImages'),
-      ClosureSummaryTable(
-        userId: widget.userId,
-        // userId: widget.userid,
-        cityName: widget.cityName,
-        depoName: widget.depoName,
-        id: 'Closure Report',
-      ),
-      // EasyMonitoring(
-      //   userId: widget.userId,
-      //   cityName: widget.cityName,
-      //   depoName: widget.depoName,
-      // ),
-      EnergyManagement(
-        userId: widget.userId,
-        cityName: widget.cityName,
-        depoName: widget.depoName,
-      )
+      'login/EVDashboard/Cities/EVBusDepot/OverviewPage/DepotOverview',
+      'login/EVDashboard/Cities/EVBusDepot/EVBusDepot/OverviewPage/ProjectPlanning',
+      'login/EVDashboard/Cities/EVBusDepot/EVBusDepot/OverviewPage/MaterialProcurement',
+      'login/EVDashboard/Cities/EVBusDepot/EVBusDepot/OverviewPage/DailyProgress',
+      'login/EVDashboard/Cities/EVBusDepot/EVBusDepot/OverviewPage/MonthlyProgress',
+      'login/EVDashboard/Cities/EVBusDepot/EVBusDepot/OverviewPage/DetailedEngineering',
+      'login/EVDashboard/Cities/EVBusDepot/EVBusDepot/OverviewPage/Jmr',
+      'login/EVDashboard/Cities/EVBusDepot/EVBusDepot/OverviewPage/SafetyChecklist',
+      'login/EVDashboard/Cities/EVBusDepot/EVBusDepot/OverviewPage/QualityChecklist',
+      'login/EVDashboard/Cities/EVBusDepot/EVBusDepot/OverviewPage/DepotInsightes',
+      'login/EVDashboard/Cities/EVBusDepot/EVBusDepot/OverviewPage/ClosureReport',
+      'login/EVDashboard/Cities/EVBusDepot/EVBusDepot/OverviewPage/DemandEnergy',
     ];
+    // List<void Function(BuildContext)> pages = [
+    //   (context) => Navigator.pushNamed(context, 'login'),
+    //   (context) => Navigator.pushNamed(context, 'login/EVDashboard'),
+
+    //   (context) =>
+    //       Navigator.pushNamed(context, 'login/EVDashboard/EVBusDepot/Cities'),
+    //   (context) => Navigator.pushNamed(context, 'login/EVDashboard/EVBusDepot/Cities/Depots'),
+    //   (context) => Navigator.pushNamed(
+    //       context, 'login/EVDashboard/EVBusDepot/overviewpage'),
+    //   (context) => Navigator.pushNamed(
+    //       context, 'login/EVDashboard/EVBusDepot/OverviewPage/DepotOverview'),
+    //   (context) => Navigator.pushNamed(context,
+    //       'login/EVDashboard/EVBusDepot/OverviewPage/DepotOverview/ProjectPlanning'),
+    //   (context) => Navigator.pushNamed(context,
+    //       'login/EVDashboard/EVBusDepot/OverviewPage/DepotOverview/ProjectPlanning/MaterialProcurement'),
+    //   (context) => Navigator.pushNamed(context,
+    //       'login/EVDashboard/EVBusDepot/OverviewPage/DepotOverview/ProjectPlanning/MaterialProcurement/DailyProgress'),
+    //   (context) => Navigator.pushNamed(context,
+    //       'login/EVDashboard/EVBusDepot/OverviewPage/DepotOverview/ProjectPlanning/MaterialProcurement/DailyProgress/MonthlyProgress'),
+    //   (context) => Navigator.pushNamed(context,
+    //       'login/EVDashboard/EVBusDepot/OverviewPage/DepotOverview/ProjectPlanning/MaterialProcurement/DailyProgress/MonthlyProgress/DetailedEngineering'),
+    //   (context) => Navigator.pushNamed(context,
+    //       'login/EVDashboard/EVBusDepot/OverviewPage/DepotOverview/ProjectPlanning/MaterialProcurement/DailyProgress/MonthlyProgress/DetailedEngineering/Jmr'),
+
+    //   (context) => Navigator.pushNamed(context,
+    //       'login/EVDashboard/EVBusDepot/OverviewPage/DepotOverview/ProjectPlanning/MaterialProcurement/DailyProgress/MonthlyProgress/DetailedEngineering/Jmr/SafetyChecklist'),
+    //   (context) => Navigator.pushNamed(context,
+    //       'login/EVDashboard/EVBusDepot/OverviewPage/DepotOverview/ProjectPlanning/MaterialProcurement/DailyProgress/MonthlyProgress/DetailedEngineering/Jmr/SafetyChecklist/QualityChecklist'),
+    //   (context) => Navigator.pushNamed(context,
+    //       'login/EVDashboard/EVBusDepot/OverviewPage/DepotOverview/ProjectPlanning/MaterialProcurement/DailyProgress/MonthlyProgress/DetailedEngineering/Jmr/SafetyChecklist/QualityChecklist/DepotInsightes'),
+    //   (context) => Navigator.pushNamed(context,
+    //       'login/EVDashboard/EVBusDepot/OverviewPage/DepotOverview/ProjectPlanning/MaterialProcurement/DailyProgress/MonthlyProgress/DetailedEngineering/Jmr/SafetyChecklist/QualityChecklist/DepotInsightes/ClosureReport'),
+    //   (context) => Navigator.pushNamed(context,
+    //       'login/EVDashboard/EVBusDepot/OverviewPage/DepotOverview/ProjectPlanning/MaterialProcurement/DailyProgress/MonthlyProgress/DetailedEngineering/Jmr/SafetyChecklist/QualityChecklist/DepotInsightes/ClosureReport/DemandEnergy'),
+
+    //   // Add other functions or widgets as needed
+    // ];
+    // // pages = [
+    // //   DepotOverview(
+    // //     userid: widget.userId,
+    // //     // userid: widget.userid,
+    // //     cityName: widget.cityName,
+    // //     depoName: widget.depoName,
+    // //   ),
+    // //   KeyEventsUser(
+    // //     userId: widget.userId,
+    // //     cityName: widget.cityName,
+    // //     depoName: widget.depoName,
+    // //   ),
+    // //   MaterialProcurement(
+    // //     userId: widget.userId,
+    // //     cityName: widget.cityName,
+    // //     depoName: widget.depoName,
+    // //   ),
+    // //   DailyProject(
+    // //     userId: widget.userId,
+    // //     cityName: widget.cityName,
+    // //     depoName: widget.depoName,
+    // //   ),
+    // //   MonthlySummary(
+    // //     userId: widget.userId,
+    // //     cityName: widget.cityName,
+    // //     depoName: widget.depoName,
+    // //   ),
+    // //   DetailedEng(
+    // //     userId: widget.userId,
+    // //     // userId: widget.userid,
+    // //     cityName: widget.cityName,
+    // //     depoName: widget.depoName,
+    // //   ),
+    // //   Jmr(
+    // //     userId: widget.userId,
+    // //     cityName: widget.cityName,
+    // //     depoName: widget.depoName,
+    // //   ),
+    // //   SafetySummary(
+    // //     userId: widget.userId,
+    // //     depoName: widget.depoName,
+    // //     cityName: widget.cityName,
+    // //     id: 'Safety Report',
+    // //   ),
+    // //   QualityChecklist(
+    // //     userId: widget.userId,
+    // //     // userId: widget.userid,
+    // //     cityName: widget.cityName,
+    // //     depoName: widget.depoName,
+    // //   ),
+    // //   ViewAllPdf(
+    // //       title: 'Overview Page',
+    // //       cityName: widget.cityName,
+    // //       depoName: widget.depoName,
+    // //       docId: 'OverviewepoImages'),
+    // //   ClosureSummaryTable(
+    // //     userId: widget.userId,
+    // //     // userId: widget.userid,
+    // //     cityName: widget.cityName,
+    // //     depoName: widget.depoName,
+    // //     id: 'Closure Report',
+    // //   ),
+    // //   // EasyMonitoring(
+    // //   //   userId: widget.userId,
+    // //   //   cityName: widget.cityName,
+    // //   //   depoName: widget.depoName,
+    // //   // ),
+    // //   EnergyManagement(
+    // //     // userId: widget.userId,
+    // //     cityName: widget.cityName,
+    // //     depoName: widget.depoName,
+    // //   )
+    // // ];
 
     return Scaffold(
       appBar: PreferredSize(
@@ -195,47 +239,43 @@ class _MyOverviewState extends State<MyOverview> {
   Widget cards(String desc, String img, int index) {
     return GestureDetector(
       onTap: (() {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => pages[index],
-            ));
+        Navigator.pushNamed(context, pages[index]);
       }),
-      child: Container(
-        padding: const EdgeInsets.all(2),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: blue,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 5,
-                offset: const Offset(0, 2), // changes position of shadow
+      child: Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width / 5,
+          height: MediaQuery.of(context).size.height / 4,
+          child: Card(
+            elevation: 25,
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    height: 60,
+                    width: 60,
+                    child: Image.asset(img, fit: BoxFit.cover),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    desc,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  )
+                ],
               ),
-            ]),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 10),
-            SizedBox(
-              height: 80,
-              width: 80,
-              child: Image.asset(img, fit: BoxFit.cover),
             ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: Text(
-                desc,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-            )
-          ],
+          ),
         ),
       ),
     );
+  }
+
+  Future<void> setSharePrefence() async {
+    _sharedPreferences = await SharedPreferences.getInstance();
+    _sharedPreferences.setString('depotName', widget.depoName);
   }
 }

@@ -5,9 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:web_appllication/OverviewPages/quality_checklist.dart';
 import 'package:web_appllication/Planning/overview.dart';
 import 'package:web_appllication/components/loading_page.dart';
-import 'package:web_appllication/components/page_routeBuilder.dart';
 import 'package:web_appllication/style.dart';
 import '../Authentication/auth_service.dart';
 import '../widgets/custom_appbar.dart';
@@ -30,6 +31,7 @@ class _MydepotsState extends State<Mydepots> {
   dynamic webImage;
   String? companyName;
   bool isLoading = true;
+  late SharedPreferences _sharedPreferences;
   @override
   void initState() {
     super.initState();
@@ -52,7 +54,7 @@ class _MydepotsState extends State<Mydepots> {
           // ignore: sort_child_properties_last
           child: CustomAppBar(
             toDepots: true,
-            text: 'Depots - ${widget.cityName}',
+            text: 'Depots/${widget.cityName}',
             cityName: widget.cityName,
             userId: widget.userId,
             // userid: widget.userid,
@@ -80,7 +82,7 @@ class _MydepotsState extends State<Mydepots> {
                   title: const Text(
                     'Add Depot',
                   ),
-                  content: Container(
+                  content: SizedBox(
                     height: 200,
                     width: 250,
                     child: Column(children: [
@@ -262,76 +264,38 @@ class _MydepotsState extends State<Mydepots> {
                     itemCount: snapshot.data!.docs.length,
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4, childAspectRatio: 1.5),
+                            crossAxisCount: 4, childAspectRatio: 1.0),
                     itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                CustomPageRoute(
-                                  page: MyOverview(
-                                    userId: widget.userId,
-                                    cityName: widget.cityName!,
-                                    depoName: snapshot.data!.docs[index]
-                                        ['DepoName'],
-                                  ),
-                                ),
-                              );
-                            },
-                            child: cards(
-                                context,
-                                snapshot.data!.docs[index]['DepoName'],
-                                snapshot.data!.docs[index]['DepoUrl'],
-                                index)
-                            //  Stack(children: [
-                            //   Column(
-                            //     children: [
-                            //       Container(
-                            //         height: 150,
-                            //         width: 150,
-                            //         decoration: BoxDecoration(
-                            //           borderRadius: BorderRadius.circular(20),
-                            //           color: blue,
-                            //           image: DecorationImage(
-                            //               image: NetworkImage(snapshot
-                            //                   .data!.docs[index]['DepoUrl']),
-                            //               fit: BoxFit.cover),
-                            //         ),
-                            //       ),
-                            //       const SizedBox(
-                            //         height: 10,
-                            //       ),
-                            //       // Text(snapshot.data!.docs[index]['DepoName']),
-                            //       const SizedBox(height: 5),
-                            //       ElevatedButton(
-                            //           style: ElevatedButton.styleFrom(
-                            //               shape: RoundedRectangleBorder(
-                            //                   borderRadius:
-                            //                       BorderRadius.circular(10)),
-                            //               backgroundColor: blue),
-                            //           onPressed: () {
-                            //             Navigator.push(
-                            //               context,
-                            //               CustomPageRoute(
-                            //                 page: MyOverview(
-                            //                   userId: widget.userId,
-                            //                   cityName: widget.cityName!,
-                            //                   depoName: snapshot.data!.docs[index]
-                            //                       ['DepoName'],
-                            //                 ),
-                            //               ),
-                            //             );
-                            //           },
-                            //           child: Text(
-                            //               snapshot.data!.docs[index]['DepoName']))
-                            //     ],
-                            //   ),
-                            // ]),
+                      return
+                          //GestureDetector(
+                          // onTap: () async {
+                          //   _sharedPreferences =
+                          //       await SharedPreferences.getInstance();
+                          //   _sharedPreferences
+                          //       .setString(
+                          //           'depotName',
+                          //           snapshot.data!.docs[index]
+                          //               ['DepoName'])
+                          //       .whenComplete(() {
+                          //     Navigator.pushNamed(context,
+                          //         'login/EVDashboard/Cities/EVBusDepot/overviewpage',
+                          //         arguments: {
+                          //           'cityName': widget.cityName,
+                          //           'depoName': snapshot.data!.docs[index]
+                          //               ['DepoName'],
+                          //         });
+                          //   });
+                          // },
 
-                            ),
-                      );
+                          cards(
+                              context,
+                              snapshot.data!.docs[index]['DepoName'],
+                              snapshot.data!.docs[index]['DepoUrl'],
+                              MyOverview(
+                                  depoName: snapshot.data!.docs[index]
+                                      ['DepoName'],
+                                  cityName: widget.cityName!),
+                              index);
                     });
               } else {
                 return Center(
@@ -400,6 +364,8 @@ class _MydepotsState extends State<Mydepots> {
   }
 
   Future<void> getcompany() async {
+    _sharedPreferences = await SharedPreferences.getInstance();
+    _sharedPreferences.setString('cityName', widget.cityName!);
     await AuthService().getCurrentCompanyName().then((value) {
       companyName = value;
       setState(() {

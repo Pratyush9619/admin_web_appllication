@@ -28,14 +28,15 @@ environment:
 # dependencies can be manually updated by changing the version numbers below to
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
-
 dependencies:
   advanced_search: ^2.2.3
-  fl_chart:
   cloud_firestore: ^4.1.0
+  connectivity_plus: ^5.0.2
   country_pickers: ^2.0.0
   csv: ^5.0.1
   cupertino_icons: ^1.0.2
+  data_table_2: null
+  dependencies: null
   excel: ^2.0.1
   external_app_launcher: ^3.1.0
   file_picker: ^5.2.3
@@ -43,11 +44,15 @@ dependencies:
   firebase_core: ^2.3.0
   firebase_storage: ^11.0.6
   firebaseapis: ^0.1.2
+  fl_chart: null
+  fluro:
   flutter:
     sdk: flutter
   flutter_admin_scaffold: ^1.1.2
   flutter_pdfview: ^1.2.5
   flutter_slider_indicator: ^1.0.0
+  flutter_typeahead: null
+  flutter_widget_from_html: null
   gantt_chart: ^0.3.0
   get: ^4.6.5
   google_fonts: ^3.0.1
@@ -57,12 +62,17 @@ dependencies:
   intl: ^0.17.0
   intl_phone_field: ^3.1.0
   jiffy: ^5.0.0
+  lottie: null
   open_app_file: ^4.0.1
   path_provider: ^2.0.11
   pdf: null
-  pdfx:
+  pdfx: null
+  percent_indicator: ^4.2.3
+  pie_chart: null
+  printing: ^5.10.4
   provider: ^6.0.5
   shared_preferences: ^2.0.15
+  side_navigation: null
   syncfusion_flutter_charts: ^20.3.58
   syncfusion_flutter_core: null
   syncfusion_flutter_datagrid: ^20.4.38
@@ -70,15 +80,7 @@ dependencies:
   syncfusion_flutter_pdfviewer: ^20.3.58
   syncfusion_flutter_xlsio: ^20.4.50-beta
   tab_indicator_styler: ^2.0.0
-  lottie:
-  flutter_typeahead:
-  printing: ^5.10.4
-  pie_chart:
-  percent_indicator: ^4.2.3
-  dependencies:
-  flutter_widget_from_html:
-  data_table_2:
-  side_navigation:
+  url_strategy: null
 
 dev_dependencies:
   flutter_lints: ^2.0.0
@@ -99,6 +101,8 @@ flutter:
     - assets/
     - assets/overview_image/
     - animations/
+    - assets/depots/
+    - assets/fonts/
   #   - images/a_dot_ham.jpeg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

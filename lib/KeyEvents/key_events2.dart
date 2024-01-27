@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:web_appllication/KeyEvents/upload.dart';
 import 'package:web_appllication/KeyEvents/view_AllFiles.dart';
@@ -446,7 +445,9 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                                   const TextStyle(
                                                 color: Colors.red,
                                                 fontSize: 14,
-                                              )),
+                                              ),
+                                              gridLineColor: blue,
+                                              gridLineStrokeWidth: 2),
                                           child: SfDataGrid(
                                             source: _KeyDataSourceKeyEvents,
                                             verticalScrollController:
@@ -1899,7 +1900,9 @@ class _KeyEvents2State extends State<KeyEvents2> {
                                             rowHoverTextStyle: const TextStyle(
                                               color: Colors.red,
                                               fontSize: 14,
-                                            )),
+                                            ),
+                                            gridLineColor: blue,
+                                            gridLineStrokeWidth: 2),
                                         child: SfDataGrid(
                                           source: _KeyDataSourceKeyEvents,
                                           onSelectionChanged:
@@ -2306,6 +2309,7 @@ class _KeyEvents2State extends State<KeyEvents2> {
                           ? Container()
                           : Container(
                               width: 450,
+                              alignment: Alignment.bottomCenter,
                               decoration: BoxDecoration(
                                   border: Border(
                                     top: BorderSide(width: 2.0, color: blue),

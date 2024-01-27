@@ -1,7 +1,4 @@
 import 'dart:html';
-import 'dart:typed_data';
-
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:web_appllication/components/loading_page.dart';
@@ -80,7 +77,10 @@ class _ViewAllPdfState extends State<ViewAllPdf> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.cityName} / ${widget.depoName} / View Files'),
+        title: Text(
+          '${widget.cityName} / ${widget.depoName} / View Files',
+          style: appFontSize,
+        ),
         backgroundColor: blue,
       ),
       body: _isload

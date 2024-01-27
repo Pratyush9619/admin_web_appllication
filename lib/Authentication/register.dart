@@ -486,10 +486,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 content: const Text('Registration Successfully Please Sign In'),
                 backgroundColor: blue,
               ));
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LoginRegister()),
-              );
+              Navigator.pushNamed(context, '/login');
             } else {
               Navigator.pop(context);
               //     authService.firebaseauth.signOut();

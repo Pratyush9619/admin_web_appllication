@@ -8,6 +8,7 @@ Color almostWhite = const Color(0xffffffff).withOpacity(0.87);
 Color blue = const Color.fromARGB(255, 9, 83, 161);
 Color lightblue = const Color(0xff009eff);
 Color white = const Color(0xffffffff);
+Color borderColor = Color(0xFF2651A1);
 
 TextStyle formtext = const TextStyle(
   fontSize: 13,
@@ -89,8 +90,8 @@ TextStyle captionWhite60 = GoogleFonts.ibmPlexSans(
     letterSpacing: 0.4,
     color: white60);
 Color darkGrey = Color(0xff121212);
-Color grey = Color(0xff2c2c2e);
-Color grey2 = Color(0xff1c1c1e);
+Color grey = Color(0xFFEDEDED);
+// Color grey2 = Color(0xff1c1c1e);
 //**************** */
 TextStyle headline1 = GoogleFonts.ibmPlexSans(
     fontSize: 99, fontWeight: FontWeight.w300, letterSpacing: -1.5);

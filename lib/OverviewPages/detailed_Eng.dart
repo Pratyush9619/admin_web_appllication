@@ -159,6 +159,7 @@ class _DetailedEngtState extends State<DetailedEng>
             backgroundColor: blue,
             title: Text(
               '${widget.cityName} / ${widget.depoName} / Detailed Engineering',
+              style: appFontSize,
             ),
             actions: [
               Container(

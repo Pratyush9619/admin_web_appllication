@@ -98,6 +98,7 @@ class _QualityChecklistState extends State<QualityChecklist> {
               automaticallyImplyLeading:
                   widget.isHeader! ? widget.isHeader! : false,
               backgroundColor: blue,
+              
               actions: [
                 Container(
                   padding: const EdgeInsets.all(5.0),
@@ -198,7 +199,7 @@ class _QualityChecklistState extends State<QualityChecklist> {
                         ))),
               ],
               title: Text(
-                  '${widget.cityName} / ${widget.depoName} / Quality Checklist'),
+                  '${widget.cityName} / ${widget.depoName} / Quality Checklist' , style: appFontSize,),
               // leading:
               bottom: PreferredSize(
                 preferredSize: const Size(double.infinity, 50),

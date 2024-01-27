@@ -123,14 +123,14 @@ class _DepotOverviewState extends State<DepotOverview> {
 
     // ignore: use_build_context_synchronously
 
-    _stream = FirebaseFirestore.instance
-        .collection('OverviewCollectionTable')
-        .doc(widget.depoName)
-        .collection("OverviewTabledData")
-        .doc(widget.userid)
-        .snapshots();
+    // _stream = FirebaseFirestore.instance
+    //     .collection('OverviewCollectionTable')
+    //     .doc(widget.depoName)
+    //     .collection("OverviewTabledData")
+    //     .doc(widget.userid)
+    //     .snapshots();
 
-    // _fetchUserData();
+    _fetchUserData();
 
     // _employees = getEmployeeData();
     // _employeeDataSource = DepotOverviewDatasource(_employees, context);
@@ -140,25 +140,12 @@ class _DepotOverviewState extends State<DepotOverview> {
     //     .doc(widget.depoName)
     //     .snapshots();
 
-    // _stream1 = FirebaseFirestore.instance
-    //     .collection('OverviewCollection')
-    //     .doc(widget.depoName)
-    //     .snapshots();
+    _stream1 = FirebaseFirestore.instance
+        .collection('OverviewCollection')
+        .doc(widget.depoName)
+        .snapshots();
 
     super.initState();
-
-    // _textEditingController =
-    //     TextEditingController(text: _textprovider.changedata);
-    // _textEditingController2 =
-    //     TextEditingController(text: _textprovider.changedata);
-    // _textEditingController3 =
-    //     TextEditingController(text: _textprovider.changedata);
-    // _textEditingController4 =
-    //     TextEditingController(text: _textprovider.changedata);
-    // _textEditingController5 =
-    //     TextEditingController(text: _textprovider.changedata);
-    // _textEditingController6 =
-    //     TextEditingController(text: _textprovider.changedata);
   }
 
   final List<PieChartData> chartData = [
@@ -1269,10 +1256,10 @@ class _DepotOverviewState extends State<DepotOverview> {
         .then((value) {
       value.docs.forEach((element) {
         if (element.data().length != null) {
-          if (element.data()['Designation'] == "Project Manager") {
-            String documentId = element.id;
-            id.add(documentId);
-          }
+          // if (element.data()['Designation'] == "Project Manager") {
+          String documentId = element.id;
+          id.add(documentId);
+          //    }
         }
 
         // for (int i = 0; i < element.data()["data"].length; i++) {

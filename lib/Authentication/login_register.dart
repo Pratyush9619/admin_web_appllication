@@ -29,7 +29,7 @@ class _LoginRegisterState extends State<LoginRegister> {
                   height: MediaQuery.of(context).size.height,
                   width: 450,
                   decoration: const BoxDecoration(
-                      image: DecorationImage(
+                      image: DecorationImage( 
                           image: AssetImage('assets/webhome.jpeg'),
                           fit: BoxFit.fill)),
                 ),

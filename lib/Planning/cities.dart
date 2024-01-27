@@ -5,12 +5,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_appllication/Planning/depot.dart';
 import 'package:web_appllication/Service/database_service.dart';
 import 'package:web_appllication/components/loading_page.dart';
-import 'package:web_appllication/components/page_routeBuilder.dart';
 import 'package:web_appllication/style.dart';
-import 'package:web_appllication/widgets/custom_appbar.dart';
 import '../Authentication/auth_service.dart';
 import '../widgets/custom_container.dart';
 
@@ -42,25 +41,97 @@ class _CitiesPageState extends State<CitiesPage> {
     return _isLoading
         ? LoadingPage()
         : Scaffold(
-            // appBar: PreferredSize(
-            //     preferredSize: Size.fromHeight(50),
-            //     child: CustomAppBar(
-            //       text: 'Cities Page',
-            //       cityName: '',
-            //     )),
             floatingActionButton: companyName == 'TATA POWER'
                 ? FloatingActionButton(
                     onPressed: () {
                       PopupDialog(context);
                     },
                     backgroundColor: blue,
-                    child: Icon(Icons.add),
+                    child: const Icon(Icons.add),
                   )
                 : Container(),
-            body: citylist(),
-          );
+            body: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection('CityName')
+                  .orderBy('CityName')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return GridView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4, childAspectRatio: 1.0),
+                    itemBuilder: (context, index) {
+                      return cards(
+                          context,
+                          snapshot.data!.docs[index]['CityName'],
+                          snapshot.data!.docs[index]['ImageUrl'],
+                          Mydepots(
+                              cityName: snapshot.data!.docs[index]['CityName'],
+                              userId: userId),
+                          index);
+                    },
+                  );
+                } else {
+                  return LoadingPage();
+                }
+              },
+            ));
+
+    // StreamBuilder(
+    //   stream: FirebaseFirestore.instance
+    //       .collection('CityName')
+    //       .orderBy('CityName')
+    //       .snapshots(),
+    //   builder: (context, snapshot) {
+    //     if (snapshot.hasData) {
+    //       return GridView.builder(
+    //           itemCount: snapshot.data!.docs.length,
+    //           gridDelegate:
+    //               const SliverGridDelegateWithFixedCrossAxisCount(
+    //                   crossAxisCount: 4, childAspectRatio: 1.0),
+    //           itemBuilder: (context, index) {
+    //             return Container(
+    //               padding: EdgeInsets.only(
+    //                 top: MediaQuery.of(context).size.height * 0.03,
+    //                 left: MediaQuery.of(context).size.height * 0.03,
+    //                 right: MediaQuery.of(context).size.height * 0.03,
+    //               ),
+    //               child: cards(
+    //                   context,
+    //                   snapshot.data!.docs[index]['CityName'],
+    //                   snapshot.data!.docs[index]['ImageUrl'],
+    //                   Mydepots(
+    //                       cityName: snapshot.data!.docs[index]
+    //                           ['CityName'],
+    //                       userId: userId),
+    //                   index),
+    //             );
+    //             //  Container(
+    //             //   padding: EdgeInsets.only(
+    //             //     top: MediaQuery.of(context).size.height * 0.03,
+    //             //     left: MediaQuery.of(context).size.height * 0.03,
+    //             //     right: MediaQuery.of(context).size.height * 0.03,
+    //             //   ),
+    //             //   child: cards(
+    //             //       context,
+    //             //       snapshot.data!.docs[index]['CityName'],
+    //             //       snapshot.data!.docs[index]['ImageUrl'],
+    //             //       Mydepots(
+    //             //           cityName: snapshot.data!.docs[index]
+    //             //               ['CityName'],
+    //             //           userId: userId),
+    //             //       index),
+    //             // );
+    //           });
+    //     } else {
+    //       return LoadingPage();
+    //     }
+    //   }));
   }
 
+  // ignore: non_constant_identifier_names
   PopupDialog(BuildContext context) {
     showDialog(
         context: context,
@@ -220,73 +291,39 @@ class _CitiesPageState extends State<CitiesPage> {
             .collection('CityName')
             .orderBy('CityName')
             .snapshots(),
-        builder: (context, AsyncSnapshot snapshot) {
+        builder: (context, snapshot) {
           if (snapshot.hasData) {
             return GridView.builder(
                 itemCount: snapshot.data!.docs.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4, childAspectRatio: 1.5),
+                    crossAxisCount: 4, childAspectRatio: 1.0),
                 itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              CustomPageRoute(
-                                  page: Mydepots(
-                                userId: userId,
-                                cityName: snapshot.data!.docs[index]
-                                    ['CityName'],
-                              )));
-                        },
+                  return Stack(
+                    children: [
+                      Container(
+                          padding: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height * 0.34,
+                          ),
+                          child: Divider(
+                            color: grey,
+                            thickness: 4,
+                          )),
+                      Container(
+                        padding: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height * 0.03,
+                            right: MediaQuery.of(context).size.height * 0.03,
+                            left: MediaQuery.of(context).size.height * 0.03),
                         child: cards(
                             context,
                             snapshot.data!.docs[index]['CityName'],
                             snapshot.data!.docs[index]['ImageUrl'],
-                            index)
-                        // Stack(children: [
-                        //   Column(
-                        //     children: [
-                        //       Container(
-                        //         height: 150,
-                        //         width: 150,
-                        //         decoration: BoxDecoration(
-                        //           borderRadius: BorderRadius.circular(20),
-                        //           color: blue,
-                        //           image: DecorationImage(
-                        //               image: NetworkImage(
-                        //                   snapshot.data!.docs[index]['ImageUrl']),
-                        //               fit: BoxFit.cover),
-                        //         ),
-                        //       ),
-                        //       const SizedBox(
-                        //         height: 10,
-                        //       ),
-                        //       // Text(snapshot.data!.docs[index]['CityName']),
-                        //       const SizedBox(height: 5),
-                        //       ElevatedButton(
-                        //           style: ElevatedButton.styleFrom(
-                        //               shape: RoundedRectangleBorder(
-                        //                   borderRadius:
-                        //                       BorderRadius.circular(10)),
-                        //               backgroundColor: blue),
-                        //           onPressed: () {
-                        //             Navigator.push(
-                        //                 context,
-                        //                 CustomPageRoute(
-                        //                     page: Mydepots(
-                        //                   userId: userId,
-                        //                   cityName: snapshot.data!.docs[index]
-                        //                       ['CityName'],
-                        //                 )));
-                        //           },
-                        //           child: Text(
-                        //               snapshot.data!.docs[index]['CityName']))
-                        //     ],
-                        //   ),
-                        // ]),
-                        ),
+                            Mydepots(
+                                cityName: snapshot.data!.docs[index]
+                                    ['CityName'],
+                                userId: userId),
+                            index),
+                      )
+                    ],
                   );
                 });
           } else {
