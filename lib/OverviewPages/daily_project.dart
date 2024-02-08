@@ -38,6 +38,8 @@ class DailyProject extends StatefulWidget {
 
 class _DailyProjectState extends State<DailyProject> {
   List<dynamic> dataForPdf = [];
+  List<dynamic> chosenDateList = [];
+  List<dynamic> availableUserId = [];
   DateTime? startdate = DateTime.now();
   DateTime? enddate = DateTime.now();
   DateTime? rangestartDate;
@@ -53,8 +55,6 @@ class _DailyProjectState extends State<DailyProject> {
   dynamic companyId;
   dynamic alldata;
   List id = [];
-  List<dynamic> chosenDateList = [];
-  List<dynamic> availableUserId = [];
 
   @override
   void initState() {

@@ -11,7 +11,6 @@ import 'package:web_appllication/provider/menuUserPageProvider.dart';
 import 'package:web_appllication/provider/selected_row_index.dart';
 import 'package:web_appllication/provider/text_provider.dart';
 import 'package:web_appllication/routeBuilder/route_generator.dart';
-import 'package:web_appllication/small_screen.dart';
 import 'package:web_appllication/style.dart';
 
 void main() async {
